@@ -1,0 +1,31 @@
+# Supabase CLI configuration
+# For local development with Supabase CLI
+# Run: npx supabase init (if you want full Supabase local stack)
+
+[db]
+port = 54322
+major_version = 15
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+# [auth.external.github]
+# enabled = true
+# client_id = "env(GITHUB_CLIENT_ID)"
+# secret = "env(GITHUB_SECRET)"

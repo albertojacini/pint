@@ -1,0 +1,59 @@
+name: Drizzle Migration Check
+
+on:
+  pull_request:
+    paths:
+      - 'app/src/lib/db/schema.ts'
+      - 'app/drizzle/**'
+      - 'infra/supabase/migrations/**'
+
+jobs:
+  migration-check:
+    name: Check Database Migrations
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: pint
+        ports:
+          - 54322:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Drizzle migrations
+        run: pnpm db:generate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:54322/pint
+
+      - name: Run migrations
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:54322/pint
+
+      - name: Check migration status
+        run: |
+          echo "✅ Migrations completed successfully"

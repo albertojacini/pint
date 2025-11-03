@@ -1,0 +1,20 @@
+{
+  "name": "@pint/types",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@pint/eslint-config": "workspace:*",
+    "@pint/tsconfig": "workspace:*",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  }
+}

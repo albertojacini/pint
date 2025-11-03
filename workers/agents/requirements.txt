@@ -1,0 +1,35 @@
+# LangGraph Agent Dependencies (Placeholder)
+
+# Core LangGraph/LangChain
+# langgraph==0.0.20
+# langchain==0.1.0
+# langchain-openai==0.0.2
+# langchain-anthropic==0.0.1
+
+# LLM Providers
+# openai==1.10.0
+# anthropic==0.8.1
+
+# Vector Stores
+# pinecone-client==3.0.2
+# chromadb==0.4.22
+# weaviate-client==4.4.0
+
+# Database
+# psycopg2-binary==2.9.9
+# asyncpg==0.29.0
+# sqlalchemy==2.0.25
+
+# Task Queue
+# celery==5.3.6
+# redis==5.0.1
+
+# Utilities
+# python-dotenv==1.0.0
+# pydantic==2.5.3
+# tiktoken==0.5.2
+
+# Development
+# pytest==7.4.4
+# pytest-asyncio==0.23.3
+# black==24.1.1
