@@ -8,15 +8,15 @@ import { readdirSync } from 'node:fs'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const rootDir = join(__dirname, '../..')
-const migrationsDir = join(rootDir, 'infra/supabase/migrations')
+const migrationsDir = join(rootDir, 'supabase/migrations')
 
 // Set default DATABASE_URL if not present
 if (!process.env.DATABASE_URL) {
   console.log('⚠️  DATABASE_URL not set, using default local database')
-  process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:54322/pint'
+  process.env.DATABASE_URL = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
 }
 
-console.log('🔄 Running SQL migrations from /infra/supabase/migrations...')
+console.log('🔄 Running SQL migrations from /supabase/migrations...')
 
 // Get all .sql files and sort them
 const sqlFiles = readdirSync(migrationsDir)

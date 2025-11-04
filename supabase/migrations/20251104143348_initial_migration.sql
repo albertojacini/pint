@@ -90,3 +90,109 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+-- Create categories table (hierarchical policy categories)
+create table if not exists public.categories (
+  id uuid primary key default uuid_generate_v4(),
+  parent_id uuid references public.categories(id) on delete cascade,
+  title text not null,
+  description text,
+  order_index integer not null default 0,
+  only_entities_with_types text[], -- Constraint: only certain entity types can use this category
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Create political_entities table
+create table if not exists public.political_entities (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null,
+  native_name text,
+  description text,
+  avatar_url text,
+  type text not null check (type in ('neighborhood', 'district', 'borough', 'city', 'region', 'country', 'supranational')),
+  population integer,
+  score_innovation integer check (score_innovation >= 0 and score_innovation <= 10),
+  score_sustainability integer check (score_sustainability >= 0 and score_sustainability <= 10),
+  score_impact integer check (score_impact >= 0 and score_impact <= 10),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Create entity_relationships table (for parent/child relationships)
+create table if not exists public.entity_relationships (
+  id uuid primary key default uuid_generate_v4(),
+  entity_id uuid not null references public.political_entities(id) on delete cascade,
+  related_entity_id uuid not null references public.political_entities(id) on delete cascade,
+  relationship_type text not null, -- e.g., 'parent city', 'parent region', 'parent country'
+  created_at timestamptz default now(),
+  unique(entity_id, related_entity_id, relationship_type)
+);
+
+-- Create policy_tags table (tag taxonomies)
+create table if not exists public.policy_tags (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null unique, -- e.g., 'country', 'maturity', 'successfulness'
+  description text,
+  created_at timestamptz default now()
+);
+
+-- Create tag_values table (individual values within each taxonomy)
+create table if not exists public.tag_values (
+  id uuid primary key default uuid_generate_v4(),
+  tag_id uuid not null references public.policy_tags(id) on delete cascade,
+  value text not null,
+  description text,
+  created_at timestamptz default now(),
+  unique(tag_id, value)
+);
+
+-- Create goals table
+create table if not exists public.goals (
+  id uuid primary key default uuid_generate_v4(),
+  title text not null,
+  description text,
+  maslow_level text, -- Link to Maslow hierarchy if applicable
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Create metrics table
+create table if not exists public.metrics (
+  id uuid primary key default uuid_generate_v4(),
+  category_id uuid references public.categories(id) on delete cascade,
+  title text not null,
+  description text,
+  unit text, -- e.g., 'percentage', 'count', 'score'
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Create indexes for new tables
+create index if not exists idx_categories_parent_id on public.categories(parent_id);
+create index if not exists idx_political_entities_type on public.political_entities(type);
+create index if not exists idx_entity_relationships_entity_id on public.entity_relationships(entity_id);
+create index if not exists idx_entity_relationships_related_entity_id on public.entity_relationships(related_entity_id);
+create index if not exists idx_tag_values_tag_id on public.tag_values(tag_id);
+create index if not exists idx_metrics_category_id on public.metrics(category_id);
+
+-- Create triggers for updated_at on new tables
+create trigger set_updated_at
+  before update on public.categories
+  for each row
+  execute function public.handle_updated_at();
+
+create trigger set_updated_at
+  before update on public.political_entities
+  for each row
+  execute function public.handle_updated_at();
+
+create trigger set_updated_at
+  before update on public.goals
+  for each row
+  execute function public.handle_updated_at();
+
+create trigger set_updated_at
+  before update on public.metrics
+  for each row
+  execute function public.handle_updated_at();

@@ -13,6 +13,7 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "db:migrate": "node tooling/scripts/migrate-dev.mjs",
+    "db:seed": "node tooling/scripts/seed.mjs",
     "db:studio": "pnpm --filter @pint/app run db:studio",
     "docker:up": "docker compose -f infra/docker/compose.dev.yml up -d",
     "docker:down": "docker compose -f infra/docker/compose.dev.yml down",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "pg": "^8.16.3",
     "prettier": "^3.1.1",
     "turbo": "^2.1.3"
   },
