@@ -3,10 +3,12 @@
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
+import { readdirSync } from 'node:fs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const rootDir = join(__dirname, '../..')
+const migrationsDir = join(rootDir, 'infra/supabase/migrations')
 
 // Set default DATABASE_URL if not present
 if (!process.env.DATABASE_URL) {
@@ -14,22 +16,36 @@ if (!process.env.DATABASE_URL) {
   process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:54322/pint'
 }
 
-console.log('🔄 Running Drizzle migrations...')
+console.log('🔄 Running SQL migrations from /infra/supabase/migrations...')
 
-const result = spawnSync('pnpm', ['-C', 'app', 'run', 'db:migrate'], {
-  stdio: 'inherit',
-  cwd: rootDir,
-  env: process.env,
-})
+// Get all .sql files and sort them
+const sqlFiles = readdirSync(migrationsDir)
+  .filter((file) => file.endsWith('.sql'))
+  .sort()
 
-if (result.error) {
-  console.error('❌ Migration failed:', result.error)
-  process.exit(1)
+for (const file of sqlFiles) {
+  console.log(`📄 Applying ${file}...`)
+  const migrationPath = join(migrationsDir, file)
+
+  const result = spawnSync(
+    'psql',
+    [process.env.DATABASE_URL, '-f', migrationPath],
+    {
+      stdio: 'inherit',
+      cwd: rootDir,
+      env: process.env,
+    }
+  )
+
+  if (result.error) {
+    console.error(`❌ Migration failed for ${file}:`, result.error)
+    process.exit(1)
+  }
+
+  if (result.status !== 0) {
+    console.error(`❌ Migration failed for ${file} with exit code:`, result.status)
+    process.exit(result.status)
+  }
 }
 
-if (result.status !== 0) {
-  console.error('❌ Migration failed with exit code:', result.status)
-  process.exit(result.status)
-}
-
-console.log('✅ Migrations completed successfully')
+console.log('✅ All migrations completed successfully')
