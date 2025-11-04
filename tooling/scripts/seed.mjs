@@ -1,19 +1,72 @@
 #!/usr/bin/env node
 
+import 'dotenv/config'
 import pg from 'pg'
+import { createClient } from '@supabase/supabase-js'
 
 const { Client } = pg
 
 // Set default DATABASE_URL if not present
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
 
+// Get user credentials from environment
+const ADMIN_USER_FULL_NAME = process.env.ADMIN_USER_FULL_NAME
+const ADMIN_USER_EMAIL = process.env.ADMIN_USER_EMAIL
+const ADMIN_USER_PASSWORD = process.env.ADMIN_USER_PASSWORD
+
+// Supabase config
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321'
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+
 console.log('🌱 Starting database seeding...')
 
 const client = new Client({ connectionString: DATABASE_URL })
+const supabase = SUPABASE_SERVICE_ROLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    })
+  : null
 
 try {
   await client.connect()
   console.log('✅ Connected to database')
+
+  // Create admin user if credentials are provided
+  if (ADMIN_USER_EMAIL && ADMIN_USER_PASSWORD && supabase) {
+    console.log('👤 Creating admin user...')
+
+    // Check if user already exists
+    const { data: existingUsers, error: listError } = await supabase.auth.admin.listUsers()
+    const userExists = existingUsers?.users?.some(u => u.email === ADMIN_USER_EMAIL)
+
+    if (!userExists) {
+      const { data, error } = await supabase.auth.admin.createUser({
+        email: ADMIN_USER_EMAIL,
+        password: ADMIN_USER_PASSWORD,
+        email_confirm: true,
+        user_metadata: {
+          full_name: ADMIN_USER_FULL_NAME || null
+        }
+      })
+
+      if (error) {
+        console.error('❌ Error creating admin user:', error.message)
+      } else {
+        console.log(`✅ Admin user created: ${ADMIN_USER_EMAIL}`)
+      }
+    } else {
+      console.log('⚠️  Admin user already exists')
+    }
+  } else {
+    if (!ADMIN_USER_EMAIL || !ADMIN_USER_PASSWORD) {
+      console.log('ℹ️  Skipping admin user creation (credentials not provided)')
+    } else if (!supabase) {
+      console.log('ℹ️  Skipping admin user creation (SUPABASE_SERVICE_ROLE_KEY not provided)')
+    }
+  }
 
   // Check if data already exists
   const existingCategories = await client.query('SELECT COUNT(*) FROM categories')
