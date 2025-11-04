@@ -13,6 +13,7 @@ export const PostSchema = z.object({
 
 export const CreatePostSchema = PostSchema.omit({
   id: true,
+  authorId: true,
   createdAt: true,
   updatedAt: true,
 })
