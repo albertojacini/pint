@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   db:
-    image: supabase/postgres:15.6.1.128
+    image: postgres:15-alpine
     container_name: pint-postgres
     environment:
       POSTGRES_USER: postgres
