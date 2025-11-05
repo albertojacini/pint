@@ -477,6 +477,153 @@ try {
 
   console.log('✅ Goals inserted')
 
+  // People (for Milan administrations)
+  const people = [
+    // Current administration (2021-2026)
+    { full_name: "Giuseppe Sala", avatar_url: null },
+    { full_name: "Marco Granelli", avatar_url: null },
+    { full_name: "Roberta Guaineri", avatar_url: null },
+    { full_name: "Pierfrancesco Maran", avatar_url: null },
+    { full_name: "Gabriele Rabaiotti", avatar_url: null },
+
+    // Previous administration (2016-2021) - some overlap with current
+    { full_name: "Cristina Tajani", avatar_url: null },
+    { full_name: "Lorenzo Lipparini", avatar_url: null },
+    { full_name: "Marco Barbieri", avatar_url: null },
+
+    // Earlier administration (2011-2016)
+    { full_name: "Giuliano Pisapia", avatar_url: null },
+    { full_name: "Carmela Rozza", avatar_url: null },
+    { full_name: "Francesco Cappelli", avatar_url: null },
+    { full_name: "Chiara Bisconti", avatar_url: null },
+
+    // Even earlier (2006-2011)
+    { full_name: "Letizia Moratti", avatar_url: null },
+    { full_name: "Bruno Tabacci", avatar_url: null },
+    { full_name: "Massimiliano Orsatti", avatar_url: null },
+  ]
+
+  const peopleIdMap = {}
+
+  console.log(`👥 Inserting ${people.length} people...`)
+
+  for (const person of people) {
+    const id = crypto.randomUUID()
+    peopleIdMap[person.full_name] = id
+
+    await client.query(
+      `INSERT INTO people (id, full_name, avatar_url) VALUES ($1, $2, $3)`,
+      [id, person.full_name, person.avatar_url]
+    )
+  }
+
+  console.log('✅ People inserted')
+
+  // Administrations (Milan)
+  const milanEntityId = entityIdMap["City of Milan"]
+
+  const administrations = [
+    {
+      name: "Milan City Council 2021-2026",
+      entity_id: milanEntityId,
+      term_start: "2021-10-18T00:00:00Z",
+      term_end: null,
+      status: "active",
+      description: "Current administration led by Giuseppe Sala"
+    },
+    {
+      name: "Milan City Council 2016-2021",
+      entity_id: milanEntityId,
+      term_start: "2016-06-20T00:00:00Z",
+      term_end: "2021-10-18T00:00:00Z",
+      status: "historical",
+      description: "Second term of Giuseppe Sala"
+    },
+    {
+      name: "Milan City Council 2011-2016",
+      entity_id: milanEntityId,
+      term_start: "2011-06-13T00:00:00Z",
+      term_end: "2016-06-20T00:00:00Z",
+      status: "historical",
+      description: "Administration led by Giuliano Pisapia"
+    },
+    {
+      name: "Milan City Council 2006-2011",
+      entity_id: milanEntityId,
+      term_start: "2006-05-29T00:00:00Z",
+      term_end: "2011-06-13T00:00:00Z",
+      status: "historical",
+      description: "Administration led by Letizia Moratti"
+    }
+  ]
+
+  const administrationIdMap = {}
+
+  console.log(`🏛️  Inserting ${administrations.length} administrations...`)
+
+  for (const admin of administrations) {
+    const id = crypto.randomUUID()
+    administrationIdMap[admin.name] = id
+
+    await client.query(
+      `INSERT INTO administrations (id, entity_id, name, term_start, term_end, status, description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [id, admin.entity_id, admin.name, admin.term_start, admin.term_end, admin.status, admin.description]
+    )
+  }
+
+  console.log('✅ Administrations inserted')
+
+  // Administration members
+  const administrationMembers = [
+    // Current administration (2021-2026)
+    { admin: "Milan City Council 2021-2026", person: "Giuseppe Sala", role_type: "mayor", role_title: "Mayor of Milan", appointed_at: "2021-10-18T00:00:00Z", left_at: null, status: "active" },
+    { admin: "Milan City Council 2021-2026", person: "Marco Granelli", role_type: "councilor", role_title: "Councilor for Mobility", appointed_at: "2021-10-18T00:00:00Z", left_at: null, status: "active" },
+    { admin: "Milan City Council 2021-2026", person: "Roberta Guaineri", role_type: "councilor", role_title: "Councilor for Tourism", appointed_at: "2021-10-18T00:00:00Z", left_at: null, status: "active" },
+    { admin: "Milan City Council 2021-2026", person: "Pierfrancesco Maran", role_type: "councilor", role_title: "Councilor for Urban Planning", appointed_at: "2021-10-18T00:00:00Z", left_at: null, status: "active" },
+    { admin: "Milan City Council 2021-2026", person: "Gabriele Rabaiotti", role_type: "councilor", role_title: "Councilor for Social Housing", appointed_at: "2021-10-18T00:00:00Z", left_at: null, status: "active" },
+
+    // Previous administration (2016-2021)
+    { admin: "Milan City Council 2016-2021", person: "Giuseppe Sala", role_type: "mayor", role_title: "Mayor of Milan", appointed_at: "2016-06-20T00:00:00Z", left_at: "2021-10-18T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2016-2021", person: "Marco Granelli", role_type: "councilor", role_title: "Councilor for Mobility", appointed_at: "2016-06-20T00:00:00Z", left_at: "2021-10-18T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2016-2021", person: "Cristina Tajani", role_type: "councilor", role_title: "Councilor for Labor", appointed_at: "2016-06-20T00:00:00Z", left_at: "2021-10-18T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2016-2021", person: "Lorenzo Lipparini", role_type: "councilor", role_title: "Councilor for Youth", appointed_at: "2016-06-20T00:00:00Z", left_at: "2021-10-18T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2016-2021", person: "Pierfrancesco Maran", role_type: "councilor", role_title: "Councilor for Urban Planning", appointed_at: "2016-06-20T00:00:00Z", left_at: "2021-10-18T00:00:00Z", status: "historical" },
+
+    // Earlier administration (2011-2016)
+    { admin: "Milan City Council 2011-2016", person: "Giuliano Pisapia", role_type: "mayor", role_title: "Mayor of Milan", appointed_at: "2011-06-13T00:00:00Z", left_at: "2016-06-20T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2011-2016", person: "Carmela Rozza", role_type: "councilor", role_title: "Councilor for Social Policy", appointed_at: "2011-06-13T00:00:00Z", left_at: "2016-06-20T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2011-2016", person: "Francesco Cappelli", role_type: "councilor", role_title: "Councilor for Mobility", appointed_at: "2011-06-13T00:00:00Z", left_at: "2016-06-20T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2011-2016", person: "Chiara Bisconti", role_type: "councilor", role_title: "Councilor for Environment", appointed_at: "2011-06-13T00:00:00Z", left_at: "2016-06-20T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2011-2016", person: "Marco Barbieri", role_type: "councilor", role_title: "Councilor for Culture", appointed_at: "2011-06-13T00:00:00Z", left_at: "2016-06-20T00:00:00Z", status: "historical" },
+
+    // Even earlier (2006-2011)
+    { admin: "Milan City Council 2006-2011", person: "Letizia Moratti", role_type: "mayor", role_title: "Mayor of Milan", appointed_at: "2006-05-29T00:00:00Z", left_at: "2011-06-13T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2006-2011", person: "Bruno Tabacci", role_type: "councilor", role_title: "Deputy Mayor", appointed_at: "2006-05-29T00:00:00Z", left_at: "2011-06-13T00:00:00Z", status: "historical" },
+    { admin: "Milan City Council 2006-2011", person: "Massimiliano Orsatti", role_type: "councilor", role_title: "Councilor for Urban Planning", appointed_at: "2006-05-29T00:00:00Z", left_at: "2011-06-13T00:00:00Z", status: "historical" },
+  ]
+
+  console.log(`🤝 Inserting ${administrationMembers.length} administration members...`)
+
+  for (const member of administrationMembers) {
+    await client.query(
+      `INSERT INTO administration_members (id, administration_id, person_id, role_type, role_title, appointed_at, left_at, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        crypto.randomUUID(),
+        administrationIdMap[member.admin],
+        peopleIdMap[member.person],
+        member.role_type,
+        member.role_title,
+        member.appointed_at,
+        member.left_at,
+        member.status
+      ]
+    )
+  }
+
+  console.log('✅ Administration members inserted')
+
   // Metrics (sample - "Traffic" category)
   const trafficCategoryId = categories.find(c => c.title === "Traffic")?.id
 
