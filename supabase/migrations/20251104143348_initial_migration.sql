@@ -1,18 +1,12 @@
+-- ============================================================================
+-- CORE INFRASTRUCTURE
+-- ============================================================================
+-- Extensions and shared functions used across all domains
+
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
--- Create user_profiles table (extends Supabase auth.users)
-create table if not exists public.user_profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  email text unique not null,
-  full_name text,
-  avatar_url text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
-
--- Create function to update updated_at timestamp
+-- Function to update updated_at timestamp (used by all tables)
 create or replace function public.handle_updated_at()
 returns trigger as $$
 begin
@@ -21,13 +15,7 @@ begin
 end;
 $$ language plpgsql;
 
--- Create triggers for updated_at
-create trigger set_updated_at
-  before update on public.user_profiles
-  for each row
-  execute function public.handle_updated_at();
-
--- Create function to automatically create user profile on signup
+-- Function to automatically create user profile on signup
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -42,24 +30,59 @@ begin
 end;
 $$ language plpgsql security definer;
 
--- Create trigger to create profile on new user
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
 
--- Create categories table (hierarchical policy categories)
-create table if not exists public.categories (
-  id uuid primary key default uuid_generate_v4(),
-  parent_id uuid references public.categories(id) on delete cascade,
-  title text not null,
-  description text,
-  order_index integer not null default 0,
-  only_entities_with_types text[], -- Constraint: only certain entity types can use this category
+-- ============================================================================
+-- AUTHENTICATION & USER MANAGEMENT DOMAIN
+-- ============================================================================
+-- Dependencies: auth.users (Supabase managed)
+
+create table if not exists public.user_profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text unique not null,
+  full_name text,
+  avatar_url text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
--- Create political_entities table
+create trigger set_updated_at
+  before update on public.user_profiles
+  for each row
+  execute function public.handle_updated_at();
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+
+
+-- ============================================================================
+-- CONTENT DOMAIN
+-- ============================================================================
+-- Simple content for application testing (/posts routes)
+-- Dependencies: auth.users only
+
+create table if not exists public.posts (
+  id uuid primary key default uuid_generate_v4(),
+  author_id uuid not null references auth.users(id) on delete cascade,
+  title varchar(200) not null,
+  content text not null,
+  status varchar(20) not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create trigger set_updated_at
+  before update on public.posts
+  for each row
+  execute function public.handle_updated_at();
+
+
+-- ============================================================================
+-- POLITICAL GEOGRAPHY DOMAIN
+-- ============================================================================
+-- Political entities (cities, regions, countries) and their relationships
+-- Dependencies: None (root domain)
+
 create table if not exists public.political_entities (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
@@ -75,7 +98,14 @@ create table if not exists public.political_entities (
   updated_at timestamptz default now()
 );
 
--- Create entity_relationships table (for parent/child relationships)
+create index if not exists idx_political_entities_type on public.political_entities(type);
+
+create trigger set_updated_at
+  before update on public.political_entities
+  for each row
+  execute function public.handle_updated_at();
+
+-- Entity relationships (hierarchical: city → region → country)
 create table if not exists public.entity_relationships (
   id uuid primary key default uuid_generate_v4(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
@@ -85,15 +115,44 @@ create table if not exists public.entity_relationships (
   unique(entity_id, related_entity_id, relationship_type)
 );
 
--- Create policy_tags table (tag taxonomies)
+create index if not exists idx_entity_relationships_entity_id on public.entity_relationships(entity_id);
+create index if not exists idx_entity_relationships_related_entity_id on public.entity_relationships(related_entity_id);
+
+
+-- ============================================================================
+-- POLICY CLASSIFICATION DOMAIN
+-- ============================================================================
+-- Categories, tags, and taxonomies for organizing policies
+-- Dependencies: political_entities (for category constraints)
+
+-- Hierarchical policy categories (self-referential tree)
+create table if not exists public.categories (
+  id uuid primary key default uuid_generate_v4(),
+  parent_id uuid references public.categories(id) on delete cascade,
+  title text not null,
+  description text,
+  order_index integer not null default 0,
+  only_entities_with_types text[], -- Constraint: only certain entity types can use this category
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_categories_parent_id on public.categories(parent_id);
+
+create trigger set_updated_at
+  before update on public.categories
+  for each row
+  execute function public.handle_updated_at();
+
+-- Tag taxonomies (e.g., 'country', 'maturity', 'successfulness')
 create table if not exists public.policy_tags (
   id uuid primary key default uuid_generate_v4(),
-  name text not null unique, -- e.g., 'country', 'maturity', 'successfulness'
+  name text not null unique,
   description text,
   created_at timestamptz default now()
 );
 
--- Create tag_values table (individual values within each taxonomy)
+-- Individual values within each taxonomy
 create table if not exists public.tag_values (
   id uuid primary key default uuid_generate_v4(),
   tag_id uuid not null references public.policy_tags(id) on delete cascade,
@@ -103,7 +162,15 @@ create table if not exists public.tag_values (
   unique(tag_id, value)
 );
 
--- Create goals table
+create index if not exists idx_tag_values_tag_id on public.tag_values(tag_id);
+
+
+-- ============================================================================
+-- POLICY METRICS DOMAIN
+-- ============================================================================
+-- Goals and metrics for measuring policy success
+-- Dependencies: categories
+
 create table if not exists public.goals (
   id uuid primary key default uuid_generate_v4(),
   title text not null,
@@ -113,7 +180,11 @@ create table if not exists public.goals (
   updated_at timestamptz default now()
 );
 
--- Create metrics table
+create trigger set_updated_at
+  before update on public.goals
+  for each row
+  execute function public.handle_updated_at();
+
 create table if not exists public.metrics (
   id uuid primary key default uuid_generate_v4(),
   category_id uuid references public.categories(id) on delete cascade,
@@ -124,15 +195,20 @@ create table if not exists public.metrics (
   updated_at timestamptz default now()
 );
 
--- Create indexes for new tables
-create index if not exists idx_categories_parent_id on public.categories(parent_id);
-create index if not exists idx_political_entities_type on public.political_entities(type);
-create index if not exists idx_entity_relationships_entity_id on public.entity_relationships(entity_id);
-create index if not exists idx_entity_relationships_related_entity_id on public.entity_relationships(related_entity_id);
-create index if not exists idx_tag_values_tag_id on public.tag_values(tag_id);
 create index if not exists idx_metrics_category_id on public.metrics(category_id);
 
--- Create people table
+create trigger set_updated_at
+  before update on public.metrics
+  for each row
+  execute function public.handle_updated_at();
+
+
+-- ============================================================================
+-- GOVERNMENT ADMINISTRATION DOMAIN
+-- ============================================================================
+-- People, administrations, and their roles
+-- Dependencies: political_entities
+
 create table if not exists public.people (
   id uuid primary key default uuid_generate_v4(),
   full_name text not null,
@@ -141,7 +217,12 @@ create table if not exists public.people (
   updated_at timestamptz default now()
 );
 
--- Create administrations table (government terms)
+create trigger set_updated_at
+  before update on public.people
+  for each row
+  execute function public.handle_updated_at();
+
+-- Government terms/periods
 create table if not exists public.administrations (
   id uuid primary key default uuid_generate_v4(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
@@ -154,7 +235,15 @@ create table if not exists public.administrations (
   updated_at timestamptz default now()
 );
 
--- Create administration_members table (many-to-many with roles)
+create index if not exists idx_administrations_entity_id on public.administrations(entity_id);
+create index if not exists idx_administrations_status on public.administrations(status);
+
+create trigger set_updated_at
+  before update on public.administrations
+  for each row
+  execute function public.handle_updated_at();
+
+-- Many-to-many join table with roles
 create table if not exists public.administration_members (
   id uuid primary key default uuid_generate_v4(),
   administration_id uuid not null references public.administrations(id) on delete cascade,
@@ -168,43 +257,9 @@ create table if not exists public.administration_members (
   updated_at timestamptz default now()
 );
 
--- Create indexes for new tables
-create index if not exists idx_administrations_entity_id on public.administrations(entity_id);
-create index if not exists idx_administrations_status on public.administrations(status);
 create index if not exists idx_administration_members_administration_id on public.administration_members(administration_id);
 create index if not exists idx_administration_members_person_id on public.administration_members(person_id);
 create index if not exists idx_administration_members_status on public.administration_members(status);
-
--- Create triggers for updated_at on new tables
-create trigger set_updated_at
-  before update on public.categories
-  for each row
-  execute function public.handle_updated_at();
-
-create trigger set_updated_at
-  before update on public.political_entities
-  for each row
-  execute function public.handle_updated_at();
-
-create trigger set_updated_at
-  before update on public.goals
-  for each row
-  execute function public.handle_updated_at();
-
-create trigger set_updated_at
-  before update on public.metrics
-  for each row
-  execute function public.handle_updated_at();
-
-create trigger set_updated_at
-  before update on public.people
-  for each row
-  execute function public.handle_updated_at();
-
-create trigger set_updated_at
-  before update on public.administrations
-  for each row
-  execute function public.handle_updated_at();
 
 create trigger set_updated_at
   before update on public.administration_members
