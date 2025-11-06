@@ -477,6 +477,179 @@ try {
 
   console.log('✅ Goals inserted')
 
+  // Create a map for goal name to id lookup
+  const goalIdMap = {}
+  const goalsResult = await client.query('SELECT id, title FROM goals')
+  for (const row of goalsResult.rows) {
+    goalIdMap[row.title] = row.id
+  }
+
+  // Policy Framework: Measurables
+  const measurables = [
+    { title: "Traffic deaths per 100,000 inhabitants", unit: "count", data_source: "National statistics agency", measurement_frequency: "yearly" },
+    { title: "Average commute time", unit: "minutes", data_source: "City transport authority", measurement_frequency: "yearly" },
+    { title: "CO2 emissions from transport", unit: "tons", data_source: "Environmental monitoring agency", measurement_frequency: "yearly" },
+    { title: "Public transport ridership", unit: "trips per day", data_source: "Transit operator", measurement_frequency: "monthly" },
+    { title: "Average monthly transport cost per household", unit: "EUR", data_source: "Economic surveys", measurement_frequency: "yearly" },
+  ]
+
+  const measurableIdMap = {}
+
+  console.log(`📏 Inserting ${measurables.length} measurables...`)
+
+  for (const measurable of measurables) {
+    const id = crypto.randomUUID()
+    measurableIdMap[measurable.title] = id
+
+    await client.query(
+      `INSERT INTO measurables (id, title, description, unit, data_source, measurement_frequency)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [id, measurable.title, null, measurable.unit, measurable.data_source, measurable.measurement_frequency]
+    )
+  }
+
+  console.log('✅ Measurables inserted')
+
+  // Policy Framework: Ideas
+  const trafficManagementCategoryId = categories.find(c => c.title === "Traffic Management")?.id
+  const publicTransportCategoryId = categories.find(c => c.title === "Public Transportation")?.id
+
+  const ideas = [
+    {
+      title: "Urban speed limit reduction to 30 km/h",
+      description: "Lower speed limits in residential and urban areas to improve safety and quality of life",
+      category_id: trafficManagementCategoryId
+    },
+    {
+      title: "Free public transportation",
+      description: "Make all public transport free for residents to increase accessibility and reduce car usage",
+      category_id: publicTransportCategoryId
+    },
+  ]
+
+  const ideaIdMap = {}
+
+  console.log(`💡 Inserting ${ideas.length} ideas...`)
+
+  for (const idea of ideas) {
+    const id = crypto.randomUUID()
+    ideaIdMap[idea.title] = id
+
+    await client.query(
+      `INSERT INTO ideas (id, title, description, category_id)
+       VALUES ($1, $2, $3, $4)`,
+      [id, idea.title, idea.description, idea.category_id]
+    )
+  }
+
+  console.log('✅ Ideas inserted')
+
+  // Policy Framework: Effects (idea → measurable relationships)
+  const effects = [
+    // Speed limit reduction effects
+    {
+      idea: "Urban speed limit reduction to 30 km/h",
+      measurable: "Traffic deaths per 100,000 inhabitants",
+      direction: "negative",
+      intensity: "high",
+      confidence: "proven",
+      evidence: "Studies from European cities show 20-40% reduction in traffic deaths"
+    },
+    {
+      idea: "Urban speed limit reduction to 30 km/h",
+      measurable: "Average commute time",
+      direction: "positive",
+      intensity: "low",
+      confidence: "medium",
+      evidence: "Minimal impact on commute times in dense urban areas"
+    },
+    {
+      idea: "Urban speed limit reduction to 30 km/h",
+      measurable: "CO2 emissions from transport",
+      direction: "negative",
+      intensity: "low",
+      confidence: "medium",
+      evidence: "Smoother traffic flow and reduced acceleration can lower emissions"
+    },
+
+    // Free public transport effects
+    {
+      idea: "Free public transportation",
+      measurable: "Public transport ridership",
+      direction: "positive",
+      intensity: "high",
+      confidence: "proven",
+      evidence: "Examples from Luxembourg and Estonian cities show 20-50% increase"
+    },
+    {
+      idea: "Free public transportation",
+      measurable: "Average monthly transport cost per household",
+      direction: "negative",
+      intensity: "high",
+      confidence: "proven",
+      evidence: "Direct cost elimination for public transport users"
+    },
+    {
+      idea: "Free public transportation",
+      measurable: "CO2 emissions from transport",
+      direction: "negative",
+      intensity: "medium",
+      confidence: "high",
+      evidence: "Shift from private cars to public transport reduces overall emissions"
+    },
+  ]
+
+  console.log(`⚡ Inserting ${effects.length} effects...`)
+
+  for (const effect of effects) {
+    await client.query(
+      `INSERT INTO effects (id, idea_id, measurable_id, direction, intensity, confidence, evidence_description)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        crypto.randomUUID(),
+        ideaIdMap[effect.idea],
+        measurableIdMap[effect.measurable],
+        effect.direction,
+        effect.intensity,
+        effect.confidence,
+        effect.evidence
+      ]
+    )
+  }
+
+  console.log('✅ Effects inserted')
+
+  // Policy Framework: Contributions (measurable → goal relationships)
+  const contributions = [
+    { measurable: "Traffic deaths per 100,000 inhabitants", goal: "Public Safety and Law Enforcement", contribution_type: "direct", weight: 0.9 },
+    { measurable: "Average commute time", goal: "Job Security and Fair Labor Standards", contribution_type: "indirect", weight: 0.3, description: "Shorter commutes improve work-life balance" },
+    { measurable: "CO2 emissions from transport", goal: "Sustainability and Environmental Protection", contribution_type: "direct", weight: 0.95 },
+    { measurable: "Public transport ridership", goal: "Sustainability and Environmental Protection", contribution_type: "supporting", weight: 0.6, description: "More transit use indicates shift away from cars" },
+    { measurable: "Public transport ridership", goal: "Social Inclusion and Anti-discrimination", contribution_type: "direct", weight: 0.7, description: "Public transport enables mobility for all income levels" },
+    { measurable: "Average monthly transport cost per household", goal: "Poverty Alleviation", contribution_type: "direct", weight: 0.8 },
+    { measurable: "Average monthly transport cost per household", goal: "Social Inclusion and Anti-discrimination", contribution_type: "direct", weight: 0.75, description: "Lower transport costs improve accessibility for low-income groups" },
+    { measurable: "Traffic deaths per 100,000 inhabitants", goal: "Universal Healthcare Access", contribution_type: "indirect", weight: 0.4, description: "Fewer accidents reduce burden on healthcare system" },
+  ]
+
+  console.log(`🎯 Inserting ${contributions.length} contributions...`)
+
+  for (const contribution of contributions) {
+    await client.query(
+      `INSERT INTO contributions (id, measurable_id, goal_id, contribution_type, weight, description)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        crypto.randomUUID(),
+        measurableIdMap[contribution.measurable],
+        goalIdMap[contribution.goal],
+        contribution.contribution_type,
+        contribution.weight,
+        contribution.description || null
+      ]
+    )
+  }
+
+  console.log('✅ Contributions inserted')
+
   // People (for Milan administrations)
   const people = [
     // Current administration (2021-2026)
@@ -623,6 +796,58 @@ try {
   }
 
   console.log('✅ Administration members inserted')
+
+  // Policy Framework: Policies (concrete implementations)
+  const policies = [
+    {
+      idea: "Urban speed limit reduction to 30 km/h",
+      entity: "City of Milan",
+      administration: "Milan City Council 2021-2026",
+      title: "Città 30 - Milan 30 km/h zones",
+      description: "Implementation of 30 km/h speed limits in all residential areas and urban zones",
+      status: "active",
+      start_date: "2024-01-01T00:00:00Z",
+      budget_allocated: 2500000,
+      budget_currency: "EUR",
+      implementation_notes: "Phased rollout across all city districts with new signage and traffic calming measures"
+    },
+    {
+      idea: "Free public transportation",
+      entity: "City of Milan",
+      administration: "Milan City Council 2021-2026",
+      title: "Free ATM Metro Trial",
+      description: "Pilot program offering free metro access for students and low-income residents",
+      status: "planned",
+      start_date: "2025-09-01T00:00:00Z",
+      budget_allocated: 15000000,
+      budget_currency: "EUR",
+      implementation_notes: "Initial 6-month trial targeting 100,000 beneficiaries, with potential expansion based on results"
+    },
+  ]
+
+  console.log(`📋 Inserting ${policies.length} policies...`)
+
+  for (const policy of policies) {
+    await client.query(
+      `INSERT INTO policies (id, idea_id, entity_id, administration_id, title, description, status, start_date, budget_allocated, budget_currency, implementation_notes)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [
+        crypto.randomUUID(),
+        ideaIdMap[policy.idea],
+        entityIdMap[policy.entity],
+        administrationIdMap[policy.administration],
+        policy.title,
+        policy.description,
+        policy.status,
+        policy.start_date,
+        policy.budget_allocated,
+        policy.budget_currency,
+        policy.implementation_notes
+      ]
+    )
+  }
+
+  console.log('✅ Policies inserted')
 
   // Metrics (sample - "Traffic" category)
   const trafficCategoryId = categories.find(c => c.title === "Traffic")?.id

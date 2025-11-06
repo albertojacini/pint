@@ -2,6 +2,8 @@
 
 **Pint** (Public Interface) is a public policies platform that serves as a UX-rich reference for up-to-date information about public administrations and policies, while also functioning as a collaboration platform for political projects.
 
+> **📖 Policy Framework**: See [docs/POLICY_FRAMEWORK.md](docs/POLICY_FRAMEWORK.md) for details on the data-driven policy analysis system: `idea → effect → measurable → contribution → goal`
+
 ## 🏗️ Architecture
 
 This is a modern monorepo built with:
