@@ -22,20 +22,64 @@ IDEA → EFFECT → MEASURABLE → CONTRIBUTION → GOAL
 
 ## Core Entities
 
-### Ideas
-Abstract, reusable policy concepts. Examples: "Speed limit reduction", "Free public transport"
+### Ideas (Policy Levers)
+Abstract, reusable policy instruments - the fundamental actions a government can take.
+
+**Rules:**
+- **Action-oriented**: Start with a verb (Subsidize, Regulate, Tax, Mandate, Prohibit, Incentivize, Provide, Introduce)
+- **Parameter-agnostic**: No specific numbers or thresholds (not "30 km/h" but "urban speed limits")
+- **One-dimensional**: Each idea pulls one lever in one direction
+- **Context-independent**: Could apply to any city/country with appropriate parameters
+- **Atomic**: Cannot be broken down into smaller policy actions
+
+**Examples:**
+- ✅ "Subsidize public transport" (not "Free public transportation")
+- ✅ "Introduce urban speed limits" (not "30 km/h zones")
+- ✅ "Tax vehicle emissions"
+- ✅ "Mandate bicycle infrastructure"
+- ✅ "Prohibit diesel vehicles in centers"
 
 **Properties:** title, description, category
 
-### Measurables
-Universal, quantifiable metrics independent of any policy or entity. Examples: "Traffic deaths per 100k", "CO2 emissions"
+### Effects (Direct Mechanisms)
+The immediate mechanical consequences - what physically/behaviorally changes as a direct result of an idea.
 
-**Properties:** title, description, unit, data_source, measurement_frequency
+**Rules:**
+- **Mechanistic**: Describe the physical or behavioral change that occurs
+- **Direction-neutral**: Can be positive, negative, or variable
+- **Comprehensive**: List ALL significant first-order effects
+- **Observable**: Things you could measure or observe happening
+- **Non-evaluative**: Don't judge if it's good or bad
 
-### Effects
-Links between ideas and measurables with qualified impact.
+**Example - "Subsidize public transport":**
+- Public transport ticket prices decrease
+- Modal shift: car → public transport
+- Modal shift: bike → public transport
+- Modal shift: walking → public transport
+- Public transport vehicle occupancy increases
+- Public transport service frequency may increase
+- Government spending on transport subsidies increases
+- Fare collection administrative costs may decrease
 
 **Properties:** idea_id, measurable_id, direction (positive/negative), intensity (low/medium/high), confidence (low/medium/high/proven), evidence
+
+### Measurables (Observable Metrics)
+Universal, quantifiable metrics independent of any policy or entity. Can be influenced by multiple effects from different ideas.
+
+**Rules:**
+- **Quantifiable**: Has a clear unit of measurement
+- **Standardizable**: Can be measured consistently across jurisdictions
+- **Multi-causal**: Influenced by multiple effects from different ideas
+- **Observable**: Can be measured or calculated from data
+
+**Examples:**
+- "Traffic deaths per 100,000 inhabitants" (unit: count)
+- "Average commute time" (unit: minutes)
+- "CO2 emissions from transport" (unit: tons)
+- "Public transport ridership" (unit: trips per day)
+- "Average monthly transport cost per household" (unit: EUR)
+
+**Properties:** title, description, unit, data_source, measurement_frequency
 
 ### Contributions
 Links between measurables and goals with weighted importance.
@@ -47,32 +91,59 @@ Concrete implementations of ideas by specific political entities.
 
 **Properties:** idea_id, entity_id, administration_id, title, description, status, dates, budget
 
-## Example: Speed Limit Reduction
+## Example: Urban Speed Limits
 
-**Idea:** "Urban speed limit reduction to 30 km/h"
+**Idea:** "Introduce urban speed limits" (generic policy lever)
 
-**Effects:**
-- Traffic deaths per 100k → **negative** direction, **high** intensity, **proven** confidence
-- Average commute time → **positive** direction (increases), **low** intensity
+**Effects (direct mechanisms):**
+- Maximum vehicle speeds decrease → Traffic deaths ↓ (kinetic energy reduction)
+- Vehicle travel time changes → Average commute time ↑ (context-dependent)
+- Modal shift: car → bike → Public transport ridership ↑ (safer cycling)
+- Modal shift: car → walking → CO2 emissions ↓ (less car usage)
+- Traffic flow patterns change → CO2 emissions ↓ (smoother acceleration)
+- Enforcement requirements increase → Government spending ↑
 
 **Measurables:**
 - "Traffic deaths per 100,000 inhabitants" (unit: count, yearly)
 - "Average commute time" (unit: minutes, yearly)
+- "Public transport ridership" (unit: trips per day, monthly)
+- "CO2 emissions from transport" (unit: tons, yearly)
 
 **Contributions:**
 - Traffic deaths → **Public Safety** goal (direct, weight: 0.9)
 - Commute time → **Job Security** goal (indirect, weight: 0.3)
+- CO2 emissions → **Environmental Protection** goal (direct, weight: 0.95)
 
-**Policy Implementation:**
-- Milan implements "Città 30" (2024, €2.5M budget)
+**Policy Implementation (concrete with parameters):**
+- Milan: "Città 30" - 30 km/h limit (2024, €2.5M budget)
+- Paris: "Zone 30" - 30 km/h limit (2021, €5M budget)
+- Barcelona: "Ciutat 30" - 30 km/h limit (2020, €1.5M budget)
+
+Each city implements the same **idea** with potentially different parameters and approaches, allowing for comparison of effectiveness.
 
 ## Key Principles
 
 1. **Abstraction**: Ideas and measurables are entity-independent
-2. **Reusability**: Same idea can be implemented by multiple entities
+2. **Reusability**: Same idea can be implemented by multiple entities with different parameters
 3. **Traceability**: Every policy traces back through the chain to goals
 4. **Evidence-based**: Effects require confidence levels and evidence
 5. **Comparable**: Policies implementing the same idea can be compared across entities
+6. **Comprehensive**: Effects capture ALL trade-offs (positive and negative)
+7. **Mechanistic**: Effects describe direct causal mechanisms, not evaluations
+
+## Key Insights
+
+The power of this framework lies in:
+
+1. **Template Reusability**: Ideas are templates that different administrations can implement with different parameters (e.g., speed limit of 30 vs 20 km/h)
+
+2. **Trade-off Visibility**: By listing ALL effects comprehensively, decision-makers see the complete picture - both benefits and costs
+
+3. **Cross-pollination**: Cities can learn from each other's implementations of the same idea
+
+4. **Evidence Accumulation**: As more entities implement an idea, the confidence in effects increases
+
+5. **Multi-pathway Impact**: Multiple ideas can influence the same measurable through different effect pathways (e.g., both "Subsidize public transport" and "Tax private vehicles" reduce CO2)
 
 ## Future Enhancements
 

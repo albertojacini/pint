@@ -1,4 +1,4 @@
-import { pgTable, text, uuid, timestamp, integer, uniqueIndex } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, integer, uniqueIndex, numeric } from 'drizzle-orm/pg-core'
 
 // User profiles table
 export const userProfiles = pgTable('user_profiles', {
@@ -136,6 +136,79 @@ export const administrationMembers = pgTable('administration_members', {
   appointedAt: timestamp('appointed_at', { withTimezone: true }).notNull(),
   leftAt: timestamp('left_at', { withTimezone: true }),
   status: text('status', { enum: ['active', 'historical'] }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// ============================================================================
+// POLICY FRAMEWORK DOMAIN
+// ============================================================================
+
+// Abstract policy ideas (entity-independent)
+export const ideas = pgTable('ideas', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  title: text('title').notNull(),
+  description: text('description'),
+  categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Universal quantifiable metrics (entity-independent)
+export const measurables = pgTable('measurables', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  title: text('title').notNull(),
+  description: text('description'),
+  unit: text('unit').notNull(),
+  dataSource: text('data_source'),
+  measurementFrequency: text('measurement_frequency'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Effects: idea → measurable relationships
+export const effects = pgTable('effects', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  ideaId: uuid('idea_id').notNull().references(() => ideas.id, { onDelete: 'cascade' }),
+  measurableId: uuid('measurable_id').notNull().references(() => measurables.id, { onDelete: 'cascade' }),
+  direction: text('direction', { enum: ['positive', 'negative', 'neutral'] }).notNull(),
+  intensity: text('intensity', { enum: ['low', 'medium', 'high'] }),
+  confidence: text('confidence', { enum: ['low', 'medium', 'high', 'proven'] }),
+  evidenceDescription: text('evidence_description'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueIdeaMeasurable: uniqueIndex('effects_unique').on(table.ideaId, table.measurableId),
+}))
+
+// Contributions: measurable → goal relationships
+export const contributions = pgTable('contributions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  measurableId: uuid('measurable_id').notNull().references(() => measurables.id, { onDelete: 'cascade' }),
+  goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
+  contributionType: text('contribution_type', { enum: ['direct', 'indirect', 'supporting'] }).notNull(),
+  weight: numeric('weight'),
+  description: text('description'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueMeasurableGoal: uniqueIndex('contributions_unique').on(table.measurableId, table.goalId),
+}))
+
+// Policies: concrete implementations of ideas by specific entities
+export const policies = pgTable('policies', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  ideaId: uuid('idea_id').notNull().references(() => ideas.id, { onDelete: 'restrict' }),
+  entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
+  administrationId: uuid('administration_id').references(() => administrations.id, { onDelete: 'set null' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  status: text('status', { enum: ['proposed', 'planned', 'active', 'completed', 'cancelled'] }).notNull().default('proposed'),
+  startDate: timestamp('start_date', { withTimezone: true }),
+  endDate: timestamp('end_date', { withTimezone: true }),
+  budgetAllocated: numeric('budget_allocated'),
+  budgetCurrency: text('budget_currency').default('EUR'),
+  implementationNotes: text('implementation_notes'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

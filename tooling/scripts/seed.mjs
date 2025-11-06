@@ -516,13 +516,13 @@ try {
 
   const ideas = [
     {
-      title: "Urban speed limit reduction to 30 km/h",
-      description: "Lower speed limits in residential and urban areas to improve safety and quality of life",
+      title: "Introduce urban speed limits",
+      description: "Implement lower maximum speed limits in urban areas (residential, commercial, school zones)",
       category_id: trafficManagementCategoryId
     },
     {
-      title: "Free public transportation",
-      description: "Make all public transport free for residents to increase accessibility and reduce car usage",
+      title: "Subsidize public transport",
+      description: "Provide government funding to reduce or eliminate public transport fares for users",
       category_id: publicTransportCategoryId
     },
   ]
@@ -546,56 +546,72 @@ try {
 
   // Policy Framework: Effects (idea → measurable relationships)
   const effects = [
-    // Speed limit reduction effects
+    // Urban speed limit effects (direct mechanisms)
     {
-      idea: "Urban speed limit reduction to 30 km/h",
+      idea: "Introduce urban speed limits",
       measurable: "Traffic deaths per 100,000 inhabitants",
       direction: "negative",
       intensity: "high",
       confidence: "proven",
-      evidence: "Studies from European cities show 20-40% reduction in traffic deaths"
+      evidence: "Reduced kinetic energy at impact decreases accident severity by 20-40%"
     },
     {
-      idea: "Urban speed limit reduction to 30 km/h",
+      idea: "Introduce urban speed limits",
       measurable: "Average commute time",
       direction: "positive",
       intensity: "low",
       confidence: "medium",
-      evidence: "Minimal impact on commute times in dense urban areas"
+      evidence: "Vehicle travel times may increase 5-15% depending on traffic patterns"
     },
     {
-      idea: "Urban speed limit reduction to 30 km/h",
+      idea: "Introduce urban speed limits",
+      measurable: "Public transport ridership",
+      direction: "positive",
+      intensity: "low",
+      confidence: "medium",
+      evidence: "Modal shift from cars as speed advantage diminishes"
+    },
+    {
+      idea: "Introduce urban speed limits",
       measurable: "CO2 emissions from transport",
       direction: "negative",
       intensity: "low",
       confidence: "medium",
-      evidence: "Smoother traffic flow and reduced acceleration can lower emissions"
+      evidence: "Smoother traffic flow and modal shift to bikes/walking"
     },
 
-    // Free public transport effects
+    // Public transport subsidy effects (direct mechanisms)
     {
-      idea: "Free public transportation",
+      idea: "Subsidize public transport",
       measurable: "Public transport ridership",
       direction: "positive",
       intensity: "high",
       confidence: "proven",
-      evidence: "Examples from Luxembourg and Estonian cities show 20-50% increase"
+      evidence: "Lower fares increase ridership by 20-50% based on subsidy level"
     },
     {
-      idea: "Free public transportation",
+      idea: "Subsidize public transport",
       measurable: "Average monthly transport cost per household",
       direction: "negative",
       intensity: "high",
       confidence: "proven",
-      evidence: "Direct cost elimination for public transport users"
+      evidence: "Direct reduction in transport expenditure proportional to subsidy"
     },
     {
-      idea: "Free public transportation",
+      idea: "Subsidize public transport",
       measurable: "CO2 emissions from transport",
       direction: "negative",
       intensity: "medium",
       confidence: "high",
-      evidence: "Shift from private cars to public transport reduces overall emissions"
+      evidence: "Modal shift from private vehicles reduces emissions; partially offset by shift from walking/cycling"
+    },
+    {
+      idea: "Subsidize public transport",
+      measurable: "Average commute time",
+      direction: "negative",
+      intensity: "low",
+      confidence: "low",
+      evidence: "Increased ridership may lead to more frequent service"
     },
   ]
 
@@ -800,7 +816,7 @@ try {
   // Policy Framework: Policies (concrete implementations)
   const policies = [
     {
-      idea: "Urban speed limit reduction to 30 km/h",
+      idea: "Introduce urban speed limits",
       entity: "City of Milan",
       administration: "Milan City Council 2021-2026",
       title: "Città 30 - Milan 30 km/h zones",
@@ -812,11 +828,11 @@ try {
       implementation_notes: "Phased rollout across all city districts with new signage and traffic calming measures"
     },
     {
-      idea: "Free public transportation",
+      idea: "Subsidize public transport",
       entity: "City of Milan",
       administration: "Milan City Council 2021-2026",
       title: "Free ATM Metro Trial",
-      description: "Pilot program offering free metro access for students and low-income residents",
+      description: "Pilot program offering free metro access for students and low-income residents (100% subsidy)",
       status: "planned",
       start_date: "2025-09-01T00:00:00Z",
       budget_allocated: 15000000,
