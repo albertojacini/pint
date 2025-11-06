@@ -91,13 +91,13 @@ export const metrics = pgTable('metrics', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-// Posts table (for the existing posts feature)
+// Posts table (simple content for testing forms and UI)
 export const posts = pgTable('posts', {
   id: uuid('id').primaryKey().defaultRandom(),
-  title: text('title').notNull(),
-  content: text('content'),
-  status: text('status', { enum: ['draft', 'published'] }).notNull().default('draft'),
-  authorId: uuid('author_id').references(() => userProfiles.id, { onDelete: 'cascade' }),
+  authorId: uuid('author_id').notNull(),
+  title: text('title', { length: 200 }).notNull(),
+  content: text('content').notNull(),
+  status: text('status', { enum: ['draft', 'published', 'archived'] }).notNull().default('draft'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
