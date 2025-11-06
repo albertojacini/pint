@@ -1,9 +1,10 @@
 import { db } from '@/lib/db/client'
-import { politicalEntities } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { politicalEntities, administrations, administrationMembers, people } from '@/lib/db/schema'
+import { eq, desc } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { AdministrationsSection } from '@/components/entities/administrations-section'
 
 interface EntityPageProps {
   params: Promise<{
@@ -23,6 +24,42 @@ export default async function EntityPage({ params }: EntityPageProps) {
   if (!entity) {
     notFound()
   }
+
+  // Fetch administrations for this entity
+  const entityAdministrations = await db
+    .select({
+      id: administrations.id,
+      name: administrations.name,
+      termStart: administrations.termStart,
+      termEnd: administrations.termEnd,
+      status: administrations.status,
+      description: administrations.description,
+    })
+    .from(administrations)
+    .where(eq(administrations.entityId, id))
+    .orderBy(desc(administrations.termStart))
+
+  // For each administration, get the mayor
+  const administrationsWithMayor = await Promise.all(
+    entityAdministrations.map(async (admin) => {
+      const [mayorMember] = await db
+        .select({
+          person: {
+            fullName: people.fullName,
+          },
+        })
+        .from(administrationMembers)
+        .innerJoin(people, eq(administrationMembers.personId, people.id))
+        .where(eq(administrationMembers.administrationId, admin.id))
+        .where(eq(administrationMembers.roleType, 'mayor'))
+        .limit(1)
+
+      return {
+        ...admin,
+        mayor: mayorMember?.person || null,
+      }
+    })
+  )
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -92,6 +129,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
           )}
         </div>
       </div>
+
+      {/* Administrations Section */}
+      <AdministrationsSection administrations={administrationsWithMayor} />
 
       {/* Metadata */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">

@@ -101,3 +101,41 @@ export const posts = pgTable('posts', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
+
+// People table (politicians, officials, etc.)
+export const people = pgTable('people', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  fullName: text('full_name').notNull(),
+  avatarUrl: text('avatar_url'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Administrations table (government terms)
+export const administrations = pgTable('administrations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  termStart: timestamp('term_start', { withTimezone: true }).notNull(),
+  termEnd: timestamp('term_end', { withTimezone: true }),
+  status: text('status', { enum: ['active', 'historical', 'upcoming'] }).notNull(),
+  description: text('description'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Administration members table (many-to-many with roles)
+export const administrationMembers = pgTable('administration_members', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  administrationId: uuid('administration_id').notNull().references(() => administrations.id, { onDelete: 'cascade' }),
+  personId: uuid('person_id').notNull().references(() => people.id, { onDelete: 'cascade' }),
+  roleType: text('role_type', {
+    enum: ['mayor', 'councilor', 'minister', 'president', 'governor', 'member']
+  }).notNull(),
+  roleTitle: text('role_title'),
+  appointedAt: timestamp('appointed_at', { withTimezone: true }).notNull(),
+  leftAt: timestamp('left_at', { withTimezone: true }),
+  status: text('status', { enum: ['active', 'historical'] }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
