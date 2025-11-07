@@ -80,16 +80,6 @@ export const goals = pgTable('goals', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-// Metrics table
-export const metrics = pgTable('metrics', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'cascade' }),
-  title: text('title').notNull(),
-  description: text('description'),
-  unit: text('unit'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
 
 // Posts table (simple content for testing forms and UI)
 export const posts = pgTable('posts', {
