@@ -1,18 +1,19 @@
 /**
- * Admin user seeder
- * Creates the initial admin user via Supabase Auth
+ * Authentication & User Management Domain Seeder
+ * Seeds admin user via Supabase Auth
+ * Dependencies: None
  */
 
 import { logger } from '../utils/logger.mjs'
 import { ADMIN_USER, isAdminUserConfigured } from '../config/environment.mjs'
 
 /**
- * Create admin user if configured
+ * Seed authentication domain
  * @param {import('pg').Client} client - PostgreSQL client (unused here)
  * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client
  * @param {object} idMaps - ID mapping object for foreign key references
  */
-export async function seedAdminUser(client, supabase, idMaps) {
+export async function seedAuthDomain(client, supabase, idMaps) {
   // Check if admin user is configured
   if (!isAdminUserConfigured()) {
     if (!ADMIN_USER.email || !ADMIN_USER.password) {
