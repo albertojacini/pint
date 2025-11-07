@@ -15,7 +15,6 @@ import { SEED_CONFIG } from './config/environment.mjs'
 import { seedAuthDomain } from './seeders/auth-domain.mjs'
 import { seedPoliticalGeography } from './seeders/political-geography.mjs'
 import { seedPolicyClassification } from './seeders/policy-classification.mjs'
-import { seedPolicyMetrics } from './seeders/policy-metrics.mjs'
 import { seedGovernmentAdministration } from './seeders/government-administration.mjs'
 import { seedPolicyFramework } from './seeders/policy-framework.mjs'
 
@@ -51,9 +50,8 @@ async function runSeed() {
       { name: 'policy-classification', fn: seedPolicyClassification },
 
       // Dependent domains (require data from previous domains)
-      { name: 'policy-metrics', fn: seedPolicyMetrics }, // needs: policy-classification (categories)
       { name: 'government-administration', fn: seedGovernmentAdministration }, // needs: political-geography (entities)
-      { name: 'policy-framework', fn: seedPolicyFramework }, // needs: policy-classification, policy-metrics, political-geography, government-administration
+      { name: 'policy-framework', fn: seedPolicyFramework }, // needs: policy-classification, political-geography, government-administration
     ]
 
     // Execute seeders in order

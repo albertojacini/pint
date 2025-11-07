@@ -1,11 +1,12 @@
 /**
  * Policy Framework Domain Seeder
  * Seeds the complete policy analysis framework:
- * idea → effect → measurable → contribution → goal
+ * goal → idea → effect → measurable → contribution → goal (circular relationship)
  * Also seeds concrete policy implementations
- * Dependencies: categories, goals, political_entities, administrations
+ * Dependencies: categories, political_entities, administrations
  */
 
+import { goals } from '../data/goals-data.mjs'
 import { ideas } from '../data/ideas-data.mjs'
 import { measurables } from '../data/measurables-data.mjs'
 import { effects } from '../data/effects-data.mjs'
@@ -22,6 +23,29 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedPolicyFramework(client, supabase, idMaps) {
+  // ===== GOALS =====
+  logger.startSection('goals')
+
+  if (await hasData(client, 'goals')) {
+    logger.skipSection('Goals')
+  } else {
+    // Insert each goal
+    for (const goalTitle of goals) {
+      const id = generateUUID()
+
+      await insertQuery(client, {
+        table: 'goals',
+        columns: ['id', 'title'],
+        values: [id, goalTitle]
+      })
+
+      // Store ID mapping for later reference
+      idMaps.goals.set(goalTitle, id)
+    }
+
+    logger.endSection('goals', goals.length)
+  }
+
   // ===== IDEAS =====
   logger.startSection('ideas')
 
