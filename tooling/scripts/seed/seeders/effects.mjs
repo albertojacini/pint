@@ -52,7 +52,7 @@ export async function seedEffects(client, supabase, idMaps) {
         'direction',
         'intensity',
         'confidence',
-        'evidence'
+        'evidence_description'
       ],
       values: [
         id,

@@ -45,7 +45,7 @@ export async function seedPolicyTags(client, supabase, idMaps) {
       const valueId = generateUUID()
 
       await insertQuery(client, {
-        table: 'policy_tag_values',
+        table: 'tag_values',
         columns: ['id', 'tag_id', 'value'],
         values: [valueId, tagId, value]
       })

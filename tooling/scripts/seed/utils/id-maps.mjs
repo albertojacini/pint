@@ -8,6 +8,7 @@
  */
 export function createIdMaps() {
   const maps = {
+    users: new Map(),
     categories: new Map(),
     entities: new Map(),
     tags: new Map(),
