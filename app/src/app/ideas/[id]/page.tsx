@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -62,66 +62,46 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                 <Card key={effect.effectId} className="border-l-4 border-l-primary">
                   <CardHeader>
                     <div className="flex items-start gap-4">
-                      {/* Direction Icon */}
-                      <div className={`mt-1 ${
-                        effect.direction === 'positive' ? 'text-green-600' :
-                        effect.direction === 'negative' ? 'text-red-600' :
-                        'text-gray-600'
-                      }`}>
-                        {effect.direction === 'positive' ? (
-                          <TrendingUp className="w-6 h-6" />
-                        ) : effect.direction === 'negative' ? (
-                          <TrendingDown className="w-6 h-6" />
-                        ) : (
-                          <ArrowRight className="w-6 h-6" />
-                        )}
+                      {/* Arrow Icon */}
+                      <div className="mt-1 text-primary">
+                        <ArrowRight className="w-6 h-6" />
                       </div>
 
-                      {/* Measurable Info */}
+                      {/* Effect Content */}
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline" className="text-xs font-mono">MEASURABLE</Badge>
-                          <CardTitle className="text-xl">{effect.measurableTitle}</CardTitle>
-                        </div>
-                        {effect.measurableDescription && (
-                          <CardDescription className="mb-3">
-                            {effect.measurableDescription}
+                        {/* Effect Title */}
+                        <CardTitle className="text-xl mb-3">{effect.title}</CardTitle>
+
+                        {/* Effect Description */}
+                        {effect.description && (
+                          <CardDescription className="mb-4">
+                            {effect.description}
                           </CardDescription>
                         )}
 
-                        {/* Effect Metadata */}
-                        <div className="mb-2">
-                          <Badge variant="outline" className="text-xs font-mono mr-2">EFFECT</Badge>
-                        </div>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge variant="outline" className={
-                            effect.direction === 'positive' ? 'border-green-600 text-green-600' :
-                            effect.direction === 'negative' ? 'border-red-600 text-red-600' :
-                            'border-gray-600 text-gray-600'
-                          }>
-                            {effect.direction}
-                          </Badge>
-                          {effect.intensity && (
-                            <Badge variant="outline">
-                              Intensity: {effect.intensity}
-                            </Badge>
-                          )}
-                          {effect.confidence && (
-                            <Badge variant={effect.confidence === 'proven' ? 'default' : 'secondary'}>
-                              {effect.confidence} confidence
-                            </Badge>
-                          )}
-                          <Badge variant="outline">
-                            Unit: {effect.measurableUnit}
-                          </Badge>
-                        </div>
-
-                        {/* Evidence */}
-                        {effect.evidenceDescription && (
-                          <div className="bg-muted p-3 rounded-md text-sm">
-                            <strong>Evidence:</strong> {effect.evidenceDescription}
+                        {/* Mechanism */}
+                        {effect.mechanism && (
+                          <div className="bg-muted p-3 rounded-md text-sm mb-4">
+                            <div className="font-semibold mb-1">Mechanism:</div>
+                            <div className="text-muted-foreground">{effect.mechanism}</div>
                           </div>
                         )}
+
+                        {/* Measurable Info */}
+                        <div className="mt-4">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline" className="text-xs font-mono">MEASURABLE</Badge>
+                            <span className="font-medium">{effect.measurableTitle}</span>
+                            <Badge variant="outline">
+                              Unit: {effect.measurableUnit}
+                            </Badge>
+                          </div>
+                          {effect.measurableDescription && (
+                            <p className="text-sm text-muted-foreground ml-24">
+                              {effect.measurableDescription}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardHeader>

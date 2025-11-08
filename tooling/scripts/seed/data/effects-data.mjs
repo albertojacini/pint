@@ -4,71 +4,63 @@
  */
 
 export const effects = [
-  // Urban speed limit effects (direct mechanisms)
+  // Urban speed limit effects
   {
     idea: "Introduce urban speed limits",
     measurable: "Traffic deaths per 100,000 inhabitants",
-    direction: "negative",
-    intensity: "high",
-    confidence: "proven",
-    evidence: "Reduced kinetic energy at impact decreases accident severity by 20-40%"
+    title: "Reduces traffic deaths",
+    description: "Reduced kinetic energy at impact decreases accident severity by 20-40%",
+    mechanism: "Speed limit → Lower vehicle speeds → Reduced kinetic energy at impact → Lower accident severity → Fewer deaths"
   },
   {
     idea: "Introduce urban speed limits",
     measurable: "Average commute time",
-    direction: "positive",
-    intensity: "low",
-    confidence: "medium",
-    evidence: "Vehicle travel times may increase 5-15% depending on traffic patterns"
+    title: "Increases commute time",
+    description: "Vehicle travel times may increase 5-15% depending on traffic patterns",
+    mechanism: "Speed limit → Lower maximum speeds → Longer travel times for car trips"
   },
   {
     idea: "Introduce urban speed limits",
     measurable: "Public transport ridership",
-    direction: "positive",
-    intensity: "low",
-    confidence: "medium",
-    evidence: "Modal shift from cars as speed advantage diminishes"
+    title: "Encourages public transport use",
+    description: "Modal shift from cars as speed advantage diminishes",
+    mechanism: "Speed limit → Reduced car speed advantage → More attractive public transport alternative → Modal shift"
   },
   {
     idea: "Introduce urban speed limits",
     measurable: "CO2 emissions from transport",
-    direction: "negative",
-    intensity: "low",
-    confidence: "medium",
-    evidence: "Smoother traffic flow and modal shift to bikes/walking"
+    title: "Reduces transport emissions",
+    description: "Smoother traffic flow and modal shift to bikes/walking",
+    mechanism: "Speed limit → Smoother traffic flow → Reduced fuel consumption → Lower emissions"
   },
 
-  // Public transport subsidy effects (direct mechanisms)
+  // Public transport subsidy effects
   {
     idea: "Subsidize public transport",
     measurable: "Public transport ridership",
-    direction: "positive",
-    intensity: "high",
-    confidence: "proven",
-    evidence: "Lower fares increase ridership by 20-50% based on subsidy level"
+    title: "Increases public transport ridership",
+    description: "Lower fares increase ridership by 20-50% based on subsidy level",
+    mechanism: "Subsidy → Lower ticket prices → Reduced barrier to entry → Increased ridership"
   },
   {
     idea: "Subsidize public transport",
     measurable: "Average monthly transport cost per household",
-    direction: "negative",
-    intensity: "high",
-    confidence: "proven",
-    evidence: "Direct reduction in transport expenditure proportional to subsidy"
+    title: "Reduces household transport costs",
+    description: "Direct reduction in transport expenditure proportional to subsidy",
+    mechanism: "Subsidy → Lower ticket prices → Reduced household transport spending"
   },
   {
     idea: "Subsidize public transport",
     measurable: "CO2 emissions from transport",
-    direction: "negative",
-    intensity: "medium",
-    confidence: "high",
-    evidence: "Modal shift from private vehicles reduces emissions; partially offset by shift from walking/cycling"
+    title: "Reduces transport emissions through modal shift",
+    description: "Modal shift from private vehicles reduces emissions; partially offset by shift from walking/cycling",
+    mechanism: "Subsidy → Lower fares → Modal shift from cars → Reduced emissions per passenger-km"
   },
   {
     idea: "Subsidize public transport",
     measurable: "Average commute time",
-    direction: "negative",
-    intensity: "low",
-    confidence: "low",
-    evidence: "Increased ridership may lead to more frequent service"
+    title: "May reduce commute times",
+    description: "Increased ridership may lead to more frequent service",
+    mechanism: "Subsidy → Higher ridership → Increased revenue → More frequent service → Shorter waiting times"
   },
 ]

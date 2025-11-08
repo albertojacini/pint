@@ -162,19 +162,17 @@ export async function seedPolicyFramework(client, supabase, idMaps) {
           'id',
           'idea_id',
           'measurable_id',
-          'direction',
-          'intensity',
-          'confidence',
-          'evidence_description'
+          'title',
+          'description',
+          'mechanism'
         ],
         values: [
           id,
           ideaId,
           measurableId,
-          effect.direction,
-          effect.intensity,
-          effect.confidence,
-          effect.evidence
+          effect.title,
+          effect.description,
+          effect.mechanism
         ]
       })
 

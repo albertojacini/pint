@@ -44,13 +44,11 @@ create table if not exists public.effects (
   id uuid primary key default uuid_generate_v4(),
   idea_id uuid not null references public.ideas(id) on delete cascade,
   measurable_id uuid not null references public.measurables(id) on delete cascade,
-  direction text not null check (direction in ('positive', 'negative', 'neutral')),
-  intensity text check (intensity in ('low', 'medium', 'high')),
-  confidence text check (confidence in ('low', 'medium', 'high', 'proven')),
-  evidence_description text,
+  title text not null,
+  description text,
+  mechanism text,
   created_at timestamptz default now(),
-  updated_at timestamptz default now(),
-  unique(idea_id, measurable_id)
+  updated_at timestamptz default now()
 );
 
 create index if not exists idx_effects_idea_id on public.effects(idea_id);

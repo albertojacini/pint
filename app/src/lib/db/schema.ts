@@ -161,15 +161,12 @@ export const effects = pgTable('effects', {
   id: uuid('id').primaryKey().defaultRandom(),
   ideaId: uuid('idea_id').notNull().references(() => ideas.id, { onDelete: 'cascade' }),
   measurableId: uuid('measurable_id').notNull().references(() => measurables.id, { onDelete: 'cascade' }),
-  direction: text('direction', { enum: ['positive', 'negative', 'neutral'] }).notNull(),
-  intensity: text('intensity', { enum: ['low', 'medium', 'high'] }),
-  confidence: text('confidence', { enum: ['low', 'medium', 'high', 'proven'] }),
-  evidenceDescription: text('evidence_description'),
+  title: text('title').notNull(),
+  description: text('description'),
+  mechanism: text('mechanism'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  uniqueIdeaMeasurable: uniqueIndex('effects_unique').on(table.ideaId, table.measurableId),
-}))
+})
 
 // Contributions: measurable → goal relationships
 export const contributions = pgTable('contributions', {

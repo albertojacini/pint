@@ -55,10 +55,9 @@ export async function getIdea(id: string) {
   const ideaEffects = await db
     .select({
       effectId: effects.id,
-      direction: effects.direction,
-      intensity: effects.intensity,
-      confidence: effects.confidence,
-      evidenceDescription: effects.evidenceDescription,
+      title: effects.title,
+      description: effects.description,
+      mechanism: effects.mechanism,
       measurableId: measurables.id,
       measurableTitle: measurables.title,
       measurableDescription: measurables.description,
@@ -67,7 +66,6 @@ export async function getIdea(id: string) {
     .from(effects)
     .innerJoin(measurables, eq(effects.measurableId, measurables.id))
     .where(eq(effects.ideaId, id))
-    .orderBy(effects.confidence, effects.intensity)
 
   // Get contributions to goals (through measurables)
   const measurableIds = ideaEffects.map(e => e.measurableId)
