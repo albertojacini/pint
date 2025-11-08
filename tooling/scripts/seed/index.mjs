@@ -15,7 +15,7 @@ import { SEED_CONFIG } from './config/environment.mjs'
 import { seedAuthDomain } from './seeders/auth-domain.mjs'
 import { seedPoliticalGeography } from './seeders/political-geography.mjs'
 import { seedPolicyClassification } from './seeders/policy-classification.mjs'
-import { seedGovernmentAdministration } from './seeders/government-administration.mjs'
+import { seedGovernmentAdministration } from './seeders/administration.mjs'
 import { seedPolicyFramework } from './seeders/policy-framework.mjs'
 
 /**
