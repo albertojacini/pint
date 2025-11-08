@@ -13,10 +13,11 @@ import { SEED_CONFIG } from './config/environment.mjs'
 
 // Import all domain seeders
 import { seedAuthDomain } from './seeders/auth-domain.mjs'
-import { seedPoliticalGeography } from './seeders/political-geography.mjs'
-import { seedPolicyClassification } from './seeders/policy-classification.mjs'
-import { seedGovernmentAdministration } from './seeders/administration.mjs'
-import { seedPolicyFramework } from './seeders/policy-framework.mjs'
+import { seedEntities } from './seeders/entities.mjs'
+import { seedTaxonomy } from './seeders/taxonomy.mjs'
+import { seedAdministrations } from './seeders/administrations.mjs'
+import { seedIdeas } from './seeders/ideas.mjs'
+import { seedPolicies } from './seeders/policies.mjs'
 
 /**
  * Main seeding function
@@ -46,12 +47,13 @@ async function runSeed() {
     const seeders = [
       // Independent domains (no foreign key dependencies)
       { name: 'auth-domain', fn: seedAuthDomain },
-      { name: 'political-geography', fn: seedPoliticalGeography },
-      { name: 'policy-classification', fn: seedPolicyClassification },
+      { name: 'taxonomy', fn: seedTaxonomy },
+      { name: 'entities', fn: seedEntities },
 
       // Dependent domains (require data from previous domains)
-      { name: 'government-administration', fn: seedGovernmentAdministration }, // needs: political-geography (entities)
-      { name: 'policy-framework', fn: seedPolicyFramework }, // needs: policy-classification, political-geography, government-administration
+      { name: 'administrations', fn: seedAdministrations }, // needs: entities
+      { name: 'ideas', fn: seedIdeas }, // needs: taxonomy
+      { name: 'policies', fn: seedPolicies }, // needs: ideas, entities, administrations
     ]
 
     // Execute seeders in order

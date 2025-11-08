@@ -16,7 +16,7 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
  * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client (unused here)
  * @param {object} idMaps - ID mapping object for foreign key references
  */
-export async function seedGovernmentAdministration(client, supabase, idMaps) {
+export async function seedAdministrations(client, supabase, idMaps) {
   // ===== PEOPLE =====
   logger.startSection('people')
 

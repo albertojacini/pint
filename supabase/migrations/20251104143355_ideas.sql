@@ -1,27 +1,11 @@
 -- ============================================================================
--- POLICY FRAMEWORK DOMAIN
+-- IDEAS DOMAIN
 -- ============================================================================
 -- Data-driven policy analysis framework: idea → effect → measurable → contribution → goal
 -- This enables evidence-based policy making and cross-entity comparison
--- Dependencies: categories, goals, political_entities, administrations
+-- Dependencies: taxonomy (categories)
 
--- Abstract policy ideas (entity-independent)
-create table if not exists public.ideas (
-  id uuid primary key default uuid_generate_v4(),
-  title text not null,
-  description text,
-  category_id uuid references public.categories(id) on delete set null,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
-create index if not exists idx_ideas_category_id on public.ideas(category_id);
-
-create trigger set_updated_at
-  before update on public.ideas
-  for each row
-  execute function public.handle_updated_at();
-
+-- High-level goals that policies aim to achieve
 create table if not exists public.goals (
   id uuid primary key default uuid_generate_v4(),
   title text not null,
@@ -50,6 +34,23 @@ create table if not exists public.measurables (
 
 create trigger set_updated_at
   before update on public.measurables
+  for each row
+  execute function public.handle_updated_at();
+
+-- Abstract policy ideas (entity-independent)
+create table if not exists public.ideas (
+  id uuid primary key default uuid_generate_v4(),
+  title text not null,
+  description text,
+  category_id uuid references public.categories(id) on delete set null,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_ideas_category_id on public.ideas(category_id);
+
+create trigger set_updated_at
+  before update on public.ideas
   for each row
   execute function public.handle_updated_at();
 
@@ -91,33 +92,5 @@ create index if not exists idx_contributions_goal_id on public.contributions(goa
 
 create trigger set_updated_at
   before update on public.contributions
-  for each row
-  execute function public.handle_updated_at();
-
--- Policies: concrete implementations of ideas by specific entities
-create table if not exists public.policies (
-  id uuid primary key default uuid_generate_v4(),
-  idea_id uuid not null references public.ideas(id) on delete restrict,
-  entity_id uuid not null references public.political_entities(id) on delete cascade,
-  administration_id uuid references public.administrations(id) on delete set null,
-  title text not null,
-  description text,
-  status text not null default 'proposed' check (status in ('proposed', 'planned', 'active', 'completed', 'cancelled')),
-  start_date timestamptz,
-  end_date timestamptz,
-  budget_allocated numeric,
-  budget_currency text default 'EUR',
-  implementation_notes text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
-create index if not exists idx_policies_idea_id on public.policies(idea_id);
-create index if not exists idx_policies_entity_id on public.policies(entity_id);
-create index if not exists idx_policies_administration_id on public.policies(administration_id);
-create index if not exists idx_policies_status on public.policies(status);
-
-create trigger set_updated_at
-  before update on public.policies
   for each row
   execute function public.handle_updated_at();

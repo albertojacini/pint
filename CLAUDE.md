@@ -11,5 +11,9 @@ IMPORTANT: This is an early stage project:
 1. **Reference Platform**: Provide up-to-date, UX-rich information about public administrations (cities, countries) and their policies
 2. **Collaboration Platform**: Enable collaboration on political projects and policy development
 
+## Project Structure
+
+**Database Seeding**: Seeding scripts are located in `/tooling/scripts/seed/`
+
 
 

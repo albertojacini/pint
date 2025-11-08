@@ -66,7 +66,7 @@ function flattenCategories(tree) {
  * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client (unused here)
  * @param {object} idMaps - ID mapping object for foreign key references
  */
-export async function seedPolicyClassification(client, supabase, idMaps) {
+export async function seedTaxonomy(client, supabase, idMaps) {
   // ===== CATEGORIES =====
   logger.startSection('categories')
 
