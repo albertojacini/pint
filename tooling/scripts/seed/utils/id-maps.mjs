@@ -20,8 +20,8 @@ export function createIdMaps() {
     ideas: new Map(),
     effects: new Map(),
     contributions: new Map(),
-    policies: new Map(),
-    actions: new Map()
+    provisions: new Map(),
+    events: new Map()
   }
 
   /**

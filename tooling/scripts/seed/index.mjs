@@ -17,7 +17,7 @@ import { seedEntities } from './seeders/entities.mjs'
 import { seedTaxonomy } from './seeders/taxonomy.mjs'
 import { seedAdministrations } from './seeders/administrations.mjs'
 import { seedIdeas } from './seeders/ideas.mjs'
-import { seedPolicies } from './seeders/policies.mjs'
+import { seedProvisions } from './seeders/provisions.mjs'
 
 /**
  * Main seeding function
@@ -53,7 +53,7 @@ async function runSeed() {
       // Dependent domains (require data from previous domains)
       { name: 'administrations', fn: seedAdministrations }, // needs: entities
       { name: 'ideas', fn: seedIdeas }, // needs: taxonomy
-      { name: 'policies', fn: seedPolicies }, // needs: ideas, entities, administrations
+      { name: 'provisions', fn: seedProvisions }, // needs: ideas, entities, administrations
     ]
 
     // Execute seeders in order
