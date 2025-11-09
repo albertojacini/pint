@@ -12,7 +12,8 @@ IMPORTANT: This is an early stage project:
 2. **Collaboration Platform**: Enable collaboration on political projects and policy development
 
 ## Project Structure
-
+**Database**: Migrations at `/supabase/migrations`
+**ORM**: Schema at `app/src/lib/db/schema.ts`
 **Database Seeding**: Seeding scripts are located in `/tooling/scripts/seed/`
 
 

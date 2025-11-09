@@ -182,20 +182,45 @@ export const contributions = pgTable('contributions', {
   uniqueMeasurableGoal: uniqueIndex('contributions_unique').on(table.measurableId, table.goalId),
 }))
 
-// Policies: concrete implementations of ideas by specific entities
-export const policies = pgTable('policies', {
+// ============================================================================
+// PROVISIONS DOMAIN
+// ============================================================================
+// State infrastructure (provisions), temporal events, and their relationships
+
+// Provisions: institutional/legal/operational infrastructure owned by entities
+export const provisions = pgTable('provisions', {
   id: uuid('id').primaryKey().defaultRandom(),
-  ideaId: uuid('idea_id').notNull().references(() => ideas.id, { onDelete: 'restrict' }),
   entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
-  administrationId: uuid('administration_id').references(() => administrations.id, { onDelete: 'set null' }),
   title: text('title').notNull(),
   description: text('description'),
-  status: text('status', { enum: ['proposed', 'planned', 'active', 'completed', 'cancelled'] }).notNull().default('proposed'),
-  startDate: timestamp('start_date', { withTimezone: true }),
-  endDate: timestamp('end_date', { withTimezone: true }),
-  budgetAllocated: numeric('budget_allocated'),
-  budgetCurrency: text('budget_currency').default('EUR'),
-  implementationNotes: text('implementation_notes'),
+  type: text('type').notNull(), // 'law', 'institution', 'utility', 'regulation', etc.
+  status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
+  effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
+  effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
+  ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
+
+// Events: temporal occurrences that shape provisions
+export const events = pgTable('events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  administrationId: uuid('administration_id').references(() => administrations.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  type: text('type').notNull(), // 'judicial_decree', 'legislative_vote', 'protest', 'executive_order', etc.
+  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Provision-Event relationships
+export const provisionEvents = pgTable('provision_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
+  eventId: uuid('event_id').notNull().references(() => events.id, { onDelete: 'cascade' }),
+  relationshipType: text('relationship_type'), // 'establishes', 'repeals', 'modifies', 'influences'
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueProvisionEvent: uniqueIndex('provision_events_unique').on(table.provisionId, table.eventId),
+}))

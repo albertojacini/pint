@@ -45,8 +45,8 @@ export default async function IdeasPage() {
                       <span className="font-semibold text-lg">{idea.effectsCount}</span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-muted-foreground">Implementations</span>
-                      <span className="font-semibold text-lg">{idea.policiesCount}</span>
+                      <span className="text-muted-foreground">Provisions</span>
+                      <span className="font-semibold text-lg">{idea.provisionsCount}</span>
                     </div>
                   </div>
                 </CardContent>

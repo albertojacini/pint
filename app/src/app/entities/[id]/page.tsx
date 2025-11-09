@@ -5,6 +5,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { AdministrationsSection } from '@/components/entities/administrations-section'
+import { getProvisionsByEntity } from '@/lib/actions/provisions'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 interface EntityPageProps {
   params: Promise<{
@@ -60,6 +63,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
       }
     })
   )
+
+  // Fetch provisions for this entity
+  const provisions = await getProvisionsByEntity(id)
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -132,6 +138,63 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
       {/* Administrations Section */}
       <AdministrationsSection administrations={administrationsWithMayor} />
+
+      {/* Provisions Section */}
+      {provisions.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
+          <h2 className="text-2xl font-bold mb-6">Provisions</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {provisions.map((provision) => (
+              <Card key={provision.id}>
+                <CardHeader>
+                  <div className="mb-2 flex gap-2">
+                    <Badge variant="outline" className="text-xs font-mono">PROVISION</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {provision.type}
+                    </Badge>
+                  </div>
+                  <div className="flex items-start justify-between gap-2">
+                    <CardTitle className="text-lg">{provision.title}</CardTitle>
+                    <Badge variant={
+                      provision.status === 'active' ? 'default' :
+                      provision.status === 'repealed' ? 'destructive' :
+                      'outline'
+                    }>
+                      {provision.status}
+                    </Badge>
+                  </div>
+                  {provision.ideaTitle && (
+                    <div className="text-sm text-muted-foreground">
+                      Inspired by: <Link href={`/ideas/${provision.ideaId}`} className="text-blue-600 hover:underline">
+                        {provision.ideaTitle}
+                      </Link>
+                    </div>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  {provision.description && (
+                    <p className="text-sm text-muted-foreground mb-3">{provision.description}</p>
+                  )}
+                  <div className="space-y-1 text-sm">
+                    {provision.effectiveFrom && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Effective From:</span>
+                        <span>{provision.effectiveFrom}</span>
+                      </div>
+                    )}
+                    {provision.effectiveUntil && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Effective Until:</span>
+                        <span>{provision.effectiveUntil}</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Metadata */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">

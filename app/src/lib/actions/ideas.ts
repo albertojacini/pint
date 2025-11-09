@@ -7,9 +7,8 @@ import {
   measurables,
   contributions,
   goals,
-  policies,
+  provisions,
   politicalEntities,
-  administrations,
   categories
 } from '@/lib/db/schema'
 import { eq, sql, inArray } from 'drizzle-orm'
@@ -23,12 +22,12 @@ export async function getIdeas() {
       categoryId: ideas.categoryId,
       categoryTitle: categories.title,
       effectsCount: sql<number>`count(distinct ${effects.id})`,
-      policiesCount: sql<number>`count(distinct ${policies.id})`,
+      provisionsCount: sql<number>`count(distinct ${provisions.id})`,
     })
     .from(ideas)
     .leftJoin(categories, eq(ideas.categoryId, categories.id))
     .leftJoin(effects, eq(ideas.id, effects.ideaId))
-    .leftJoin(policies, eq(ideas.id, policies.ideaId))
+    .leftJoin(provisions, eq(ideas.id, provisions.ideaId))
     .groupBy(ideas.id, categories.title)
     .orderBy(ideas.title)
 
@@ -88,32 +87,29 @@ export async function getIdea(id: string) {
         .orderBy(contributions.weight)
     : []
 
-  // Get policies implementing this idea
-  const ideaPolicies = await db
+  // Get provisions inspired by this idea
+  const ideaProvisions = await db
     .select({
-      policyId: policies.id,
-      policyTitle: policies.title,
-      policyDescription: policies.description,
-      status: policies.status,
-      startDate: policies.startDate,
-      endDate: policies.endDate,
-      budgetAllocated: policies.budgetAllocated,
-      budgetCurrency: policies.budgetCurrency,
+      provisionId: provisions.id,
+      provisionTitle: provisions.title,
+      provisionDescription: provisions.description,
+      type: provisions.type,
+      status: provisions.status,
+      effectiveFrom: provisions.effectiveFrom,
+      effectiveUntil: provisions.effectiveUntil,
       entityId: politicalEntities.id,
       entityName: politicalEntities.name,
       entityType: politicalEntities.type,
-      administrationName: administrations.name,
     })
-    .from(policies)
-    .innerJoin(politicalEntities, eq(policies.entityId, politicalEntities.id))
-    .leftJoin(administrations, eq(policies.administrationId, administrations.id))
-    .where(eq(policies.ideaId, id))
-    .orderBy(policies.status, policies.startDate)
+    .from(provisions)
+    .innerJoin(politicalEntities, eq(provisions.entityId, politicalEntities.id))
+    .where(eq(provisions.ideaId, id))
+    .orderBy(provisions.status, provisions.effectiveFrom)
 
   return {
     idea,
     effects: ideaEffects,
     goalContributions,
-    policies: ideaPolicies,
+    provisions: ideaProvisions,
   }
 }

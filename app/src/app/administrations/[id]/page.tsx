@@ -4,6 +4,9 @@ import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { getEventsByAdministration } from '@/lib/actions/events'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 interface AdministrationPageProps {
   params: Promise<{
@@ -57,6 +60,9 @@ export default async function AdministrationPage({ params }: AdministrationPageP
     .from(administrationMembers)
     .innerJoin(people, eq(administrationMembers.personId, people.id))
     .where(eq(administrationMembers.administrationId, id))
+
+  // Fetch events for this administration
+  const events = await getEventsByAdministration(id)
 
   const termPeriod = administration.termEnd
     ? `${format(new Date(administration.termStart), 'MMMM dd, yyyy')} - ${format(new Date(administration.termEnd), 'MMMM dd, yyyy')}`
@@ -173,6 +179,36 @@ export default async function AdministrationPage({ params }: AdministrationPageP
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Events Section */}
+      {events.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
+          <h2 className="text-2xl font-bold mb-6">Events</h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            {events.map((event) => (
+              <Card key={event.id}>
+                <CardHeader>
+                  <div className="mb-2 flex gap-2">
+                    <Badge variant="outline" className="text-xs font-mono">EVENT</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {event.type}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-lg">{event.title}</CardTitle>
+                  <div className="text-sm text-muted-foreground">
+                    {format(new Date(event.occurredAt), 'PPP')}
+                  </div>
+                </CardHeader>
+                {event.description && (
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{event.description}</p>
+                  </CardContent>
+                )}
+              </Card>
+            ))}
+          </div>
         </div>
       )}
 

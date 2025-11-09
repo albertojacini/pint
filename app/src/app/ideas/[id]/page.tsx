@@ -14,7 +14,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
     notFound()
   }
 
-  const { idea, effects, goalContributions, policies } = data
+  const { idea, effects, goalContributions, provisions } = data
 
   // Group goals by measurable for better visualization
   const goalsByMeasurable = goalContributions.reduce((acc, gc) => {
@@ -156,66 +156,55 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
         )}
       </section>
 
-      {/* Policies Section */}
+      {/* Provisions Section */}
       <section>
-        <h2 className="text-2xl font-bold mb-6">Real-World Implementations</h2>
+        <h2 className="text-2xl font-bold mb-6">Inspired Provisions</h2>
 
-        {policies.length === 0 ? (
-          <p className="text-muted-foreground">No implementations found for this idea yet.</p>
+        {provisions.length === 0 ? (
+          <p className="text-muted-foreground">No provisions inspired by this idea yet.</p>
         ) : (
           <div className="grid gap-4 md:grid-cols-2">
-            {policies.map((policy) => (
-              <Card key={policy.policyId}>
+            {provisions.map((provision) => (
+              <Card key={provision.provisionId}>
                 <CardHeader>
-                  <div className="mb-2">
-                    <Badge variant="outline" className="text-xs font-mono">POLICY</Badge>
+                  <div className="mb-2 flex gap-2">
+                    <Badge variant="outline" className="text-xs font-mono">PROVISION</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {provision.type}
+                    </Badge>
                   </div>
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{policy.policyTitle}</CardTitle>
+                    <CardTitle className="text-lg">{provision.provisionTitle}</CardTitle>
                     <Badge variant={
-                      policy.status === 'active' ? 'default' :
-                      policy.status === 'completed' ? 'secondary' :
-                      policy.status === 'cancelled' ? 'destructive' :
+                      provision.status === 'active' ? 'default' :
+                      provision.status === 'repealed' ? 'destructive' :
                       'outline'
                     }>
-                      {policy.status}
+                      {provision.status}
                     </Badge>
                   </div>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span>{policy.entityName}</span>
+                    <span>{provision.entityName}</span>
                     <Badge variant="outline" className="text-xs">
-                      {policy.entityType}
+                      {provision.entityType}
                     </Badge>
                   </div>
-                  {policy.administrationName && (
-                    <div className="text-sm text-muted-foreground">
-                      {policy.administrationName}
-                    </div>
-                  )}
                 </CardHeader>
                 <CardContent>
-                  {policy.policyDescription && (
-                    <p className="text-sm mb-3">{policy.policyDescription}</p>
+                  {provision.provisionDescription && (
+                    <p className="text-sm mb-3">{provision.provisionDescription}</p>
                   )}
                   <div className="space-y-1 text-sm">
-                    {policy.startDate && (
+                    {provision.effectiveFrom && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">Start:</span>
-                        <span>{new Date(policy.startDate).toLocaleDateString()}</span>
+                        <span className="text-muted-foreground">Effective From:</span>
+                        <span>{provision.effectiveFrom}</span>
                       </div>
                     )}
-                    {policy.endDate && (
+                    {provision.effectiveUntil && (
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">End:</span>
-                        <span>{new Date(policy.endDate).toLocaleDateString()}</span>
-                      </div>
-                    )}
-                    {policy.budgetAllocated && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Budget:</span>
-                        <span className="font-semibold">
-                          {parseFloat(policy.budgetAllocated).toLocaleString()} {policy.budgetCurrency}
-                        </span>
+                        <span className="text-muted-foreground">Effective Until:</span>
+                        <span>{provision.effectiveUntil}</span>
                       </div>
                     )}
                   </div>
