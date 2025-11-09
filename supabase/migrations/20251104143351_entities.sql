@@ -7,7 +7,6 @@
 create table if not exists public.political_entities (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
-  native_name text,
   description text,
   avatar_url text,
   type text not null check (type in ('neighborhood', 'district', 'borough', 'city', 'region', 'country', 'supranational')),

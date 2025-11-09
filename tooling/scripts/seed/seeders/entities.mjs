@@ -32,7 +32,6 @@ export async function seedEntities(client, supabase, idMaps) {
         columns: [
           'id',
           'name',
-          'native_name',
           'description',
           'avatar_url',
           'type',
@@ -44,7 +43,6 @@ export async function seedEntities(client, supabase, idMaps) {
         values: [
           id,
           entity.name,
-          entity.native_name || null,
           entity.description,
           entity.avatar_url || null,
           entity.type,

@@ -5,38 +5,38 @@
 
 export const entityRelationships = [
   // Italy - Milan hierarchy
-  { entity: "Zone 1", related: "City of Milan", type: "parent city" },
-  { entity: "Zone 1", related: "Lombardy", type: "parent region" },
-  { entity: "Zone 1", related: "Republic of Italy", type: "parent country" },
-  { entity: "City of Milan", related: "Lombardy", type: "parent region" },
-  { entity: "City of Milan", related: "Republic of Italy", type: "parent country" },
-  { entity: "Lombardy", related: "Republic of Italy", type: "parent country" },
+  { entity: "Zona 1", related: "Comune di Milano", type: "parent city" },
+  { entity: "Zona 1", related: "Regione Lombardia", type: "parent region" },
+  { entity: "Zona 1", related: "Repubblica Italiana", type: "parent country" },
+  { entity: "Comune di Milano", related: "Regione Lombardia", type: "parent region" },
+  { entity: "Comune di Milano", related: "Repubblica Italiana", type: "parent country" },
+  { entity: "Regione Lombardia", related: "Repubblica Italiana", type: "parent country" },
 
   // Germany - Berlin hierarchy
-  { entity: "Britz", related: "Neukölln", type: "parent district" },
-  { entity: "Britz", related: "City of Berlin", type: "parent city" },
-  { entity: "Britz", related: "Federal Republic of Germany", type: "parent country" },
-  { entity: "Neukölln", related: "City of Berlin", type: "parent city" },
-  { entity: "Neukölln", related: "Federal Republic of Germany", type: "parent country" },
-  { entity: "City of Berlin", related: "Federal Republic of Germany", type: "parent country" },
+  { entity: "Bezirk Britz", related: "Bezirk Neukölln", type: "parent district" },
+  { entity: "Bezirk Britz", related: "Stadt Berlin", type: "parent city" },
+  { entity: "Bezirk Britz", related: "Bundesrepublik Deutschland", type: "parent country" },
+  { entity: "Bezirk Neukölln", related: "Stadt Berlin", type: "parent city" },
+  { entity: "Bezirk Neukölln", related: "Bundesrepublik Deutschland", type: "parent country" },
+  { entity: "Stadt Berlin", related: "Bundesrepublik Deutschland", type: "parent country" },
 
   // Spain - Barcelona hierarchy
-  { entity: "Eixample", related: "City of Barcelona", type: "parent city" },
-  { entity: "Eixample", related: "Kingdom of Spain", type: "parent country" },
-  { entity: "City of Barcelona", related: "Kingdom of Spain", type: "parent country" },
+  { entity: "Eixample", related: "Ajuntament de Barcelona", type: "parent city" },
+  { entity: "Eixample", related: "Reino de España", type: "parent country" },
+  { entity: "Ajuntament de Barcelona", related: "Reino de España", type: "parent country" },
 
   // France - Paris hierarchy
-  { entity: "1st arrondissement", related: "Paris Centre", type: "parent district" },
-  { entity: "1st arrondissement", related: "City of Paris", type: "parent city" },
-  { entity: "1st arrondissement", related: "French Republic", type: "parent country" },
-  { entity: "Paris Centre", related: "City of Paris", type: "parent city" },
-  { entity: "Paris Centre", related: "French Republic", type: "parent country" },
-  { entity: "City of Paris", related: "French Republic", type: "parent country" },
+  { entity: "1er arrondissement", related: "Centre de Paris", type: "parent district" },
+  { entity: "1er arrondissement", related: "Ville de Paris", type: "parent city" },
+  { entity: "1er arrondissement", related: "République française", type: "parent country" },
+  { entity: "Centre de Paris", related: "Ville de Paris", type: "parent city" },
+  { entity: "Centre de Paris", related: "République française", type: "parent country" },
+  { entity: "Ville de Paris", related: "République française", type: "parent country" },
 
   // Austria - Vienna hierarchy
-  { entity: "Leopoldstadt", related: "City of Vienna", type: "parent city" },
-  { entity: "Leopoldstadt", related: "Republic of Austria", type: "parent country" },
-  { entity: "City of Vienna", related: "Republic of Austria", type: "parent country" },
+  { entity: "Leopoldstadt", related: "Stadt Wien", type: "parent city" },
+  { entity: "Leopoldstadt", related: "Republik Österreich", type: "parent country" },
+  { entity: "Stadt Wien", related: "Republik Österreich", type: "parent country" },
 
   // UK - London hierarchy
   { entity: "London Borough of Hackney", related: "City of London", type: "parent city" },

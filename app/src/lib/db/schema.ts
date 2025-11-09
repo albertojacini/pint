@@ -26,7 +26,6 @@ export const categories = pgTable('categories', {
 export const politicalEntities = pgTable('political_entities', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
-  nativeName: text('native_name'),
   description: text('description'),
   avatarUrl: text('avatar_url'),
   type: text('type', {

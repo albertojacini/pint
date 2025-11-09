@@ -7,7 +7,7 @@
 export const administrations = [
   {
     name: "Milan City Council 2021-2026",
-    entity: "City of Milan", // entity name, will be resolved to ID
+    entity: "Comune di Milano", // entity name, will be resolved to ID
     term_start: "2021-10-18T00:00:00Z",
     term_end: null,
     status: "active",
@@ -15,7 +15,7 @@ export const administrations = [
   },
   {
     name: "Milan City Council 2016-2021",
-    entity: "City of Milan",
+    entity: "Comune di Milano",
     term_start: "2016-06-20T00:00:00Z",
     term_end: "2021-10-18T00:00:00Z",
     status: "historical",
@@ -23,7 +23,7 @@ export const administrations = [
   },
   {
     name: "Milan City Council 2011-2016",
-    entity: "City of Milan",
+    entity: "Comune di Milano",
     term_start: "2011-06-13T00:00:00Z",
     term_end: "2016-06-20T00:00:00Z",
     status: "historical",
@@ -31,7 +31,7 @@ export const administrations = [
   },
   {
     name: "Milan City Council 2006-2011",
-    entity: "City of Milan",
+    entity: "Comune di Milano",
     term_start: "2006-05-29T00:00:00Z",
     term_end: "2011-06-13T00:00:00Z",
     status: "historical",
