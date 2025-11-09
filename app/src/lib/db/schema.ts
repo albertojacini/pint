@@ -192,7 +192,11 @@ export const provisions = pgTable('provisions', {
   entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   description: text('description'),
-  type: text('type').notNull(), // 'law', 'institution', 'utility', 'regulation', etc.
+  type: text('type').notNull(), // Legal: 'law', 'regulation', 'ordinance', 'decree', 'standard', 'code'
+                                  // Institutional: 'institution', 'utility', 'agency', 'program', 'fund'
+                                  // Planning: 'plan', 'zone', 'project', 'guideline'
+                                  // Fiscal: 'tax', 'fee', 'budget', 'subsidy', 'tariff'
+                                  // Administrative: 'procedure', 'agreement', 'delegation', 'protocol', 'policy'
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
