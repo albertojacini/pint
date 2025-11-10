@@ -41,7 +41,15 @@ create table if not exists public.events (
   administration_id uuid references public.administrations(id) on delete cascade,
   title text not null,
   description text,
-  type text not null, -- 'judicial_decree', 'legislative_vote', 'protest', 'executive_order', etc.
+  type text not null, -- Legislative: 'legislative_session', 'bill_proposal', 'referendum', 'amendment'
+                      -- Executive: 'executive_order', 'appointment', 'regulation_update', 'administrative_reform'
+                      -- Judicial: 'court_ruling', 'legal_challenge'
+                      -- Public: 'public_consultation', 'citizen_petition', 'protest'
+                      -- Budget: 'budget_approval', 'funding_decision', 'tax_change'
+                      -- Planning: 'plan_adoption', 'zoning_decision', 'project_launch'
+                      -- Operations: 'service_change', 'contract_award', 'partnership_agreement'
+                      -- Emergency: 'emergency_declaration', 'crisis_response'
+                      -- Review: 'policy_review'
   occurred_at timestamptz not null,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
