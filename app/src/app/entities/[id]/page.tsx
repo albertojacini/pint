@@ -547,13 +547,6 @@ export default async function EntityPage({ params }: EntityPageProps) {
             </div>
           </div>
         )}
-
-        {entity.description && (
-          <div className="mb-6 pt-4 border-t border-gray-200">
-            <h2 className="text-lg font-semibold mb-2">Description</h2>
-            <p className="text-gray-700">{entity.description}</p>
-          </div>
-        )}
       </div>
 
       {/* Administrations Section */}
