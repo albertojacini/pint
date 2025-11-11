@@ -23,7 +23,15 @@ export const politicalEntities = [
     population: 1500000,
     score_innovation: 9,
     score_sustainability: 8,
-    score_impact: 9
+    score_impact: 9,
+    identity_data: {
+      countryCode: "IT",
+      regionName: "Lombardy",
+      cityType: "Metropolitan City",
+      coatOfArmsUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Coat_of_arms_of_Milan.svg/200px-Coat_of_arms_of_Milan.svg.png",
+      officialWebsite: "https://www.comune.milano.it",
+      sisterCities: 15
+    }
   },
   {
     name: "Regione Lombardia",

@@ -1,4 +1,4 @@
-import { pgTable, text, uuid, timestamp, integer, uniqueIndex, numeric } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, integer, uniqueIndex, numeric, jsonb } from 'drizzle-orm/pg-core'
 
 // User profiles table
 export const userProfiles = pgTable('user_profiles', {
@@ -35,6 +35,14 @@ export const politicalEntities = pgTable('political_entities', {
   scoreInnovation: integer('score_innovation'),
   scoreSustainability: integer('score_sustainability'),
   scoreImpact: integer('score_impact'),
+  identityData: jsonb('identity_data').$type<{
+    countryCode?: string
+    regionName?: string
+    cityType?: string
+    coatOfArmsUrl?: string
+    officialWebsite?: string
+    sisterCities?: number
+  }>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

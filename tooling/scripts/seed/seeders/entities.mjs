@@ -38,7 +38,8 @@ export async function seedEntities(client, supabase, idMaps) {
           'population',
           'score_innovation',
           'score_sustainability',
-          'score_impact'
+          'score_impact',
+          'identity_data'
         ],
         values: [
           id,
@@ -49,7 +50,8 @@ export async function seedEntities(client, supabase, idMaps) {
           entity.population || null,
           entity.score_innovation || null,
           entity.score_sustainability || null,
-          entity.score_impact || null
+          entity.score_impact || null,
+          entity.identity_data ? JSON.stringify(entity.identity_data) : null
         ]
       })
 
