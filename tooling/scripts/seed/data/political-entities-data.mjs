@@ -23,7 +23,89 @@ export const politicalEntities = [
     population: 1500000,
     score_innovation: 9,
     score_sustainability: 8,
-    score_impact: 9
+    score_impact: 9,
+    identity_data: {
+      countryCode: "IT",
+      regionName: "Lombardy",
+      cityType: "Metropolitan City",
+      coatOfArmsUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Coat_of_arms_of_Milan.svg/200px-Coat_of_arms_of_Milan.svg.png",
+      officialWebsite: "https://www.comune.milano.it",
+      sisterCities: 15
+    },
+    essential_stats: {
+      area: 181.8,
+      density: 8249,
+      gdpPerCapita: 49500,
+      timezone: "CET (UTC+1)",
+      languages: ["Italian"],
+      elevation: 120,
+      founded: "600 BC"
+    },
+    political_landscape: {
+      currentMayor: {
+        name: "Giuseppe Sala",
+        party: "Centro-sinistra",
+        partyColor: "#D32F2F"
+      },
+      lastElection: {
+        date: "2021-10-03",
+        turnout: 47.7
+      },
+      nextElection: {
+        date: "2026-10-04"
+      },
+      councilComposition: [
+        { party: "Centro-sinistra", seats: 24, color: "#D32F2F" },
+        { party: "Centro-destra", seats: 18, color: "#1976D2" },
+        { party: "M5S", seats: 6, color: "#FFB300" }
+      ]
+    },
+    performance_indicators: {
+      innovation: {
+        overall: 9,
+        subcategories: [
+          { name: "Digital Infrastructure", score: 9 },
+          { name: "Startup Ecosystem", score: 8 },
+          { name: "R&D Investment", score: 9 },
+          { name: "Smart City Initiatives", score: 8 }
+        ]
+      },
+      sustainability: {
+        overall: 8,
+        subcategories: [
+          { name: "Green Mobility", score: 8 },
+          { name: "Renewable Energy", score: 7 },
+          { name: "Waste Management", score: 9 },
+          { name: "Air Quality", score: 6 }
+        ]
+      },
+      impact: {
+        overall: 9,
+        subcategories: [
+          { name: "Economic Growth", score: 9 },
+          { name: "Social Inclusion", score: 8 },
+          { name: "Quality of Life", score: 9 },
+          { name: "Cultural Influence", score: 10 }
+        ]
+      }
+    },
+    community_metrics: {
+      userSatisfaction: {
+        overall: 7.8,
+        responsesCount: 1247
+      },
+      activeProjects: 34,
+      communityEngagement: {
+        totalUsers: 8920,
+        activeContributors: 156
+      },
+      surveys: [
+        { title: "Public Transport", score: 8.2, responses: 543 },
+        { title: "Green Spaces", score: 7.1, responses: 412 },
+        { title: "Safety", score: 7.9, responses: 689 },
+        { title: "Digital Services", score: 8.5, responses: 398 }
+      ]
+    }
   },
   {
     name: "Regione Lombardia",
