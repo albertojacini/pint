@@ -43,6 +43,73 @@ export const politicalEntities = pgTable('political_entities', {
     officialWebsite?: string
     sisterCities?: number
   }>(),
+  essentialStats: jsonb('essential_stats').$type<{
+    area?: number
+    density?: number
+    gdpPerCapita?: number
+    timezone?: string
+    languages?: string[]
+    elevation?: number
+    founded?: string
+  }>(),
+  politicalLandscape: jsonb('political_landscape').$type<{
+    currentMayor?: {
+      name: string
+      party: string
+      partyColor: string
+    }
+    lastElection?: {
+      date: string
+      turnout: number // percentage
+    }
+    nextElection?: {
+      date: string
+    }
+    councilComposition?: Array<{
+      party: string
+      seats: number
+      color: string
+    }>
+  }>(),
+  performanceIndicators: jsonb('performance_indicators').$type<{
+    innovation?: {
+      overall: number // 0-10
+      subcategories?: Array<{
+        name: string
+        score: number // 0-10
+      }>
+    }
+    sustainability?: {
+      overall: number // 0-10
+      subcategories?: Array<{
+        name: string
+        score: number // 0-10
+      }>
+    }
+    impact?: {
+      overall: number // 0-10
+      subcategories?: Array<{
+        name: string
+        score: number // 0-10
+      }>
+    }
+  }>(),
+  communityMetrics: jsonb('community_metrics').$type<{
+    userSatisfaction?: {
+      overall: number // 0-10
+      responsesCount: number
+    }
+    activeProjects?: number
+    communityEngagement?: {
+      totalUsers: number
+      activeContributors: number
+    }
+    surveys?: Array<{
+      title: string
+      score: number // 0-10
+      responses: number
+    }>
+  }>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
