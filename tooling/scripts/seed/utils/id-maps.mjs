@@ -12,7 +12,6 @@ export function createIdMaps() {
     categories: new Map(),
     entities: new Map(),
     tags: new Map(),
-    tagValues: new Map(),
     goals: new Map(),
     people: new Map(),
     administrations: new Map(),

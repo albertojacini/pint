@@ -125,23 +125,30 @@ export const entityRelationships = pgTable('entity_relationships', {
   uniqueRelationship: uniqueIndex('entity_relationships_unique').on(table.entityId, table.relatedEntityId, table.relationshipType),
 }))
 
-// Policy tags table (tag taxonomies)
-export const policyTags = pgTable('policy_tags', {
+// Unified tags table for all content types
+export const tags = pgTable('tags', {
   id: uuid('id').primaryKey().defaultRandom(),
-  name: text('name').notNull().unique(),
+  name: text('name').notNull(),
+  slug: text('slug').notNull().unique(),
   description: text('description'),
+  category: text('category'), // 'policy-topic', 'geographic', 'impact-area', 'maturity'
+  color: text('color'),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}),
+  usageCount: integer('usage_count').default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-// Tag values table (individual values within each taxonomy)
-export const tagValues = pgTable('tag_values', {
+// Polymorphic tagging junction table
+export const taggables = pgTable('taggables', {
   id: uuid('id').primaryKey().defaultRandom(),
-  tagId: uuid('tag_id').notNull().references(() => policyTags.id, { onDelete: 'cascade' }),
-  value: text('value').notNull(),
-  description: text('description'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+  tagId: uuid('tag_id').notNull().references(() => tags.id, { onDelete: 'cascade' }),
+  taggableType: text('taggable_type').notNull(), // 'entity', 'provision', 'idea', 'event', 'administration'
+  taggableId: uuid('taggable_id').notNull(),
+  createdBy: uuid('created_by').references(() => userProfiles.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
-  uniqueTagValue: uniqueIndex('tag_values_unique').on(table.tagId, table.value),
+  uniqueTaggable: uniqueIndex('taggables_unique').on(table.tagId, table.taggableType, table.taggableId),
 }))
 
 // Goals table

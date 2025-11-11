@@ -6,6 +6,9 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
+-- Enable pg_trgm extension for fuzzy text search
+create extension if not exists "pg_trgm";
+
 -- Function to update updated_at timestamp (used by all tables)
 create or replace function public.handle_updated_at()
 returns trigger as $$

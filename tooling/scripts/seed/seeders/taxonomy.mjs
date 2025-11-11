@@ -1,11 +1,11 @@
 /**
  * Policy Classification Domain Seeder
- * Seeds hierarchical categories and policy tags with their values
+ * Seeds hierarchical categories and unified tags
  * Dependencies: None
  */
 
 import { categoriesTree } from '../data/categories-tree.mjs'
-import { policyTags } from '../data/policy-tags-data.mjs'
+import { tagsData } from '../data/tags-data.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -105,47 +105,38 @@ export async function seedTaxonomy(client, supabase, idMaps) {
     logger.endSection('categories', categories.length)
   }
 
-  // ===== POLICY TAGS =====
-  logger.startSection('policy tags')
+  // ===== TAGS =====
+  logger.startSection('tags')
 
-  if (await hasData(client, 'policy_tags')) {
-    logger.skipSection('Policy tags')
+  if (await hasData(client, 'tags')) {
+    logger.skipSection('Tags')
   } else {
-    let tagCount = 0
-    let valueCount = 0
-
-    // Insert each tag taxonomy and its values
-    for (const [tagName, values] of Object.entries(policyTags)) {
+    // Insert each tag
+    for (const tag of tagsData) {
       const tagId = generateUUID()
 
-      // Insert the tag
       await insertQuery(client, {
-        table: 'policy_tags',
-        columns: ['id', 'name'],
-        values: [tagId, tagName]
+        table: 'tags',
+        columns: ['id', 'name', 'slug', 'description', 'category', 'color'],
+        values: [
+          tagId,
+          tag.name,
+          tag.slug,
+          tag.description || null,
+          tag.category,
+          tag.color || null
+        ]
       })
 
-      tagCount++
-      idMaps.tags.set(tagName, tagId)
-
-      // Insert the tag values
-      for (const value of values) {
-        const valueId = generateUUID()
-
-        await insertQuery(client, {
-          table: 'tag_values',
-          columns: ['id', 'tag_id', 'value'],
-          values: [valueId, tagId, value]
-        })
-
-        valueCount++
-        // Store value ID with compound key: "tagName:value"
-        idMaps.tagValues.set(`${tagName}:${value}`, valueId)
-      }
+      // Store ID mapping for later reference (by slug)
+      idMaps.tags.set(tag.slug, tagId)
     }
 
-    logger.endSection('policy tags', tagCount)
-    logger.info(`  └─ ${valueCount} tag values inserted`)
+    logger.endSection('tags', tagsData.length)
+    logger.info(`  └─ ${tagsData.filter(t => t.category === 'policy-topic').length} policy topics`)
+    logger.info(`  └─ ${tagsData.filter(t => t.category === 'geographic').length} geographic tags`)
+    logger.info(`  └─ ${tagsData.filter(t => t.category === 'impact-area').length} impact areas`)
+    logger.info(`  └─ ${tagsData.filter(t => t.category === 'maturity').length} maturity levels`)
   }
 
   return idMaps
