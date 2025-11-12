@@ -552,51 +552,62 @@ export default async function EntityPage({ params }: EntityPageProps) {
       {/* Administrations Section */}
       <AdministrationsSection administrations={administrationsWithMayor} />
 
-      {/* Provisions Section */}
+      {/* Provisions Overview Section */}
       {provisions.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
-          <h2 className="text-2xl font-bold mb-6">Provisions</h2>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Provisions Overview</h2>
+            <Link
+              href={`/entities/${id}/provisions`}
+              className="text-blue-600 hover:underline text-sm font-medium"
+            >
+              View all →
+            </Link>
+          </div>
 
           {(() => {
-            // Helper function to get type color and category
+            // Calculate stats
+            const totalCount = provisions.length
+            const activeCount = provisions.filter(p => p.status === 'active').length
+            const repealedCount = provisions.filter(p => p.status === 'repealed').length
+            const suspendedCount = provisions.filter(p => p.status === 'suspended').length
+
+            // Helper function to get type color
             const getTypeConfig = (type: string) => {
-              const configs: Record<string, { category: string; color: string; bgColor: string }> = {
+              const configs: Record<string, { color: string; bgColor: string }> = {
                 // Legal & Regulatory
-                'regulation': { category: 'Legal & Regulatory', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-                'ordinance': { category: 'Legal & Regulatory', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-                'standard': { category: 'Legal & Regulatory', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-                'law': { category: 'Legal & Regulatory', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-                'decree': { category: 'Legal & Regulatory', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-                'code': { category: 'Legal & Regulatory', color: 'text-blue-700', bgColor: 'bg-blue-100' },
-
+                'regulation': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+                'ordinance': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+                'standard': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+                'law': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+                'decree': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+                'code': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
                 // Institutional & Services
-                'utility': { category: 'Institutional & Services', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-                'institution': { category: 'Institutional & Services', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-                'agency': { category: 'Institutional & Services', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-                'program': { category: 'Institutional & Services', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-                'fund': { category: 'Institutional & Services', color: 'text-purple-700', bgColor: 'bg-purple-100' },
-
+                'utility': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
+                'institution': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
+                'agency': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
+                'program': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
+                'fund': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
                 // Planning
-                'plan': { category: 'Planning', color: 'text-green-700', bgColor: 'bg-green-100' },
-                'zone': { category: 'Planning', color: 'text-green-700', bgColor: 'bg-green-100' },
-                'project': { category: 'Planning', color: 'text-green-700', bgColor: 'bg-green-100' },
-                'guideline': { category: 'Planning', color: 'text-green-700', bgColor: 'bg-green-100' },
-
+                'plan': { color: 'text-green-700', bgColor: 'bg-green-100' },
+                'zone': { color: 'text-green-700', bgColor: 'bg-green-100' },
+                'project': { color: 'text-green-700', bgColor: 'bg-green-100' },
+                'guideline': { color: 'text-green-700', bgColor: 'bg-green-100' },
                 // Fiscal
-                'tax': { category: 'Fiscal', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-                'fee': { category: 'Fiscal', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-                'budget': { category: 'Fiscal', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-                'subsidy': { category: 'Fiscal', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-                'tariff': { category: 'Fiscal', color: 'text-orange-700', bgColor: 'bg-orange-100' },
-
+                'tax': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
+                'fee': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
+                'budget': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
+                'subsidy': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
+                'tariff': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
                 // Administrative
-                'procedure': { category: 'Administrative', color: 'text-gray-700', bgColor: 'bg-gray-100' },
-                'agreement': { category: 'Administrative', color: 'text-gray-700', bgColor: 'bg-gray-100' },
-                'delegation': { category: 'Administrative', color: 'text-gray-700', bgColor: 'bg-gray-100' },
-                'protocol': { category: 'Administrative', color: 'text-gray-700', bgColor: 'bg-gray-100' },
-                'policy': { category: 'Administrative', color: 'text-gray-700', bgColor: 'bg-gray-100' },
+                'procedure': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
+                'agreement': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
+                'delegation': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
+                'protocol': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
+                'policy': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
               }
-              return configs[type] || { category: 'Other', color: 'text-gray-700', bgColor: 'bg-gray-100' }
+              return configs[type] || { color: 'text-gray-700', bgColor: 'bg-gray-100' }
             }
 
             // Helper function to get status color
@@ -609,108 +620,79 @@ export default async function EntityPage({ params }: EntityPageProps) {
               return colors[status] || 'bg-gray-500'
             }
 
-            // Group provisions by category
-            const groupedProvisions = provisions.reduce((acc, provision) => {
-              const config = getTypeConfig(provision.type)
-              if (!acc[config.category]) {
-                acc[config.category] = []
-              }
-              acc[config.category].push(provision)
-              return acc
-            }, {} as Record<string, typeof provisions>)
+            // Get most recent 6 provisions
+            const featuredProvisions = provisions.slice(0, 6)
 
-            // Define category order
-            const categoryOrder = [
-              'Legal & Regulatory',
-              'Institutional & Services',
-              'Planning',
-              'Fiscal',
-              'Administrative',
-              'Other'
-            ]
+            return (
+              <>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                  {/* Total */}
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="text-3xl font-bold text-gray-800 mb-1">{totalCount}</div>
+                    <div className="text-sm text-gray-600">Total</div>
+                  </div>
+                  {/* Active */}
+                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <div className="text-3xl font-bold text-green-700 mb-1">{activeCount}</div>
+                    <div className="text-sm text-green-600">Active</div>
+                  </div>
+                  {/* Repealed */}
+                  <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <div className="text-3xl font-bold text-red-700 mb-1">{repealedCount}</div>
+                    <div className="text-sm text-red-600">Repealed</div>
+                  </div>
+                  {/* Suspended */}
+                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                    <div className="text-3xl font-bold text-yellow-700 mb-1">{suspendedCount}</div>
+                    <div className="text-sm text-yellow-600">Suspended</div>
+                  </div>
+                </div>
 
-            return categoryOrder.map(category => {
-              const categoryProvisions = groupedProvisions[category]
-              if (!categoryProvisions || categoryProvisions.length === 0) return null
-
-              return (
-                <div key={category} className="mb-8 last:mb-0">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">{category}</h3>
+                {/* Featured Provisions */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">Featured Provisions</h3>
                   <div className="grid gap-4 md:grid-cols-2">
-                    {categoryProvisions.map((provision) => {
+                    {featuredProvisions.map((provision) => {
                       const typeConfig = getTypeConfig(provision.type)
                       const startYear = provision.effectiveFrom ? new Date(provision.effectiveFrom).getFullYear() : null
 
                       return (
                         <div key={provision.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
                           {/* Row 1: Status dot, year, type badge */}
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
                               <div
                                 className={`w-2 h-2 rounded-full ${getStatusColor(provision.status)}`}
                                 title={provision.status}
                               />
                               {startYear && (
-                                <span className="text-sm font-semibold text-gray-600">{startYear}</span>
+                                <span className="text-xs font-semibold text-gray-600">{startYear}</span>
                               )}
                             </div>
-                            <div className="flex gap-2 items-center">
-                              <span className={`px-2 py-1 rounded text-xs font-medium ${typeConfig.bgColor} ${typeConfig.color}`}>
-                                {provision.type}
-                              </span>
-                            </div>
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${typeConfig.bgColor} ${typeConfig.color}`}>
+                              {provision.type}
+                            </span>
                           </div>
 
                           {/* Row 2: Title */}
-                          <h4 className="text-base font-semibold text-gray-900 mb-2">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-1">
                             {provision.title}
                           </h4>
 
-                          {/* Row 3: Description */}
+                          {/* Row 3: Description (truncated) */}
                           {provision.description && (
-                            <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                            <p className="text-xs text-gray-600 line-clamp-2">
                               {provision.description}
                             </p>
-                          )}
-
-                          {/* Row 4: Type-specific indicators */}
-                          <div className="mt-4 pt-3 border-t border-gray-100">
-                            <div className="flex gap-4">
-                              {/* Fake indicator 1 */}
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                                <span className="text-xs font-medium text-gray-700">
-                                  {Math.floor(Math.random() * 40) + 60}% completion
-                                </span>
-                              </div>
-                              {/* Fake indicator 2 */}
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-amber-500" />
-                                <span className="text-xs font-medium text-gray-700">
-                                  {Math.floor(Math.random() * 50) + 50}k beneficiaries
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Linked idea reference */}
-                          {provision.ideaTitle && (
-                            <div className="mt-3 pt-3 border-t border-gray-100">
-                              <div className="text-xs text-gray-500">
-                                Inspired by:{' '}
-                                <Link href={`/ideas/${provision.ideaId}`} className="text-blue-600 hover:underline font-medium">
-                                  {provision.ideaTitle}
-                                </Link>
-                              </div>
-                            </div>
                           )}
                         </div>
                       )
                     })}
                   </div>
                 </div>
-              )
-            })
+              </>
+            )
           })()}
         </div>
       )}
