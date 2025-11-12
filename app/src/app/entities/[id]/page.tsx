@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { AdministrationsSection } from '@/components/entities/administrations-section'
 import { getProvisionsByEntity } from '@/lib/actions/provisions'
+import { getEventsByEntity } from '@/lib/actions/events'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Search, MessageCircle } from 'lucide-react'
@@ -91,6 +92,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   // Fetch provisions for this entity
   const provisions = await getProvisionsByEntity(id)
+
+  // Fetch events for this entity
+  const events = await getEventsByEntity(id)
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -694,6 +698,63 @@ export default async function EntityPage({ params }: EntityPageProps) {
               </>
             )
           })()}
+        </div>
+      )}
+
+      {/* Events Overview Section */}
+      {events.length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Recent Events</h2>
+            <Link
+              href={`/entities/${id}/events`}
+              className="text-blue-600 hover:underline text-sm font-medium"
+            >
+              View all →
+            </Link>
+          </div>
+
+          {/* Most recent 10 events */}
+          <div className="space-y-4">
+            {events.slice(0, 10).map((event) => (
+              <div key={event.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge variant="outline" className="text-xs font-mono">EVENT</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {event.type}
+                    </Badge>
+                  </div>
+                  <span className="text-xs text-gray-500 whitespace-nowrap">
+                    {format(new Date(event.occurredAt), 'PPP')}
+                  </span>
+                </div>
+
+                <h3 className="text-base font-semibold text-gray-900 mb-2">
+                  {event.title}
+                </h3>
+
+                {event.description && (
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {event.description}
+                  </p>
+                )}
+
+                {event.administrationName && event.administrationId && (
+                  <div className="text-xs text-gray-500">
+                    Administration:{' '}
+                    <Link
+                      href={`/administrations/${event.administrationId}`}
+                      className="text-blue-600 hover:underline font-medium"
+                    >
+                      {event.administrationName}
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

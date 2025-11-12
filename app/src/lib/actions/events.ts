@@ -41,3 +41,22 @@ export async function getEventsByAdministration(administrationId: string) {
 
   return administrationEvents
 }
+
+export async function getEventsByEntity(entityId: string) {
+  const entityEvents = await db
+    .select({
+      id: events.id,
+      title: events.title,
+      description: events.description,
+      type: events.type,
+      occurredAt: events.occurredAt,
+      administrationId: administrations.id,
+      administrationName: administrations.name,
+    })
+    .from(events)
+    .leftJoin(administrations, eq(events.administrationId, administrations.id))
+    .where(eq(administrations.entityId, entityId))
+    .orderBy(desc(events.occurredAt))
+
+  return entityEvents
+}
