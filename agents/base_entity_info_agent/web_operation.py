@@ -1,4 +1,4 @@
-"""Web operations for entity_info_agent - SERP search and Wikipedia API."""
+"""Web operations for base_entity_info_agent - SERP search and Wikipedia API."""
 
 from dotenv import load_dotenv
 import os

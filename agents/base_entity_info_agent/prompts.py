@@ -1,4 +1,4 @@
-"""Prompt templates for entity_info_agent."""
+"""Prompt templates for base_entity_info_agent."""
 
 from typing import Dict, Any
 

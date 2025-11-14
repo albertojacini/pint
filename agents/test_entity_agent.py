@@ -1,10 +1,10 @@
-"""Test script for entity_info_agent."""
+"""Test script for base_entity_info_agent."""
 
 import sys
 import os
 
-# Add entity_info_agent to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'entity_info_agent'))
+# Add base_entity_info_agent to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'base_entity_info_agent'))
 
 from main import build_graph
 

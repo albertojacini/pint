@@ -1,4 +1,4 @@
-"""Database operations for entity_info_agent."""
+"""Database operations for base_entity_info_agent."""
 
 import os
 import json
