@@ -5,6 +5,16 @@ IMPORTANT: This is an early stage project:
 - edit the initial db migration, don't create extra migrations since the db will be reset every time
 - feel free to break things, don't care about backward compatibility
 
+## Python Development
+**CRITICAL**:
+- ALWAYS use `uv` for package management (NEVER use `pip`)
+- ALWAYS activate the virtual environment before running Python commands:
+  ```bash
+  cd /Users/albertojacini/Projects/pint/agents && source .venv/bin/activate
+  ```
+- Package installation: `uv add <package>` or `uv pip install <package>`
+- Run Python scripts: Always prepend with activation command
+
 ## Project Overview
 
 **Pint** (Public Interface) is a public policies platform with two main objectives:
