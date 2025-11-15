@@ -4,44 +4,57 @@ import asyncio
 import os
 from typing import Optional, Dict, Any, List
 from datetime import datetime
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
+from mcp import ClientSession
+from mcp.client.sse import sse_client
 from langchain_mcp_adapters.tools import load_mcp_tools
 from models import WebsiteContent
 
 
-# Global MCP session management
+# Global MCP client management
 _mcp_session = None
 _mcp_tools = None
 
 
 async def initialize_mcp_session():
-    """Initialize the MCP session with BrightData tools."""
+    """Initialize the MCP session with BrightData tools using SSE transport."""
     global _mcp_session, _mcp_tools
 
-    if _mcp_session is not None:
+    if _mcp_tools is not None:
         return _mcp_tools
 
-    server_params = StdioServerParameters(
-        command="npx",
-        env={
-            "API_TOKEN": os.getenv("API_TOKEN"),
-            "BROWSER_AUTH": os.getenv("BROWSER_AUTH"),
-            "WEB_UNLOCKER_ZONE": os.getenv("WEB_UNLOCKER_ZONE"),
-        },
-        args=["@brightdata/mcp"],
-    )
+    # Get API token from environment
+    api_token = os.getenv("BRIGHTDATA_API_KEY") or os.getenv("API_TOKEN")
+    if not api_token:
+        print("❌ No BRIGHTDATA_API_KEY or API_TOKEN found in environment")
+        return None
 
     try:
-        # Create stdio client
-        read, write = await stdio_client(server_params).__aenter__()
+        # BrightData MCP SSE endpoint
+        sse_url = f"https://mcp.brightdata.com/sse?token={api_token}"
+
+        print("🔌 Connecting to BrightData MCP (SSE transport)...")
+        print(f"   Endpoint: {sse_url}")
+
+        # Create SSE client connection
+        read, write = await sse_client(sse_url).__aenter__()
         _mcp_session = await ClientSession(read, write).__aenter__()
+
+        # Initialize the session
         await _mcp_session.initialize()
+
+        # Load tools using langchain adapter
         _mcp_tools = await load_mcp_tools(_mcp_session)
-        print("✅ MCP session initialized successfully")
+
+        print(f"✅ MCP session initialized successfully")
+        print(f"   Loaded {len(_mcp_tools)} tools from BrightData:")
+        for tool in _mcp_tools:
+            print(f"   - {tool.name}: {tool.description}")
+
         return _mcp_tools
     except Exception as e:
         print(f"❌ Failed to initialize MCP session: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
