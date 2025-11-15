@@ -4,6 +4,7 @@ import asyncio
 import os
 from typing import Optional, Dict, Any, List
 from datetime import datetime
+from contextlib import asynccontextmanager
 from mcp import ClientSession
 from mcp.client.sse import sse_client
 from langchain_mcp_adapters.tools import load_mcp_tools
@@ -11,65 +12,74 @@ from models import WebsiteContent
 
 
 # Global MCP client management
+_mcp_context_stack = None
 _mcp_session = None
 _mcp_tools = None
 
 
-async def initialize_mcp_session():
-    """Initialize the MCP session with BrightData tools using SSE transport."""
-    global _mcp_session, _mcp_tools
+@asynccontextmanager
+async def mcp_session():
+    """
+    Context manager for MCP session.
+    Use this to properly manage the MCP connection lifecycle.
 
-    if _mcp_tools is not None:
-        return _mcp_tools
-
+    Example:
+        async with mcp_session() as tools:
+            # Use tools here
+            result = await tools[0].ainvoke({"url": "https://example.com"})
+    """
     # Get API token from environment
     api_token = os.getenv("BRIGHTDATA_API_KEY") or os.getenv("API_TOKEN")
     if not api_token:
         print("❌ No BRIGHTDATA_API_KEY or API_TOKEN found in environment")
-        return None
+        yield None
+        return
+
+    # BrightData MCP SSE endpoint
+    sse_url = f"https://mcp.brightdata.com/sse?token={api_token}"
+
+    print("🔌 Connecting to BrightData MCP (SSE transport)...")
 
     try:
-        # BrightData MCP SSE endpoint
-        sse_url = f"https://mcp.brightdata.com/sse?token={api_token}"
+        # Create SSE client connection with proper context management
+        async with sse_client(sse_url) as (read, write):
+            async with ClientSession(read, write) as session:
+                # Initialize the session
+                await session.initialize()
 
-        print("🔌 Connecting to BrightData MCP (SSE transport)...")
-        print(f"   Endpoint: {sse_url}")
+                # Load tools using langchain adapter
+                tools = await load_mcp_tools(session)
 
-        # Create SSE client connection
-        read, write = await sse_client(sse_url).__aenter__()
-        _mcp_session = await ClientSession(read, write).__aenter__()
+                print(f"✅ MCP session initialized successfully")
+                print(f"   Loaded {len(tools)} tools from BrightData:")
+                for tool in tools:
+                    print(f"   - {tool.name}")
 
-        # Initialize the session
-        await _mcp_session.initialize()
+                yield tools
 
-        # Load tools using langchain adapter
-        _mcp_tools = await load_mcp_tools(_mcp_session)
+                print("✅ MCP session closed")
 
-        print(f"✅ MCP session initialized successfully")
-        print(f"   Loaded {len(_mcp_tools)} tools from BrightData:")
-        for tool in _mcp_tools:
-            print(f"   - {tool.name}: {tool.description}")
-
-        return _mcp_tools
     except Exception as e:
         print(f"❌ Failed to initialize MCP session: {e}")
         import traceback
         traceback.print_exc()
-        return None
+        yield None
+
+
+async def initialize_mcp_session():
+    """
+    Legacy function for backwards compatibility.
+    Note: This should only be used in sync code paths.
+    For proper async usage, use the mcp_session() context manager instead.
+    """
+    print("⚠️  Warning: initialize_mcp_session() is deprecated.")
+    print("   Use 'async with mcp_session() as tools:' instead for proper lifecycle management.")
+    return None
 
 
 async def close_mcp_session():
-    """Close the MCP session."""
-    global _mcp_session, _mcp_tools
-
-    if _mcp_session:
-        try:
-            await _mcp_session.__aexit__(None, None, None)
-            _mcp_session = None
-            _mcp_tools = None
-            print("✅ MCP session closed")
-        except Exception as e:
-            print(f"❌ Error closing MCP session: {e}")
+    """Legacy function for backwards compatibility."""
+    pass
 
 
 async def scrape_website(
@@ -88,53 +98,53 @@ async def scrape_website(
     Returns:
         WebsiteContent object with scraped data
     """
-    tools = await initialize_mcp_session()
-    if not tools:
-        print(f"❌ MCP tools not available for scraping {url}")
-        return None
-
-    try:
-        # Find the browser tool
-        browser_tool = None
-        for tool in tools:
-            if "browser" in tool.name.lower() or "scrape" in tool.name.lower():
-                browser_tool = tool
-                break
-
-        if not browser_tool:
-            print("❌ Browser tool not found in MCP tools")
+    async with mcp_session() as tools:
+        if not tools:
+            print(f"❌ MCP tools not available for scraping {url}")
             return None
 
-        # Prepare scraping parameters
-        scrape_params = {
-            "url": url,
-            "type": "text"  # Get text content
-        }
+        try:
+            # Find the scrape tool (scrape_as_markdown)
+            scrape_tool = None
+            for tool in tools:
+                if "markdown" in tool.name.lower() or "scrape" in tool.name.lower():
+                    if "batch" not in tool.name.lower():  # Skip batch version
+                        scrape_tool = tool
+                        break
 
-        if wait_for_selector:
-            scrape_params["wait_for"] = wait_for_selector
+            if not scrape_tool:
+                print("❌ Scrape tool not found in MCP tools")
+                return None
 
-        # Execute scraping
-        print(f"🔍 Scraping {url}...")
-        result = await browser_tool.ainvoke(scrape_params)
+            # Prepare scraping parameters
+            scrape_params = {"url": url}
 
-        if result:
-            content = WebsiteContent(
-                url=url,
-                content=result.get("content", ""),
-                title=result.get("title"),
-                metadata=result.get("metadata") if extract_metadata else None,
-                scraped_at=datetime.utcnow().isoformat()
-            )
-            print(f"✅ Successfully scraped {url}")
-            return content
-        else:
-            print(f"❌ No content returned from {url}")
+            # Execute scraping
+            print(f"🔍 Scraping {url}...")
+            result = await scrape_tool.ainvoke(scrape_params)
+
+            if result:
+                # Result is markdown text
+                content_text = result if isinstance(result, str) else str(result)
+
+                content = WebsiteContent(
+                    url=url,
+                    content=content_text,
+                    title=None,  # Extract from markdown if needed
+                    metadata=None,
+                    scraped_at=datetime.utcnow().isoformat()
+                )
+                print(f"✅ Successfully scraped {url}")
+                return content
+            else:
+                print(f"❌ No content returned from {url}")
+                return None
+
+        except Exception as e:
+            print(f"❌ Error scraping {url}: {e}")
+            import traceback
+            traceback.print_exc()
             return None
-
-    except Exception as e:
-        print(f"❌ Error scraping {url}: {e}")
-        return None
 
 
 async def search_and_scrape(
@@ -153,56 +163,49 @@ async def search_and_scrape(
     Returns:
         List of search results with optional scraped content
     """
-    tools = await initialize_mcp_session()
-    if not tools:
-        return []
-
-    results = []
-
-    try:
-        # Find the SERP tool
-        serp_tool = None
-        for tool in tools:
-            if "serp" in tool.name.lower() or "search" in tool.name.lower():
-                serp_tool = tool
-                break
-
-        if not serp_tool:
-            print("❌ SERP tool not found in MCP tools")
+    async with mcp_session() as tools:
+        if not tools:
             return []
 
-        # Execute search
-        print(f"🔍 Searching for: {query}")
-        search_results = await serp_tool.ainvoke({
-            "query": query,
-            "num": num_results
-        })
+        results = []
 
-        if not search_results:
+        try:
+            # Find the search engine tool
+            search_tool = None
+            for tool in tools:
+                if "search_engine" in tool.name.lower():
+                    if "batch" not in tool.name.lower():  # Skip batch version
+                        search_tool = tool
+                        break
+
+            if not search_tool:
+                print("❌ Search engine tool not found in MCP tools")
+                return []
+
+            # Execute search
+            print(f"🔍 Searching for: {query}")
+            search_result = await search_tool.ainvoke({
+                "query": query,
+                "engine": "google"  # Use Google by default
+            })
+
+            if not search_result:
+                return []
+
+            # Parse results (BrightData returns markdown or JSON)
+            # For now, just return the raw result
+            # You may need to parse this based on the actual format returned
+            print(f"✅ Search completed")
+
+            # Note: The actual parsing of search results depends on the format
+            # returned by BrightData's search_engine tool
+            return [{"raw_result": search_result}]
+
+        except Exception as e:
+            print(f"❌ Error in search_and_scrape: {e}")
+            import traceback
+            traceback.print_exc()
             return []
-
-        # Process results
-        for idx, result in enumerate(search_results.get("results", [])[:num_results]):
-            processed_result = {
-                "title": result.get("title"),
-                "url": result.get("url"),
-                "snippet": result.get("snippet"),
-                "position": idx + 1
-            }
-
-            # Optionally scrape the URL
-            if scrape_results and processed_result["url"]:
-                scraped_content = await scrape_website(processed_result["url"])
-                if scraped_content:
-                    processed_result["scraped_content"] = scraped_content.dict()
-
-            results.append(processed_result)
-
-        return results
-
-    except Exception as e:
-        print(f"❌ Error in search_and_scrape: {e}")
-        return []
 
 
 async def extract_political_data_from_website(
@@ -267,12 +270,38 @@ async def extract_political_data_from_website(
     return political_data if political_data["sections"] else None
 
 
-# Utility function for synchronous code
+# Utility functions for synchronous code
 def scrape_website_sync(url: str, **kwargs) -> Optional[WebsiteContent]:
-    """Synchronous wrapper for scrape_website."""
-    return asyncio.run(scrape_website(url, **kwargs))
+    """
+    Synchronous wrapper for scrape_website.
+    Creates a new event loop to run the async function.
+    """
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(scrape_website(url, **kwargs))
+        finally:
+            loop.close()
+    except Exception as e:
+        print(f"❌ Error in scrape_website_sync: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 def search_and_scrape_sync(query: str, **kwargs) -> List[Dict[str, Any]]:
-    """Synchronous wrapper for search_and_scrape."""
-    return asyncio.run(search_and_scrape(query, **kwargs))
+    """
+    Synchronous wrapper for search_and_scrape.
+    Creates a new event loop to run the async function.
+    """
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            return loop.run_until_complete(search_and_scrape(query, **kwargs))
+        finally:
+            loop.close()
+    except Exception as e:
+        print(f"❌ Error in search_and_scrape_sync: {e}")
+        return []
