@@ -53,8 +53,8 @@ async def test_agent():
         if entity.identity_data:
             if entity.identity_data.official_website:
                 print(f"   Official Website: {entity.identity_data.official_website}")
-            if entity.identity_data.country:
-                print(f"   Country: {entity.identity_data.country}")
+            if entity.identity_data.country_code:
+                print(f"   Country: {entity.identity_data.country_code}")
 
         if entity.political_landscape and entity.political_landscape.current_mayor:
             mayor = entity.political_landscape.current_mayor
@@ -62,8 +62,8 @@ async def test_agent():
             print(f"   Name: {mayor.name}")
             if mayor.party:
                 print(f"   Party: {mayor.party}")
-            if mayor.term_start:
-                print(f"   Term Start: {mayor.term_start}")
+            if mayor.since:
+                print(f"   Term Start: {mayor.since}")
 
         if result.get("db_result"):
             db = result["db_result"]

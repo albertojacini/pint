@@ -160,13 +160,63 @@ class EntityInformationAgent:
             )
 
             response = self.llm.invoke(prompt)
-            ranking_data = json.loads(response.content)
 
-            # Order URLs based on ranking
+            # Parse JSON with better error handling
+            try:
+                # Check if response has content
+                if not response or not response.content:
+                    print("⚠️ LLM returned empty response for ranking")
+                    ranked_urls = [r["url"] for r in wikipedia_results]
+                    return {"wikipedia_urls": ranked_urls}
+
+                # Try to extract JSON from response
+                content = response.content.strip()
+                if not content:
+                    print("⚠️ LLM response content is empty")
+                    ranked_urls = [r["url"] for r in wikipedia_results]
+                    return {"wikipedia_urls": ranked_urls}
+
+                # Remove markdown code blocks if present
+                if content.startswith("```"):
+                    # Extract JSON from ```json ... ``` or ``` ... ```
+                    # Remove first line (```json or ```)
+                    content = content.split("\n", 1)[1] if "\n" in content else content[3:]
+                    # Remove last ``` if present
+                    if content.endswith("```"):
+                        content = content[:-3]
+                    # Find the last } and cut there to handle extra text after JSON
+                    last_brace = content.rfind("}")
+                    if last_brace != -1:
+                        content = content[:last_brace + 1]
+                    content = content.strip()
+
+                ranking_data = json.loads(content)
+            except json.JSONDecodeError as e:
+                print(f"⚠️ Failed to parse LLM ranking response: {e}")
+                print(f"   Response content: {response.content[:200] if response.content else 'None'}")
+                # Fallback: use URLs in original order
+                ranked_urls = [r["url"] for r in wikipedia_results]
+                return {"wikipedia_urls": ranked_urls}
+
+            # Validate and order URLs based on ranking
             ranked_urls = []
-            for idx in ranking_data.get("rankings", []):
-                if idx < len(wikipedia_results):
-                    ranked_urls.append(wikipedia_results[idx]["url"])
+            rankings = ranking_data.get("rankings", [])
+
+            if not rankings:
+                print("⚠️ No rankings returned by LLM, using original order")
+                ranked_urls = [r["url"] for r in wikipedia_results]
+            else:
+                # Validate each index and build ranked list
+                for idx in rankings:
+                    if isinstance(idx, int) and 0 <= idx < len(wikipedia_results):
+                        ranked_urls.append(wikipedia_results[idx]["url"])
+                    else:
+                        print(f"⚠️ Invalid ranking index: {idx} (max: {len(wikipedia_results)-1})")
+
+                # If no valid rankings, fallback to original order
+                if not ranked_urls:
+                    print("⚠️ All rankings were invalid, using original order")
+                    ranked_urls = [r["url"] for r in wikipedia_results]
 
             print(f"✅ Found {len(ranked_urls)} Wikipedia URLs")
             return {"wikipedia_urls": ranked_urls}
@@ -174,8 +224,15 @@ class EntityInformationAgent:
         except Exception as e:
             error_msg = f"Wikipedia filtering failed: {str(e)}"
             print(f"❌ {error_msg}")
+            # Fallback: return URLs in original order if available
+            wikipedia_urls = []
+            if state.get("serp_results"):
+                wikipedia_urls = [
+                    r["url"] for r in state["serp_results"]
+                    if r.get("is_wikipedia", False)
+                ]
             return {
-                "wikipedia_urls": [],
+                "wikipedia_urls": wikipedia_urls,
                 "errors": state.get("errors", []) + [error_msg]
             }
 
@@ -211,9 +268,19 @@ class EntityInformationAgent:
         """Extract basic entity information from Wikipedia content."""
         print("🔍 Extracting basic entity information...")
 
+        # Create minimal basic info if no Wikipedia content available
         if not state.get("wikipedia_content"):
-            print("⚠️ No Wikipedia content to extract from")
-            return {"basic_info": None}
+            print("⚠️ No Wikipedia content available, creating minimal basic info")
+            # Create minimal structure with entity name and type
+            basic_info = {
+                "name": state["entity_name"],
+                "type": state["entity_type"],
+                "description": None,
+                "population": None,
+                "identity_data": {},
+                "essential_stats": {}
+            }
+            return {"basic_info": basic_info}
 
         try:
             prompt = self.prompts.EXTRACT_BASIC_INFO.format(
@@ -222,7 +289,70 @@ class EntityInformationAgent:
             )
 
             response = self.llm.invoke(prompt)
-            basic_info = json.loads(response.content)
+
+            # Parse JSON with error handling
+            try:
+                # Check if response has content
+                if not response or not response.content:
+                    print("⚠️ LLM returned empty response for basic info")
+                    basic_info = {
+                        "name": state["entity_name"],
+                        "type": state["entity_type"],
+                        "description": None,
+                        "population": None,
+                        "identity_data": {},
+                        "essential_stats": {}
+                    }
+                    return {"basic_info": basic_info}
+
+                content = response.content.strip()
+                if not content:
+                    print("⚠️ LLM response content is empty")
+                    basic_info = {
+                        "name": state["entity_name"],
+                        "type": state["entity_type"],
+                        "description": None,
+                        "population": None,
+                        "identity_data": {},
+                        "essential_stats": {}
+                    }
+                    return {"basic_info": basic_info}
+
+                # Remove markdown code blocks if present
+                if content.startswith("```"):
+                    # Remove first line (```json or ```)
+                    content = content.split("\n", 1)[1] if "\n" in content else content[3:]
+                    # Remove last ``` if present
+                    if content.endswith("```"):
+                        content = content[:-3]
+                    # Find the last } and cut there to handle extra text after JSON
+                    last_brace = content.rfind("}")
+                    if last_brace != -1:
+                        content = content[:last_brace + 1]
+                    content = content.strip()
+
+                basic_info = json.loads(content)
+            except json.JSONDecodeError as e:
+                print(f"⚠️ Failed to parse LLM response: {e}")
+                print(f"   Response content: {response.content[:200] if response.content else 'None'}")
+                # Return minimal structure
+                basic_info = {
+                    "name": state["entity_name"],
+                    "type": state["entity_type"],
+                    "description": None,
+                    "population": None,
+                    "identity_data": {},
+                    "essential_stats": {}
+                }
+                return {"basic_info": basic_info}
+
+            # Ensure required fields exist with defaults
+            basic_info.setdefault("name", state["entity_name"])
+            basic_info.setdefault("type", state["entity_type"])
+            basic_info.setdefault("description", None)
+            basic_info.setdefault("population", None)
+            basic_info.setdefault("identity_data", {})
+            basic_info.setdefault("essential_stats", {})
 
             print(f"✅ Extracted basic information for: {state['entity_name']}")
             return {"basic_info": basic_info}
@@ -230,8 +360,17 @@ class EntityInformationAgent:
         except Exception as e:
             error_msg = f"Basic info extraction failed: {str(e)}"
             print(f"❌ {error_msg}")
+            # Return minimal structure instead of None
+            basic_info = {
+                "name": state["entity_name"],
+                "type": state["entity_type"],
+                "description": None,
+                "population": None,
+                "identity_data": {},
+                "essential_stats": {}
+            }
             return {
-                "basic_info": None,
+                "basic_info": basic_info,
                 "errors": state.get("errors", []) + [error_msg]
             }
 
@@ -303,16 +442,21 @@ class EntityInformationAgent:
         """Extract political landscape information from all sources."""
         print("🏛️ Extracting political landscape data...")
 
+        # Prepare content for extraction
+        website_content = ""
+        if state.get("website_content"):
+            website_content = state["website_content"].get("content", "")[:5000]
+
+        wikipedia_content = ""
+        if state.get("wikipedia_content"):
+            wikipedia_content = state["wikipedia_content"].get("extract", "")[:5000]
+
+        # If no content available, return empty structure
+        if not website_content and not wikipedia_content:
+            print("⚠️ No content available for political data extraction")
+            return {"political_data": {}}
+
         try:
-            # Prepare content for extraction
-            website_content = ""
-            if state.get("website_content"):
-                website_content = state["website_content"].get("content", "")[:5000]
-
-            wikipedia_content = ""
-            if state.get("wikipedia_content"):
-                wikipedia_content = state["wikipedia_content"].get("extract", "")[:5000]
-
             prompt = self.prompts.EXTRACT_POLITICAL_LANDSCAPE.format(
                 entity_name=state["entity_name"],
                 website_content=website_content or "No website content available",
@@ -320,7 +464,42 @@ class EntityInformationAgent:
             )
 
             response = self.llm.invoke(prompt)
-            political_data = json.loads(response.content)
+
+            # Parse JSON with error handling
+            try:
+                # Check if response has content
+                if not response or not response.content:
+                    print("⚠️ LLM returned empty response for political data")
+                    return {"political_data": {}}
+
+                content = response.content.strip()
+                if not content:
+                    print("⚠️ LLM response content is empty")
+                    return {"political_data": {}}
+
+                # Remove markdown code blocks if present
+                if content.startswith("```"):
+                    # Remove first line (```json or ```)
+                    content = content.split("\n", 1)[1] if "\n" in content else content[3:]
+                    # Remove last ``` if present
+                    if content.endswith("```"):
+                        content = content[:-3]
+                    # Find the last } and cut there to handle extra text after JSON
+                    last_brace = content.rfind("}")
+                    if last_brace != -1:
+                        content = content[:last_brace + 1]
+                    content = content.strip()
+
+                political_data = json.loads(content)
+            except json.JSONDecodeError as e:
+                print(f"⚠️ Failed to parse political data response: {e}")
+                print(f"   Response content: {response.content[:200] if response.content else 'None'}")
+                return {"political_data": {}}
+
+            # Ensure it's a dict
+            if not isinstance(political_data, dict):
+                print(f"⚠️ Political data is not a dictionary: {type(political_data)}")
+                return {"political_data": {}}
 
             print("✅ Extracted political landscape data")
             return {"political_data": political_data}
@@ -329,7 +508,7 @@ class EntityInformationAgent:
             error_msg = f"Political data extraction failed: {str(e)}"
             print(f"❌ {error_msg}")
             return {
-                "political_data": None,
+                "political_data": {},
                 "errors": state.get("errors", []) + [error_msg]
             }
 
@@ -339,19 +518,43 @@ class EntityInformationAgent:
         print("💾 Saving to database...")
 
         try:
-            # Combine all extracted data
-            basic_info = state.get("basic_info", {})
-            political_data = state.get("political_data", {})
+            # Get extracted data with safe defaults
+            basic_info = state.get("basic_info") or {}
+            political_data = state.get("political_data") or {}
 
-            # Create CompleteEntityInfo object
+            # Ensure basic_info is a dict
+            if not isinstance(basic_info, dict):
+                print(f"⚠️ basic_info is not a dict: {type(basic_info)}, using defaults")
+                basic_info = {}
+
+            # Ensure political_data is a dict
+            if not isinstance(political_data, dict):
+                print(f"⚠️ political_data is not a dict: {type(political_data)}, using defaults")
+                political_data = {}
+
+            # Extract nested data safely
+            identity_data_dict = basic_info.get("identity_data", {})
+            if not isinstance(identity_data_dict, dict):
+                identity_data_dict = {}
+
+            essential_stats_dict = basic_info.get("essential_stats", {})
+            if not isinstance(essential_stats_dict, dict):
+                essential_stats_dict = {}
+
+            # Get avatar URL safely
+            avatar_url = None
+            if state.get("wikipedia_content") and isinstance(state["wikipedia_content"], dict):
+                avatar_url = state["wikipedia_content"].get("main_image")
+
+            # Create CompleteEntityInfo object with safe defaults
             entity = CompleteEntityInfo(
-                name=state["entity_name"],
+                name=basic_info.get("name") or state["entity_name"],
                 description=basic_info.get("description"),
-                type=state["entity_type"],
+                type=basic_info.get("type") or state["entity_type"],
                 population=basic_info.get("population"),
-                avatar_url=state.get("wikipedia_content", {}).get("main_image"),
-                identity_data=EntityIdentityData(**basic_info.get("identity_data", {})),
-                essential_stats=EntityEssentialStats(**basic_info.get("essential_stats", {})),
+                avatar_url=avatar_url,
+                identity_data=EntityIdentityData(**identity_data_dict),
+                essential_stats=EntityEssentialStats(**essential_stats_dict),
                 political_landscape=PoliticalLandscape(**political_data) if political_data else None
             )
 
@@ -367,6 +570,8 @@ class EntityInformationAgent:
         except Exception as e:
             error_msg = f"Database save failed: {str(e)}"
             print(f"❌ {error_msg}")
+            import traceback
+            traceback.print_exc()
             return {
                 "complete_entity": None,
                 "db_result": None,

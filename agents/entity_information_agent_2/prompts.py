@@ -255,10 +255,14 @@ Return JSON: {{"innovation": 0-100 or null, "sustainability": 0-100 or null, "im
         """Format search results for prompts."""
         formatted = []
         for i, result in enumerate(results):
+            # Handle None values safely
+            title = result.get('title') or 'No title'
+            url = result.get('url') or 'No URL'
+            snippet = result.get('snippet') or 'No snippet'
             formatted.append(
-                f"{i}. {result.get('title', 'No title')}\n"
-                f"   URL: {result.get('url', 'No URL')}\n"
-                f"   Snippet: {result.get('snippet', 'No snippet')[:200]}..."
+                f"{i}. {title}\n"
+                f"   URL: {url}\n"
+                f"   Snippet: {snippet[:200]}..."
             )
         return "\n".join(formatted)
 
