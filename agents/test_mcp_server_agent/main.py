@@ -20,6 +20,11 @@ client = MultiServerMCPClient({
     "brightdata": {
         "url": f"https://mcp.brightdata.com/sse?token={brightdata_token}",
         "transport": "sse",
+    },
+    "wikipedia": {
+        "command": "python",
+        "args": ["/Users/albertojacini/Projects/pint/agents/wikipedia_mcp_server.py"],
+        "transport": "stdio",
     }
 })
 
@@ -31,7 +36,7 @@ async def chat_with_agent():
     agent = create_agent(model, tools)
 
     print("Type 'exit' or 'quit' to end the chat.")
-    print(f"Connected with {len(tools)} tools from BrightData MCP server\n")
+    print(f"Connected with {len(tools)} tools from MCP servers (BrightData + Wikipedia)\n")
 
     while True:
         user_input = input("\nYou: ")
