@@ -5,38 +5,45 @@ from dotenv import load_dotenv
 import os
 
 
-def get_mcp_client() -> MultiServerMCPClient:
+def get_mcp_client(use_brightdata: bool = False) -> MultiServerMCPClient:
     """
     Create and return a configured MultiServerMCPClient with BrightData and Wikipedia.
 
+    Args:
+        use_brightdata: If True, include BrightData server. Default False for faster startup.
+
     Returns:
-        MultiServerMCPClient configured with BrightData (SSE) and Wikipedia (STDIO) servers
+        MultiServerMCPClient configured with Wikipedia (STDIO) and optionally BrightData (SSE)
 
     Raises:
-        ValueError: If BRIGHTDATA_API_KEY is not set in environment
+        ValueError: If use_brightdata=True and BRIGHTDATA_API_KEY is not set in environment
     """
     load_dotenv()
-
-    # Get BrightData token from environment
-    brightdata_token = os.getenv("BRIGHTDATA_API_KEY")
-    if not brightdata_token:
-        raise ValueError("BRIGHTDATA_API_KEY environment variable is not set")
 
     # Get the absolute path to the wikipedia MCP server
     agents_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     wikipedia_server_path = os.path.join(agents_dir, "wikipedia_mcp_server.py")
 
-    client = MultiServerMCPClient({
-        "brightdata": {
-            "url": f"https://mcp.brightdata.com/sse?token={brightdata_token}",
-            "transport": "sse",
-        },
+    connections = {
         "wikipedia": {
             "command": "python",
             "args": [wikipedia_server_path],
             "transport": "stdio",
         }
-    })
+    }
+
+    if use_brightdata:
+        # Get BrightData token from environment
+        brightdata_token = os.getenv("BRIGHTDATA_API_KEY")
+        if not brightdata_token:
+            raise ValueError("BRIGHTDATA_API_KEY environment variable is not set")
+
+        connections["brightdata"] = {
+            "url": f"https://mcp.brightdata.com/sse?token={brightdata_token}",
+            "transport": "sse",
+        }
+
+    client = MultiServerMCPClient(connections)
 
     return client
 
