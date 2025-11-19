@@ -60,11 +60,12 @@ async def run_agent(entity_input: str):
 
     logger.info("Creating agent...")
     agent = create_agent(
-        "gpt-5",
+        "gpt-5-mini",
         search_tools,
         # system_prompt="...",
         # middleware=
         response_format=EntityData,
+        system_prompt="When choosing web resources always prioritize those in the same language of the political entity in the input"
     )
     logger.info("Agent created, invoking...")
 
