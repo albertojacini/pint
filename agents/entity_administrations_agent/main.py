@@ -84,12 +84,21 @@ async def run_agent(entity_input: str):
         logger.error(f"Error getting tools: {e}", exc_info=True)
         raise
 
-    search_tools = [t for t in tools if t.name in ["query_wikipedia", "search_engine"]]
+    # lsearch_engine` | BrightData | `query` | `engine`, `cursor` | Search Google/Bing/Yandex for current info |
+    # || `scrape_as_markdown` | BrightData | `url` | - | Scrape single webpage to markdown |
+    # || `search_engine_batch` | BrightData | `queries` (array) | - | Run up to 10 searches in parallel |
+    # || `scrape_batch` | BrightData | `urls` (array) | - | Scrape up to 10 webpages in parallel |
+    # || `query_wikipedia` | Wikipedia | `title` | `language` | Query Wikipedia articles |
+    search_tools = [t for t in tools if t.name in ["query_wikipedia", "search_engine", ""]]
+
     logger.info(f"Filtered to {len(search_tools)} search tools: {[t.name for t in search_tools]}")
 
     system_prompt = """You are an expert at finding government administration data for political entities.
 
 Your task is to find all administrations (governments) for the given political entity from the last 10 years.
+STRATEGY:
+- Start with defining which administrations were elected and ruled in the last 10 year. For this look for wikipedia pages about elections in the target political entity.
+- Once you have a clear idea you go into details and try to find specific people that were part of the administration.
 
 SEARCH PRIORITY (in order):
 1. Wikipedia first (use query_wikipedia tool)
@@ -97,11 +106,10 @@ SEARCH PRIORITY (in order):
 3. Other reliable sources
 
 IMPORTANT:
-- Find ALL administrations from the last 10 years, not just the current one
-- Include complete member information (names, roles, dates)
-- Use dates in ISO format (YYYY-MM-DD)
 - The output language should match the language of the political entity
-- Be thorough - include all government members you can find (mayors, councilors, ministers, etc.)
+- Find administrations from the last 10 years, not just the current one
+- Include complete member information (names, roles, dates)
+- Try to include all government members you can find (mayors, councilors, ministers, etc.). Do your best but give up when it sounds too complicated to collect more info
 - Mark status as 'active' for current administrations, 'historical' for past ones
 """
 
