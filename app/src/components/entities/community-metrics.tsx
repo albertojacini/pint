@@ -21,7 +21,7 @@ export function CommunityMetrics({ data }: CommunityMetricsProps) {
   if (!data) return null
 
   return (
-    <div className="py-4 border-t border-gray-200">
+    <div className="py-4">
       <h3 className="text-sm font-semibold text-gray-700 mb-3">Pint Community Metrics</h3>
 
       <div className="grid md:grid-cols-2 gap-6">

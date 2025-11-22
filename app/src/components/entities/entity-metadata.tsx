@@ -8,7 +8,7 @@ interface EntityMetadataProps {
 
 export function EntityMetadata({ id, createdAt, updatedAt }: EntityMetadataProps) {
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+    <div className="bg-gray-50 rounded-lg p-6">
       <h2 className="text-lg font-semibold mb-4">Metadata</h2>
       <div className="grid md:grid-cols-2 gap-4 text-sm">
         <div>

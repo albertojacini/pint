@@ -21,7 +21,7 @@ export function EventsOverview({ entityId, events }: EventsOverviewProps) {
   if (events.length === 0) return null
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
+    <div className="bg-white p-8 mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Recent Events</h2>

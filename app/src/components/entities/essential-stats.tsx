@@ -15,7 +15,7 @@ export function EssentialStats({ population, stats }: EssentialStatsProps) {
   if (!population && !stats) return null
 
   return (
-    <div className="py-3 mb-6 border-b border-gray-200">
+    <div className="py-3 mb-6">
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
         {population && (
           <div className="flex items-center gap-2">

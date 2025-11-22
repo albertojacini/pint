@@ -1,5 +1,6 @@
 export { EntityTags } from './entity-tags'
 export { EntityHeader } from './entity-header'
+export { EntityActions } from './entity-actions'
 export { EssentialStats } from './essential-stats'
 export { PoliticalLandscape } from './political-landscape'
 export { PerformanceIndicators } from './performance-indicators'

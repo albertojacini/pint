@@ -8,6 +8,7 @@ import { getEventsByEntity } from '@/lib/actions/events'
 import {
   EntityTags,
   EntityHeader,
+  EntityActions,
   EssentialStats,
   PoliticalLandscape,
   PerformanceIndicators,
@@ -119,9 +120,10 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </div>
 
       {/* Main entity card */}
-      <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
+      <div className="bg-white p-8 mb-6">
         <EntityHeader entity={entity} />
         <EssentialStats population={entity.population} stats={entity.essentialStats} />
+        <EntityActions entityId={id} />
         <PoliticalLandscape data={entity.politicalLandscape} />
         <PerformanceIndicators data={entity.performanceIndicators} />
         <CommunityMetrics data={entity.communityMetrics} />

@@ -26,7 +26,7 @@ export function AdministrationsSection({ administrations }: AdministrationsSecti
     .slice(0, 4) // Get up to 4 historical
 
   return (
-    <div className="mt-8 rounded-lg border border-gray-200 bg-white p-6">
+    <div className="mt-8 bg-white p-6">
       <h2 className="text-2xl font-bold mb-4">Administrations</h2>
 
       {activeAdministration && (

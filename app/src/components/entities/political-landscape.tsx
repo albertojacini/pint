@@ -24,7 +24,7 @@ export function PoliticalLandscape({ data }: PoliticalLandscapeProps) {
   if (!data) return null
 
   return (
-    <div className="py-4 mb-6 border-b border-gray-200">
+    <div className="py-4 mb-6">
       <h3 className="text-sm font-semibold text-gray-700 mb-3">Political Landscape</h3>
 
       <div className="grid md:grid-cols-2 gap-6">
