@@ -6,6 +6,7 @@
 
 import { politicalEntities } from '../data/political-entities-data.mjs'
 import { entityRelationships } from '../data/entity-relationships-data.mjs'
+import { taggablesData } from '../data/taggables-data.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -130,6 +131,50 @@ export async function seedEntities(client, supabase, idMaps) {
     }
 
     logger.endSection('entity relationships', successCount)
+  }
+
+  // ===== ENTITY TAGGABLES =====
+  logger.startSection('entity taggables')
+
+  if (await hasData(client, 'taggables')) {
+    logger.skipSection('Taggables')
+  } else {
+    let taggablesCount = 0
+    let taggablesSkipped = 0
+
+    // Filter to only entity taggables
+    const entityTaggables = taggablesData.filter(t => t.taggableType === 'entity')
+
+    for (const taggable of entityTaggables) {
+      // Look up tag ID by slug
+      const tagId = idMaps.tags.get(taggable.tagSlug)
+      // Look up entity ID by name
+      const entityId = idMaps.entities.get(taggable.taggableName)
+
+      if (!tagId || !entityId) {
+        logger.warning(
+          `Skipping taggable: tag=${taggable.tagSlug}, entity=${taggable.taggableName} (not found)`
+        )
+        taggablesSkipped++
+        continue
+      }
+
+      const id = generateUUID()
+
+      await insertQuery(client, {
+        table: 'taggables',
+        columns: ['id', 'tag_id', 'taggable_type', 'taggable_id'],
+        values: [id, tagId, 'entity', entityId]
+      })
+
+      taggablesCount++
+    }
+
+    if (taggablesSkipped > 0) {
+      logger.warning(`Skipped ${taggablesSkipped} taggables due to missing references`)
+    }
+
+    logger.endSection('entity taggables', taggablesCount)
   }
 
   return idMaps

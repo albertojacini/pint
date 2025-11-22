@@ -1,6 +1,6 @@
 import { db } from '@/lib/db/client'
-import { politicalEntities, administrations, administrationMembers, people } from '@/lib/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { politicalEntities, administrations, administrationMembers, people, taggables, tags } from '@/lib/db/schema'
+import { eq, desc, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
@@ -96,13 +96,52 @@ export default async function EntityPage({ params }: EntityPageProps) {
   // Fetch events for this entity
   const events = await getEventsByEntity(id)
 
+  // Fetch tags for this entity
+  const entityTags = await db
+    .select({
+      id: tags.id,
+      name: tags.name,
+      slug: tags.slug,
+      color: tags.color,
+      category: tags.category,
+    })
+    .from(taggables)
+    .innerJoin(tags, eq(taggables.tagId, tags.id))
+    .where(
+      and(
+        eq(taggables.taggableType, 'entity'),
+        eq(taggables.taggableId, id)
+      )
+    )
+
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      {/* Back button */}
-      <div className="mb-6">
-        <Link href="/entities" className="text-blue-600 hover:underline">
-          ← Back to entities
+      {/* Tags row */}
+      {entityTags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {entityTags.map((tag) => (
+            <span
+              key={tag.id}
+              className="px-2 py-0.5 rounded text-xs font-medium text-white"
+              style={{ backgroundColor: tag.color || '#6b7280' }}
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Back link - breadcrumb style */}
+      <div className="text-sm text-gray-500 mb-2">
+        <Link href="/entities" className="hover:underline">
+          {entity.identityData?.countryCode || 'Entities'}
         </Link>
+        {entity.identityData?.regionName && (
+          <>
+            {' > '}
+            <span>{entity.identityData.regionName}</span>
+          </>
+        )}
       </div>
 
       {/* Entity header */}
