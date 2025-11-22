@@ -18,7 +18,7 @@ export const politicalEntities = [
   {
     name: "Comune di Milano",
     description: "The city council of Milan",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: "./assets/avatars/entities/comune-di-milano.webp",
     type: "city",
     population: 1500000,
     score_innovation: 9,
@@ -28,7 +28,6 @@ export const politicalEntities = [
       countryCode: "IT",
       regionName: "Lombardy",
       cityType: "Metropolitan City",
-      coatOfArmsUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Coat_of_arms_of_Milan.svg/200px-Coat_of_arms_of_Milan.svg.png",
       officialWebsite: "https://www.comune.milano.it",
       sisterCities: 15
     },
@@ -110,7 +109,7 @@ export const politicalEntities = [
   {
     name: "Regione Lombardia",
     description: "The regional government of Lombardy",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "region",
     population: 10000000,
     score_innovation: 7,
@@ -120,7 +119,7 @@ export const politicalEntities = [
   {
     name: "Repubblica Italiana",
     description: "The Italian Republic",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "country",
     population: 60000000,
     score_innovation: 6,
@@ -132,7 +131,7 @@ export const politicalEntities = [
   {
     name: "European Union",
     description: "The European Union",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "supranational",
     population: 450000000,
     score_innovation: 8,
@@ -169,7 +168,7 @@ export const politicalEntities = [
   {
     name: "Stadt Berlin",
     description: "The city council of Berlin",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "city",
     population: 4000000,
     score_innovation: 8,
@@ -197,7 +196,7 @@ export const politicalEntities = [
   {
     name: "Ajuntament de Barcelona",
     description: "The city council of Barcelona",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "city",
     population: 2000000,
     score_innovation: 9,
@@ -235,7 +234,7 @@ export const politicalEntities = [
   {
     name: "Ville de Paris",
     description: "The city council of Paris",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "city",
     population: 2200000,
     score_innovation: 9,
@@ -263,7 +262,7 @@ export const politicalEntities = [
   {
     name: "Stadt Wien",
     description: "The city council of Vienna",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "city",
     population: 1900000,
     score_innovation: 9,
@@ -291,7 +290,7 @@ export const politicalEntities = [
   {
     name: "City of London",
     description: "The city council of London",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "city",
     population: 9000000,
     score_innovation: 9,
@@ -329,7 +328,7 @@ export const politicalEntities = [
   {
     name: "City of New York",
     description: "The city council of New York",
-    avatar_url: "https://example.com/avatar.jpg",
+    avatar_url: null,
     type: "city",
     population: 8500000,
     score_innovation: 9,
