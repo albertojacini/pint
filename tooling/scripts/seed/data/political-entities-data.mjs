@@ -35,10 +35,8 @@ export const politicalEntities = [
       area: 181.8,
       density: 8249,
       gdpPerCapita: 49500,
-      timezone: "CET (UTC+1)",
-      languages: ["Italian"],
-      elevation: 120,
-      founded: "600 BC"
+      unemploymentRate: 5.8,
+      povertyRate: 12
     },
     political_landscape: {
       currentMayor: {

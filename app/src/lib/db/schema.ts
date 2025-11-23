@@ -47,10 +47,8 @@ export const politicalEntities = pgTable('political_entities', {
     area?: number
     density?: number
     gdpPerCapita?: number
-    timezone?: string
-    languages?: string[]
-    elevation?: number
-    founded?: string
+    unemploymentRate?: number
+    povertyRate?: number
   }>(),
   politicalLandscape: jsonb('political_landscape').$type<{
     currentMayor?: {

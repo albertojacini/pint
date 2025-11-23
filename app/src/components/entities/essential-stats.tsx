@@ -4,10 +4,8 @@ interface EssentialStatsProps {
     area?: number
     density?: number
     gdpPerCapita?: number
-    timezone?: string
-    languages?: string[]
-    elevation?: number
-    founded?: string
+    unemploymentRate?: number
+    povertyRate?: number
   } | null
 }
 
@@ -41,28 +39,16 @@ export function EssentialStats({ population, stats }: EssentialStatsProps) {
             <span className="font-semibold">${stats.gdpPerCapita.toLocaleString()}</span>
           </div>
         )}
-        {stats?.timezone && (
+        {stats?.unemploymentRate != null && (
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">Timezone:</span>
-            <span className="font-semibold">{stats.timezone}</span>
+            <span className="text-gray-500">Unemployment:</span>
+            <span className="font-semibold">{stats.unemploymentRate}%</span>
           </div>
         )}
-        {stats?.languages && stats.languages.length > 0 && (
+        {stats?.povertyRate != null && (
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">Languages:</span>
-            <span className="font-semibold">{stats.languages.join(', ')}</span>
-          </div>
-        )}
-        {stats?.elevation && (
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500">Elevation:</span>
-            <span className="font-semibold">{stats.elevation}m</span>
-          </div>
-        )}
-        {stats?.founded && (
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500">Founded:</span>
-            <span className="font-semibold">{stats.founded}</span>
+            <span className="text-gray-500">Poverty rate:</span>
+            <span className="font-semibold">{stats.povertyRate}%</span>
           </div>
         )}
       </div>
