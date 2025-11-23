@@ -39,22 +39,49 @@ export const politicalEntities = [
       povertyRate: 12
     },
     political_landscape: {
-      currentMayor: {
-        name: "Giuseppe Sala",
-        party: "Centro-sinistra",
-        partyColor: "#D32F2F"
-      },
-      lastElection: {
-        date: "2021-10-03",
-        turnout: 47.7
-      },
-      nextElection: {
-        date: "2026-10-04"
-      },
       councilComposition: [
-        { party: "Centro-sinistra", seats: 24, color: "#D32F2F" },
-        { party: "Centro-destra", seats: 18, color: "#1976D2" },
-        { party: "M5S", seats: 6, color: "#FFB300" }
+        { party: "PD", seats: 24, color: "#D32F2F" },
+        { party: "FdI", seats: 18, color: "#1B5E20" },
+        { party: "Lega", seats: 6, color: "#F57C00" }
+      ],
+      executiveMembers: [
+        { name: "Sala", role: "mayor", party: "PD" },
+        { name: "Morlecchi", role: "vice-mayor", party: "PD" },
+        { name: "Grandi", role: "assessor", roleTitle: "Assessore al Lavoro", party: "PD" },
+        { name: "Rossi", role: "assessor", roleTitle: "Assessore Bilancio", party: "FdI" },
+        { name: "Ferrari", role: "councilor", party: "Lega" }
+      ],
+      nextElection: {
+        date: "2027-03-15"
+      },
+      electionHistory: [
+        {
+          date: "2024-10-06",
+          turnout: 52.3,
+          results: [
+            { party: "PD", percentage: 45, color: "#D32F2F" },
+            { party: "FdI", percentage: 19, color: "#1B5E20" },
+            { party: "Lega", percentage: 24, color: "#F57C00" }
+          ]
+        },
+        {
+          date: "2019-09-22",
+          turnout: 58.1,
+          results: [
+            { party: "PD", percentage: 45, color: "#D32F2F" },
+            { party: "FdI", percentage: 19, color: "#1B5E20" },
+            { party: "Lega", percentage: 24, color: "#F57C00" }
+          ]
+        },
+        {
+          date: "2015-06-14",
+          turnout: 61.2,
+          results: [
+            { party: "PD", percentage: 45, color: "#D32F2F" },
+            { party: "FdI", percentage: 19, color: "#1B5E20" },
+            { party: "Lega", percentage: 24, color: "#F57C00" }
+          ]
+        }
       ]
     },
     performance_indicators: {

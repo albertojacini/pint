@@ -51,22 +51,31 @@ export const politicalEntities = pgTable('political_entities', {
     povertyRate?: number
   }>(),
   politicalLandscape: jsonb('political_landscape').$type<{
-    currentMayor?: {
-      name: string
-      party: string
-      partyColor: string
-    }
-    lastElection?: {
-      date: string
-      turnout: number // percentage
-    }
-    nextElection?: {
-      date: string
-    }
+    // Legislative branch - council composition
     councilComposition?: Array<{
       party: string
       seats: number
       color: string
+    }>
+    // Executive branch - city council members with roles
+    executiveMembers?: Array<{
+      name: string
+      role: 'mayor' | 'vice-mayor' | 'assessor' | 'councilor'
+      roleTitle?: string // e.g. "Assessore al Lavoro"
+      party?: string
+    }>
+    // Elections history and upcoming
+    nextElection?: {
+      date: string
+    }
+    electionHistory?: Array<{
+      date: string
+      turnout?: number
+      results: Array<{
+        party: string
+        percentage: number
+        color: string
+      }>
     }>
   }>(),
   performanceIndicators: jsonb('performance_indicators').$type<{
