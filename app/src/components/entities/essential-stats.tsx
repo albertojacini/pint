@@ -21,15 +21,15 @@ function getIndicatorColor(level: IndicatorLevel): string | null {
 }
 
 function getPopulationLevel(population: number): IndicatorLevel {
-  if (population >= 1000000) return 'good' // large city
-  if (population >= 100000) return 'moderate' // medium city
-  return 'concerning' // small
+  if (population >= 1000000) return 'good'
+  if (population >= 100000) return 'moderate'
+  return 'concerning'
 }
 
 function getAreaLevel(area: number): IndicatorLevel {
-  if (area >= 500) return 'good' // large
-  if (area >= 100) return 'moderate' // medium
-  return 'concerning' // small
+  if (area >= 500) return 'good'
+  if (area >= 100) return 'moderate'
+  return 'concerning'
 }
 
 function getDensityLevel(density: number): IndicatorLevel {
@@ -56,10 +56,28 @@ function getPovertyLevel(rate: number): IndicatorLevel {
   return 'concerning'
 }
 
+function formatCompact(n: number): string {
+  if (n >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(1).replace(/\.0$/, '')}B`
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`
+  return n.toString()
+}
+
 function Indicator({ level }: { level: IndicatorLevel }) {
   const color = getIndicatorColor(level)
   if (!color) return null
   return <span className={`inline-block w-2 h-2 rounded-full ${color}`} />
+}
+
+function Stat({ icon, label, value, level }: { icon: string; label: string; value: string; level: IndicatorLevel }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <Indicator level={level} />
+      <span className="md:hidden">{icon}</span>
+      <span className="hidden md:inline text-gray-500">{label}</span>
+      <span className="font-medium">{value}</span>
+    </div>
+  )
 }
 
 export function EssentialStats({ population, stats }: EssentialStatsProps) {
@@ -67,48 +85,24 @@ export function EssentialStats({ population, stats }: EssentialStatsProps) {
 
   return (
     <div className="py-3 mb-6">
-      <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
         {population && (
-          <div className="flex items-center gap-2">
-            <Indicator level={getPopulationLevel(population)} />
-            <span className="text-gray-500">Population:</span>
-            <span className="font-semibold">{population.toLocaleString()}</span>
-          </div>
+          <Stat icon="👥" label="Population" value={formatCompact(population)} level={getPopulationLevel(population)} />
         )}
         {stats?.area && (
-          <div className="flex items-center gap-2">
-            <Indicator level={getAreaLevel(stats.area)} />
-            <span className="text-gray-500">Area:</span>
-            <span className="font-semibold">{stats.area.toLocaleString()} km²</span>
-          </div>
+          <Stat icon="📐" label="Area" value={`${formatCompact(stats.area)}km²`} level={getAreaLevel(stats.area)} />
         )}
         {stats?.density && (
-          <div className="flex items-center gap-2">
-            <Indicator level={getDensityLevel(stats.density)} />
-            <span className="text-gray-500">Density:</span>
-            <span className="font-semibold">{stats.density.toLocaleString()}/km²</span>
-          </div>
+          <Stat icon="🏘️" label="Density" value={`${formatCompact(stats.density)}/km²`} level={getDensityLevel(stats.density)} />
         )}
         {stats?.gdpPerCapita && (
-          <div className="flex items-center gap-2">
-            <Indicator level={getGdpLevel(stats.gdpPerCapita)} />
-            <span className="text-gray-500">GDP per capita:</span>
-            <span className="font-semibold">${stats.gdpPerCapita.toLocaleString()}</span>
-          </div>
+          <Stat icon="💰" label="GDP/capita" value={`$${formatCompact(stats.gdpPerCapita)}`} level={getGdpLevel(stats.gdpPerCapita)} />
         )}
         {stats?.unemploymentRate != null && (
-          <div className="flex items-center gap-2">
-            <Indicator level={getUnemploymentLevel(stats.unemploymentRate)} />
-            <span className="text-gray-500">Unemployment:</span>
-            <span className="font-semibold">{stats.unemploymentRate}%</span>
-          </div>
+          <Stat icon="📉" label="Unemployment" value={`${stats.unemploymentRate}%`} level={getUnemploymentLevel(stats.unemploymentRate)} />
         )}
         {stats?.povertyRate != null && (
-          <div className="flex items-center gap-2">
-            <Indicator level={getPovertyLevel(stats.povertyRate)} />
-            <span className="text-gray-500">Poverty rate:</span>
-            <span className="font-semibold">{stats.povertyRate}%</span>
-          </div>
+          <Stat icon="🏚️" label="Poverty" value={`${stats.povertyRate}%`} level={getPovertyLevel(stats.povertyRate)} />
         )}
       </div>
     </div>
