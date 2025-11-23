@@ -1,5 +1,12 @@
 import { db } from '@/lib/db/client'
-import { politicalEntities, administrations, administrationMembers, people, taggables, tags } from '@/lib/db/schema'
+import {
+  politicalEntities,
+  administrations,
+  administrationMembers,
+  people,
+  taggables,
+  tags,
+} from '@/lib/db/schema'
 import { eq, desc, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -29,10 +36,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
   const { id } = await params
 
   // Fetch the entity
-  const [entity] = await db
-    .select()
-    .from(politicalEntities)
-    .where(eq(politicalEntities.id, id))
+  const [entity] = await db.select().from(politicalEntities).where(eq(politicalEntities.id, id))
 
   if (!entity) {
     notFound()
@@ -95,12 +99,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
     })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))
-    .where(
-      and(
-        eq(taggables.taggableType, 'entity'),
-        eq(taggables.taggableId, id)
-      )
-    )
+    .where(and(eq(taggables.taggableType, 'entity'), eq(taggables.taggableId, id)))
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -120,14 +119,12 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </div>
 
       {/* Main entity card */}
-      <div className="bg-white p-8 mb-6">
-        <EntityHeader entity={entity} />
-        <EssentialStats population={entity.population} stats={entity.essentialStats} />
-        <EntityActions entityId={id} />
-        <PoliticalLandscape data={entity.politicalLandscape} />
-        <PerformanceIndicators data={entity.performanceIndicators} />
-        <CommunityMetrics data={entity.communityMetrics} />
-      </div>
+      <EntityHeader entity={entity} />
+      <EssentialStats population={entity.population} stats={entity.essentialStats} />
+      <EntityActions entityId={id} />
+      <PoliticalLandscape data={entity.politicalLandscape} />
+      <PerformanceIndicators data={entity.performanceIndicators} />
+      <CommunityMetrics data={entity.communityMetrics} />
 
       <AdministrationsSection administrations={administrationsWithMayor} />
       <ProvisionsOverview entityId={id} provisions={provisions} />
