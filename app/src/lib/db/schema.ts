@@ -62,6 +62,7 @@ export const politicalEntities = pgTable('political_entities', {
       name: string
       role: 'mayor' | 'vice-mayor' | 'assessor' | 'councilor'
       roleTitle?: string // e.g. "Assessore al Lavoro"
+      icon?: string // emoji icon for the role/portfolio
       party?: string
     }>
     // Elections history and upcoming
@@ -72,7 +73,7 @@ export const politicalEntities = pgTable('political_entities', {
       date: string
       turnout?: number
       results: Array<{
-        party: string
+        coalition: string
         percentage: number
         color: string
       }>

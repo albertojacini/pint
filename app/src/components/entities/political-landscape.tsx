@@ -9,6 +9,7 @@ interface PoliticalLandscapeProps {
       name: string
       role: 'mayor' | 'vice-mayor' | 'assessor' | 'councilor'
       roleTitle?: string
+      icon?: string
       party?: string
     }>
     nextElection?: {
@@ -18,7 +19,7 @@ interface PoliticalLandscapeProps {
       date: string
       turnout?: number
       results: Array<{
-        party: string
+        coalition: string
         percentage: number
         color: string
       }>
@@ -26,11 +27,11 @@ interface PoliticalLandscapeProps {
   } | null
 }
 
-// Role icons as emoji representations
+// Fallback role icons (used when icon not specified in data)
 const ROLE_ICONS: Record<string, string> = {
-  mayor: '👔',
-  'vice-mayor': '👔',
-  assessor: '⚖️',
+  mayor: '🎖️',
+  'vice-mayor': '🎖️',
+  assessor: '📋',
   councilor: '🏛️',
 }
 
@@ -77,7 +78,7 @@ function LegislativeSection({
 
   return (
     <div>
-      <SectionHeader>Legislativo</SectionHeader>
+      <SectionHeader>Consiglio comunale</SectionHeader>
       <div className="text-xs text-gray-500 mb-2">Council Composition ({totalSeats} seats)</div>
 
       {/* Visual bar */}
@@ -124,11 +125,11 @@ function ExecutiveSection({
 
   return (
     <div>
-      <SectionHeader>Consiglio comunale</SectionHeader>
+      <SectionHeader>Giunta comunale</SectionHeader>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
         {members.map((member, idx) => (
           <div key={idx} className="flex items-center gap-1.5">
-            <span>{ROLE_ICONS[member.role] || '👤'}</span>
+            <span>{member.icon || ROLE_ICONS[member.role] || '👤'}</span>
             <span className="text-gray-700">{member.name}</span>
           </div>
         ))}
@@ -141,8 +142,10 @@ function ExecutiveSection({
 function ElectionResultBar({
   results,
 }: {
-  results: Array<{ party: string; percentage: number; color: string }>
+  results: Array<{ coalition: string; percentage: number; color: string }>
 }) {
+  if (results.length === 0) return null
+
   return (
     <div className="h-6 rounded overflow-hidden flex">
       {results.map((result, idx) => (
@@ -154,7 +157,7 @@ function ElectionResultBar({
             width: `${result.percentage}%`,
           }}
         >
-          {result.percentage >= 10 && `${result.party} ${result.percentage}%`}
+          {result.percentage >= 10 && `${result.coalition} ${result.percentage}%`}
         </div>
       ))}
     </div>
@@ -188,16 +191,18 @@ function ElectionsSection({
       {/* Historical elections */}
       {history && history.length > 0 && (
         <div className="space-y-2">
-          {history.map((election, idx) => (
-            <div key={idx} className="flex items-center gap-3">
-              <span className="text-xs text-gray-500 w-16 flex-shrink-0">
-                {formatElectionDate(election.date)}
-              </span>
-              <div className="flex-1">
-                <ElectionResultBar results={election.results} />
+          {history
+            .filter((election) => election.results.length > 0)
+            .map((election, idx) => (
+              <div key={idx} className="flex items-center gap-3">
+                <span className="text-xs text-gray-500 w-16 flex-shrink-0">
+                  {formatElectionDate(election.date)}
+                </span>
+                <div className="flex-1">
+                  <ElectionResultBar results={election.results} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
     </div>
