@@ -73,6 +73,7 @@ export const politicalEntities = pgTable('political_entities', {
       date: string
       turnout?: number
       results: Array<{
+        candidate: string
         coalition: string
         percentage: number
         color: string

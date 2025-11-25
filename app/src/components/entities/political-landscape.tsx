@@ -19,6 +19,7 @@ interface PoliticalLandscapeProps {
       date: string
       turnout?: number
       results: Array<{
+        candidate: string
         coalition: string
         percentage: number
         color: string
@@ -142,9 +143,12 @@ function ExecutiveSection({
 function ElectionResultBar({
   results,
 }: {
-  results: Array<{ coalition: string; percentage: number; color: string }>
+  results: Array<{ candidate: string; coalition: string; percentage: number; color: string }>
 }) {
   if (results.length === 0) return null
+
+  const totalPercentage = results.reduce((sum, r) => sum + r.percentage, 0)
+  const othersPercentage = Math.max(0, 100 - totalPercentage)
 
   return (
     <div className="h-6 rounded overflow-hidden flex">
@@ -157,9 +161,20 @@ function ElectionResultBar({
             width: `${result.percentage}%`,
           }}
         >
-          {result.percentage >= 10 && `${result.coalition} ${result.percentage}%`}
+          {result.percentage >= 10 && `${result.candidate} ${result.percentage}%`}
         </div>
       ))}
+      {othersPercentage > 0 && (
+        <div
+          className="flex items-center justify-center text-white text-xs font-medium"
+          style={{
+            backgroundColor: '#9E9E9E',
+            width: `${othersPercentage}%`,
+          }}
+        >
+          {othersPercentage >= 5 && `Altri ${othersPercentage.toFixed(1)}%`}
+        </div>
+      )}
     </div>
   )
 }
