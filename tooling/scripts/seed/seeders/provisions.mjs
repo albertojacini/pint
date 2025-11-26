@@ -54,7 +54,8 @@ export async function seedProvisions(client, supabase, idMaps) {
           'status',
           'effective_from',
           'effective_until',
-          'idea_id'
+          'idea_id',
+          'extra_data'
         ],
         values: [
           id,
@@ -65,7 +66,8 @@ export async function seedProvisions(client, supabase, idMaps) {
           provision.status || 'active',
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
-          ideaId
+          ideaId,
+          JSON.stringify(provision.extraData || {})
         ]
       })
 

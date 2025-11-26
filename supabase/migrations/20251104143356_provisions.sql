@@ -21,6 +21,7 @@ create table if not exists public.provisions (
   effective_from date,
   effective_until date,
   idea_id uuid references public.ideas(id) on delete set null,
+  extra_data jsonb default '{}', -- Type-specific data: utility→{revenues}, tax→{rate}, etc.
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
