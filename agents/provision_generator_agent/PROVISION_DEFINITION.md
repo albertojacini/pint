@@ -46,13 +46,13 @@ If you can complete it with a meaningful action (change, sell, raise, terminate,
 | Zone 30 speed limits | Can expand zones, modify |
 | Historic center ZTL | Can change hours, boundaries |
 | Municipal kindergartens | Can open, close, change fees |
+| Expo 2015 | Was controlled by Milan (bid, organized, funded) — now expired |
 
 ### Is NOT a Provision
 
 | Found in text | Why not |
 |---------------|---------|
 | Population: 1.4M | Demographic fact — no action possible |
-| Expo 2015 | Historical event — immutable |
 | EU air quality directive | External constraint — not Milan's control |
 | Mayor's announcement | News event — not the provision itself |
 | Carbon neutrality goal 2050 | Aspiration — not a concrete mechanism |
