@@ -10,21 +10,29 @@ It represents a **relationship of control** between the political entity and som
 
 ## Criteria
 
-**The one-sentence test:**
+### 1. Control relationship
+The political entity can DO something with it. Test: can you complete *"[Political Entity] can _______ this"* with a meaningful action? (sell, raise, terminate, expand, amend, revoke...)
 
-> Can you complete this sentence?
->
-> *"[Political Entity] can _______ this."*
+### 2. Jurisdiction
+The control must be within the political entity's actual power. Milan can't change EU directives or national tax law — those aren't Milan's provisions.
 
-If you can complete it with a meaningful action (change, sell, raise, terminate, grant, etc.), it's likely a provision.
+### 3. Granularity
+The provision should be at the level a citizen or policymaker would recognize as "a thing you could debate or change."
 
-**What indicates control:**
-- Change, modify, update
-- Sell, buy, divest
-- Terminate, extend, renew
-- Raise, lower, restructure
-- Enact, repeal, amend
-- Grant, revoke
+- **Too granular**: Bus line 54's schedule, a single parking meter, one street's speed limit
+- **Right level**: Public transport service contract, street parking tariff policy, Zone 30 program
+- **Too abstract**: "Transportation", "Municipal revenue", "All regulations"
+
+### 4. Distinctness
+One provision = one control mechanism. If something bundles multiple independent controls, split them:
+- "Area C" → Area C fee (taxation) + Area C zone boundary (designation) + Area C vehicle rules (regulation)
+- "ATM" → ATM ownership stake + ATM service contract
+
+### 5. Temporal validity
+Expired or terminated things are still provisions — just with inactive status. An old contract, a concluded event (Expo 2015), a repealed regulation: all remain provisions with `effective_to` in the past.
+
+### 6. Verifiability
+The provision should be traceable to an official source (law, contract, deliberation, public record). Rumors or unofficial plans don't count until formalized.
 
 ---
 
