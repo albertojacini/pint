@@ -32,19 +32,30 @@ If you can complete it with a meaningful action (change, sell, raise, terminate,
 
 ### Is a Provision
 
-| Text Found | Why |
-|------------|-----|
-| "Milan owns 51% of ATM" | Milan can **sell** this |
-| "Area C charges €5" | Milan can **raise/lower** this |
-| "Building permit required for renovations" | Milan can **change the rules** |
-| "Municipal waste tax (TARI)" | Milan can **adjust the rate** |
+| Provision | Why |
+|-----------|-----|
+| ATM stake (51%) | Can sell, buy more, divest |
+| Area C fee | Can raise, lower, abolish |
+| Area B zone | Can expand, shrink, modify rules |
+| TARI (waste tax) | Can adjust rate, change exemptions |
+| IMU (property tax) | Can set rates within limits |
+| Building permit rules | Can change requirements |
+| Street parking tariffs | Can raise, lower prices |
+| Public housing stock | Can sell, renovate, expand |
+| SEA airport stake | Can divest, increase ownership |
+| Zone 30 speed limits | Can expand zones, modify |
+| Historic center ZTL | Can change hours, boundaries |
+| Municipal kindergartens | Can open, close, change fees |
 
 ### Is NOT a Provision
 
-| Text Found | Why |
-|------------|-----|
-| "Milan has 1.4M residents" | No action possible — just a fact |
-| "Milan hosted Expo 2015" | Past event — immutable |
-| "EU requires air quality standards" | Not Milan's control — external constraint |
-| "Mayor announced new initiative" | News — describes event, not the provision itself |
-| "Milan aims for carbon neutrality by 2050" | Aspiration — not a concrete control mechanism |
+| Found in text | Why not |
+|---------------|---------|
+| Population: 1.4M | Demographic fact — no action possible |
+| Expo 2015 | Historical event — immutable |
+| EU air quality directive | External constraint — not Milan's control |
+| Mayor's announcement | News event — not the provision itself |
+| Carbon neutrality goal 2050 | Aspiration — not a concrete mechanism |
+| Milan has 9 districts | Administrative structure — descriptive |
+| Public transport ridership | Statistical measure — outcome, not control |
+| Average rent prices | Market outcome — not directly controlled |
