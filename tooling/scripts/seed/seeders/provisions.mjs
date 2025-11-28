@@ -1,12 +1,10 @@
 /**
  * Provisions Domain Seeder
- * Seeds provisions (state infrastructure), events, and their relationships
- * Dependencies: ideas, entities (political_entities), administrations
+ * Seeds provision resources (URLs for the agent to process)
+ * Dependencies: entities (political_entities)
  */
 
-import { provisions } from '../data/provisions-data.mjs'
-import { events } from '../data/events-data.mjs'
-import { provisionEvents } from '../data/provision-events-data.mjs'
+import { provisionResources } from '../data/provision-resources-data.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -18,177 +16,43 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedProvisions(client, supabase, idMaps) {
-  // ===== PROVISIONS =====
-  logger.startSection('provisions')
+  // ===== PROVISION RESOURCES =====
+  logger.startSection('provision_resources')
 
-  let provisionSuccessCount = 0
-  let provisionSkipCount = 0
+  let successCount = 0
+  let skipCount = 0
 
-  if (await hasData(client, 'provisions')) {
-    logger.skipSection('Provisions')
+  if (await hasData(client, 'provision_resources')) {
+    logger.skipSection('Provision resources')
   } else {
-    // Insert each provision
-    for (const provision of provisions) {
-      // Look up foreign key IDs
-      const entityId = idMaps.entities.get(provision.entity)
-      const ideaId = provision.idea ? idMaps.ideas.get(provision.idea) : null
+    for (const resource of provisionResources) {
+      const entityId = idMaps.entities.get(resource.entity)
 
       if (!entityId) {
         logger.warning(
-          `Skipping provision "${provision.title}" - entity not found: ${provision.entity}`
+          `Skipping resource "${resource.url}" - entity not found: ${resource.entity}`
         )
-        provisionSkipCount++
+        skipCount++
         continue
       }
 
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'provisions',
-        columns: [
-          'id',
-          'entity_id',
-          'title',
-          'description',
-          'type',
-          'status',
-          'effective_from',
-          'effective_until',
-          'idea_id',
-          'extra_data'
-        ],
-        values: [
-          id,
-          entityId,
-          provision.title,
-          provision.description,
-          provision.type,
-          provision.status || 'active',
-          provision.effectiveFrom || null,
-          provision.effectiveUntil || null,
-          ideaId,
-          JSON.stringify(provision.extraData || {})
-        ]
+        table: 'provision_resources',
+        columns: ['id', 'entity_id', 'url', 'status'],
+        values: [id, entityId, resource.url, 'pending']
       })
 
-      provisionSuccessCount++
-      idMaps.provisions.set(provision.title, id)
+      successCount++
+      idMaps.provisionResources.set(resource.url, id)
     }
 
-    if (provisionSkipCount > 0) {
-      logger.warning(`Skipped ${provisionSkipCount} provisions due to missing dependencies`)
+    if (skipCount > 0) {
+      logger.warning(`Skipped ${skipCount} resources due to missing dependencies`)
     }
 
-    logger.endSection('provisions', provisionSuccessCount)
-  }
-
-  // ===== EVENTS =====
-  logger.startSection('events')
-
-  let eventSuccessCount = 0
-  let eventSkipCount = 0
-
-  if (await hasData(client, 'events')) {
-    logger.skipSection('Events')
-  } else {
-    // Insert each event
-    for (const event of events) {
-      // Look up administration ID (nullable for non-governmental events)
-      const administrationId = event.administration
-        ? idMaps.administrations.get(event.administration)
-        : null
-
-      // Only skip if administration was specified but not found
-      if (event.administration && !administrationId) {
-        logger.warning(
-          `Skipping event "${event.title}" - administration not found: ${event.administration}`
-        )
-        eventSkipCount++
-        continue
-      }
-
-      const id = generateUUID()
-
-      await insertQuery(client, {
-        table: 'events',
-        columns: [
-          'id',
-          'administration_id',
-          'title',
-          'description',
-          'type',
-          'occurred_at'
-        ],
-        values: [
-          id,
-          administrationId,
-          event.title,
-          event.description,
-          event.type,
-          event.occurredAt
-        ]
-      })
-
-      eventSuccessCount++
-      idMaps.events.set(event.title, id)
-    }
-
-    if (eventSkipCount > 0) {
-      logger.warning(`Skipped ${eventSkipCount} events due to missing dependencies`)
-    }
-
-    logger.endSection('events', eventSuccessCount)
-  }
-
-  // ===== PROVISION-EVENT RELATIONSHIPS =====
-  logger.startSection('provision-event relationships')
-
-  let relationshipSuccessCount = 0
-  let relationshipSkipCount = 0
-
-  if (await hasData(client, 'provision_events')) {
-    logger.skipSection('Provision-event relationships')
-  } else {
-    // Insert each relationship
-    for (const relationship of provisionEvents) {
-      // Look up provision and event IDs
-      const provisionId = idMaps.provisions.get(relationship.provision)
-      const eventId = idMaps.events.get(relationship.event)
-
-      if (!provisionId || !eventId) {
-        logger.warning(
-          `Skipping relationship: ${relationship.provision} <-> ${relationship.event} (not found)`
-        )
-        relationshipSkipCount++
-        continue
-      }
-
-      const id = generateUUID()
-
-      await insertQuery(client, {
-        table: 'provision_events',
-        columns: [
-          'id',
-          'provision_id',
-          'event_id',
-          'relationship_type'
-        ],
-        values: [
-          id,
-          provisionId,
-          eventId,
-          relationship.relationshipType || null
-        ]
-      })
-
-      relationshipSuccessCount++
-    }
-
-    if (relationshipSkipCount > 0) {
-      logger.warning(`Skipped ${relationshipSkipCount} relationships due to missing dependencies`)
-    }
-
-    logger.endSection('provision-event relationships', relationshipSuccessCount)
+    logger.endSection('provision_resources', successCount)
   }
 
   return idMaps
