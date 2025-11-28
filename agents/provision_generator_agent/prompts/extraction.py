@@ -48,16 +48,10 @@ For each provision, provide:
 - **effective_from**: Start date if mentioned (YYYY-MM-DD format), otherwise null
 - **source_snippet**: Brief quote from the page that evidences this provision
 
-## Tools Available
-
-- **scrape_url(url)**: If you find a link that might have more details about a provision, use this to get the content
-- **submit_provisions(provisions)**: When done, call this with your final list of provisions
-
 ## Important
 
 - Be thorough but precise. Don't invent provisions that aren't evidenced in the text.
-- If a page has no provisions (just informational content), submit an empty list.
-- Follow links only if they likely contain provision details (not general navigation links).
+- If a page has no provisions (just informational content), return an empty list.
 - Split compound provisions into distinct entries.
 """
 
@@ -71,6 +65,5 @@ Content:
 Remember:
 - Extract provisions (things the entity controls), not just information
 - Use the correct type for each provision
-- Follow links if needed for more details
-- Call submit_provisions when done
+- Split compound provisions into distinct entries
 """
