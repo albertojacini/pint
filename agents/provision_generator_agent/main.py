@@ -11,103 +11,126 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from langgraph.types import Command
+
 from provision_generator_agent.config import GOLDMINE_URLS
-from provision_generator_agent.models import ReviewDecision
-from provision_generator_agent.nodes.scraper import scrape
-from provision_generator_agent.nodes.extractor import extract
-from provision_generator_agent.nodes.deduper import dedupe
-from provision_generator_agent.nodes.reviewer import review
-from provision_generator_agent.nodes.storage import (
-    get_entity_id,
-    get_existing_provisions,
-    store,
-)
+from provision_generator_agent.graph import compile_graph
+from provision_generator_agent.nodes.storage import get_entity_id
 
 
-async def process_url(url: str, entity_id: str, entity_name: str) -> dict:
+def get_user_decision() -> str:
+    """Get decision from user via CLI."""
+    print("[A]pprove  [R]eject  [E]dit  [S]kip  [Q]uit")
+    while True:
+        choice = input("> ").strip().lower()
+        if choice in ("a", "approve", "r", "reject", "e", "edit", "s", "skip", "q", "quit"):
+            return choice
+        print("Invalid choice. Please enter A, R, E, S, or Q.")
+
+
+async def process_url(graph, url: str, entity_id: str, entity_name: str, thread_id: str) -> dict:
     """
-    Process a single URL through the pipeline.
+    Process a single URL through the graph.
 
     Returns:
         Stats dict with counts of approved, rejected, skipped provisions
     """
-    stats = {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0}
+    config = {"configurable": {"thread_id": thread_id}}
+
+    # Initial state
+    initial_state = {
+        "url": url,
+        "entity_id": entity_id,
+        "entity_name": entity_name,
+        "page": None,
+        "candidates": [],
+        "existing_provisions": [],
+        "current_candidate_index": 0,
+        "current_candidate": None,
+        "current_dedupe_result": None,
+        "current_decision": None,
+        "stats": {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0},
+        "stored_provision_ids": [],
+        "should_quit": False,
+    }
 
     print(f"\n{'='*60}")
     print(f"Processing: {url}")
     print("=" * 60)
 
-    # Step 1: Scrape
-    print("\n[1/5] Scraping...")
-    try:
-        page = await scrape(url)
-        print(f"  ✓ Got {len(page.markdown_content)} characters")
-    except Exception as e:
-        print(f"  ✗ Scraping failed: {e}")
-        stats["errors"] += 1
-        return stats
+    # Run graph until completion or interrupt
+    result = None
+    async for event in graph.astream(initial_state, config, stream_mode="updates"):
+        # Check for interrupt
+        if "__interrupt__" in event:
+            interrupt_info = event["__interrupt__"][0]
+            # Human review needed
+            decision = get_user_decision()
+            # Resume with decision
+            async for resume_event in graph.astream(
+                Command(resume=decision), config, stream_mode="updates"
+            ):
+                if "__interrupt__" in resume_event:
+                    # Another interrupt (another candidate)
+                    decision = get_user_decision()
+                    # Continue resuming - need to handle nested interrupts
+                    continue
 
-    # Step 2: Extract
-    print("\n[2/5] Extracting provisions...")
-    try:
-        candidates = await extract(page, entity_name=entity_name)
-        print(f"  ✓ Found {len(candidates)} candidate provisions")
-    except Exception as e:
-        print(f"  ✗ Extraction failed: {e}")
-        stats["errors"] += 1
-        return stats
+    # Get final state
+    final_state = graph.get_state(config)
+    return final_state.values.get("stats", {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0})
 
-    if not candidates:
-        print("  No provisions found on this page.")
-        return stats
 
-    # Get existing provisions for deduplication
-    existing = get_existing_provisions(entity_id)
-    print(f"\n[3/5] Checking against {len(existing)} existing provisions...")
+async def process_url_interactive(graph, url: str, entity_id: str, entity_name: str, thread_id: str) -> dict:
+    """
+    Process a URL with proper interrupt handling for multiple candidates.
+    """
+    config = {"configurable": {"thread_id": thread_id}}
 
-    # Process each candidate
-    for i, candidate in enumerate(candidates, 1):
-        print(f"\n--- Candidate {i}/{len(candidates)} ---")
+    initial_state = {
+        "url": url,
+        "entity_id": entity_id,
+        "entity_name": entity_name,
+        "page": None,
+        "candidates": [],
+        "existing_provisions": [],
+        "current_candidate_index": 0,
+        "current_candidate": None,
+        "current_dedupe_result": None,
+        "current_decision": None,
+        "stats": {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0},
+        "stored_provision_ids": [],
+        "should_quit": False,
+    }
 
-        # Step 3: Dedupe
-        try:
-            result = await dedupe(candidate, existing)
-        except Exception as e:
-            print(f"  ✗ Deduplication failed: {e}")
-            stats["errors"] += 1
-            continue
+    print(f"\n{'='*60}")
+    print(f"Processing: {url}")
+    print("=" * 60)
 
-        # Step 4: Review
-        decision, edited_candidate = review(result)
+    # Start the graph
+    current_input = initial_state
 
-        if decision == ReviewDecision.QUIT:
-            print("\nQuitting...")
-            return stats
+    while True:
+        # Run until interrupt or completion
+        async for event in graph.astream(current_input, config, stream_mode="updates"):
+            pass  # Just consume events
 
-        # Step 5: Store
-        if decision == ReviewDecision.APPROVE:
-            try:
-                provision_id = store(edited_candidate, entity_id)
-                print(f"  ✓ Stored provision: {provision_id}")
-                stats["approved"] += 1
-                # Add to existing for future deduplication
-                existing.append({
-                    "id": provision_id,
-                    "title": edited_candidate.title,
-                    "type": edited_candidate.type.value,
-                    "description": edited_candidate.description,
-                })
-            except Exception as e:
-                print(f"  ✗ Storage failed: {e}")
-                stats["errors"] += 1
-        elif decision == ReviewDecision.REJECT:
-            print("  → Rejected")
-            stats["rejected"] += 1
-        else:  # SKIP
-            print("  → Skipped")
-            stats["skipped"] += 1
+        # Check state
+        state = graph.get_state(config)
 
-    return stats
+        if not state.next:
+            # Graph completed
+            break
+
+        if state.next == ("review",) or "review" in state.next:
+            # Interrupted at review node - get human input
+            decision = get_user_decision()
+            current_input = Command(resume=decision)
+        else:
+            # Unexpected state
+            break
+
+    return state.values.get("stats", {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0})
 
 
 async def main(entity_name: str = "Comune di Milano", urls: list[str] | None = None):
@@ -119,7 +142,7 @@ async def main(entity_name: str = "Comune di Milano", urls: list[str] | None = N
         urls: List of URLs to process (defaults to GOLDMINE_URLS)
     """
     print("\n" + "=" * 60)
-    print("PROVISION GENERATOR AGENT")
+    print("PROVISION GENERATOR AGENT (LangGraph)")
     print("=" * 60)
     print(f"\nEntity: {entity_name}")
 
@@ -135,17 +158,23 @@ async def main(entity_name: str = "Comune di Milano", urls: list[str] | None = N
     urls = urls or GOLDMINE_URLS
     print(f"URLs to process: {len(urls)}")
 
+    # Compile graph once
+    graph = compile_graph()
+
     # Process each URL
     total_stats = {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0}
 
-    for url in urls:
-        stats = await process_url(url, entity_id, entity_name)
+    for i, url in enumerate(urls):
+        thread_id = f"provision-{entity_id}-{i}"
+        stats = await process_url_interactive(graph, url, entity_id, entity_name, thread_id)
 
         for key in total_stats:
-            total_stats[key] += stats[key]
+            total_stats[key] += stats.get(key, 0)
 
         # Check if user quit
-        if stats.get("quit"):
+        final_state = graph.get_state({"configurable": {"thread_id": thread_id}})
+        if final_state.values.get("should_quit"):
+            print("\nUser requested quit. Stopping...")
             break
 
     # Print summary
