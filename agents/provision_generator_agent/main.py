@@ -13,9 +13,8 @@ load_dotenv()
 
 from langgraph.types import Command
 
-from provision_generator_agent.config import GOLDMINE_URLS
+from provision_generator_agent.db import get_pending_resources, update_resource_status
 from provision_generator_agent.graph import compile_graph
-from provision_generator_agent.nodes.storage import get_entity_id
 
 
 def get_user_decision() -> str:
@@ -26,59 +25,6 @@ def get_user_decision() -> str:
         if choice in ("a", "approve", "r", "reject", "e", "edit", "s", "skip", "q", "quit"):
             return choice
         print("Invalid choice. Please enter A, R, E, S, or Q.")
-
-
-async def process_url(graph, url: str, entity_id: str, entity_name: str, thread_id: str) -> dict:
-    """
-    Process a single URL through the graph.
-
-    Returns:
-        Stats dict with counts of approved, rejected, skipped provisions
-    """
-    config = {"configurable": {"thread_id": thread_id}}
-
-    # Initial state
-    initial_state = {
-        "url": url,
-        "entity_id": entity_id,
-        "entity_name": entity_name,
-        "page": None,
-        "candidates": [],
-        "existing_provisions": [],
-        "current_candidate_index": 0,
-        "current_candidate": None,
-        "current_dedupe_result": None,
-        "current_decision": None,
-        "stats": {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0},
-        "stored_provision_ids": [],
-        "should_quit": False,
-    }
-
-    print(f"\n{'='*60}")
-    print(f"Processing: {url}")
-    print("=" * 60)
-
-    # Run graph until completion or interrupt
-    result = None
-    async for event in graph.astream(initial_state, config, stream_mode="updates"):
-        # Check for interrupt
-        if "__interrupt__" in event:
-            interrupt_info = event["__interrupt__"][0]
-            # Human review needed
-            decision = get_user_decision()
-            # Resume with decision
-            async for resume_event in graph.astream(
-                Command(resume=decision), config, stream_mode="updates"
-            ):
-                if "__interrupt__" in resume_event:
-                    # Another interrupt (another candidate)
-                    decision = get_user_decision()
-                    # Continue resuming - need to handle nested interrupts
-                    continue
-
-    # Get final state
-    final_state = graph.get_state(config)
-    return final_state.values.get("stats", {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0})
 
 
 async def process_url_interactive(graph, url: str, entity_id: str, entity_name: str, thread_id: str) -> dict:
@@ -133,43 +79,55 @@ async def process_url_interactive(graph, url: str, entity_id: str, entity_name: 
     return state.values.get("stats", {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0})
 
 
-async def main(entity_name: str = "Comune di Milano", urls: list[str] | None = None):
+async def main(entity_name: str = "Comune di Milano", limit: int = 10):
     """
     Run the provision generator pipeline.
 
     Args:
         entity_name: Name of the political entity
-        urls: List of URLs to process (defaults to GOLDMINE_URLS)
+        limit: Maximum number of resources to process
     """
     print("\n" + "=" * 60)
     print("PROVISION GENERATOR AGENT (LangGraph)")
     print("=" * 60)
     print(f"\nEntity: {entity_name}")
 
-    # Get entity ID
-    entity_id = get_entity_id(entity_name)
-    if not entity_id:
-        print(f"✗ Entity not found: {entity_name}")
+    # Get pending resources from DB
+    resources = get_pending_resources(entity_name, limit)
+    if not resources:
+        print(f"✗ No pending resources found for: {entity_name}")
         return
 
-    print(f"Entity ID: {entity_id}")
-
-    # Get URLs to process
-    urls = urls or GOLDMINE_URLS
-    print(f"URLs to process: {len(urls)}")
+    print(f"Resources to process: {len(resources)}")
 
     # Compile graph once
     graph = compile_graph()
 
-    # Process each URL
+    # Process each resource
     total_stats = {"approved": 0, "rejected": 0, "skipped": 0, "errors": 0}
 
-    for i, url in enumerate(urls):
-        thread_id = f"provision-{entity_id}-{i}"
-        stats = await process_url_interactive(graph, url, entity_id, entity_name, thread_id)
+    for i, resource in enumerate(resources):
+        thread_id = f"provision-{resource['entity_id']}-{i}"
 
-        for key in total_stats:
-            total_stats[key] += stats.get(key, 0)
+        try:
+            stats = await process_url_interactive(
+                graph,
+                resource["url"],
+                resource["entity_id"],
+                entity_name,
+                thread_id,
+            )
+
+            for key in total_stats:
+                total_stats[key] += stats.get(key, 0)
+
+            # Mark as processed
+            update_resource_status(resource["id"], "processed")
+
+        except Exception as e:
+            print(f"✗ Error processing {resource['url']}: {e}")
+            update_resource_status(resource["id"], "failed")
+            total_stats["errors"] += 1
 
         # Check if user quit
         final_state = graph.get_state({"configurable": {"thread_id": thread_id}})
@@ -198,21 +156,12 @@ if __name__ == "__main__":
         help="Name of the political entity",
     )
     parser.add_argument(
-        "--url",
-        help="Single URL to process (instead of all goldmine URLs)",
-    )
-    parser.add_argument(
-        "--urls",
-        nargs="+",
-        help="List of URLs to process (instead of all goldmine URLs)",
+        "--limit",
+        type=int,
+        default=10,
+        help="Maximum number of resources to process",
     )
 
     args = parser.parse_args()
 
-    urls = None
-    if args.url:
-        urls = [args.url]
-    elif args.urls:
-        urls = args.urls
-
-    asyncio.run(main(entity_name=args.entity, urls=urls))
+    asyncio.run(main(entity_name=args.entity, limit=args.limit))
