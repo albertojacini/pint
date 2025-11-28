@@ -12,11 +12,13 @@ create table if not exists public.provisions (
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   title text not null,
   description text,
-  type text not null, -- Legal: 'law', 'regulation', 'ordinance', 'decree', 'standard', 'code'
-                      -- Institutional: 'institution', 'utility', 'agency', 'program', 'fund'
-                      -- Planning: 'plan', 'zone', 'project', 'guideline'
-                      -- Fiscal: 'tax', 'fee', 'budget', 'subsidy', 'tariff'
-                      -- Administrative: 'procedure', 'agreement', 'delegation', 'protocol', 'policy'
+  type text not null check (type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
+                      -- ownership: stakes in companies, property, infrastructure
+                      -- contract: service agreements, concessions, partnerships
+                      -- regulation: rules, ordinances, codes, standards
+                      -- taxation: taxes, fees, tariffs
+                      -- allocation: programs, subsidies, budgets, funds
+                      -- designation: zones, landmarks, protected areas, institutions
   status text not null default 'active', -- 'active', 'repealed', 'suspended'
   effective_from date,
   effective_until date,
