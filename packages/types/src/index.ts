@@ -43,7 +43,15 @@ export const PoliticalEntitySchema = z.object({
   nativeName: z.string().optional(),
   description: z.string().optional(),
   avatarUrl: z.string().url().optional(),
-  type: z.enum(['neighborhood', 'district', 'borough', 'city', 'region', 'country', 'supranational']),
+  type: z.enum([
+    'neighborhood',
+    'district',
+    'borough',
+    'city',
+    'region',
+    'country',
+    'supranational',
+  ]),
   population: z.number().int().positive().optional(),
   scoreInnovation: z.number().int().min(0).max(10).optional(),
   scoreSustainability: z.number().int().min(0).max(10).optional(),
@@ -73,25 +81,48 @@ export type UpdatePoliticalEntity = z.infer<typeof UpdatePoliticalEntitySchema>
 // Provision extra data schemas (type-discriminated)
 const OwnershipDataSchema = z.object({
   type: z.literal('ownership'),
-  assetType: z.enum(['company', 'property', 'infrastructure']).optional(),
+
+  // Asset classification
+  assetCategory: z
+    .enum(['equity', 'real_estate', 'intellectual_property', 'infrastructure', 'other'])
+    .optional(),
+  assetName: z.string().optional(),
+
+  // Ownership details
   ownershipPercentage: z.number().min(0).max(100).optional(),
+  purpose: z
+    .enum([
+      'public_service',
+      'strategic_infrastructure',
+      'economic_development',
+      'revenue_generation',
+    ])
+    .optional(),
+
+  // Acquisition (what they paid)
+  investmentAmount: z.number().optional(),
+  investmentCurrency: z.string().optional(),
+  acquisitionDate: z.string().optional(), // YYYY-MM-DD
+
+  // Current value (what it's worth)
   valuationAmount: z.number().optional(),
   valuationCurrency: z.string().optional(),
+  valuationDate: z.string().optional(), // YYYY-MM-DD
+
+  // Annual financial impact (cash flow)
+  annualCashFlow: z.number().optional(), // Positive = revenue, Negative = cost/subsidy
+  annualCashFlowCurrency: z.string().optional(),
+  annualCashFlowYear: z.string().optional(), // Fiscal year (YYYY)
 })
 
 const ContractDataSchema = z.object({
   type: z.literal('contract'),
   contractType: z.enum(['service', 'concession', 'partnership']).optional(),
-  contractorName: z.string().optional(),
-  contractValue: z.number().optional(),
-  contractCurrency: z.string().optional(),
 })
 
 const RegulationDataSchema = z.object({
   type: z.literal('regulation'),
   regulationType: z.enum(['rule', 'ordinance', 'code', 'standard']).optional(),
-  enforcementLevel: z.enum(['mandatory', 'advisory']).optional(),
-  penaltyAmount: z.number().optional(),
 })
 
 const TaxationDataSchema = z.object({
@@ -104,18 +135,10 @@ const TaxationDataSchema = z.object({
 
 const AllocationDataSchema = z.object({
   type: z.literal('allocation'),
-  allocationType: z.enum(['program', 'subsidy', 'budget', 'fund']).optional(),
-  budgetAmount: z.number().optional(),
-  currency: z.string().optional(),
-  beneficiaryCount: z.number().optional(),
 })
 
 const DesignationDataSchema = z.object({
   type: z.literal('designation'),
-  designationType: z.enum(['zone', 'landmark', 'protected_area', 'institution']).optional(),
-  areaSize: z.number().optional(),
-  areaSizeUnit: z.string().optional(),
-  protectionLevel: z.enum(['high', 'medium', 'low']).optional(),
 })
 
 export const ProvisionExtraDataSchema = z.discriminatedUnion('type', [
