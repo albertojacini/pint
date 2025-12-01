@@ -71,7 +71,7 @@ export type CreatePoliticalEntity = z.infer<typeof CreatePoliticalEntitySchema>
 export type UpdatePoliticalEntity = z.infer<typeof UpdatePoliticalEntitySchema>
 
 // Provision extra data schemas (type-discriminated)
-const OwnershipExtraDataSchema = z.object({
+const OwnershipDataSchema = z.object({
   type: z.literal('ownership'),
   assetType: z.enum(['company', 'property', 'infrastructure']).optional(),
   ownershipPercentage: z.number().min(0).max(100).optional(),
@@ -79,7 +79,7 @@ const OwnershipExtraDataSchema = z.object({
   valuationCurrency: z.string().optional(),
 })
 
-const ContractExtraDataSchema = z.object({
+const ContractDataSchema = z.object({
   type: z.literal('contract'),
   contractType: z.enum(['service', 'concession', 'partnership']).optional(),
   contractorName: z.string().optional(),
@@ -87,14 +87,14 @@ const ContractExtraDataSchema = z.object({
   contractCurrency: z.string().optional(),
 })
 
-const RegulationExtraDataSchema = z.object({
+const RegulationDataSchema = z.object({
   type: z.literal('regulation'),
   regulationType: z.enum(['rule', 'ordinance', 'code', 'standard']).optional(),
   enforcementLevel: z.enum(['mandatory', 'advisory']).optional(),
   penaltyAmount: z.number().optional(),
 })
 
-const TaxationExtraDataSchema = z.object({
+const TaxationDataSchema = z.object({
   type: z.literal('taxation'),
   taxType: z.enum(['tax', 'fee', 'tariff']).optional(),
   rate: z.number().optional(),
@@ -102,7 +102,7 @@ const TaxationExtraDataSchema = z.object({
   revenueAmount: z.number().optional(),
 })
 
-const AllocationExtraDataSchema = z.object({
+const AllocationDataSchema = z.object({
   type: z.literal('allocation'),
   allocationType: z.enum(['program', 'subsidy', 'budget', 'fund']).optional(),
   budgetAmount: z.number().optional(),
@@ -110,7 +110,7 @@ const AllocationExtraDataSchema = z.object({
   beneficiaryCount: z.number().optional(),
 })
 
-const DesignationExtraDataSchema = z.object({
+const DesignationDataSchema = z.object({
   type: z.literal('designation'),
   designationType: z.enum(['zone', 'landmark', 'protected_area', 'institution']).optional(),
   areaSize: z.number().optional(),
@@ -119,21 +119,21 @@ const DesignationExtraDataSchema = z.object({
 })
 
 export const ProvisionExtraDataSchema = z.discriminatedUnion('type', [
-  OwnershipExtraDataSchema,
-  ContractExtraDataSchema,
-  RegulationExtraDataSchema,
-  TaxationExtraDataSchema,
-  AllocationExtraDataSchema,
-  DesignationExtraDataSchema,
+  OwnershipDataSchema,
+  ContractDataSchema,
+  RegulationDataSchema,
+  TaxationDataSchema,
+  AllocationDataSchema,
+  DesignationDataSchema,
 ])
 
 export type ProvisionExtraData = z.infer<typeof ProvisionExtraDataSchema>
-export type OwnershipExtraData = z.infer<typeof OwnershipExtraDataSchema>
-export type ContractExtraData = z.infer<typeof ContractExtraDataSchema>
-export type RegulationExtraData = z.infer<typeof RegulationExtraDataSchema>
-export type TaxationExtraData = z.infer<typeof TaxationExtraDataSchema>
-export type AllocationExtraData = z.infer<typeof AllocationExtraDataSchema>
-export type DesignationExtraData = z.infer<typeof DesignationExtraDataSchema>
+export type OwnershipData = z.infer<typeof OwnershipDataSchema>
+export type ContractData = z.infer<typeof ContractDataSchema>
+export type RegulationData = z.infer<typeof RegulationDataSchema>
+export type TaxationData = z.infer<typeof TaxationDataSchema>
+export type AllocationData = z.infer<typeof AllocationDataSchema>
+export type DesignationData = z.infer<typeof DesignationDataSchema>
 
 // Provision schemas
 export const ProvisionSchema = z.object({
