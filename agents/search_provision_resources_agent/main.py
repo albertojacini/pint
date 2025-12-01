@@ -56,27 +56,36 @@ async def main(entity_name: str, categories: list[str] = None):
     queries_text = "\n".join([f"- {q['query']} (category: {q['category']})" for q in queries])
 
     user_message = f"""
+**THIS IS A TEST RUN** - Please search for provision resource URLs with limited scope.
+
 Find provision resource URLs for the political entity: {entity.name}
 
 Entity language: {entity.language}
 Categories to search: {', '.join(categories)}
 
-Here are the search queries you should execute:
+**IMPORTANT - Testing Mode:**
+- This is a test run to validate the search agent
+- Only execute searches for the {len(queries)} queries listed below
+- Limit results to the TOP 3-5 URLs per query (not exhaustive)
+- Return results quickly for testing purposes
+
+Search queries to execute:
 {queries_text}
 
 For each query:
 1. Use the search_engine tool to find relevant URLs
-2. Extract unique URLs from the search results
+2. Extract unique URLs from the search results (TOP 3-5 only)
 3. Validate each URL to ensure it's a high-quality provision resource
 4. Keep only URLs with a quality score >= 4/10
 
-Return a list of validated URLs organized by category.
+Return a concise list of validated URLs organized by category.
 
 Important guidelines:
 - Focus on official government sources (.gov, .gob, .comune domains)
 - Avoid PDFs, news articles, and social media
 - Prefer specific pages over generic homepages
 - URLs should contain provision-related content (regulations, taxes, owned companies, etc.)
+- **Keep this test run focused and quick** - quality over quantity
 """
 
     print("Running agent...")

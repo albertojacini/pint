@@ -32,16 +32,13 @@ async def create_search_agent():
     prompt_path = Path(__file__).parent / "prompts" / "system_prompt.txt"
     system_prompt = prompt_path.read_text()
 
-    # Create filesystem backend for logging
-    fs_backend = FilesystemBackend(root_dir="/tmp/search_provision_agent")
-
     # Create deep agent
     # Note: create_deep_agent includes default middleware (TodoList, Filesystem, SubAgent)
+    # Using Claude Sonnet 4.5 (cheaper than Opus)
     agent = create_deep_agent(
-        model="claude-3-5-sonnet-latest",
+        model="claude-sonnet-4-5-20250929",
         tools=search_tools,
-        system_prompt=system_prompt,
-        backend=fs_backend
+        system_prompt=system_prompt
     )
 
     return agent, mcp_client
