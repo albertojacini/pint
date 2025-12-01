@@ -150,7 +150,6 @@ export const ProvisionExtraDataSchema = z.discriminatedUnion('type', [
   DesignationDataSchema,
 ])
 
-F
 export type OwnershipData = z.infer<typeof OwnershipDataSchema>
 export type ContractData = z.infer<typeof ContractDataSchema>
 export type RegulationData = z.infer<typeof RegulationDataSchema>
