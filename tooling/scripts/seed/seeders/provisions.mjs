@@ -15,7 +15,7 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
  * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client (unused here)
  * @param {object} idMaps - ID mapping object for foreign key references
  */
-export async function seedProvisions(client, supabase, idMaps) {
+export async function seedProvisions(client, idMaps) {
   // ===== PROVISION RESOURCES =====
   logger.startSection('provision_resources')
 
@@ -29,9 +29,7 @@ export async function seedProvisions(client, supabase, idMaps) {
       const entityId = idMaps.entities.get(resource.entity)
 
       if (!entityId) {
-        logger.warning(
-          `Skipping resource "${resource.url}" - entity not found: ${resource.entity}`
-        )
+        logger.warning(`Skipping resource "${resource.url}" - entity not found: ${resource.entity}`)
         skipCount++
         continue
       }
@@ -41,7 +39,7 @@ export async function seedProvisions(client, supabase, idMaps) {
       await insertQuery(client, {
         table: 'provision_resources',
         columns: ['id', 'entity_id', 'url', 'status'],
-        values: [id, entityId, resource.url, 'pending']
+        values: [id, entityId, resource.url, 'pending'],
       })
 
       successCount++
