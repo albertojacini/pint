@@ -283,16 +283,19 @@ export const provisions = pgTable('provisions', {
   entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   description: text('description'),
-  type: text('type').notNull(), // Legal: 'law', 'regulation', 'ordinance', 'decree', 'standard', 'code'
-                                  // Institutional: 'institution', 'utility', 'agency', 'program', 'fund'
-                                  // Planning: 'plan', 'zone', 'project', 'guideline'
-                                  // Fiscal: 'tax', 'fee', 'budget', 'subsidy', 'tariff'
-                                  // Administrative: 'procedure', 'agreement', 'delegation', 'protocol', 'policy'
+  type: text('type', {
+    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
+  }).notNull(), // ownership: stakes in companies, property, infrastructure
+                // contract: service agreements, concessions, partnerships
+                // regulation: rules, ordinances, codes, standards
+                // taxation: taxes, fees, tariffs
+                // allocation: programs, subsidies, budgets, funds
+                // designation: zones, landmarks, protected areas, institutions
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
-  extraData: jsonb('extra_data').$type<Record<string, unknown>>().default({}), // Type-specific data
+  extraData: jsonb('extra_data').$type<Record<string, unknown>>(), // Type-specific data validated with Zod
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
