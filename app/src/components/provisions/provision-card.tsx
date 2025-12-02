@@ -1,4 +1,7 @@
 import Link from 'next/link'
+import type { Tag } from '@/lib/actions/provisions'
+import { ProvisionImpactChart } from './provision-impact-chart'
+import { ProvisionCardRow4 } from './provision-card-row4'
 
 interface ProvisionCardProps {
   provision: {
@@ -8,22 +11,43 @@ interface ProvisionCardProps {
     type: string
     status: string
     effectiveFrom: string | null
+    effectiveUntil: string | null
     ideaId: string | null
     ideaTitle: string | null
+    extraData: Record<string, unknown> | null
+    tags: Tag[]
   }
 }
 
-// Helper function to get type color
+// Helper function to get type colors (Polymarket-inspired, dark mode compatible)
 const getTypeColor = (type: string) => {
   const colors: Record<string, { color: string; bgColor: string }> = {
-    'ownership': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    'contract': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'regulation': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'taxation': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    'allocation': { color: 'text-green-700', bgColor: 'bg-green-100' },
-    'designation': { color: 'text-emerald-700', bgColor: 'bg-emerald-100' },
+    'ownership': {
+      color: 'rgb(147 51 234)',
+      bgColor: 'rgb(243 232 255)',
+    },
+    'contract': {
+      color: 'rgb(37 99 235)',
+      bgColor: 'rgb(219 234 254)',
+    },
+    'regulation': {
+      color: 'rgb(234 88 12)',
+      bgColor: 'rgb(254 243 199)',
+    },
+    'taxation': {
+      color: 'rgb(22 163 74)',
+      bgColor: 'rgb(220 252 231)',
+    },
+    'allocation': {
+      color: 'rgb(219 39 119)',
+      bgColor: 'rgb(252 231 243)',
+    },
+    'designation': {
+      color: 'rgb(71 85 105)',
+      bgColor: 'rgb(241 245 249)',
+    },
   }
-  return colors[type] || { color: 'text-gray-700', bgColor: 'bg-gray-100' }
+  return colors[type] || colors.designation
 }
 
 // Helper function to get status color
@@ -36,53 +60,138 @@ const getStatusColor = (status: string) => {
   return colors[status] || 'bg-gray-500'
 }
 
+// Helper function to get type emoji
+const getTypeEmoji = (type: string) => {
+  const emojis: Record<string, string> = {
+    'ownership': '🏢',
+    'contract': '📄',
+    'regulation': '⚖️',
+    'taxation': '💰',
+    'allocation': '📊',
+    'designation': '🏛️',
+  }
+  return emojis[type] || '📋'
+}
+
+// Helper function to get type gradient
+const getTypeGradient = (type: string) => {
+  const gradients: Record<string, string> = {
+    'ownership': 'from-purple-500 to-indigo-600',
+    'contract': 'from-blue-500 to-cyan-600',
+    'regulation': 'from-amber-500 to-orange-600',
+    'taxation': 'from-green-500 to-emerald-600',
+    'allocation': 'from-pink-500 to-rose-600',
+    'designation': 'from-slate-500 to-gray-600',
+  }
+  return gradients[type] || 'from-gray-500 to-slate-600'
+}
+
 export function ProvisionCard({ provision }: ProvisionCardProps) {
   const typeConfig = getTypeColor(provision.type)
-  const startYear = provision.effectiveFrom ? new Date(provision.effectiveFrom).getFullYear() : null
+  const emoji = getTypeEmoji(provision.type)
+  const gradient = getTypeGradient(provision.type)
+
+  // Filter tags to only show policy-topic and impact-area categories
+  const visibleTags = provision.tags.filter(
+    tag => tag.category === 'policy-topic' || tag.category === 'impact-area'
+  )
+  const displayedTags = visibleTags.slice(0, 3)
+  const extraTagsCount = Math.max(0, visibleTags.length - 3)
 
   return (
-    <div className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors bg-white">
-      {/* Row 1: Status dot, year, type badge */}
+    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200">
+      {/* Row 1: Type Badge + Tags */}
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div
-            className={`w-2 h-2 rounded-full ${getStatusColor(provision.status)}`}
-            title={provision.status}
-          />
-          {startYear && (
-            <span className="text-sm font-semibold text-gray-600">{startYear}</span>
-          )}
-        </div>
-        <div className="flex gap-2 items-center">
-          <span className={`px-2 py-1 rounded text-xs font-medium ${typeConfig.bgColor} ${typeConfig.color}`}>
-            {provision.type}
-          </span>
-        </div>
+        {/* Type badge */}
+        <span
+          className="px-2 py-1 rounded text-xs font-medium"
+          style={{
+            backgroundColor: typeConfig.bgColor,
+            color: typeConfig.color
+          }}
+        >
+          {provision.type}
+        </span>
+
+        {/* Tags */}
+        {visibleTags.length > 0 && (
+          <div className="flex gap-1.5">
+            {displayedTags.map(tag => (
+              <span
+                key={tag.id}
+                className="px-2 py-0.5 rounded-full text-xs font-medium"
+                style={{
+                  backgroundColor: tag.color ? `${tag.color}15` : 'rgb(229 231 235)',
+                  color: tag.color || 'rgb(107 114 128)'
+                }}
+              >
+                {tag.name}
+              </span>
+            ))}
+            {extraTagsCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">
+                +{extraTagsCount}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Row 2: Title */}
-      <h4 className="text-base font-semibold text-gray-900 mb-2">
-        {provision.title}
-      </h4>
+      {/* Row 2: Title + Impact Diagram */}
+      <div className="flex items-center gap-3 mb-3">
+        <h4 className="text-lg font-semibold line-clamp-2 flex-1">
+          {provision.title}
+        </h4>
 
-      {/* Row 3: Description */}
-      {provision.description && (
-        <p className="text-sm text-gray-600 mb-3 line-clamp-3">
-          {provision.description}
-        </p>
-      )}
+        <ProvisionImpactChart provisionId={provision.id} />
+      </div>
 
-      {/* Linked idea reference */}
-      {provision.ideaTitle && provision.ideaId && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="text-xs text-gray-500">
-            Inspired by:{' '}
-            <Link href={`/ideas/${provision.ideaId}`} className="text-blue-600 hover:underline font-medium">
-              {provision.ideaTitle}
-            </Link>
-          </div>
+      {/* Row 3: Placeholder Image + Description */}
+      <div className="flex gap-3 mb-3">
+        {/* Placeholder image with emoji + gradient */}
+        <div className={`w-20 h-20 flex-shrink-0 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-3xl`}>
+          {emoji}
         </div>
-      )}
+
+        {/* Description */}
+        <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
+          {provision.description || 'No description available'}
+        </p>
+      </div>
+
+      {/* Row 4: Type-Specific Content */}
+      <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
+
+      {/* Row 5: Mini Stats + Mini Info */}
+      <div className="flex items-center justify-between pt-3 border-t border-border">
+        {/* Left: Mini stats */}
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          {/* Status indicator */}
+          <div className="flex items-center gap-1.5">
+            <div className={`w-1.5 h-1.5 rounded-full ${getStatusColor(provision.status)}`} />
+            <span className="capitalize">{provision.status}</span>
+          </div>
+
+          {/* Effective year */}
+          {provision.effectiveFrom && (
+            <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
+          )}
+        </div>
+
+        {/* Right: Mini info */}
+        <div className="flex items-center gap-2 text-xs">
+          {/* Linked idea */}
+          {provision.ideaTitle && provision.ideaId && (
+            <Link
+              href={`/ideas/${provision.ideaId}`}
+              className="text-primary hover:underline flex items-center gap-1"
+            >
+              <span>💡</span>
+              <span className="max-w-[100px] truncate">{provision.ideaTitle}</span>
+            </Link>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

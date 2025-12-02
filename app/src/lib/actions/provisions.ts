@@ -1,8 +1,32 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { provisions, politicalEntities, ideas } from '@/lib/db/schema'
-import { eq, desc, asc, or, ilike, and, SQL } from 'drizzle-orm'
+import { provisions, politicalEntities, ideas, tags, taggables } from '@/lib/db/schema'
+import { eq, desc, asc, or, ilike, and, SQL, inArray } from 'drizzle-orm'
+
+// Tag type definition
+export type Tag = {
+  id: string
+  name: string
+  slug: string
+  category: string | null
+  color: string | null
+}
+
+// Provision with tags and extraData
+export type ProvisionWithTags = {
+  id: string
+  title: string
+  description: string | null
+  type: string
+  status: string
+  effectiveFrom: string | null
+  effectiveUntil: string | null
+  ideaId: string | null
+  ideaTitle: string | null
+  extraData: Record<string, unknown> | null
+  tags: Tag[]
+}
 
 export async function getProvisionsByEntity(entityId: string) {
   const entityProvisions = await db
@@ -33,7 +57,7 @@ export async function getFilteredProvisions(
     status?: string
     sort?: string
   }
-) {
+): Promise<ProvisionWithTags[]> {
   // Build where conditions
   const conditions: SQL[] = [eq(provisions.entityId, entityId)]
 
@@ -54,7 +78,7 @@ export async function getFilteredProvisions(
     conditions.push(eq(provisions.status, filters.status as any))
   }
 
-  // Build base query
+  // Build base query with extraData included
   const baseQuery = db
     .select({
       id: provisions.id,
@@ -66,20 +90,80 @@ export async function getFilteredProvisions(
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
+      extraData: provisions.extraData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
     .where(and(...conditions))
 
   // Apply sorting and execute
+  let provisionResults: any[]
   switch (filters.sort) {
     case 'date-asc':
-      return await baseQuery.orderBy(asc(provisions.effectiveFrom))
+      provisionResults = await baseQuery.orderBy(asc(provisions.effectiveFrom))
+      break
     case 'title-asc':
-      return await baseQuery.orderBy(asc(provisions.title))
+      provisionResults = await baseQuery.orderBy(asc(provisions.title))
+      break
     case 'title-desc':
-      return await baseQuery.orderBy(desc(provisions.title))
+      provisionResults = await baseQuery.orderBy(desc(provisions.title))
+      break
     default: // 'date-desc'
-      return await baseQuery.orderBy(desc(provisions.effectiveFrom))
+      provisionResults = await baseQuery.orderBy(desc(provisions.effectiveFrom))
+      break
   }
+
+  // If no provisions, return empty array
+  if (provisionResults.length === 0) {
+    return []
+  }
+
+  // Fetch tags for all provisions (two-query approach)
+  const provisionIds = provisionResults.map(p => p.id)
+
+  const provisionTags = await db
+    .select({
+      provisionId: taggables.taggableId,
+      tagId: tags.id,
+      tagName: tags.name,
+      tagSlug: tags.slug,
+      tagCategory: tags.category,
+      tagColor: tags.color,
+    })
+    .from(taggables)
+    .innerJoin(tags, eq(taggables.tagId, tags.id))
+    .where(and(
+      eq(taggables.taggableType, 'provision'),
+      inArray(taggables.taggableId, provisionIds)
+    ))
+
+  // Group tags by provision
+  const tagsByProvision = provisionTags.reduce((acc, row) => {
+    if (!acc[row.provisionId]) {
+      acc[row.provisionId] = []
+    }
+    acc[row.provisionId].push({
+      id: row.tagId,
+      name: row.tagName,
+      slug: row.tagSlug,
+      category: row.tagCategory,
+      color: row.tagColor,
+    })
+    return acc
+  }, {} as Record<string, Tag[]>)
+
+  // Merge provisions with tags
+  return provisionResults.map(p => ({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    type: p.type,
+    status: p.status,
+    effectiveFrom: p.effectiveFrom,
+    effectiveUntil: p.effectiveUntil,
+    ideaId: p.ideaId,
+    ideaTitle: p.ideaTitle,
+    extraData: p.extraData as Record<string, unknown> | null,
+    tags: tagsByProvision[p.id] || []
+  }))
 }
