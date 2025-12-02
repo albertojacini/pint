@@ -6,6 +6,7 @@
 
 import { provisions } from '../data/provisions-data.mjs'
 import { provisionResources } from '../data/provision-resources-data.mjs'
+import { taggablesData } from '../data/taggables-data.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -128,6 +129,46 @@ export async function seedProvisions(client, supabase, idMaps) {
 
     logger.endSection('provision_resources', successCount)
   }
+
+  // ===== PROVISION TAGGABLES =====
+  logger.startSection('provision taggables')
+
+  let taggablesCount = 0
+  let taggablesSkipped = 0
+
+  // Filter to only provision taggables
+  const provisionTaggables = taggablesData.filter(t => t.taggableType === 'provision')
+
+  for (const taggable of provisionTaggables) {
+    // Look up tag ID by slug
+    const tagId = idMaps.tags.get(taggable.tagSlug)
+    // Look up provision ID by title
+    const provisionId = idMaps.provisions.get(taggable.taggableName)
+
+    if (!tagId || !provisionId) {
+      logger.warning(
+        `Skipping taggable: tag=${taggable.tagSlug}, provision=${taggable.taggableName} (not found)`
+      )
+      taggablesSkipped++
+      continue
+    }
+
+    const id = generateUUID()
+
+    await insertQuery(client, {
+      table: 'taggables',
+      columns: ['id', 'tag_id', 'taggable_type', 'taggable_id'],
+      values: [id, tagId, 'provision', provisionId]
+    })
+
+    taggablesCount++
+  }
+
+  if (taggablesSkipped > 0) {
+    logger.warning(`Skipped ${taggablesSkipped} taggables due to missing references`)
+  }
+
+  logger.endSection('provision taggables', taggablesCount)
 
   return idMaps
 }
