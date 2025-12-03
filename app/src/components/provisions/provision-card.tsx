@@ -21,27 +21,27 @@ interface ProvisionCardProps {
 // Helper function to get type colors (Polymarket-inspired, dark mode compatible)
 const getTypeColor = (type: string) => {
   const colors: Record<string, { color: string; bgColor: string }> = {
-    'ownership': {
+    ownership: {
       color: 'rgb(147 51 234)',
       bgColor: 'rgb(243 232 255)',
     },
-    'contract': {
+    contract: {
       color: 'rgb(37 99 235)',
       bgColor: 'rgb(219 234 254)',
     },
-    'regulation': {
+    regulation: {
       color: 'rgb(234 88 12)',
       bgColor: 'rgb(254 243 199)',
     },
-    'taxation': {
+    taxation: {
       color: 'rgb(22 163 74)',
       bgColor: 'rgb(220 252 231)',
     },
-    'allocation': {
+    allocation: {
       color: 'rgb(219 39 119)',
       bgColor: 'rgb(252 231 243)',
     },
-    'designation': {
+    designation: {
       color: 'rgb(71 85 105)',
       bgColor: 'rgb(241 245 249)',
     },
@@ -52,9 +52,9 @@ const getTypeColor = (type: string) => {
 // Helper function to get status color
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    'active': 'bg-green-500',
-    'repealed': 'bg-red-500',
-    'suspended': 'bg-yellow-500',
+    active: 'bg-green-500',
+    repealed: 'bg-red-500',
+    suspended: 'bg-yellow-500',
   }
   return colors[status] || 'bg-gray-500'
 }
@@ -62,12 +62,12 @@ const getStatusColor = (status: string) => {
 // Helper function to get type emoji
 const getTypeEmoji = (type: string) => {
   const emojis: Record<string, string> = {
-    'ownership': '🏢',
-    'contract': '📄',
-    'regulation': '⚖️',
-    'taxation': '💰',
-    'allocation': '📊',
-    'designation': '🏛️',
+    ownership: '🏢',
+    contract: '📄',
+    regulation: '⚖️',
+    taxation: '💰',
+    allocation: '📊',
+    designation: '🏛️',
   }
   return emojis[type] || '📋'
 }
@@ -75,12 +75,12 @@ const getTypeEmoji = (type: string) => {
 // Helper function to get type gradient
 const getTypeGradient = (type: string) => {
   const gradients: Record<string, string> = {
-    'ownership': 'from-purple-500 to-indigo-600',
-    'contract': 'from-blue-500 to-cyan-600',
-    'regulation': 'from-amber-500 to-orange-600',
-    'taxation': 'from-green-500 to-emerald-600',
-    'allocation': 'from-pink-500 to-rose-600',
-    'designation': 'from-slate-500 to-gray-600',
+    ownership: 'from-purple-500 to-indigo-600',
+    contract: 'from-blue-500 to-cyan-600',
+    regulation: 'from-amber-500 to-orange-600',
+    taxation: 'from-green-500 to-emerald-600',
+    allocation: 'from-pink-500 to-rose-600',
+    designation: 'from-slate-500 to-gray-600',
   }
   return gradients[type] || 'from-gray-500 to-slate-600'
 }
@@ -108,7 +108,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
-    tag => tag.category === 'policy-topic' || tag.category === 'impact-area'
+    (tag) => tag.category === 'policy-topic' || tag.category === 'impact-area'
   )
   const displayedTags = visibleTags.slice(0, 3)
   const extraTagsCount = Math.max(0, visibleTags.length - 3)
@@ -121,7 +121,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
         <span
           className="px-2 py-1 rounded text-xs font-medium border-0"
           style={{
-            color: typeConfig.color
+            color: typeConfig.color,
           }}
         >
           {provision.type}
@@ -130,7 +130,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
         {/* Tags */}
         {visibleTags.length > 0 && (
           <div className="flex gap-1.5">
-            {displayedTags.map(tag => (
+            {displayedTags.map((tag) => (
               <span
                 key={tag.id}
                 className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground"
@@ -149,9 +149,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
 
       {/* Row 2: Title + Importance Dots */}
       <div className="flex items-center gap-3 mb-3">
-        <h4 className="text-lg font-semibold line-clamp-2 flex-1">
-          {provision.title}
-        </h4>
+        <h4 className="text-lg font-semibold line-clamp-2 flex-1">{provision.title}</h4>
 
         {/* Importance indicator with dots */}
         <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -160,7 +158,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
               key={dot}
               className="w-2 h-2 rounded-full transition-colors"
               style={{
-                backgroundColor: dot <= importanceScore ? importanceColor : 'rgb(229 231 235)'
+                backgroundColor: dot <= importanceScore ? importanceColor : 'rgb(229 231 235)',
               }}
             />
           ))}
@@ -170,7 +168,9 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
       {/* Row 3: Placeholder Image + Description */}
       <div className="flex gap-3 mb-3">
         {/* Placeholder image with emoji + gradient */}
-        <div className={`w-20 h-20 flex-shrink-0 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-3xl`}>
+        <div
+          className={`w-10 h-10 flex-shrink-0 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-3xl`}
+        >
           {emoji}
         </div>
 
