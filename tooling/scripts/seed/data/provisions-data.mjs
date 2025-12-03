@@ -464,6 +464,7 @@ export const provisions = [
     descriptionShort: "Area C entry fee €7.50/day (Mon-Fri 7:30-19:30)",
     type: "taxation",
     status: "active",
+    idea: "Urban congestion charge",
     extraData: {
       type: "taxation",
       taxType: "fee",

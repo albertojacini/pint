@@ -50,11 +50,16 @@ export async function seedProvisions(client, supabase, idMaps) {
         continue
       }
 
+      // Look up idea ID if provided
+      const ideaId = provision.idea
+        ? idMaps.ideas.get(provision.idea)
+        : null;
+
       const id = generateUUID()
 
       await insertQuery(client, {
         table: 'provisions',
-        columns: ['id', 'entity_id', 'title', 'description', 'description_short', 'type', 'status', 'effective_from', 'effective_until', 'extra_data'],
+        columns: ['id', 'entity_id', 'title', 'description', 'description_short', 'type', 'status', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
         values: [
           id,
           entityId,
@@ -65,6 +70,7 @@ export async function seedProvisions(client, supabase, idMaps) {
           provision.status,
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
+          ideaId,
           JSON.stringify(provision.extraData || {})
         ],
       })

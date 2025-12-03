@@ -5,13 +5,18 @@
 
 export const ideas = [
   {
-    title: "Introduce urban speed limits",
-    description: "Implement lower maximum speed limits in urban areas (residential, commercial, school zones)",
+    title: "Urban speed limits",
+    description: "Lower maximum speed limits in urban areas (residential, commercial, school zones)",
     category: "Traffic Management" // category title, will be resolved to ID
   },
   {
-    title: "Subsidize public transport",
-    description: "Provide government funding to reduce or eliminate public transport fares for users",
+    title: "Public transport subsidies",
+    description: "Government funding to reduce or eliminate public transport fares for users",
     category: "Public Transportation" // category title, will be resolved to ID
+  },
+  {
+    title: "Urban congestion charge",
+    description: "Fee for vehicles to enter designated urban zones during peak hours to reduce traffic congestion, improve air quality, and generate revenue for public transport",
+    category: "Traffic Management" // category title, will be resolved to ID
   },
 ]

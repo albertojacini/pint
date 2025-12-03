@@ -26,18 +26,18 @@ IDEA → EFFECT → MEASURABLE → CONTRIBUTION → GOAL
 Abstract, reusable policy instruments - the fundamental actions a government can take.
 
 **Rules:**
-- **Action-oriented**: Start with a verb (Subsidize, Regulate, Tax, Mandate, Prohibit, Incentivize, Provide, Introduce)
+- **Noun-based**: Use noun phrases (Urban speed limits, Public transport subsidies, Vehicle emission taxes)
 - **Parameter-agnostic**: No specific numbers or thresholds (not "30 km/h" but "urban speed limits")
 - **One-dimensional**: Each idea pulls one lever in one direction
 - **Context-independent**: Could apply to any city/country with appropriate parameters
 - **Atomic**: Cannot be broken down into smaller policy actions
 
 **Examples:**
-- ✅ "Subsidize public transport" (not "Free public transportation")
-- ✅ "Introduce urban speed limits" (not "30 km/h zones")
-- ✅ "Tax vehicle emissions"
-- ✅ "Mandate bicycle infrastructure"
-- ✅ "Prohibit diesel vehicles in centers"
+- ✅ "Public transport subsidies" (not "Free public transportation")
+- ✅ "Urban speed limits" (not "30 km/h zones")
+- ✅ "Vehicle emission taxes"
+- ✅ "Bicycle infrastructure mandates"
+- ✅ "Diesel vehicle bans in centers"
 
 **Properties:** title, description, category
 
@@ -51,7 +51,7 @@ The immediate mechanical consequences - what physically/behaviorally changes as 
 - **Observable**: Things you could measure or observe happening
 - **Non-evaluative**: Don't judge if it's good or bad
 
-**Example - "Subsidize public transport":**
+**Example - "Public transport subsidies":**
 - Public transport ticket prices decrease
 - Modal shift: car → public transport
 - Modal shift: bike → public transport
@@ -93,7 +93,7 @@ Concrete implementations of ideas by specific political entities.
 
 ## Example: Urban Speed Limits
 
-**Idea:** "Introduce urban speed limits" (generic policy lever)
+**Idea:** "Urban speed limits" (generic policy lever)
 
 **Effects (direct mechanisms):**
 - Maximum vehicle speeds decrease → Traffic deaths ↓ (kinetic energy reduction)
@@ -143,7 +143,7 @@ The power of this framework lies in:
 
 4. **Evidence Accumulation**: As more entities implement an idea, the confidence in effects increases
 
-5. **Multi-pathway Impact**: Multiple ideas can influence the same measurable through different effect pathways (e.g., both "Subsidize public transport" and "Tax private vehicles" reduce CO2)
+5. **Multi-pathway Impact**: Multiple ideas can influence the same measurable through different effect pathways (e.g., both "Public transport subsidies" and "Private vehicle taxes" reduce CO2)
 
 ## Future Enhancements
 
