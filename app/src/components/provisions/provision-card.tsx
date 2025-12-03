@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import type { Tag } from '@/lib/actions/provisions'
-import { ProvisionImpactChart } from './provision-impact-chart'
 import { ProvisionCardRow4 } from './provision-card-row4'
 
 interface ProvisionCardProps {
@@ -86,10 +85,26 @@ const getTypeGradient = (type: string) => {
   return gradients[type] || 'from-gray-500 to-slate-600'
 }
 
+// Generate consistent mock importance based on provision ID
+function getImportanceScore(id: string): number {
+  const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
+  const percentage = 45 + (hash % 40) // Returns 45-84
+  return Math.ceil(percentage / 20) // Convert to 1-5 scale
+}
+
+// Get color based on importance score
+function getImportanceColor(score: number): string {
+  if (score >= 4) return 'rgb(34 197 94)' // green-500
+  if (score >= 3) return 'rgb(234 179 8)' // yellow-500
+  return 'rgb(239 68 68)' // red-500
+}
+
 export function ProvisionCard({ provision }: ProvisionCardProps) {
   const typeConfig = getTypeColor(provision.type)
   const emoji = getTypeEmoji(provision.type)
   const gradient = getTypeGradient(provision.type)
+  const importanceScore = getImportanceScore(provision.id)
+  const importanceColor = getImportanceColor(importanceScore)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
@@ -132,13 +147,24 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
         )}
       </div>
 
-      {/* Row 2: Title + Impact Diagram */}
+      {/* Row 2: Title + Importance Dots */}
       <div className="flex items-center gap-3 mb-3">
         <h4 className="text-lg font-semibold line-clamp-2 flex-1">
           {provision.title}
         </h4>
 
-        <ProvisionImpactChart provisionId={provision.id} />
+        {/* Importance indicator with dots */}
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          {[1, 2, 3, 4, 5].map((dot) => (
+            <div
+              key={dot}
+              className="w-2 h-2 rounded-full transition-colors"
+              style={{
+                backgroundColor: dot <= importanceScore ? importanceColor : 'rgb(229 231 235)'
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Row 3: Placeholder Image + Description */}
