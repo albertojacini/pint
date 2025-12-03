@@ -6,7 +6,7 @@ interface ProvisionCardProps {
   provision: {
     id: string
     title: string
-    description: string | null
+    descriptionShort: string | null
     type: string
     status: string
     effectiveFrom: string | null
@@ -176,7 +176,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
 
         {/* Description */}
         <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
-          {provision.description || 'No description available'}
+          {provision.descriptionShort || 'No description available'}
         </p>
       </div>
 

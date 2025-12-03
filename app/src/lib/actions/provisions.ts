@@ -17,7 +17,7 @@ export type Tag = {
 export type ProvisionWithTags = {
   id: string
   title: string
-  description: string | null
+  descriptionShort: string | null
   type: string
   status: string
   effectiveFrom: string | null
@@ -33,7 +33,7 @@ export async function getProvisionsByEntity(entityId: string) {
     .select({
       id: provisions.id,
       title: provisions.title,
-      description: provisions.description,
+      descriptionShort: provisions.descriptionShort,
       type: provisions.type,
       status: provisions.status,
       effectiveFrom: provisions.effectiveFrom,
@@ -65,7 +65,7 @@ export async function getFilteredProvisions(
     conditions.push(
       or(
         ilike(provisions.title, `%${filters.search}%`),
-        ilike(provisions.description, `%${filters.search}%`)
+        ilike(provisions.descriptionShort, `%${filters.search}%`)
       )!
     )
   }
@@ -83,7 +83,7 @@ export async function getFilteredProvisions(
     .select({
       id: provisions.id,
       title: provisions.title,
-      description: provisions.description,
+      descriptionShort: provisions.descriptionShort,
       type: provisions.type,
       status: provisions.status,
       effectiveFrom: provisions.effectiveFrom,
@@ -156,7 +156,7 @@ export async function getFilteredProvisions(
   return provisionResults.map(p => ({
     id: p.id,
     title: p.title,
-    description: p.description,
+    descriptionShort: p.descriptionShort,
     type: p.type,
     status: p.status,
     effectiveFrom: p.effectiveFrom,

@@ -14,6 +14,7 @@ export const provisions = [
     entity: "Comune di Milano",
     title: "ATM Ownership Stake",
     description: "The Comune di Milano holds 100% ownership of ATM (Azienda Trasporti Milanesi), the public transport company managing metro, tram, bus, and trolleybus services in Milan and 95 surrounding municipalities. This allows complete control over public transportation policies, fares, service expansion, and infrastructure development.",
+    descriptionShort: "100% ownership of ATM public transport company",
     type: "ownership",
     status: "active",
     extraData: {
