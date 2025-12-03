@@ -101,12 +101,11 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
   return (
     <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200">
       {/* Row 1: Type Badge + Tags */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center gap-2 mb-3">
         {/* Type badge */}
         <span
-          className="px-2 py-1 rounded text-xs font-medium"
+          className="px-2 py-1 rounded text-xs font-medium border-0"
           style={{
-            backgroundColor: typeConfig.bgColor,
             color: typeConfig.color
           }}
         >
@@ -119,11 +118,7 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
             {displayedTags.map(tag => (
               <span
                 key={tag.id}
-                className="px-2 py-0.5 rounded-full text-xs font-medium"
-                style={{
-                  backgroundColor: tag.color ? `${tag.color}15` : 'rgb(229 231 235)',
-                  color: tag.color || 'rgb(107 114 128)'
-                }}
+                className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground"
               >
                 {tag.name}
               </span>
