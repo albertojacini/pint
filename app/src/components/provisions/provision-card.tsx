@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import type { Tag } from '@/lib/actions/provisions'
 import { ProvisionCardRow4 } from './provision-card-row4'
@@ -90,9 +92,10 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
   const extraTagsCount = Math.max(0, visibleTags.length - 3)
 
   return (
-    <Link
-      href={`/entities/${entityId}/provisions/${provision.id}`}
-      className="block border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200"
+    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200 group cursor-pointer"
+      onClick={() => {
+        window.location.href = `/entities/${entityId}/provisions/${provision.id}`
+      }}
     >
       {/* Row 1: Type Badge + Tags */}
       <div className="flex items-center gap-2 mb-3">
@@ -184,16 +187,17 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
         <div className="flex items-center gap-2 text-xs">
           {/* Linked idea */}
           {provision.ideaTitle && provision.ideaId && (
-            <Link
+            <a
               href={`/ideas/${provision.ideaId}`}
-              className="text-primary hover:underline flex items-center gap-1"
+              className="text-primary hover:underline flex items-center gap-1 relative z-10"
+              onClick={(e) => e.stopPropagation()}
             >
               <span>💡</span>
               <span className="max-w-[100px] truncate">{provision.ideaTitle}</span>
-            </Link>
+            </a>
           )}
         </div>
       </div>
-    </Link>
+    </div>
   )
 }
