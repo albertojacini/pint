@@ -69,12 +69,11 @@ export const provisions = [
       type: 'taxation',
       taxType: 'fee',
       rateDescription: 'EUR 7.50 daily access fee per non-exempt vehicle',
-      taxRevenueFiscalYear: '2023',
-      taxRevenueAmount: 85000000, // €85M annually
-      collectionCostAmount: 4200000, // €4.2M annually
-      collectionCostYear: '2023',
-      revenueGrowth: -2.5, // -2.5% YoY
-      revenueGrowthPreviousYear: '2022',
+      dataYear: '2023',
+      taxRevenue: 85000000, // €85M in 2023
+      taxRevenuePrevYear: 87173913, // €87.2M in 2022 (calculated from -2.5% growth)
+      collectionCost: 4200000, // €4.2M in 2023
+      collectionCostPrevYear: 4263959, // €4.3M in 2022 (calculated from -1.5% growth)
       taxRevenueShare: 12.3, // 12.3% of all tax revenue
       progressivity: 'regressive',
     },

@@ -38,6 +38,14 @@ function getTrendColor(growth: number): string {
   return 'rgb(107 114 128)' // gray-500
 }
 
+// Calculate year-over-year growth percentage
+function calculateGrowth(current: number | undefined, previous: number | undefined): number | null {
+  if (current === undefined || previous === undefined || previous === 0) {
+    return null
+  }
+  return ((current - previous) / previous) * 100
+}
+
 export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
   // Ownership type - Rich display
   if (type === 'ownership' && extraData) {
@@ -113,78 +121,119 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     }
   }
 
-  // Taxation type - Rich display
+  // Taxation type - Rich display matching new design
   if (type === 'taxation' && extraData) {
     const taxation = extraData as any
 
+    // Calculate growth percentages
+    const revenueGrowth = calculateGrowth(taxation.taxRevenue, taxation.taxRevenuePrevYear)
+    const collectionCostGrowth = calculateGrowth(taxation.collectionCost, taxation.collectionCostPrevYear)
+
+    // Calculate net contribution
+    const netContribution = taxation.taxRevenue !== undefined && taxation.collectionCost !== undefined
+      ? taxation.taxRevenue - taxation.collectionCost
+      : null
+    const netContributionPrev = taxation.taxRevenuePrevYear !== undefined && taxation.collectionCostPrevYear !== undefined
+      ? taxation.taxRevenuePrevYear - taxation.collectionCostPrevYear
+      : null
+    const netContributionGrowth = calculateGrowth(netContribution ?? undefined, netContributionPrev ?? undefined)
+
     return (
-      <div className="grid grid-cols-2 gap-2 py-3 px-3 bg-muted/50 rounded-lg mb-3">
-        {/* Row 1: Tax Type + Rate Description */}
-        {taxation.taxType && (
-          <div className="col-span-2 flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs capitalize">
-              {taxation.taxType}
-            </Badge>
-            {taxation.rateDescription && (
-              <span className="text-sm font-medium">{taxation.rateDescription}</span>
+      <div className="py-3 px-3 bg-muted/50 rounded-lg mb-3 space-y-3">
+        {/* Row 1: Header - Badges + Year */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {taxation.taxType && (
+              <Badge variant="secondary" className="text-xs capitalize">
+                {taxation.taxType}
+              </Badge>
+            )}
+            {taxation.progressivity && (
+              <Badge variant="secondary" className="text-xs capitalize">
+                {taxation.progressivity}
+              </Badge>
             )}
           </div>
-        )}
+          {taxation.dataYear && (
+            <span className="text-sm font-semibold text-muted-foreground">
+              Year {taxation.dataYear}
+            </span>
+          )}
+        </div>
 
-        {/* Row 2: Revenue + Collection Cost */}
-        {taxation.taxRevenueAmount && (
+        {/* Row 2: Rate Section */}
+        {taxation.rateDescription && (
           <div>
-            <div className="text-xs text-muted-foreground">
-              Revenue {taxation.taxRevenueFiscalYear && `(${taxation.taxRevenueFiscalYear})`}
-            </div>
-            <div className="text-sm font-semibold">
-              {formatCurrency(taxation.taxRevenueAmount, 'EUR')}
-            </div>
+            <div className="text-xs text-muted-foreground mb-1">Rate</div>
+            <div className="text-sm">{taxation.rateDescription}</div>
           </div>
         )}
 
-        {taxation.collectionCostAmount && (
-          <div>
-            <div className="text-xs text-muted-foreground">
-              Collection Cost {taxation.collectionCostYear && `(${taxation.collectionCostYear})`}
+        {/* Row 3: Financial Metrics - 3 Columns */}
+        <div className="grid grid-cols-3 gap-3">
+          {/* Column 1: Revenue */}
+          {taxation.taxRevenue !== undefined && (
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Revenue</div>
+              <div className="flex items-baseline gap-2">
+                <div className="text-sm font-semibold">
+                  {formatCurrency(taxation.taxRevenue, 'EUR')}
+                </div>
+                {revenueGrowth !== null && (
+                  <div className="text-xs font-medium" style={{ color: getTrendColor(revenueGrowth) }}>
+                    {getTrendIndicator(revenueGrowth)} {revenueGrowth > 0 ? '+' : ''}{revenueGrowth.toFixed(1)}%
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="text-sm font-semibold">
-              {formatCurrency(taxation.collectionCostAmount, 'EUR')}
-            </div>
-          </div>
-        )}
+          )}
 
-        {/* Row 3: Revenue Growth + Revenue Share */}
-        {taxation.revenueGrowth !== undefined && (
-          <div>
-            <div className="text-xs text-muted-foreground">Revenue Growth</div>
-            <div className="text-sm font-semibold" style={{ color: getTrendColor(taxation.revenueGrowth) }}>
-              {getTrendIndicator(taxation.revenueGrowth)} {taxation.revenueGrowth > 0 ? '+' : ''}{taxation.revenueGrowth}% YoY
+          {/* Column 2: Collection Cost */}
+          {taxation.collectionCost !== undefined && (
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Collection Cost</div>
+              <div className="flex items-baseline gap-2">
+                <div className="text-sm font-semibold">
+                  {formatCurrency(taxation.collectionCost, 'EUR')}
+                </div>
+                {collectionCostGrowth !== null && (
+                  <div className="text-xs font-medium" style={{ color: getTrendColor(collectionCostGrowth) }}>
+                    {getTrendIndicator(collectionCostGrowth)} {collectionCostGrowth > 0 ? '+' : ''}{collectionCostGrowth.toFixed(1)}%
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
+          {/* Column 3: Net Contribution */}
+          {netContribution !== null && (
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Net contribution</div>
+              <div className="flex items-baseline gap-2">
+                <div className="text-sm font-semibold">
+                  {formatCurrency(netContribution, 'EUR')}
+                </div>
+                {netContributionGrowth !== null && (
+                  <div className="text-xs font-medium" style={{ color: getTrendColor(netContributionGrowth) }}>
+                    {getTrendIndicator(netContributionGrowth)} {netContributionGrowth > 0 ? '+' : ''}{netContributionGrowth.toFixed(1)}%
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Row 4: Revenue Share */}
         {taxation.taxRevenueShare !== undefined && (
           <div>
-            <div className="text-xs text-muted-foreground">Revenue Share</div>
-            <div className="text-sm font-semibold mb-1">{taxation.taxRevenueShare}%</div>
-            {/* Progress bar visualization */}
+            <div className="text-xs text-muted-foreground mb-1">Revenue share</div>
+            <div className="text-sm font-semibold mb-1.5">{taxation.taxRevenueShare}%</div>
             <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all"
                 style={{ width: `${Math.min(taxation.taxRevenueShare, 100)}%` }}
               />
             </div>
-          </div>
-        )}
-
-        {/* Row 4: Progressivity */}
-        {taxation.progressivity && (
-          <div className="col-span-2">
-            <div className="text-xs text-muted-foreground mb-1">Tax Design</div>
-            <Badge variant="secondary" className="text-xs capitalize">
-              {taxation.progressivity}
-            </Badge>
           </div>
         )}
       </div>
