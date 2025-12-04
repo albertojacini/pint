@@ -18,8 +18,10 @@ export type ProvisionWithTags = {
   id: string
   title: string
   descriptionShort: string | null
+  avatarUrl: string | null
   type: string
   status: string
+  significance: number | null
   effectiveFrom: string | null
   effectiveUntil: string | null
   ideaId: string | null
@@ -36,6 +38,7 @@ export async function getProvisionsByEntity(entityId: string) {
       descriptionShort: provisions.descriptionShort,
       type: provisions.type,
       status: provisions.status,
+      significance: provisions.significance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
@@ -84,8 +87,10 @@ export async function getFilteredProvisions(
       id: provisions.id,
       title: provisions.title,
       descriptionShort: provisions.descriptionShort,
+      avatarUrl: provisions.avatarUrl,
       type: provisions.type,
       status: provisions.status,
+      significance: provisions.significance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
@@ -157,8 +162,10 @@ export async function getFilteredProvisions(
     id: p.id,
     title: p.title,
     descriptionShort: p.descriptionShort,
+    avatarUrl: p.avatarUrl,
     type: p.type,
     status: p.status,
+    significance: p.significance,
     effectiveFrom: p.effectiveFrom,
     effectiveUntil: p.effectiveUntil,
     ideaId: p.ideaId,

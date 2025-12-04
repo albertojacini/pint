@@ -67,6 +67,7 @@ export async function uploadAvatar(supabase, localPath, entityName, entityType =
     const contentType = extension === 'webp' ? 'image/webp'
       : extension === 'png' ? 'image/png'
       : extension === 'jpg' || extension === 'jpeg' ? 'image/jpeg'
+      : extension === 'svg' ? 'image/svg+xml'
       : 'image/webp'
 
     // Generate a safe filename

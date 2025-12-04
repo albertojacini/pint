@@ -7,8 +7,10 @@ interface ProvisionCardProps {
     id: string
     title: string
     descriptionShort: string | null
+    avatarUrl: string | null
     type: string
     status: string
+    significance: number | null
     effectiveFrom: string | null
     effectiveUntil: string | null
     ideaId: string | null
@@ -59,52 +61,25 @@ const getStatusColor = (status: string) => {
   return colors[status] || 'bg-gray-500'
 }
 
-// Helper function to get type emoji
-const getTypeEmoji = (type: string) => {
-  const emojis: Record<string, string> = {
-    ownership: '🏢',
-    contract: '📄',
-    regulation: '⚖️',
-    taxation: '💰',
-    allocation: '📊',
-    designation: '🏛️',
-  }
-  return emojis[type] || '📋'
+
+// Map 0-10 significance to 1-5 dots
+function getSignificanceDots(significance: number | null): number {
+  if (significance === null || significance === undefined) return 0
+  return Math.ceil(significance / 2) // 0→0, 1-2→1, 3-4→2, 5-6→3, 7-8→4, 9-10→5
 }
 
-// Helper function to get type gradient
-const getTypeGradient = (type: string) => {
-  const gradients: Record<string, string> = {
-    ownership: 'from-purple-500 to-indigo-600',
-    contract: 'from-blue-500 to-cyan-600',
-    regulation: 'from-amber-500 to-orange-600',
-    taxation: 'from-green-500 to-emerald-600',
-    allocation: 'from-pink-500 to-rose-600',
-    designation: 'from-slate-500 to-gray-600',
-  }
-  return gradients[type] || 'from-gray-500 to-slate-600'
-}
-
-// Generate consistent mock importance based on provision ID
-function getImportanceScore(id: string): number {
-  const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  const percentage = 45 + (hash % 40) // Returns 45-84
-  return Math.ceil(percentage / 20) // Convert to 1-5 scale
-}
-
-// Get color based on importance score
-function getImportanceColor(score: number): string {
-  if (score >= 4) return 'rgb(34 197 94)' // green-500
-  if (score >= 3) return 'rgb(234 179 8)' // yellow-500
-  return 'rgb(239 68 68)' // red-500
+// Get color based on significance score (0-10 scale)
+function getSignificanceColor(score: number | null): string {
+  if (score === null || score === undefined) return 'rgb(209 213 219)' // gray-300 for unknown
+  if (score >= 7) return 'rgb(34 197 94)' // green-500 (high: 7-10)
+  if (score >= 4) return 'rgb(234 179 8)' // yellow-500 (medium: 4-6)
+  return 'rgb(239 68 68)' // red-500 (low: 0-3)
 }
 
 export function ProvisionCard({ provision }: ProvisionCardProps) {
   const typeConfig = getTypeColor(provision.type)
-  const emoji = getTypeEmoji(provision.type)
-  const gradient = getTypeGradient(provision.type)
-  const importanceScore = getImportanceScore(provision.id)
-  const importanceColor = getImportanceColor(importanceScore)
+  const significanceDots = getSignificanceDots(provision.significance)
+  const significanceColor = getSignificanceColor(provision.significance)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
@@ -151,28 +126,30 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
       <div className="flex items-center gap-3 mb-3">
         <h4 className="text-lg font-semibold line-clamp-2 flex-1">{provision.title}</h4>
 
-        {/* Importance indicator with dots */}
+        {/* Significance indicator with 5 dots (0-10 scale mapped) */}
         <div className="flex items-center gap-0.5 flex-shrink-0">
           {[1, 2, 3, 4, 5].map((dot) => (
             <div
               key={dot}
               className="w-2 h-2 rounded-full transition-colors"
               style={{
-                backgroundColor: dot <= importanceScore ? importanceColor : 'rgb(229 231 235)',
+                backgroundColor: dot <= significanceDots ? significanceColor : 'rgb(229 231 235)',
               }}
             />
           ))}
         </div>
       </div>
 
-      {/* Row 3: Placeholder Image + Description */}
+      {/* Row 3: Avatar Image + Description */}
       <div className="flex gap-3 mb-3">
-        {/* Placeholder image with emoji + gradient */}
-        <div
-          className={`w-10 h-10 flex-shrink-0 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center text-3xl`}
-        >
-          {emoji}
-        </div>
+        {/* Avatar image (only show if exists) */}
+        {provision.avatarUrl && (
+          <img
+            src={provision.avatarUrl}
+            alt={provision.title}
+            className="w-10 h-10 flex-shrink-0 rounded-lg object-cover"
+          />
+        )}
 
         {/* Description */}
         <p className="text-sm text-muted-foreground line-clamp-3 flex-1">

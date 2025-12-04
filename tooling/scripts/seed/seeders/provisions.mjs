@@ -10,6 +10,7 @@ import { taggablesData } from '../data/taggables-data.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
+import { uploadAvatar } from '../utils/storage.mjs'
 
 /**
  * Seed provisions domain
@@ -55,19 +56,30 @@ export async function seedProvisions(client, supabase, idMaps) {
         ? idMaps.ideas.get(provision.idea)
         : null;
 
+      // Upload avatar to Supabase Storage if available
+      let avatarUrl = provision.avatarUrl || null
+      if (supabase && avatarUrl && avatarUrl !== 'https://example.com/avatar.jpg') {
+        const uploadedUrl = await uploadAvatar(supabase, avatarUrl, provision.title, 'provisions')
+        if (uploadedUrl) {
+          avatarUrl = uploadedUrl
+        }
+      }
+
       const id = generateUUID()
 
       await insertQuery(client, {
         table: 'provisions',
-        columns: ['id', 'entity_id', 'title', 'description', 'description_short', 'type', 'status', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
+        columns: ['id', 'entity_id', 'title', 'description', 'description_short', 'avatar_url', 'type', 'status', 'significance', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
         values: [
           id,
           entityId,
           provision.title,
           provision.description,
           provision.descriptionShort || null,
+          avatarUrl,
           provision.type,
           provision.status,
+          provision.significance || null,
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
           ideaId,

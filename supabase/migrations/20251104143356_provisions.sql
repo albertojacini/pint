@@ -12,7 +12,8 @@ create table if not exists public.provisions (
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   title text not null,
   description text,
-  description_short text check (length(description_short) <= 80),
+  description_short text check (length(description_short) <= 100),
+  avatar_url text,
   type text not null check (type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
                       -- ownership: stakes in companies, property, infrastructure
                       -- contract: service agreements, concessions, partnerships
@@ -21,6 +22,7 @@ create table if not exists public.provisions (
                       -- allocation: programs, subsidies, budgets, funds
                       -- designation: zones, landmarks, protected areas, institutions
   status text not null default 'active', -- 'active', 'repealed', 'suspended'
+  significance integer check (significance >= 0 and significance <= 10),
   effective_from date,
   effective_until date,
   idea_id uuid references public.ideas(id) on delete set null,
@@ -45,7 +47,7 @@ create table if not exists public.events (
   administration_id uuid references public.administrations(id) on delete cascade,
   title text not null,
   description text,
-  description_short text check (length(description_short) <= 80),
+  description_short text check (length(description_short) <= 100),
   type text not null, -- Legislative: 'legislative_session', 'bill_proposal', 'referendum', 'amendment'
                       -- Executive: 'executive_order', 'appointment', 'regulation_update', 'administrative_reform'
                       -- Judicial: 'court_ruling', 'legal_challenge'
