@@ -92,11 +92,7 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
   const extraTagsCount = Math.max(0, visibleTags.length - 3)
 
   return (
-    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200 group cursor-pointer"
-      onClick={() => {
-        window.location.href = `/entities/${entityId}/provisions/${provision.id}`
-      }}
-    >
+    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200">
       {/* Row 1: Type Badge + Tags */}
       <div className="flex items-center gap-2 mb-3">
         {/* Type badge */}
@@ -131,7 +127,12 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
 
       {/* Row 2: Title + Importance Dots */}
       <div className="flex items-center gap-3 mb-3">
-        <h4 className="text-lg font-semibold line-clamp-2 flex-1">{provision.title}</h4>
+        <Link
+          href={`/entities/${entityId}/provisions/${provision.id}`}
+          className="text-lg font-semibold line-clamp-2 flex-1 hover:text-primary hover:underline transition-colors"
+        >
+          {provision.title}
+        </Link>
 
         {/* Significance indicator with 5 dots (0-10 scale mapped) */}
         <div className="flex items-center gap-0.5 flex-shrink-0">
@@ -187,14 +188,13 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
         <div className="flex items-center gap-2 text-xs">
           {/* Linked idea */}
           {provision.ideaTitle && provision.ideaId && (
-            <a
+            <Link
               href={`/ideas/${provision.ideaId}`}
-              className="text-primary hover:underline flex items-center gap-1 relative z-10"
-              onClick={(e) => e.stopPropagation()}
+              className="text-primary hover:underline flex items-center gap-1"
             >
               <span>💡</span>
               <span className="max-w-[100px] truncate">{provision.ideaTitle}</span>
-            </a>
+            </Link>
           )}
         </div>
       </div>
