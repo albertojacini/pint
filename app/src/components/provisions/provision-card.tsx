@@ -18,6 +18,7 @@ interface ProvisionCardProps {
     extraData: Record<string, unknown> | null
     tags: Tag[]
   }
+  entityId: string
 }
 
 // Helper function to get type colors (Polymarket-inspired, dark mode compatible)
@@ -76,7 +77,7 @@ function getSignificanceColor(score: number | null): string {
   return 'rgb(239 68 68)' // red-500 (low: 0-3)
 }
 
-export function ProvisionCard({ provision }: ProvisionCardProps) {
+export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
   const typeConfig = getTypeColor(provision.type)
   const significanceDots = getSignificanceDots(provision.significance)
   const significanceColor = getSignificanceColor(provision.significance)
@@ -89,7 +90,10 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
   const extraTagsCount = Math.max(0, visibleTags.length - 3)
 
   return (
-    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200">
+    <Link
+      href={`/entities/${entityId}/provisions/${provision.id}`}
+      className="block border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200"
+    >
       {/* Row 1: Type Badge + Tags */}
       <div className="flex items-center gap-2 mb-3">
         {/* Type badge */}
@@ -190,6 +194,6 @@ export function ProvisionCard({ provision }: ProvisionCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

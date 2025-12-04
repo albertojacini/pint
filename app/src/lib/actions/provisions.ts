@@ -52,6 +52,73 @@ export async function getProvisionsByEntity(entityId: string) {
   return entityProvisions
 }
 
+export async function getProvisionById(provisionId: string): Promise<ProvisionWithTags | null> {
+  // Fetch provision
+  const provisionResult = await db
+    .select({
+      id: provisions.id,
+      title: provisions.title,
+      descriptionShort: provisions.descriptionShort,
+      avatarUrl: provisions.avatarUrl,
+      type: provisions.type,
+      status: provisions.status,
+      significance: provisions.significance,
+      effectiveFrom: provisions.effectiveFrom,
+      effectiveUntil: provisions.effectiveUntil,
+      ideaId: ideas.id,
+      ideaTitle: ideas.title,
+      extraData: provisions.extraData,
+    })
+    .from(provisions)
+    .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
+    .where(eq(provisions.id, provisionId))
+    .limit(1)
+
+  if (provisionResult.length === 0) {
+    return null
+  }
+
+  const provision = provisionResult[0]
+
+  // Fetch tags
+  const provisionTags = await db
+    .select({
+      tagId: tags.id,
+      tagName: tags.name,
+      tagSlug: tags.slug,
+      tagCategory: tags.category,
+      tagColor: tags.color,
+    })
+    .from(taggables)
+    .innerJoin(tags, eq(taggables.tagId, tags.id))
+    .where(and(
+      eq(taggables.taggableType, 'provision'),
+      eq(taggables.taggableId, provisionId)
+    ))
+
+  return {
+    id: provision.id,
+    title: provision.title,
+    descriptionShort: provision.descriptionShort,
+    avatarUrl: provision.avatarUrl,
+    type: provision.type,
+    status: provision.status,
+    significance: provision.significance,
+    effectiveFrom: provision.effectiveFrom,
+    effectiveUntil: provision.effectiveUntil,
+    ideaId: provision.ideaId,
+    ideaTitle: provision.ideaTitle,
+    extraData: provision.extraData as Record<string, unknown> | null,
+    tags: provisionTags.map(t => ({
+      id: t.tagId,
+      name: t.tagName,
+      slug: t.tagSlug,
+      category: t.tagCategory,
+      color: t.tagColor,
+    }))
+  }
+}
+
 export async function getFilteredProvisions(
   entityId: string,
   filters: {

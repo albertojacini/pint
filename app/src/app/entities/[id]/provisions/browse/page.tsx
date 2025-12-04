@@ -68,7 +68,7 @@ export default async function BrowseProvisionsPage({
       {provisions.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {provisions.map((provision) => (
-            <ProvisionCard key={provision.id} provision={provision} />
+            <ProvisionCard key={provision.id} provision={provision} entityId={id} />
           ))}
         </div>
       ) : (
