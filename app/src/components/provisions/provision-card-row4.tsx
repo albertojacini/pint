@@ -24,6 +24,20 @@ function formatCurrency(amount: number, currency: string): string {
   }
 }
 
+// Get trend arrow indicator based on growth value
+function getTrendIndicator(growth: number): string {
+  if (growth > 0) return '↑'
+  if (growth < 0) return '↓'
+  return '→'
+}
+
+// Get color for trend based on growth value
+function getTrendColor(growth: number): string {
+  if (growth > 0) return 'rgb(34 197 94)' // green-500
+  if (growth < 0) return 'rgb(239 68 68)' // red-500
+  return 'rgb(107 114 128)' // gray-500
+}
+
 export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
   // Ownership type - Rich display
   if (type === 'ownership' && extraData) {
@@ -99,24 +113,82 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     }
   }
 
-  // Taxation type - Simple display
+  // Taxation type - Rich display
   if (type === 'taxation' && extraData) {
     const taxation = extraData as any
-    if (taxation.taxType) {
-      return (
-        <div className="py-2 px-3 bg-muted/30 rounded text-sm text-muted-foreground mb-3">
-          <span className="font-medium capitalize">{taxation.taxType}</span>
-          {taxation.rate && (
-            <>
-              {' · '}
-              <span className="font-medium">
-                {taxation.rate}{taxation.rateType === 'percentage' ? '%' : ''}
-              </span>
-            </>
-          )}
-        </div>
-      )
-    }
+
+    return (
+      <div className="grid grid-cols-2 gap-2 py-3 px-3 bg-muted/50 rounded-lg mb-3">
+        {/* Row 1: Tax Type + Rate Description */}
+        {taxation.taxType && (
+          <div className="col-span-2 flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs capitalize">
+              {taxation.taxType}
+            </Badge>
+            {taxation.rateDescription && (
+              <span className="text-sm font-medium">{taxation.rateDescription}</span>
+            )}
+          </div>
+        )}
+
+        {/* Row 2: Revenue + Collection Cost */}
+        {taxation.taxRevenueAmount && (
+          <div>
+            <div className="text-xs text-muted-foreground">
+              Revenue {taxation.taxRevenueFiscalYear && `(${taxation.taxRevenueFiscalYear})`}
+            </div>
+            <div className="text-sm font-semibold">
+              {formatCurrency(taxation.taxRevenueAmount, 'EUR')}
+            </div>
+          </div>
+        )}
+
+        {taxation.collectionCostAmount && (
+          <div>
+            <div className="text-xs text-muted-foreground">
+              Collection Cost {taxation.collectionCostYear && `(${taxation.collectionCostYear})`}
+            </div>
+            <div className="text-sm font-semibold">
+              {formatCurrency(taxation.collectionCostAmount, 'EUR')}
+            </div>
+          </div>
+        )}
+
+        {/* Row 3: Revenue Growth + Revenue Share */}
+        {taxation.revenueGrowth !== undefined && (
+          <div>
+            <div className="text-xs text-muted-foreground">Revenue Growth</div>
+            <div className="text-sm font-semibold" style={{ color: getTrendColor(taxation.revenueGrowth) }}>
+              {getTrendIndicator(taxation.revenueGrowth)} {taxation.revenueGrowth > 0 ? '+' : ''}{taxation.revenueGrowth}% YoY
+            </div>
+          </div>
+        )}
+
+        {taxation.taxRevenueShare !== undefined && (
+          <div>
+            <div className="text-xs text-muted-foreground">Revenue Share</div>
+            <div className="text-sm font-semibold mb-1">{taxation.taxRevenueShare}%</div>
+            {/* Progress bar visualization */}
+            <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all"
+                style={{ width: `${Math.min(taxation.taxRevenueShare, 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Row 4: Progressivity */}
+        {taxation.progressivity && (
+          <div className="col-span-2">
+            <div className="text-xs text-muted-foreground mb-1">Tax Design</div>
+            <Badge variant="secondary" className="text-xs capitalize">
+              {taxation.progressivity}
+            </Badge>
+          </div>
+        )}
+      </div>
+    )
   }
 
   // Contract type - Simple display

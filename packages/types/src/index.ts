@@ -127,10 +127,30 @@ const RegulationDataSchema = z.object({
 
 const TaxationDataSchema = z.object({
   type: z.literal('taxation'),
+
+  // Categorization
   taxType: z.enum(['tax', 'fee', 'tariff']).optional(),
-  rate: z.number().optional(),
-  rateType: z.enum(['percentage', 'fixed']).optional(),
-  revenueAmount: z.number().optional(),
+
+  // Rate information (human-readable)
+  rateDescription: z.string().optional(),
+
+  // Annual financial data
+  taxRevenueFiscalYear: z.string().optional(), // YYYY
+  taxRevenueAmount: z.number().optional(),
+
+  // Collection costs
+  collectionCostAmount: z.number().optional(),
+  collectionCostYear: z.string().optional(), // YYYY
+
+  // Growth & trends
+  revenueGrowth: z.number().optional(), // YoY % change
+  revenueGrowthPreviousYear: z.string().optional(), // YYYY
+
+  // Fiscal importance
+  taxRevenueShare: z.number().min(0).max(100).optional(),
+
+  // Tax design
+  progressivity: z.enum(['regressive', 'proportional', 'progressive', 'mixed']).optional(),
 })
 
 const AllocationDataSchema = z.object({

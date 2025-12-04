@@ -68,11 +68,15 @@ export const provisions = [
     extraData: {
       type: 'taxation',
       taxType: 'fee',
-      rate: 7.5,
-      rateType: 'fixed',
-      source_url:
-        'https://www.sicurauto.it/news/attualita-e-curiosita/ztl-a-milano-mappa-regole-e-orari/',
-      source_snippet: 'Area C entry fee: €7.50 for authorized vehicles',
+      rateDescription: 'EUR 7.50 daily access fee per non-exempt vehicle',
+      taxRevenueFiscalYear: '2023',
+      taxRevenueAmount: 85000000, // €85M annually
+      collectionCostAmount: 4200000, // €4.2M annually
+      collectionCostYear: '2023',
+      revenueGrowth: -2.5, // -2.5% YoY
+      revenueGrowthPreviousYear: '2022',
+      taxRevenueShare: 12.3, // 12.3% of all tax revenue
+      progressivity: 'regressive',
     },
   },
 ]
