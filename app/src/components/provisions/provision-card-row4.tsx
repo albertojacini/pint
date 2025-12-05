@@ -7,7 +7,7 @@ interface ProvisionCardRow4Props {
 
 // Helper function to format purpose string
 function formatPurpose(purpose: string): string {
-  return purpose.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+  return purpose.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
 }
 
 // Helper function to format currency
@@ -56,18 +56,14 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
         {/* Asset name */}
         <div className="col-span-2">
           <div className="text-xs text-muted-foreground">Asset</div>
-          <div className="text-sm font-semibold truncate">
-            {ownership.assetName || 'N/A'}
-          </div>
+          <div className="text-sm font-semibold truncate">{ownership.assetName || 'N/A'}</div>
         </div>
 
         {/* Ownership percentage */}
         {ownership.ownershipPercentage !== undefined && (
           <div>
             <div className="text-xs text-muted-foreground">Ownership</div>
-            <div className="text-sm font-semibold">
-              {ownership.ownershipPercentage}%
-            </div>
+            <div className="text-sm font-semibold">{ownership.ownershipPercentage}%</div>
           </div>
         )}
 
@@ -127,16 +123,24 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
 
     // Calculate growth percentages
     const revenueGrowth = calculateGrowth(taxation.taxRevenue, taxation.taxRevenuePrevYear)
-    const collectionCostGrowth = calculateGrowth(taxation.collectionCost, taxation.collectionCostPrevYear)
+    const collectionCostGrowth = calculateGrowth(
+      taxation.collectionCost,
+      taxation.collectionCostPrevYear
+    )
 
     // Calculate net contribution
-    const netContribution = taxation.taxRevenue !== undefined && taxation.collectionCost !== undefined
-      ? taxation.taxRevenue - taxation.collectionCost
-      : null
-    const netContributionPrev = taxation.taxRevenuePrevYear !== undefined && taxation.collectionCostPrevYear !== undefined
-      ? taxation.taxRevenuePrevYear - taxation.collectionCostPrevYear
-      : null
-    const netContributionGrowth = calculateGrowth(netContribution ?? undefined, netContributionPrev ?? undefined)
+    const netContribution =
+      taxation.taxRevenue !== undefined && taxation.collectionCost !== undefined
+        ? taxation.taxRevenue - taxation.collectionCost
+        : null
+    const netContributionPrev =
+      taxation.taxRevenuePrevYear !== undefined && taxation.collectionCostPrevYear !== undefined
+        ? taxation.taxRevenuePrevYear - taxation.collectionCostPrevYear
+        : null
+    const netContributionGrowth = calculateGrowth(
+      netContribution ?? undefined,
+      netContributionPrev ?? undefined
+    )
 
     return (
       <div className="py-3 px-3 bg-muted/50 rounded-lg mb-3 space-y-3">
@@ -180,8 +184,12 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
                   {formatCurrency(taxation.taxRevenue, 'EUR')}
                 </div>
                 {revenueGrowth !== null && (
-                  <div className="text-xs font-medium" style={{ color: getTrendColor(revenueGrowth) }}>
-                    {getTrendIndicator(revenueGrowth)} {revenueGrowth > 0 ? '+' : ''}{revenueGrowth.toFixed(1)}%
+                  <div
+                    className="text-xs font-medium"
+                    style={{ color: getTrendColor(revenueGrowth) }}
+                  >
+                    {getTrendIndicator(revenueGrowth)} {revenueGrowth > 0 ? '+' : ''}
+                    {revenueGrowth.toFixed(1)}%
                   </div>
                 )}
               </div>
@@ -197,8 +205,12 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
                   {formatCurrency(taxation.collectionCost, 'EUR')}
                 </div>
                 {collectionCostGrowth !== null && (
-                  <div className="text-xs font-medium" style={{ color: getTrendColor(collectionCostGrowth) }}>
-                    {getTrendIndicator(collectionCostGrowth)} {collectionCostGrowth > 0 ? '+' : ''}{collectionCostGrowth.toFixed(1)}%
+                  <div
+                    className="text-xs font-medium"
+                    style={{ color: getTrendColor(collectionCostGrowth) }}
+                  >
+                    {getTrendIndicator(collectionCostGrowth)} {collectionCostGrowth > 0 ? '+' : ''}
+                    {collectionCostGrowth.toFixed(1)}%
                   </div>
                 )}
               </div>
@@ -214,8 +226,13 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
                   {formatCurrency(netContribution, 'EUR')}
                 </div>
                 {netContributionGrowth !== null && (
-                  <div className="text-xs font-medium" style={{ color: getTrendColor(netContributionGrowth) }}>
-                    {getTrendIndicator(netContributionGrowth)} {netContributionGrowth > 0 ? '+' : ''}{netContributionGrowth.toFixed(1)}%
+                  <div
+                    className="text-xs font-medium"
+                    style={{ color: getTrendColor(netContributionGrowth) }}
+                  >
+                    {getTrendIndicator(netContributionGrowth)}{' '}
+                    {netContributionGrowth > 0 ? '+' : ''}
+                    {netContributionGrowth.toFixed(1)}%
                   </div>
                 )}
               </div>
