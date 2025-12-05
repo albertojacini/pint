@@ -168,33 +168,59 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
       {/* Row 4: Type-Specific Content */}
       <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
 
-      {/* Row 5: Mini Stats + Mini Info */}
+      {/* Row 5: Interaction Stats + Actions */}
       <div className="flex items-center justify-between pt-3 border-t border-border">
-        {/* Left: Mini stats */}
+        {/* Left: Interaction stats */}
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          {/* Status indicator */}
-          <div className="flex items-center gap-1.5">
-            <div className={`w-1.5 h-1.5 rounded-full ${getStatusColor(provision.status)}`} />
-            <span className="capitalize">{provision.status}</span>
+          {/* Likes */}
+          <div className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+            </svg>
+            <span>12k</span>
           </div>
 
-          {/* Effective year */}
-          {provision.effectiveFrom && (
-            <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
-          )}
+          {/* Dislikes */}
+          <div className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.736 3h4.018a2 2 0 01.485.06l3.76.94m-7 10v5a2 2 0 002 2h.096c.5 0 .905-.405.905-.904 0-.715.211-1.413.608-2.008L17 13V4m-7 10h2m5-10h2a2 2 0 012 2v6a2 2 0 01-2 2h-2.5" />
+            </svg>
+            <span>3.2k</span>
+          </div>
+
+          {/* Reviews */}
+          <div className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span>156</span>
+          </div>
         </div>
 
-        {/* Right: Mini info */}
+        {/* Right: Action indicators */}
         <div className="flex items-center gap-2 text-xs">
-          {/* Linked idea */}
-          {provision.ideaTitle && provision.ideaId && (
+          {/* Lightbulb if has linked idea */}
+          {provision.ideaId && (
             <Link
               href={`/ideas/${provision.ideaId}`}
-              className="text-primary hover:underline flex items-center gap-1"
+              className="hover:opacity-70 transition-opacity text-muted-foreground"
+              title="Has linked idea"
             >
-              <span>💡</span>
-              <span className="max-w-[100px] truncate">{provision.ideaTitle}</span>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
             </Link>
+          )}
+
+          {/* Status icon */}
+          {provision.status === 'active' ? (
+            <svg className="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Active">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          ) : (
+            <svg className="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Inactive">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           )}
         </div>
       </div>
