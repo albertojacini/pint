@@ -52,7 +52,7 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     const ownership = extraData as any
 
     return (
-      <div className="grid grid-cols-2 gap-2 py-3 px-3 bg-muted/50 rounded-lg mb-3">
+      <div className="grid grid-cols-2 gap-2 mb-3">
         {/* Asset name */}
         <div className="col-span-2">
           <div className="text-xs text-muted-foreground">Asset</div>
@@ -110,7 +110,7 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     const regulation = extraData as any
     if (regulation.regulationType) {
       return (
-        <div className="py-2 px-3 bg-muted/30 rounded text-sm text-muted-foreground mb-3">
+        <div className="text-sm text-muted-foreground mb-3">
           Type: <span className="font-medium capitalize">{regulation.regulationType}</span>
         </div>
       )
@@ -143,7 +143,7 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     )
 
     return (
-      <div className="py-3 px-3 bg-muted/50 rounded-lg mb-3 space-y-3">
+      <div className="mb-3 space-y-3">
         {/* Row 1: Header - Badges + Year */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -262,7 +262,7 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     const contract = extraData as any
     if (contract.contractType) {
       return (
-        <div className="py-2 px-3 bg-muted/30 rounded text-sm text-muted-foreground mb-3">
+        <div className="text-sm text-muted-foreground mb-3">
           Contract type: <span className="font-medium capitalize">{contract.contractType}</span>
         </div>
       )
@@ -271,7 +271,7 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
 
   // Fallback for all other cases
   return (
-    <div className="py-2 px-3 bg-muted/30 rounded text-sm text-muted-foreground mb-3">
+    <div className="text-sm text-muted-foreground mb-3">
       Additional details available on request
     </div>
   )

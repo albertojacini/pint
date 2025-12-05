@@ -149,7 +149,7 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
       </div>
 
       {/* Row 3: Avatar Image + Description */}
-      <div className="flex gap-3 mb-3">
+      <div className="flex gap-3 mb-6">
         {/* Avatar image (only show if exists) */}
         {provision.avatarUrl && (
           <img
@@ -169,7 +169,7 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
       <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
 
       {/* Row 5: Interaction Stats + Actions */}
-      <div className="flex items-center justify-between pt-3 border-t border-border">
+      <div className="flex items-center justify-between pt-3">
         {/* Left: Interaction stats */}
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           {/* Likes */}
