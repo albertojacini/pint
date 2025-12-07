@@ -8,7 +8,8 @@ export const tagsData = [
   {
     name: 'Climate Change',
     slug: 'climate-change',
-    description: 'Policies related to climate action, emissions reduction, and environmental sustainability',
+    description:
+      'Policies related to climate action, emissions reduction, and environmental sustainability',
     category: 'policy-topic',
     color: '#10b981', // Green
   },
@@ -74,6 +75,13 @@ export const tagsData = [
     description: 'Waste reduction, recycling programs, and circular economy',
     category: 'policy-topic',
     color: '#16a34a', // Dark green
+  },
+  {
+    name: 'Air Quality',
+    slug: 'air-quality',
+    description: 'Air pollution reduction and air quality improvement initiatives',
+    category: 'policy-topic',
+    color: '#0d9488', // Teal-600
   },
 
   // ===== GEOGRAPHIC =====

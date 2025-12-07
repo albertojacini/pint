@@ -14,4 +14,5 @@ export const taggablesData = [
   // Provision tags - ATM Ownership
   { tagSlug: 'public-transit', taggableType: 'provision', taggableName: 'ATM Ownership Stake' },
   { tagSlug: 'economic-impact', taggableType: 'provision', taggableName: 'ATM Ownership Stake' },
+  { tagSlug: 'air-quality', taggableType: 'provision', taggableName: 'Area C Congestion Charge' },
 ]
