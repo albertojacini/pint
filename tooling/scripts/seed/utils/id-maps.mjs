@@ -13,6 +13,7 @@ export function createIdMaps() {
     entities: new Map(),
     tags: new Map(),
     goals: new Map(),
+    stakeholderGroups: new Map(),
     people: new Map(),
     administrations: new Map(),
     measurables: new Map(),

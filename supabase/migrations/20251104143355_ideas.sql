@@ -43,6 +43,7 @@ create table if not exists public.ideas (
   title text not null,
   description text,
   category_id uuid references public.categories(id) on delete set null,
+  effects_diagram jsonb default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -94,3 +95,27 @@ create trigger set_updated_at
   before update on public.contributions
   for each row
   execute function public.handle_updated_at();
+
+-- ============================================================================
+-- STAKEHOLDER GROUPS
+-- ============================================================================
+-- Universal stakeholder types affected by policy ideas
+
+-- Stakeholder groups: universal stakeholders affected by policies
+create table if not exists public.stakeholder_groups (
+  id uuid primary key default uuid_generate_v4(),
+  name text not null unique,
+  title text not null,
+  category text,
+  description text,
+  icon text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create trigger set_updated_at
+  before update on public.stakeholder_groups
+  for each row
+  execute function public.handle_updated_at();
+
+create index if not exists idx_stakeholder_groups_category on public.stakeholder_groups(category);

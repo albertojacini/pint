@@ -1,4 +1,5 @@
 import { pgTable, text, uuid, timestamp, integer, uniqueIndex, numeric, jsonb } from 'drizzle-orm/pg-core'
+import type { EffectsDiagram } from '@repo/types'
 
 // User profiles table
 export const userProfiles = pgTable('user_profiles', {
@@ -170,6 +171,18 @@ export const goals = pgTable('goals', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
+// Stakeholder groups (universal stakeholders affected by policies)
+export const stakeholderGroups = pgTable('stakeholder_groups', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull().unique(),
+  title: text('title').notNull(),
+  category: text('category'),
+  description: text('description'),
+  icon: text('icon'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
 
 // Posts table (simple content for testing forms and UI)
 export const posts = pgTable('posts', {
@@ -230,6 +243,7 @@ export const ideas = pgTable('ideas', {
   title: text('title').notNull(),
   description: text('description'),
   categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
+  effectsDiagram: jsonb('effects_diagram').$type<EffectsDiagram>().default({}),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

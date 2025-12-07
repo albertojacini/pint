@@ -205,6 +205,67 @@ export type Provision = z.infer<typeof ProvisionSchema>
 export type CreateProvision = z.infer<typeof CreateProvisionSchema>
 export type UpdateProvision = z.infer<typeof UpdateProvisionSchema>
 
+// ============================================================================
+// EFFECTS DIAGRAM - Stakeholder Impact Visualization
+// ============================================================================
+
+// Effect sentiment (positive/negative)
+const EffectSentimentEnum = z.enum(['positive', 'negative'])
+export type EffectSentiment = z.infer<typeof EffectSentimentEnum>
+
+// Individual effect on a stakeholder
+const StakeholderEffectSchema = z.object({
+  title: z.string().min(1, 'Effect title is required'),
+  description: z.string().optional(),
+  sentiment: EffectSentimentEnum,
+  severity: z.number().int().min(1).max(5), // 1=minimal, 5=major impact
+})
+
+export type StakeholderEffect = z.infer<typeof StakeholderEffectSchema>
+
+// Stakeholder group with their effects (references stakeholder_groups table)
+const StakeholderGroupEffectsSchema = z.object({
+  stakeholderGroupId: z.string().uuid(), // References public.stakeholder_groups.id
+  subtitle: z.string().optional(),       // Contextual info like "≈40,000 daily users"
+  effects: z.array(StakeholderEffectSchema).min(1, 'At least one effect is required'),
+})
+
+export type StakeholderGroupEffects = z.infer<typeof StakeholderGroupEffectsSchema>
+
+// Complete effects diagram
+export const EffectsDiagramSchema = z.object({
+  stakeholderGroups: z.array(StakeholderGroupEffectsSchema).min(1, 'At least one stakeholder group is required'),
+})
+
+export type EffectsDiagram = z.infer<typeof EffectsDiagramSchema>
+
+// Stakeholder Group schema (for the database table)
+export const StakeholderGroupSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  title: z.string().min(1),
+  category: z.string().optional(),
+  description: z.string().optional(),
+  icon: z.string().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+export type StakeholderGroup = z.infer<typeof StakeholderGroupSchema>
+
+// Idea schema (complete schema including effectsDiagram)
+export const IdeaSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string().min(1),
+  description: z.string().optional(),
+  categoryId: z.string().uuid().optional(),
+  effectsDiagram: EffectsDiagramSchema.optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+export type Idea = z.infer<typeof IdeaSchema>
+
 // API response types
 export interface ApiResponse<T = unknown> {
   ok: boolean

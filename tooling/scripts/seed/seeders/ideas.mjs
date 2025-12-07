@@ -6,6 +6,7 @@
  */
 
 import { goals } from '../data/goals-data.mjs'
+import { stakeholderGroups } from '../data/stakeholder-groups-data.mjs'
 import { ideas } from '../data/ideas-data.mjs'
 import { measurables } from '../data/measurables-data.mjs'
 import { effects } from '../data/effects-data.mjs'
@@ -42,6 +43,29 @@ export async function seedIdeas(client, supabase, idMaps) {
     }
 
     logger.endSection('goals', goals.length)
+  }
+
+  // ===== STAKEHOLDER GROUPS =====
+  logger.startSection('stakeholder_groups')
+
+  if (await hasData(client, 'stakeholder_groups')) {
+    logger.skipSection('Stakeholder Groups')
+  } else {
+    // Insert each stakeholder group
+    for (const group of stakeholderGroups) {
+      const id = generateUUID()
+
+      await insertQuery(client, {
+        table: 'stakeholder_groups',
+        columns: ['id', 'name', 'title', 'category', 'icon'],
+        values: [id, group.name, group.title, group.category, group.icon]
+      })
+
+      // Store ID mapping for later reference (by name)
+      idMaps.stakeholderGroups.set(group.name, id)
+    }
+
+    logger.endSection('stakeholder_groups', stakeholderGroups.length)
   }
 
   // ===== MEASURABLES =====

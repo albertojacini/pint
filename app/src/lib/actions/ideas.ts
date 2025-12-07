@@ -23,6 +23,7 @@ export async function getIdeas() {
       categoryTitle: categories.title,
       effectsCount: sql<number>`count(distinct ${effects.id})`,
       provisionsCount: sql<number>`count(distinct ${provisions.id})`,
+      effectsDiagram: ideas.effectsDiagram,
     })
     .from(ideas)
     .leftJoin(categories, eq(ideas.categoryId, categories.id))
@@ -43,6 +44,7 @@ export async function getIdea(id: string) {
       description: ideas.description,
       categoryId: ideas.categoryId,
       categoryTitle: categories.title,
+      effectsDiagram: ideas.effectsDiagram,
     })
     .from(ideas)
     .leftJoin(categories, eq(ideas.categoryId, categories.id))
