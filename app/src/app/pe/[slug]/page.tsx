@@ -12,6 +12,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getProvisionsByEntity } from '@/lib/actions/provisions'
 import { getEventsByEntity } from '@/lib/actions/events'
+import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
   EntityTags,
   EntityHeader,
@@ -24,6 +25,7 @@ import {
   EventsOverview,
   EntityMetadata,
   AdministrationsSection,
+  RelatedEntitiesSection,
 } from '@/components/entities'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 
@@ -93,6 +95,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
   // Fetch events for this entity
   const events = await getEventsByEntity(entity.id)
 
+  // Fetch relationships for this entity
+  const relationships = await getGroupedEntityRelationships(entity.id)
+
   // Fetch tags for this entity
   const entityTags = await db
     .select({
@@ -127,6 +132,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <EntityHeader entity={entity} />
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
       <EntityActions entity={entity} />
+      <RelatedEntitiesSection relationships={relationships} />
       <PoliticalLandscape data={entity.politicalLandscape} />
       <PerformanceIndicators data={entity.performanceIndicators} />
       <CommunityMetrics data={entity.communityMetrics} />
