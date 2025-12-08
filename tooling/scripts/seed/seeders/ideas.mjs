@@ -125,19 +125,41 @@ export async function seedIdeas(client, supabase, idMaps) {
 
       const id = generateUUID()
 
+      // Process effects diagram if present
+      let effectsDiagram = null
+      if (idea.effectsDiagram) {
+        // Resolve stakeholder group names to IDs
+        effectsDiagram = {
+          stakeholderGroups: idea.effectsDiagram.stakeholderGroups.map(sg => {
+            const stakeholderGroupId = idMaps.stakeholderGroups.get(sg.stakeholderGroupName)
+            if (!stakeholderGroupId) {
+              logger.warning(`Stakeholder group not found: ${sg.stakeholderGroupName}`)
+              return null
+            }
+            return {
+              stakeholderGroupId,
+              subtitle: sg.subtitle,
+              effects: sg.effects
+            }
+          }).filter(sg => sg !== null)
+        }
+      }
+
       await insertQuery(client, {
         table: 'ideas',
         columns: [
           'id',
           'category_id',
           'title',
-          'description'
+          'description',
+          'effects_diagram'
         ],
         values: [
           id,
           categoryId,
           idea.title,
-          idea.description
+          idea.description,
+          effectsDiagram ? JSON.stringify(effectsDiagram) : null
         ]
       })
 

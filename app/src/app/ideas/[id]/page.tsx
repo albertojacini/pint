@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
+import { EffectsDiagram } from '@/components/ideas/effects-diagram'
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -14,7 +15,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
     notFound()
   }
 
-  const { idea, effects, goalContributions, provisions } = data
+  const { idea, effects, goalContributions, provisions, stakeholderGroups } = data
 
   // Group goals by measurable for better visualization
   const goalsByMeasurable = goalContributions.reduce((acc, gc) => {
@@ -46,6 +47,12 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
           <p className="text-muted-foreground text-lg">{idea.description}</p>
         )}
       </div>
+
+      {/* Effects Diagram Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">Stakeholder Effects</h2>
+        <EffectsDiagram effectsDiagram={idea.effectsDiagram} stakeholderGroups={stakeholderGroups} />
+      </section>
 
       {/* Effects Chain Section */}
       <section className="mb-12">

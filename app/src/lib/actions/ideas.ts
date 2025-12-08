@@ -9,7 +9,8 @@ import {
   goals,
   provisions,
   politicalEntities,
-  categories
+  categories,
+  stakeholderGroups
 } from '@/lib/db/schema'
 import { eq, sql, inArray } from 'drizzle-orm'
 
@@ -108,10 +109,27 @@ export async function getIdea(id: string) {
     .where(eq(provisions.ideaId, id))
     .orderBy(provisions.status, provisions.effectiveFrom)
 
+  // Get stakeholder groups referenced in the effects diagram
+  const stakeholderGroupIds = idea.effectsDiagram?.stakeholderGroups?.map(sg => sg.stakeholderGroupId) || []
+
+  const stakeholderGroupsData = stakeholderGroupIds.length > 0
+    ? await db
+        .select({
+          id: stakeholderGroups.id,
+          name: stakeholderGroups.name,
+          title: stakeholderGroups.title,
+          category: stakeholderGroups.category,
+          icon: stakeholderGroups.icon,
+        })
+        .from(stakeholderGroups)
+        .where(inArray(stakeholderGroups.id, stakeholderGroupIds))
+    : []
+
   return {
     idea,
     effects: ideaEffects,
     goalContributions,
     provisions: ideaProvisions,
+    stakeholderGroups: stakeholderGroupsData,
   }
 }
