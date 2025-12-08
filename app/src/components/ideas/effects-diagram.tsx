@@ -1,5 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import type { EffectsDiagram } from '@repo/types'
 
 interface StakeholderGroupData {
@@ -28,82 +26,85 @@ export function EffectsDiagram({ effectsDiagram, stakeholderGroups }: EffectsDia
   )
 
   return (
-    <div className="space-y-4">
-      {effectsDiagram.stakeholderGroups.map((stakeholderGroupEffects, index) => {
-        const stakeholderGroup = stakeholderGroupMap.get(stakeholderGroupEffects.stakeholderGroupId)
+    <div className="border rounded-lg overflow-hidden">
+      <table className="w-full">
+        <tbody>
+          {effectsDiagram.stakeholderGroups.map((stakeholderGroupEffects, index) => {
+            const stakeholderGroup = stakeholderGroupMap.get(stakeholderGroupEffects.stakeholderGroupId)
 
-        if (!stakeholderGroup) {
-          return null
-        }
+            if (!stakeholderGroup) {
+              return null
+            }
 
-        return (
-          <Card key={stakeholderGroupEffects.stakeholderGroupId} className="border-l-4 border-l-muted">
-            <CardHeader>
-              <div className="flex items-start gap-3">
-                {stakeholderGroup.icon && (
-                  <span className="text-2xl" aria-hidden="true">
-                    {stakeholderGroup.icon}
-                  </span>
-                )}
-                <div className="flex-1">
-                  <CardTitle className="text-lg mb-1">
-                    {stakeholderGroup.title}
-                  </CardTitle>
-                  {stakeholderGroupEffects.subtitle && (
-                    <p className="text-sm text-muted-foreground">
-                      {stakeholderGroupEffects.subtitle}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {stakeholderGroupEffects.effects.map((effect, effectIndex) => {
-                  const isPositive = effect.sentiment === 'positive'
-                  const severityDots = '●'.repeat(effect.severity)
-
-                  return (
-                    <div
-                      key={effectIndex}
-                      className={`p-3 rounded-md border-l-4 ${
-                        isPositive
-                          ? 'bg-green-50 border-l-green-500 dark:bg-green-950/30'
-                          : 'bg-red-50 border-l-red-500 dark:bg-red-950/30'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-1">
-                        <h4 className="font-medium flex-1">{effect.title}</h4>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={isPositive ? 'default' : 'destructive'}
-                            className="text-xs"
-                          >
-                            {isPositive ? '+' : '−'}
-                          </Badge>
-                          <span
-                            className={`text-xs ${
-                              isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                            }`}
-                            title={`Severity: ${effect.severity}/5`}
-                          >
-                            {severityDots}
-                          </span>
-                        </div>
+            return (
+              <tr key={stakeholderGroupEffects.stakeholderGroupId} className="border-b last:border-b-0">
+                {/* First column: Stakeholder info */}
+                <td className="p-3 align-top bg-muted/30 w-64">
+                  <div className="flex items-start gap-2">
+                    {stakeholderGroup.icon && (
+                      <span className="text-xl" aria-hidden="true">
+                        {stakeholderGroup.icon}
+                      </span>
+                    )}
+                    <div>
+                      <div className="font-semibold text-sm">
+                        {stakeholderGroup.title}
                       </div>
-                      {effect.description && (
-                        <p className="text-sm text-muted-foreground">
-                          {effect.description}
-                        </p>
+                      {stakeholderGroupEffects.subtitle && (
+                        <div className="text-xs text-muted-foreground mt-0.5">
+                          {stakeholderGroupEffects.subtitle}
+                        </div>
                       )}
                     </div>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        )
-      })}
+                  </div>
+                </td>
+
+                {/* Second column: Effects table */}
+                <td className="p-0">
+                  <table className="w-full">
+                    <tbody>
+                      {stakeholderGroupEffects.effects.map((effect, effectIndex) => {
+                        const isPositive = effect.sentiment === 'positive'
+                        const severityDots = '●'.repeat(effect.severity)
+
+                        return (
+                          <tr
+                            key={effectIndex}
+                            className={`border-b last:border-b-0 ${
+                              isPositive
+                                ? 'bg-green-50/50 dark:bg-green-950/20'
+                                : 'bg-red-50/50 dark:bg-red-950/20'
+                            }`}
+                          >
+                            <td className="p-2 pl-3">
+                              <div className="font-medium text-sm">{effect.title}</div>
+                              {effect.description && (
+                                <div className="text-xs text-muted-foreground mt-0.5">
+                                  {effect.description}
+                                </div>
+                              )}
+                            </td>
+                            <td className="p-2 pr-3 text-right w-20">
+                              <span
+                                className={`text-lg font-bold ${
+                                  isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                                }`}
+                                title={`Severity: ${effect.severity}/5`}
+                              >
+                                {severityDots}
+                              </span>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }
