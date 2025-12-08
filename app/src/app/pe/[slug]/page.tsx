@@ -115,24 +115,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <EntityTags tags={entityTags} />
 
-      {/* Breadcrumb */}
-      <div className="text-sm text-gray-500 mb-2">
-        <Link href="/pe" className="hover:underline">
-          {entity.identityData?.countryCode || 'Entities'}
-        </Link>
-        {entity.identityData?.regionName && (
-          <>
-            {' > '}
-            <span>{entity.identityData.regionName}</span>
-          </>
-        )}
-      </div>
-
       {/* Main entity card */}
       <EntityHeader entity={entity} />
+      <RelatedEntitiesSection relationships={relationships} />
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
       <EntityActions entity={entity} />
-      <RelatedEntitiesSection relationships={relationships} />
       <PoliticalLandscape data={entity.politicalLandscape} />
       <PerformanceIndicators data={entity.performanceIndicators} />
       <CommunityMetrics data={entity.communityMetrics} />
