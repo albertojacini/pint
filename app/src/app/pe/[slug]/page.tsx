@@ -25,18 +25,23 @@ import {
   EntityMetadata,
   AdministrationsSection,
 } from '@/components/entities'
+import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 
 interface EntityPageProps {
   params: Promise<{
-    id: string
+    slug: string
   }>
 }
 
 export default async function EntityPage({ params }: EntityPageProps) {
-  const { id } = await params
+  const { slug: urlSlug } = await params
+  const { idPrefix } = parseUrlSlug(urlSlug)
 
-  // Fetch the entity
-  const [entity] = await db.select().from(politicalEntities).where(eq(politicalEntities.id, id))
+  // Fetch the entity by ID prefix
+  const [entity] = await db
+    .select()
+    .from(politicalEntities)
+    .where(idStartsWith(politicalEntities.id, idPrefix))
 
   if (!entity) {
     notFound()
@@ -53,7 +58,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       description: administrations.description,
     })
     .from(administrations)
-    .where(eq(administrations.entityId, id))
+    .where(eq(administrations.entityId, entity.id))
     .orderBy(desc(administrations.termStart))
 
   // For each administration, get the mayor
@@ -83,10 +88,10 @@ export default async function EntityPage({ params }: EntityPageProps) {
   )
 
   // Fetch provisions for this entity
-  const provisions = await getProvisionsByEntity(id)
+  const provisions = await getProvisionsByEntity(entity.id)
 
   // Fetch events for this entity
-  const events = await getEventsByEntity(id)
+  const events = await getEventsByEntity(entity.id)
 
   // Fetch tags for this entity
   const entityTags = await db
@@ -99,7 +104,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
     })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))
-    .where(and(eq(taggables.taggableType, 'entity'), eq(taggables.taggableId, id)))
+    .where(and(eq(taggables.taggableType, 'entity'), eq(taggables.taggableId, entity.id)))
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -107,7 +112,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
       {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-2">
-        <Link href="/entities" className="hover:underline">
+        <Link href="/pe" className="hover:underline">
           {entity.identityData?.countryCode || 'Entities'}
         </Link>
         {entity.identityData?.regionName && (
@@ -121,14 +126,14 @@ export default async function EntityPage({ params }: EntityPageProps) {
       {/* Main entity card */}
       <EntityHeader entity={entity} />
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
-      <EntityActions entityId={id} />
+      <EntityActions entity={entity} />
       <PoliticalLandscape data={entity.politicalLandscape} />
       <PerformanceIndicators data={entity.performanceIndicators} />
       <CommunityMetrics data={entity.communityMetrics} />
 
       <AdministrationsSection administrations={administrationsWithMayor} />
-      <ProvisionsOverview entityId={id} provisions={provisions} />
-      <EventsOverview entityId={id} events={events} />
+      <ProvisionsOverview entity={entity} provisions={provisions} />
+      <EventsOverview entity={entity} events={events} />
       <EntityMetadata id={entity.id} createdAt={entity.createdAt} updatedAt={entity.updatedAt} />
     </div>
   )

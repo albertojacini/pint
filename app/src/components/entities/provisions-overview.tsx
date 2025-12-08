@@ -1,16 +1,17 @@
 import Link from 'next/link'
+import { entityPath } from '@/lib/utils'
 
 interface Provision {
   id: string
   title: string
-  description: string | null
+  descriptionShort: string | null
   type: string
   status: string
   effectiveFrom: string | null
 }
 
 interface ProvisionsOverviewProps {
-  entityId: string
+  entity: { id: string; slug: string }
   provisions: Provision[]
 }
 
@@ -61,7 +62,7 @@ function getStatusColor(status: string) {
   return colors[status] || 'bg-gray-500'
 }
 
-export function ProvisionsOverview({ entityId, provisions }: ProvisionsOverviewProps) {
+export function ProvisionsOverview({ entity, provisions }: ProvisionsOverviewProps) {
   if (provisions.length === 0) return null
 
   // Calculate stats
@@ -79,7 +80,7 @@ export function ProvisionsOverview({ entityId, provisions }: ProvisionsOverviewP
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Provisions Overview</h2>
         <Link
-          href={`/entities/${entityId}/provisions`}
+          href={`${entityPath(entity)}/pr`}
           className="text-blue-600 hover:underline text-sm font-medium"
         >
           View all
@@ -138,9 +139,9 @@ export function ProvisionsOverview({ entityId, provisions }: ProvisionsOverviewP
                 </h4>
 
                 {/* Row 3: Description (truncated) */}
-                {provision.description && (
+                {provision.descriptionShort && (
                   <p className="text-xs text-gray-600 line-clamp-2">
-                    {provision.description}
+                    {provision.descriptionShort}
                   </p>
                 )}
               </div>

@@ -3,10 +3,12 @@
 import Link from 'next/link'
 import type { Tag } from '@/lib/actions/provisions'
 import { ProvisionCardRow4 } from './provision-card-row4'
+import { provisionPath } from '@/lib/utils'
 
 interface ProvisionCardProps {
   provision: {
     id: string
+    slug: string
     title: string
     descriptionShort: string | null
     avatarUrl: string | null
@@ -20,7 +22,7 @@ interface ProvisionCardProps {
     extraData: Record<string, unknown> | null
     tags: Tag[]
   }
-  entityId: string
+  entity: { id: string; slug: string }
 }
 
 // Helper function to get type colors (Polymarket-inspired, dark mode compatible)
@@ -79,7 +81,7 @@ function getSignificanceColor(score: number | null): string {
   return 'rgb(239 68 68)' // red-500 (low: 0-3)
 }
 
-export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
+export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
   const typeConfig = getTypeColor(provision.type)
   const significanceDots = getSignificanceDots(provision.significance)
   const significanceColor = getSignificanceColor(provision.significance)
@@ -128,7 +130,7 @@ export function ProvisionCard({ provision, entityId }: ProvisionCardProps) {
       {/* Row 2: Title + Importance Dots */}
       <div className="flex items-center gap-3 mb-3">
         <Link
-          href={`/entities/${entityId}/provisions/${provision.id}`}
+          href={provisionPath(entity, provision)}
           className="text-lg font-semibold line-clamp-2 flex-1 hover:text-primary hover:underline transition-colors"
         >
           {provision.title}

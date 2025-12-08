@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { Search, MessageCircle } from 'lucide-react'
+import { entityPath } from '@/lib/utils'
 
 interface EntityActionsProps {
-  entityId: string
+  entity: { id: string; slug: string }
 }
 
-export function EntityActions({ entityId }: EntityActionsProps) {
+export function EntityActions({ entity }: EntityActionsProps) {
   return (
     <div className="flex items-center gap-2 py-4 mb-4">
       <button
@@ -23,7 +24,7 @@ export function EntityActions({ entityId }: EntityActionsProps) {
         <span>Chat</span>
       </button>
       <Link
-        href={`/entities/${entityId}/compare`}
+        href={`${entityPath(entity)}/compare`}
         className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
       >
         <span>&ge;</span>

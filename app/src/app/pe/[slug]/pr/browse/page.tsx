@@ -3,12 +3,12 @@ import Link from 'next/link'
 import { getFilteredProvisions } from '@/lib/actions/provisions'
 import { db } from '@/lib/db/client'
 import { politicalEntities } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
 import { ProvisionCard } from '@/components/provisions/provision-card'
 import { ProvisionsFilterBar } from '@/components/provisions/provisions-filter-bar'
+import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface BrowseProvisionsPageProps {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
   searchParams: Promise<{
     search?: string
     type?: string
@@ -21,21 +21,22 @@ export default async function BrowseProvisionsPage({
   params,
   searchParams,
 }: BrowseProvisionsPageProps) {
-  const { id } = await params
+  const { slug: urlSlug } = await params
+  const { idPrefix } = parseUrlSlug(urlSlug)
   const filters = await searchParams
 
   // Fetch the entity to verify it exists
   const [entity] = await db
     .select()
     .from(politicalEntities)
-    .where(eq(politicalEntities.id, id))
+    .where(idStartsWith(politicalEntities.id, idPrefix))
 
   if (!entity) {
     notFound()
   }
 
   // Fetch filtered provisions
-  const provisions = await getFilteredProvisions(id, {
+  const provisions = await getFilteredProvisions(entity.id, {
     search: filters.search,
     type: filters.type,
     status: filters.status,
@@ -46,7 +47,7 @@ export default async function BrowseProvisionsPage({
     <div className="container mx-auto py-8 px-4">
       {/* Back button */}
       <div className="mb-6">
-        <Link href={`/entities/${id}/provisions`} className="text-blue-600 hover:underline">
+        <Link href={`${entityPath(entity)}/pr`} className="text-blue-600 hover:underline">
           ← Back to Provisions Overview
         </Link>
       </div>
@@ -68,7 +69,7 @@ export default async function BrowseProvisionsPage({
       {provisions.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {provisions.map((provision) => (
-            <ProvisionCard key={provision.id} provision={provision} entityId={id} />
+            <ProvisionCard key={provision.id} provision={provision} entity={entity} />
           ))}
         </div>
       ) : (

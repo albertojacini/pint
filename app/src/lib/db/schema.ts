@@ -27,6 +27,7 @@ export const categories = pgTable('categories', {
 export const politicalEntities = pgTable('political_entities', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
+  slug: text('slug').notNull(),
   description: text('description'),
   avatarUrl: text('avatar_url'),
   type: text('type', {
@@ -296,6 +297,7 @@ export const provisions = pgTable('provisions', {
   id: uuid('id').primaryKey().defaultRandom(),
   entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
+  slug: text('slug').notNull(),
   description: text('description'),
   descriptionShort: text('description_short'),
   avatarUrl: text('avatar_url'),

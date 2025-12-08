@@ -13,6 +13,20 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
 import { uploadAvatar } from '../utils/storage.mjs'
 
 /**
+ * Generate a slug from text
+ */
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+}
+
+/**
  * Seed provisions domain
  * @param {import('pg').Client} client - PostgreSQL client
  * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client (unused here)
@@ -67,13 +81,16 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       const id = generateUUID()
 
+      const slug = generateSlug(provision.title)
+
       await insertQuery(client, {
         table: 'provisions',
-        columns: ['id', 'entity_id', 'title', 'description', 'description_short', 'avatar_url', 'type', 'status', 'significance', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
+        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'type', 'status', 'significance', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
         values: [
           id,
           entityId,
           provision.title,
+          slug,
           provision.description,
           provision.descriptionShort || null,
           avatarUrl,

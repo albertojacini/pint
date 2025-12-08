@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
+import { entityPath } from '@/lib/utils'
 
 interface Event {
   id: string
@@ -13,11 +14,11 @@ interface Event {
 }
 
 interface EventsOverviewProps {
-  entityId: string
+  entity: { id: string; slug: string }
   events: Event[]
 }
 
-export function EventsOverview({ entityId, events }: EventsOverviewProps) {
+export function EventsOverview({ entity, events }: EventsOverviewProps) {
   if (events.length === 0) return null
 
   return (
@@ -26,7 +27,7 @@ export function EventsOverview({ entityId, events }: EventsOverviewProps) {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Recent Events</h2>
         <Link
-          href={`/entities/${entityId}/events`}
+          href={`${entityPath(entity)}/events`}
           className="text-blue-600 hover:underline text-sm font-medium"
         >
           View all

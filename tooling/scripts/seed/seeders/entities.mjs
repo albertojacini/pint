@@ -13,6 +13,20 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
 import { uploadAvatar } from '../utils/storage.mjs'
 
 /**
+ * Generate a slug from text
+ */
+function generateSlug(text) {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+    .trim()
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+}
+
+/**
  * Seed political geography domain
  * @param {import('pg').Client} client - PostgreSQL client
  * @param {import('@supabase/supabase-js').SupabaseClient} supabase - Supabase client (unused here)
@@ -38,11 +52,14 @@ export async function seedEntities(client, supabase, idMaps) {
         }
       }
 
+      const slug = generateSlug(entity.name)
+
       await insertQuery(client, {
         table: 'political_entities',
         columns: [
           'id',
           'name',
+          'slug',
           'description',
           'avatar_url',
           'type',
@@ -59,6 +76,7 @@ export async function seedEntities(client, supabase, idMaps) {
         values: [
           id,
           entity.name,
+          slug,
           entity.description,
           avatarUrl,
           entity.type,

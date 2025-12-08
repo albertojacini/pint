@@ -65,7 +65,7 @@ export function Navbar() {
         {/* Main Navigation - Desktop only */}
         <div className="hidden md:flex items-center gap-8 border-t border-gray-100 h-12">
           <Link
-            href="/entities"
+            href="/pe"
             className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
           >
             Entities

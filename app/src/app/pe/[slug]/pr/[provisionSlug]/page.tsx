@@ -1,12 +1,15 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getProvisionById } from '@/lib/actions/provisions'
+import { db } from '@/lib/db/client'
+import { politicalEntities, provisions, tags, taggables, ideas } from '@/lib/db/schema'
+import { eq, and } from 'drizzle-orm'
 import { ProvisionCardRow4 } from '@/components/provisions/provision-card-row4'
+import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface PageProps {
   params: Promise<{
-    id: string
-    provisionId: string
+    slug: string
+    provisionSlug: string
   }>
 }
 
@@ -66,11 +69,71 @@ function getSignificanceColor(score: number | null): string {
 }
 
 export default async function ProvisionDetailPage({ params }: PageProps) {
-  const { id: entityId, provisionId } = await params
-  const provision = await getProvisionById(provisionId)
+  const { slug: entityUrlSlug, provisionSlug: provisionUrlSlug } = await params
+  const { idPrefix: entityIdPrefix } = parseUrlSlug(entityUrlSlug)
+  const { idPrefix: provisionIdPrefix } = parseUrlSlug(provisionUrlSlug)
 
-  if (!provision) {
+  // Fetch the entity
+  const [entity] = await db
+    .select()
+    .from(politicalEntities)
+    .where(idStartsWith(politicalEntities.id, entityIdPrefix))
+
+  if (!entity) {
     notFound()
+  }
+
+  // Fetch the provision
+  const [provisionResult] = await db
+    .select({
+      id: provisions.id,
+      title: provisions.title,
+      slug: provisions.slug,
+      description: provisions.description,
+      descriptionShort: provisions.descriptionShort,
+      avatarUrl: provisions.avatarUrl,
+      type: provisions.type,
+      status: provisions.status,
+      significance: provisions.significance,
+      effectiveFrom: provisions.effectiveFrom,
+      effectiveUntil: provisions.effectiveUntil,
+      extraData: provisions.extraData,
+      ideaId: provisions.ideaId,
+    })
+    .from(provisions)
+    .where(idStartsWith(provisions.id, provisionIdPrefix))
+
+  if (!provisionResult) {
+    notFound()
+  }
+
+  // Fetch idea if linked
+  let ideaTitle: string | null = null
+  if (provisionResult.ideaId) {
+    const [idea] = await db
+      .select({ title: ideas.title })
+      .from(ideas)
+      .where(eq(ideas.id, provisionResult.ideaId))
+    ideaTitle = idea?.title || null
+  }
+
+  // Fetch tags for this provision
+  const provisionTags = await db
+    .select({
+      id: tags.id,
+      name: tags.name,
+      slug: tags.slug,
+      color: tags.color,
+      category: tags.category,
+    })
+    .from(taggables)
+    .innerJoin(tags, eq(taggables.tagId, tags.id))
+    .where(and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id)))
+
+  const provision = {
+    ...provisionResult,
+    tags: provisionTags,
+    ideaTitle,
   }
 
   const typeConfig = getTypeColor(provision.type)
@@ -88,7 +151,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       {/* Back link */}
       <Link
-        href={`/entities/${entityId}/provisions`}
+        href={`${entityPath(entity)}/pr`}
         className="text-sm text-muted-foreground hover:text-primary mb-6 inline-block"
       >
         ← Back to provisions

@@ -16,6 +16,7 @@ export type Tag = {
 // Provision with tags and extraData
 export type ProvisionWithTags = {
   id: string
+  slug: string
   title: string
   descriptionShort: string | null
   avatarUrl: string | null
@@ -57,6 +58,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
   const provisionResult = await db
     .select({
       id: provisions.id,
+      slug: provisions.slug,
       title: provisions.title,
       descriptionShort: provisions.descriptionShort,
       avatarUrl: provisions.avatarUrl,
@@ -98,6 +100,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
 
   return {
     id: provision.id,
+    slug: provision.slug,
     title: provision.title,
     descriptionShort: provision.descriptionShort,
     avatarUrl: provision.avatarUrl,
@@ -152,6 +155,7 @@ export async function getFilteredProvisions(
   const baseQuery = db
     .select({
       id: provisions.id,
+      slug: provisions.slug,
       title: provisions.title,
       descriptionShort: provisions.descriptionShort,
       avatarUrl: provisions.avatarUrl,
@@ -227,6 +231,7 @@ export async function getFilteredProvisions(
   // Merge provisions with tags
   return provisionResults.map(p => ({
     id: p.id,
+    slug: p.slug,
     title: p.title,
     descriptionShort: p.descriptionShort,
     avatarUrl: p.avatarUrl,

@@ -11,6 +11,7 @@ create table if not exists public.provisions (
   id uuid primary key default uuid_generate_v4(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   title text not null,
+  slug text not null,
   description text,
   description_short text check (length(description_short) <= 100),
   avatar_url text,

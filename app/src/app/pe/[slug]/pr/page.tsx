@@ -3,30 +3,31 @@ import Link from 'next/link'
 import { getProvisionsByEntity } from '@/lib/actions/provisions'
 import { db } from '@/lib/db/client'
 import { politicalEntities } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
 import { Button } from '@/components/ui/button'
+import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface ProvisionsPageProps {
   params: Promise<{
-    id: string
+    slug: string
   }>
 }
 
 export default async function ProvisionsPage({ params }: ProvisionsPageProps) {
-  const { id } = await params
+  const { slug: urlSlug } = await params
+  const { idPrefix } = parseUrlSlug(urlSlug)
 
   // Fetch the entity to verify it exists
   const [entity] = await db
     .select()
     .from(politicalEntities)
-    .where(eq(politicalEntities.id, id))
+    .where(idStartsWith(politicalEntities.id, idPrefix))
 
   if (!entity) {
     notFound()
   }
 
   // Fetch provisions for this entity
-  const provisions = await getProvisionsByEntity(id)
+  const provisions = await getProvisionsByEntity(entity.id)
 
   // Calculate stats
   const stats = {
@@ -47,7 +48,7 @@ export default async function ProvisionsPage({ params }: ProvisionsPageProps) {
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Back button */}
       <div className="mb-6">
-        <Link href={`/entities/${id}`} className="text-blue-600 hover:underline">
+        <Link href={entityPath(entity)} className="text-blue-600 hover:underline">
           ← Back to {entity.name}
         </Link>
       </div>
@@ -60,7 +61,7 @@ export default async function ProvisionsPage({ params }: ProvisionsPageProps) {
             Summary of all provisions for {entity.name}
           </p>
         </div>
-        <Link href={`/entities/${id}/provisions/browse`}>
+        <Link href={`${entityPath(entity)}/pr/browse`}>
           <Button size="lg">Browse All Provisions →</Button>
         </Link>
       </div>

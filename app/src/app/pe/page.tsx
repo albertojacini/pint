@@ -2,6 +2,7 @@ import { db } from '@/lib/db/client'
 import { politicalEntities } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
 import Link from 'next/link'
+import { entityPath } from '@/lib/utils'
 
 export default async function EntitiesPage() {
   // Fetch all political entities
@@ -28,7 +29,7 @@ export default async function EntitiesPage() {
           {entities.map((entity) => (
             <Link
               key={entity.id}
-              href={`/entities/${entity.id}`}
+              href={entityPath(entity)}
               className="block p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow"
             >
               <div className="flex items-start gap-4">
