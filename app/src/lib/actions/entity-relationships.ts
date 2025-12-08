@@ -11,9 +11,6 @@ export type RelatedEntity = {
   slug: string
   type: string
   avatarUrl: string | null
-  identityData: {
-    coatOfArmsUrl?: string
-  } | null
   relationshipType: string
   direction: 'outgoing' | 'incoming'
 }
@@ -37,7 +34,6 @@ export async function getEntityRelationships(entityId: string): Promise<RelatedE
       relatedSlug: politicalEntities.slug,
       relatedType: politicalEntities.type,
       relatedAvatarUrl: politicalEntities.avatarUrl,
-      relatedIdentityData: politicalEntities.identityData,
     })
     .from(entityRelationships)
     .innerJoin(politicalEntities, eq(entityRelationships.relatedEntityId, politicalEntities.id))
@@ -52,7 +48,6 @@ export async function getEntityRelationships(entityId: string): Promise<RelatedE
       relatedSlug: politicalEntities.slug,
       relatedType: politicalEntities.type,
       relatedAvatarUrl: politicalEntities.avatarUrl,
-      relatedIdentityData: politicalEntities.identityData,
     })
     .from(entityRelationships)
     .innerJoin(politicalEntities, eq(entityRelationships.entityId, politicalEntities.id))
@@ -65,7 +60,6 @@ export async function getEntityRelationships(entityId: string): Promise<RelatedE
     slug: r.relatedSlug,
     type: r.relatedType,
     avatarUrl: r.relatedAvatarUrl,
-    identityData: r.relatedIdentityData,
     relationshipType: r.relationshipType,
     direction: 'outgoing' as const,
   }))
@@ -77,7 +71,6 @@ export async function getEntityRelationships(entityId: string): Promise<RelatedE
     slug: r.relatedSlug,
     type: r.relatedType,
     avatarUrl: r.relatedAvatarUrl,
-    identityData: r.relatedIdentityData,
     relationshipType: invertRelationshipType(r.relationshipType),
     direction: 'incoming' as const,
   }))

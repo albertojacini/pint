@@ -37,14 +37,6 @@ export const politicalEntities = pgTable('political_entities', {
   scoreInnovation: integer('score_innovation'),
   scoreSustainability: integer('score_sustainability'),
   scoreImpact: integer('score_impact'),
-  identityData: jsonb('identity_data').$type<{
-    countryCode?: string
-    regionName?: string
-    cityType?: string
-    coatOfArmsUrl?: string
-    officialWebsite?: string
-    sisterCities?: number
-  }>(),
   essentialStats: jsonb('essential_stats').$type<{
     area?: number
     density?: number

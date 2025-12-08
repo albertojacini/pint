@@ -24,7 +24,7 @@ def get_entity_by_name(entity_name: str) -> EntityInfo:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT id, name, identity_data
+                SELECT id, name
                 FROM political_entities
                 WHERE name = %s
                 """,
@@ -34,18 +34,13 @@ def get_entity_by_name(entity_name: str) -> EntityInfo:
             if not row:
                 raise ValueError(f"Entity not found: {entity_name}")
 
-            # Infer language from entity name or identity data
+            # Infer language from entity name
             language = 'en'  # default
-            identity_data = row[2] or {}
-
-            # Check for Italian entities
-            if 'Comune' in entity_name or 'Italia' in entity_name:
+            if 'Comune' in entity_name or 'Italia' in entity_name or 'Regione' in entity_name or 'Repubblica Italiana' in entity_name:
                 language = 'it'
-            elif identity_data.get('countryCode') == 'IT':
-                language = 'it'
-            elif identity_data.get('countryCode') == 'ES':
+            elif 'Ajuntament' in entity_name or 'Reino de España' in entity_name:
                 language = 'es'
-            elif identity_data.get('countryCode') == 'FR':
+            elif 'Ville de' in entity_name or 'République française' in entity_name:
                 language = 'fr'
 
             return EntityInfo(id=str(row[0]), name=row[1], language=language)

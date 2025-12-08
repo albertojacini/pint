@@ -24,13 +24,6 @@ export const politicalEntities = [
     score_innovation: 9,
     score_sustainability: 8,
     score_impact: 9,
-    identity_data: {
-      countryCode: 'IT',
-      regionName: 'Lombardy',
-      cityType: 'Metropolitan City',
-      officialWebsite: 'https://www.comune.milano.it',
-      sisterCities: 15,
-    },
     essential_stats: {
       area: 181.8,
       density: 8249,
