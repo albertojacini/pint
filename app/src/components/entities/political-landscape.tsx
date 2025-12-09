@@ -1,4 +1,5 @@
 import { PercentageBar, type PercentageBarItem } from '@/components/custom-ui/percentage-bar'
+import Link from 'next/link'
 
 interface PoliticalLandscapeProps {
   data: {
@@ -28,6 +29,7 @@ interface PoliticalLandscapeProps {
       }>
     }>
   } | null
+  entitySlug?: string
 }
 
 // Fallback role icons (used when icon not specified in data)
@@ -195,7 +197,7 @@ function ElectionsSection({
   )
 }
 
-export function PoliticalLandscape({ data }: PoliticalLandscapeProps) {
+export function PoliticalLandscape({ data, entitySlug }: PoliticalLandscapeProps) {
   if (!data) return null
 
   const hasContent =
@@ -208,7 +210,17 @@ export function PoliticalLandscape({ data }: PoliticalLandscapeProps) {
 
   return (
     <div className="py-4 mb-6">
-      <h3 className="text-sm font-semibold text-gray-700 mb-4">Amministrazione</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-gray-700">Amministrazione</h3>
+        {entitySlug && (
+          <Link
+            href={`/pe/${entitySlug}/ad`}
+            className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            View all →
+          </Link>
+        )}
+      </div>
 
       <div className="space-y-6">
         <LegislativeSection composition={data.councilComposition} />

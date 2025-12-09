@@ -23,7 +23,6 @@ import {
   ProvisionsOverview,
   EventsOverview,
   EntityMetadata,
-  AdministrationsSection,
   RelatedEntitiesSection,
 } from '@/components/entities'
 import { Tags } from '@/components/custom-ui/tags'
@@ -183,11 +182,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
               }
             : null
         }
+        entitySlug={urlSlug}
       />
       <PerformanceIndicators data={entity.performanceIndicators} />
       <CommunityMetrics data={entity.communityMetrics} />
 
-      <AdministrationsSection administrations={administrationsWithMayor} />
       <ProvisionsOverview entity={entity} provisions={provisions} />
       <EventsOverview entity={entity} events={events} />
       <EntityMetadata id={entity.id} createdAt={entity.createdAt} updatedAt={entity.updatedAt} />
