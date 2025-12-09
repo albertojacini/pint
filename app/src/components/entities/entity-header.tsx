@@ -1,4 +1,5 @@
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
+import { PageH1 } from '@/components/custom-ui/typography'
 
 interface EntityHeaderProps {
   entity: {
@@ -28,7 +29,7 @@ export function EntityHeader({ entity }: EntityHeaderProps) {
         </div>
 
         {/* Entity Name */}
-        <h1 className="text-4xl font-bold">{entity.name}</h1>
+        <PageH1>{entity.name}</PageH1>
       </div>
     </div>
   )

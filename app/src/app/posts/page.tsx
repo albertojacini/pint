@@ -1,5 +1,6 @@
 import { getPosts } from '@/lib/actions/posts'
 import Link from 'next/link'
+import { PageH1, PageH2 } from '@/components/custom-ui/typography'
 
 export default async function PostsPage() {
   const posts = await getPosts()
@@ -8,7 +9,7 @@ export default async function PostsPage() {
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-4xl font-bold mb-2">Posts</h1>
+          <PageH1 className="mb-2">Posts</PageH1>
           <p className="text-gray-600">Simple content for testing forms and UI</p>
         </div>
         <Link
@@ -38,7 +39,7 @@ export default async function PostsPage() {
               className="block p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow"
             >
               <div className="flex justify-between items-start mb-2">
-                <h2 className="text-2xl font-semibold">{post.title}</h2>
+                <PageH2>{post.title}</PageH2>
                 <span
                   className={`px-2 py-1 text-xs font-medium rounded ${
                     post.status === 'published'

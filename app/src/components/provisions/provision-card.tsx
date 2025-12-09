@@ -6,6 +6,7 @@ import { ProvisionCardRow4 } from './provision-card-row4'
 import { provisionPath } from '@/lib/utils'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
+import { CardTitle } from '@/components/custom-ui/typography'
 
 interface ProvisionCardProps {
   provision: {
@@ -75,9 +76,9 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
       <div className="flex items-center gap-3 mb-3">
         <Link
           href={provisionPath(entity, provision)}
-          className="text-lg font-semibold line-clamp-2 flex-1 hover:text-primary hover:underline transition-colors"
+          className="line-clamp-2 flex-1 hover:text-primary hover:underline transition-colors"
         >
-          {provision.title}
+          <CardTitle>{provision.title}</CardTitle>
         </Link>
 
         {/* Significance indicator with 5 dots (0-10 scale mapped) */}

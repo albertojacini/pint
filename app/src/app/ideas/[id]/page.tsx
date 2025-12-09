@@ -1,11 +1,12 @@
 import { getIdea } from '@/lib/actions/ideas'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { EffectsDiagram } from '@/components/ideas/effects-diagram'
+import { PageH1, PageH2, CardTitle } from '@/components/custom-ui/typography'
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -37,7 +38,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
         <div className="mb-2">
           <Badge variant="outline" className="text-xs font-mono">IDEA</Badge>
         </div>
-        <h1 className="text-4xl font-bold mb-2">{idea.title}</h1>
+        <PageH1 className="mb-2">{idea.title}</PageH1>
         {idea.categoryTitle && (
           <Badge variant="secondary" className="mb-4">
             {idea.categoryTitle}
@@ -50,13 +51,13 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
 
       {/* Effects Diagram Section */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Stakeholder Effects</h2>
+        <PageH2 className="mb-6">Stakeholder Effects</PageH2>
         <EffectsDiagram effectsDiagram={idea.effectsDiagram} stakeholderGroups={stakeholderGroups} />
       </section>
 
       {/* Effects Chain Section */}
       <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Impact Chain: Effects → Measurables → Goals</h2>
+        <PageH2 className="mb-6">Impact Chain: Effects → Measurables → Goals</PageH2>
 
         {effects.length === 0 ? (
           <p className="text-muted-foreground">No effects defined for this idea yet.</p>
@@ -77,7 +78,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                       {/* Effect Content */}
                       <div className="flex-1">
                         {/* Effect Title */}
-                        <CardTitle className="text-xl mb-3">{effect.title}</CardTitle>
+                        <CardTitle className="mb-3">{effect.title}</CardTitle>
 
                         {/* Effect Description */}
                         {effect.description && (
@@ -165,7 +166,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
 
       {/* Provisions Section */}
       <section>
-        <h2 className="text-2xl font-bold mb-6">Inspired Provisions</h2>
+        <PageH2 className="mb-6">Inspired Provisions</PageH2>
 
         {provisions.length === 0 ? (
           <p className="text-muted-foreground">No provisions inspired by this idea yet.</p>
@@ -181,7 +182,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                     </Badge>
                   </div>
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-lg">{provision.provisionTitle}</CardTitle>
+                    <CardTitle>{provision.provisionTitle}</CardTitle>
                     <Badge variant={
                       provision.status === 'active' ? 'default' :
                       provision.status === 'repealed' ? 'destructive' :

@@ -1,7 +1,8 @@
 import { getIdeas } from '@/lib/actions/ideas'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { PageH1, CardTitle } from '@/components/custom-ui/typography'
 
 export default async function IdeasPage() {
   const ideas = await getIdeas()
@@ -9,7 +10,7 @@ export default async function IdeasPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Policy Ideas</h1>
+        <PageH1 className="mb-2">Policy Ideas</PageH1>
         <p className="text-muted-foreground">
           Explore abstract policy concepts and their evidence-based impacts
         </p>
@@ -26,7 +27,7 @@ export default async function IdeasPage() {
               <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <CardTitle className="text-xl">{idea.title}</CardTitle>
+                    <CardTitle>{idea.title}</CardTitle>
                   </div>
                   {idea.categoryTitle && (
                     <Badge variant="secondary" className="w-fit">

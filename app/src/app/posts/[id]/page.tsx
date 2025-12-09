@@ -2,6 +2,7 @@ import { getPost } from '@/lib/actions/posts'
 import { PostActions } from '@/components/posts/post-actions'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { PageH1 } from '@/components/custom-ui/typography'
 
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -22,7 +23,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       <div className="bg-white border border-gray-200 rounded-lg p-8">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-4xl font-bold mb-2">{post.title}</h1>
+            <PageH1 className="mb-2">{post.title}</PageH1>
             <div className="flex items-center gap-3 text-sm text-gray-500">
               <span>
                 {new Date(post.createdAt).toLocaleDateString('en-US', {

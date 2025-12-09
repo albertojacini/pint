@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import { ClassificationBadge } from '@/components/custom-ui/classification-badge'
+import { PageH2, PageH3, PageH4 } from '@/components/custom-ui/typography'
 
 interface Provision {
   id: string
@@ -79,7 +80,7 @@ export function ProvisionsOverview({ entity, provisions }: ProvisionsOverviewPro
     <div className="bg-white p-8 mb-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Provisions Overview</h2>
+        <PageH2>Provisions Overview</PageH2>
         <Link
           href={`${entityPath(entity)}/pr`}
           className="text-blue-600 hover:underline text-sm font-medium"
@@ -110,7 +111,7 @@ export function ProvisionsOverview({ entity, provisions }: ProvisionsOverviewPro
 
       {/* Featured Provisions */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Featured Provisions</h3>
+        <PageH3 className="text-gray-700 mb-4">Featured Provisions</PageH3>
         <div className="grid gap-4 md:grid-cols-2">
           {featuredProvisions.map((provision) => {
             const typeColor = getTypeColor(provision.type)
@@ -133,9 +134,9 @@ export function ProvisionsOverview({ entity, provisions }: ProvisionsOverviewPro
                 </div>
 
                 {/* Row 2: Title */}
-                <h4 className="text-sm font-semibold text-gray-900 mb-1">
+                <PageH4 className="text-sm text-gray-900 mb-1">
                   {provision.title}
-                </h4>
+                </PageH4>
 
                 {/* Row 3: Description (truncated) */}
                 {provision.descriptionShort && (
