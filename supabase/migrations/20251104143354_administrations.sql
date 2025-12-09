@@ -26,6 +26,9 @@ create table if not exists public.administrations (
   term_end timestamptz,
   status text not null check (status in ('active', 'historical', 'upcoming')),
   description text,
+  council_composition jsonb,
+  election_data jsonb,
+  extra_metadata jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -45,6 +48,8 @@ create table if not exists public.administration_members (
   person_id uuid not null references public.people(id) on delete cascade,
   role_type text not null check (role_type in ('mayor', 'councilor', 'minister', 'president', 'governor', 'member')),
   role_title text,
+  icon text,
+  party text,
   appointed_at timestamptz not null,
   left_at timestamptz,
   status text not null check (status in ('active', 'historical')),

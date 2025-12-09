@@ -59,10 +59,43 @@ export default async function EntityPage({ params }: EntityPageProps) {
       termEnd: administrations.termEnd,
       status: administrations.status,
       description: administrations.description,
+      councilComposition: administrations.councilComposition,
+      electionData: administrations.electionData,
     })
     .from(administrations)
     .where(eq(administrations.entityId, entity.id))
     .orderBy(desc(administrations.termStart))
+
+  // Get active administration
+  const [activeAdmin] = entityAdministrations.filter((a) => a.status === 'active')
+
+  // Fetch executive members for active administration
+  let executiveMembers: Array<{
+    name: string
+    role: string
+    roleTitle: string | null
+    icon: string | null
+    party: string | null
+  }> = []
+
+  if (activeAdmin) {
+    executiveMembers = await db
+      .select({
+        name: people.fullName,
+        role: administrationMembers.roleType,
+        roleTitle: administrationMembers.roleTitle,
+        icon: administrationMembers.icon,
+        party: administrationMembers.party,
+      })
+      .from(administrationMembers)
+      .innerJoin(people, eq(administrationMembers.personId, people.id))
+      .where(
+        and(
+          eq(administrationMembers.administrationId, activeAdmin.id),
+          eq(administrationMembers.status, 'active')
+        )
+      )
+  }
 
   // For each administration, get the mayor
   const administrationsWithMayor = await Promise.all(
@@ -124,7 +157,33 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <RelatedEntitiesSection relationships={relationships} />
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
       <EntityActions entity={entity} />
-      <PoliticalLandscape data={entity.politicalLandscape} />
+      <PoliticalLandscape
+        data={
+          activeAdmin
+            ? {
+                councilComposition: activeAdmin.councilComposition || undefined,
+                executiveMembers: executiveMembers.map((m) => ({
+                  name: m.name,
+                  role: m.role as 'mayor' | 'vice-mayor' | 'assessor' | 'councilor',
+                  roleTitle: m.roleTitle || undefined,
+                  icon: m.icon || undefined,
+                  party: m.party || undefined,
+                })),
+                nextElection: activeAdmin.electionData?.nextElection
+                  ? { date: activeAdmin.electionData.nextElection }
+                  : undefined,
+                electionHistory: entityAdministrations
+                  .filter((admin) => admin.electionData?.electionDate)
+                  .map((admin) => ({
+                    date: admin.electionData!.electionDate!,
+                    turnout: admin.electionData!.turnout,
+                    results: admin.electionData!.results || [],
+                  }))
+                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+              }
+            : null
+        }
+      />
       <PerformanceIndicators data={entity.performanceIndicators} />
       <CommunityMetrics data={entity.communityMetrics} />
 

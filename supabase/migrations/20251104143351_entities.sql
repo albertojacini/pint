@@ -16,7 +16,6 @@ create table if not exists public.political_entities (
   score_sustainability integer check (score_sustainability >= 0 and score_sustainability <= 10),
   score_impact integer check (score_impact >= 0 and score_impact <= 10),
   essential_stats jsonb,
-  political_landscape jsonb,
   performance_indicators jsonb,
   community_metrics jsonb,
   created_at timestamptz default now(),

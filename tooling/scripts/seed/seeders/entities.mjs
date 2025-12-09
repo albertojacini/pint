@@ -68,7 +68,6 @@ export async function seedEntities(client, supabase, idMaps) {
           'score_sustainability',
           'score_impact',
           'essential_stats',
-          'political_landscape',
           'performance_indicators',
           'community_metrics'
         ],
@@ -84,7 +83,6 @@ export async function seedEntities(client, supabase, idMaps) {
           entity.score_sustainability || null,
           entity.score_impact || null,
           entity.essential_stats ? JSON.stringify(entity.essential_stats) : null,
-          entity.political_landscape ? JSON.stringify(entity.political_landscape) : null,
           entity.performance_indicators ? JSON.stringify(entity.performance_indicators) : null,
           entity.community_metrics ? JSON.stringify(entity.community_metrics) : null
         ]

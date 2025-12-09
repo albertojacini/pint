@@ -72,7 +72,10 @@ export async function seedAdministrations(client, supabase, idMaps) {
           'term_start',
           'term_end',
           'status',
-          'description'
+          'description',
+          'council_composition',
+          'election_data',
+          'extra_metadata'
         ],
         values: [
           id,
@@ -81,7 +84,10 @@ export async function seedAdministrations(client, supabase, idMaps) {
           admin.term_start,
           admin.term_end,
           admin.status,
-          admin.description
+          admin.description,
+          admin.council_composition ? JSON.stringify(admin.council_composition) : null,
+          admin.election_data ? JSON.stringify(admin.election_data) : null,
+          admin.extra_metadata ? JSON.stringify(admin.extra_metadata) : null
         ]
       })
 
@@ -121,6 +127,8 @@ export async function seedAdministrations(client, supabase, idMaps) {
           'person_id',
           'role_type',
           'role_title',
+          'icon',
+          'party',
           'appointed_at',
           'left_at',
           'status'
@@ -131,6 +139,8 @@ export async function seedAdministrations(client, supabase, idMaps) {
           personId,
           member.role_type,
           member.role_title,
+          member.icon || null,
+          member.party || null,
           member.appointed_at,
           member.left_at,
           member.status

@@ -44,36 +44,6 @@ export const politicalEntities = pgTable('political_entities', {
     unemploymentRate?: number
     povertyRate?: number
   }>(),
-  politicalLandscape: jsonb('political_landscape').$type<{
-    // Legislative branch - council composition
-    councilComposition?: Array<{
-      party: string
-      seats: number
-      color: string
-    }>
-    // Executive branch - city council members with roles
-    executiveMembers?: Array<{
-      name: string
-      role: 'mayor' | 'vice-mayor' | 'assessor' | 'councilor'
-      roleTitle?: string // e.g. "Assessore al Lavoro"
-      icon?: string // emoji icon for the role/portfolio
-      party?: string
-    }>
-    // Elections history and upcoming
-    nextElection?: {
-      date: string
-    }
-    electionHistory?: Array<{
-      date: string
-      turnout?: number
-      results: Array<{
-        candidate: string
-        coalition: string
-        percentage: number
-        color: string
-      }>
-    }>
-  }>(),
   performanceIndicators: jsonb('performance_indicators').$type<{
     innovation?: {
       overall: number // 0-10
@@ -205,6 +175,23 @@ export const administrations = pgTable('administrations', {
   termEnd: timestamp('term_end', { withTimezone: true }),
   status: text('status', { enum: ['active', 'historical', 'upcoming'] }).notNull(),
   description: text('description'),
+  councilComposition: jsonb('council_composition').$type<Array<{
+    party: string
+    seats: number
+    color: string
+  }>>(),
+  electionData: jsonb('election_data').$type<{
+    electionDate?: string
+    turnout?: number
+    nextElection?: string
+    results?: Array<{
+      candidate: string
+      coalition: string
+      percentage: number
+      color: string
+    }>
+  }>(),
+  extraMetadata: jsonb('extra_metadata').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
@@ -218,6 +205,8 @@ export const administrationMembers = pgTable('administration_members', {
     enum: ['mayor', 'councilor', 'minister', 'president', 'governor', 'member']
   }).notNull(),
   roleTitle: text('role_title'),
+  icon: text('icon'),
+  party: text('party'),
   appointedAt: timestamp('appointed_at', { withTimezone: true }).notNull(),
   leftAt: timestamp('left_at', { withTimezone: true }),
   status: text('status', { enum: ['active', 'historical'] }).notNull(),

@@ -6,7 +6,18 @@
 export const people = [
   // Current administration (2021-2026)
   { full_name: "Giuseppe Sala", avatar_url: null },
+  { full_name: "Anna Scavuzzo", avatar_url: null },
+  { full_name: "Guido Bardelli", avatar_url: null },
+  { full_name: "Lamberto Bertolé", avatar_url: null },
+  { full_name: "Alessia Cappello", avatar_url: null },
+  { full_name: "Arianna Censi", avatar_url: null },
+  { full_name: "Emmanuel Conte", avatar_url: null },
+  { full_name: "Elena Grandi", avatar_url: null },
   { full_name: "Marco Granelli", avatar_url: null },
+  { full_name: "Martina Riva", avatar_url: null },
+  { full_name: "Gaia Romani", avatar_url: null },
+  { full_name: "Tommaso Sacchi", avatar_url: null },
+  { full_name: "Giancarlo Tancredi", avatar_url: null },
   { full_name: "Roberta Guaineri", avatar_url: null },
   { full_name: "Pierfrancesco Maran", avatar_url: null },
   { full_name: "Gabriele Rabaiotti", avatar_url: null },
