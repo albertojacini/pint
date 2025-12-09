@@ -57,17 +57,21 @@ export function PercentageBar({
 
       {/* Legend */}
       {showLegend && (
-        <div className="flex flex-wrap gap-3 text-xs">
-          {items.map((item, idx) => (
-            <div key={idx} className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color }} />
-              <span className="text-gray-700">{item.label}</span>
-              <span className="text-gray-500">
-                ({item.value}
-                {valueType === 'percentage' ? '%' : ''})
-              </span>
-            </div>
-          ))}
+        <div className="flex gap-3 text-xs overflow-x-auto overflow-y-hidden">
+          {items.map((item, idx) => {
+            const displayValue =
+              valueType === 'percentage' ? item.value.toFixed(1) : item.value.toString()
+            return (
+              <div key={idx} className="flex items-center gap-1.5 flex-shrink-0">
+                <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: item.color }} />
+                <span className="text-gray-700">{item.label}</span>
+                <span className="text-gray-500">
+                  ({displayValue}
+                  {valueType === 'percentage' ? '%' : ''})
+                </span>
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
