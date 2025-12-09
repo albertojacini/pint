@@ -1,3 +1,5 @@
+import { PercentageBar, type PercentageBarItem } from '@/components/custom-ui/percentage-bar'
+
 interface PoliticalLandscapeProps {
   data: {
     councilComposition?: Array<{
@@ -77,41 +79,18 @@ function LegislativeSection({
 
   const totalSeats = composition.reduce((sum, p) => sum + p.seats, 0)
 
+  // Transform composition to PercentageBar format
+  const items = composition.map((party) => ({
+    label: party.party,
+    value: party.seats,
+    color: party.color,
+  }))
+
   return (
     <div>
       <SectionHeader>Consiglio comunale</SectionHeader>
       <div className="text-xs text-gray-500 mb-2">Council Composition ({totalSeats} seats)</div>
-
-      {/* Visual bar */}
-      <div className="h-8 rounded-full overflow-hidden flex mb-2">
-        {composition.map((party, idx) => {
-          const percentage = (party.seats / totalSeats) * 100
-          return (
-            <div
-              key={idx}
-              className="flex items-center justify-center text-white text-xs font-semibold"
-              style={{
-                backgroundColor: party.color,
-                width: `${percentage}%`,
-              }}
-              title={`${party.party}: ${party.seats} seats (${percentage.toFixed(1)}%)`}
-            >
-              {percentage > 15 && party.seats}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="flex flex-wrap gap-3 text-xs">
-        {composition.map((party, idx) => (
-          <div key={idx} className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: party.color }} />
-            <span className="text-gray-700">{party.party}</span>
-            <span className="text-gray-500">({party.seats})</span>
-          </div>
-        ))}
-      </div>
+      <PercentageBar items={items} valueType="count" />
     </div>
   )
 }
@@ -150,33 +129,25 @@ function ElectionResultBar({
   const totalPercentage = results.reduce((sum, r) => sum + r.percentage, 0)
   const othersPercentage = Math.max(0, 100 - totalPercentage)
 
-  return (
-    <div className="h-6 rounded overflow-hidden flex">
-      {results.map((result, idx) => (
-        <div
-          key={idx}
-          className="flex items-center justify-center text-white text-xs font-medium"
-          style={{
-            backgroundColor: result.color,
-            width: `${result.percentage}%`,
-          }}
-        >
-          {result.percentage >= 10 && `${result.candidate} ${result.percentage}%`}
-        </div>
-      ))}
-      {othersPercentage > 0 && (
-        <div
-          className="flex items-center justify-center text-white text-xs font-medium"
-          style={{
-            backgroundColor: '#9E9E9E',
-            width: `${othersPercentage}%`,
-          }}
-        >
-          {othersPercentage >= 5 && `Altri ${othersPercentage.toFixed(1)}%`}
-        </div>
-      )}
-    </div>
-  )
+  // Transform results to PercentageBar format
+  const items: PercentageBarItem[] = results.map((result) => ({
+    label: result.candidate,
+    value: result.percentage,
+    color: result.color,
+    metadata: result.coalition,
+  }))
+
+  // Add "Others" if there's remaining percentage
+  if (othersPercentage > 0) {
+    items.push({
+      label: 'Altri',
+      value: othersPercentage,
+      color: '#9E9E9E',
+      metadata: undefined,
+    })
+  }
+
+  return <PercentageBar items={items} barHeight="h-6" valueType="percentage" />
 }
 
 // Elections section - Next election + historical results
