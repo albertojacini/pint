@@ -135,7 +135,6 @@ export const tags = pgTable('tags', {
   slug: text('slug').notNull().unique(),
   description: text('description'),
   category: text('category'), // 'policy-topic', 'geographic', 'impact-area', 'maturity'
-  color: text('color'),
   metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}),
   usageCount: integer('usage_count').default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

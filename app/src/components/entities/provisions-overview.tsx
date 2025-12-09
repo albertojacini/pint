@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
+import { ClassificationBadge } from '@/components/custom-ui/classification-badge'
 
 interface Provision {
   id: string
@@ -16,40 +17,40 @@ interface ProvisionsOverviewProps {
 }
 
 // Helper function to get type color
-function getTypeConfig(type: string) {
-  const configs: Record<string, { color: string; bgColor: string }> = {
+function getTypeColor(type: string): string {
+  const colors: Record<string, string> = {
     // Legal & Regulatory
-    'regulation': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'ordinance': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'standard': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'law': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'decree': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
-    'code': { color: 'text-blue-700', bgColor: 'bg-blue-100' },
+    'regulation': 'rgb(29 78 216)',      // blue-700
+    'ordinance': 'rgb(29 78 216)',
+    'standard': 'rgb(29 78 216)',
+    'law': 'rgb(29 78 216)',
+    'decree': 'rgb(29 78 216)',
+    'code': 'rgb(29 78 216)',
     // Institutional & Services
-    'utility': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    'institution': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    'agency': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    'program': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
-    'fund': { color: 'text-purple-700', bgColor: 'bg-purple-100' },
+    'utility': 'rgb(126 34 206)',        // purple-700
+    'institution': 'rgb(126 34 206)',
+    'agency': 'rgb(126 34 206)',
+    'program': 'rgb(126 34 206)',
+    'fund': 'rgb(126 34 206)',
     // Planning
-    'plan': { color: 'text-green-700', bgColor: 'bg-green-100' },
-    'zone': { color: 'text-green-700', bgColor: 'bg-green-100' },
-    'project': { color: 'text-green-700', bgColor: 'bg-green-100' },
-    'guideline': { color: 'text-green-700', bgColor: 'bg-green-100' },
+    'plan': 'rgb(21 128 61)',            // green-700
+    'zone': 'rgb(21 128 61)',
+    'project': 'rgb(21 128 61)',
+    'guideline': 'rgb(21 128 61)',
     // Fiscal
-    'tax': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    'fee': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    'budget': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    'subsidy': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
-    'tariff': { color: 'text-orange-700', bgColor: 'bg-orange-100' },
+    'tax': 'rgb(194 65 12)',             // orange-700
+    'fee': 'rgb(194 65 12)',
+    'budget': 'rgb(194 65 12)',
+    'subsidy': 'rgb(194 65 12)',
+    'tariff': 'rgb(194 65 12)',
     // Administrative
-    'procedure': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
-    'agreement': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
-    'delegation': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
-    'protocol': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
-    'policy': { color: 'text-gray-700', bgColor: 'bg-gray-100' },
+    'procedure': 'rgb(55 65 81)',        // gray-700
+    'agreement': 'rgb(55 65 81)',
+    'delegation': 'rgb(55 65 81)',
+    'protocol': 'rgb(55 65 81)',
+    'policy': 'rgb(55 65 81)',
   }
-  return configs[type] || { color: 'text-gray-700', bgColor: 'bg-gray-100' }
+  return colors[type] || 'rgb(55 65 81)'
 }
 
 // Helper function to get status color
@@ -112,7 +113,7 @@ export function ProvisionsOverview({ entity, provisions }: ProvisionsOverviewPro
         <h3 className="text-lg font-semibold text-gray-700 mb-4">Featured Provisions</h3>
         <div className="grid gap-4 md:grid-cols-2">
           {featuredProvisions.map((provision) => {
-            const typeConfig = getTypeConfig(provision.type)
+            const typeColor = getTypeColor(provision.type)
             const startYear = provision.effectiveFrom ? new Date(provision.effectiveFrom).getFullYear() : null
 
             return (
@@ -128,9 +129,7 @@ export function ProvisionsOverview({ entity, provisions }: ProvisionsOverviewPro
                       <span className="text-xs font-semibold text-gray-600">{startYear}</span>
                     )}
                   </div>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${typeConfig.bgColor} ${typeConfig.color}`}>
-                    {provision.type}
-                  </span>
+                  <ClassificationBadge type={provision.type} color={typeColor} />
                 </div>
 
                 {/* Row 2: Title */}

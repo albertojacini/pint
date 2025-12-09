@@ -14,7 +14,6 @@ import { getProvisionsByEntity } from '@/lib/actions/provisions'
 import { getEventsByEntity } from '@/lib/actions/events'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
-  EntityTags,
   EntityHeader,
   EntityActions,
   EssentialStats,
@@ -27,6 +26,7 @@ import {
   AdministrationsSection,
   RelatedEntitiesSection,
 } from '@/components/entities'
+import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 
 interface EntityPageProps {
@@ -104,7 +104,6 @@ export default async function EntityPage({ params }: EntityPageProps) {
       id: tags.id,
       name: tags.name,
       slug: tags.slug,
-      color: tags.color,
       category: tags.category,
     })
     .from(taggables)
@@ -113,7 +112,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <EntityTags tags={entityTags} />
+      <Tags tags={entityTags} />
 
       {/* Main entity card */}
       <EntityHeader entity={entity} />

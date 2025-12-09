@@ -4,6 +4,8 @@ import { db } from '@/lib/db/client'
 import { politicalEntities, provisions, tags, taggables, ideas } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { ProvisionCardRow4 } from '@/components/provisions/provision-card-row4'
+import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
+import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface PageProps {
@@ -11,37 +13,6 @@ interface PageProps {
     slug: string
     provisionSlug: string
   }>
-}
-
-// Helper function to get type colors
-const getTypeColor = (type: string) => {
-  const colors: Record<string, { color: string; bgColor: string }> = {
-    ownership: {
-      color: 'rgb(147 51 234)',
-      bgColor: 'rgb(243 232 255)',
-    },
-    contract: {
-      color: 'rgb(37 99 235)',
-      bgColor: 'rgb(219 234 254)',
-    },
-    regulation: {
-      color: 'rgb(234 88 12)',
-      bgColor: 'rgb(254 243 199)',
-    },
-    taxation: {
-      color: 'rgb(22 163 74)',
-      bgColor: 'rgb(220 252 231)',
-    },
-    allocation: {
-      color: 'rgb(219 39 119)',
-      bgColor: 'rgb(252 231 243)',
-    },
-    designation: {
-      color: 'rgb(71 85 105)',
-      bgColor: 'rgb(241 245 249)',
-    },
-  }
-  return colors[type] || colors.designation
 }
 
 // Helper function to get status color
@@ -123,7 +94,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       id: tags.id,
       name: tags.name,
       slug: tags.slug,
-      color: tags.color,
       category: tags.category,
     })
     .from(taggables)
@@ -136,7 +106,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     ideaTitle,
   }
 
-  const typeConfig = getTypeColor(provision.type)
   const significanceDots = getSignificanceDots(provision.significance)
   const significanceColor = getSignificanceColor(provision.significance)
 
@@ -144,8 +113,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const visibleTags = provision.tags.filter(
     (tag) => tag.category === 'policy-topic' || tag.category === 'impact-area'
   )
-  const displayedTags = visibleTags.slice(0, 3)
-  const extraTagsCount = Math.max(0, visibleTags.length - 3)
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -160,34 +127,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       <div className="border border-border/50 rounded-lg p-6 bg-card">
         {/* Row 1: Type Badge + Tags */}
         <div className="flex items-center gap-2 mb-4">
-          {/* Type badge */}
-          <span
-            className="px-3 py-1.5 rounded text-sm font-medium border-0"
-            style={{
-              color: typeConfig.color,
-            }}
-          >
-            {provision.type}
-          </span>
-
-          {/* Tags */}
-          {visibleTags.length > 0 && (
-            <div className="flex gap-1.5">
-              {displayedTags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground"
-                >
-                  {tag.name}
-                </span>
-              ))}
-              {extraTagsCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">
-                  +{extraTagsCount}
-                </span>
-              )}
-            </div>
-          )}
+          <ProvisionClassificationBadge type={provision.type as any} />
+          <Tags tags={visibleTags} maxTags={3} />
         </div>
 
         {/* Row 2: Title + Importance Dots */}

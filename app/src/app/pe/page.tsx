@@ -3,6 +3,7 @@ import { politicalEntities } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
+import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 
 export default async function EntitiesPage() {
   // Fetch all political entities
@@ -45,9 +46,7 @@ export default async function EntitiesPage() {
                   {entity.nativeName && (
                     <p className="text-sm text-gray-500 mb-2">{entity.nativeName}</p>
                   )}
-                  <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
-                    {entity.type}
-                  </span>
+                  <EntityClassificationBadge type={entity.type as any} />
                 </div>
               </div>
 

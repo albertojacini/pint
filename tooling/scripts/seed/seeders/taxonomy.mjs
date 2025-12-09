@@ -117,14 +117,13 @@ export async function seedTaxonomy(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'tags',
-        columns: ['id', 'name', 'slug', 'description', 'category', 'color'],
+        columns: ['id', 'name', 'slug', 'description', 'category'],
         values: [
           tagId,
           tag.name,
           tag.slug,
           tag.description || null,
-          tag.category,
-          tag.color || null
+          tag.category
         ]
       })
 
