@@ -22,20 +22,13 @@ export function EntityHeader({ entity }: EntityHeaderProps) {
             />
           ) : (
             <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-xl font-bold text-gray-400">
-                {entity.name.charAt(0)}
-              </span>
+              <span className="text-xl font-bold text-gray-400">{entity.name.charAt(0)}</span>
             </div>
           )}
         </div>
 
         {/* Entity Name */}
         <h1 className="text-4xl font-bold">{entity.name}</h1>
-      </div>
-
-      {/* Entity Type Badge */}
-      <div className="ml-16">
-        <EntityClassificationBadge type={entity.type as any} />
       </div>
     </div>
   )

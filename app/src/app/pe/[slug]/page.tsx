@@ -27,6 +27,7 @@ import {
   RelatedEntitiesSection,
 } from '@/components/entities'
 import { Tags } from '@/components/custom-ui/tags'
+import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 
 interface EntityPageProps {
@@ -112,7 +113,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <Tags tags={entityTags} />
+      {/* Entity Type Badge + Tags */}
+      <div className="flex items-center gap-2 mb-6">
+        <EntityClassificationBadge type={entity.type as any} />
+        <Tags tags={entityTags} />
+      </div>
 
       {/* Main entity card */}
       <EntityHeader entity={entity} />
