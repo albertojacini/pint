@@ -90,7 +90,7 @@ function LegislativeSection({
     <div>
       <SectionHeader>Consiglio comunale</SectionHeader>
       <div className="text-xs text-gray-500 mb-2">Council Composition ({totalSeats} seats)</div>
-      <PercentageBar items={items} valueType="count" />
+      <PercentageBar items={items} valueType="count" barHeight="h-4" />
     </div>
   )
 }
@@ -147,7 +147,7 @@ function ElectionResultBar({
     })
   }
 
-  return <PercentageBar items={items} barHeight="h-6" valueType="percentage" />
+  return <PercentageBar items={items} valueType="percentage" />
 }
 
 // Elections section - Next election + historical results
@@ -180,7 +180,7 @@ function ElectionsSection({
           {history
             .filter((election) => election.results.length > 0)
             .map((election, idx) => (
-              <div key={idx} className="flex items-center gap-3">
+              <div key={idx} className="flex items-start gap-3">
                 <span className="text-xs text-gray-500 w-16 flex-shrink-0">
                   {formatElectionDate(election.date)}
                 </span>

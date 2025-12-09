@@ -17,7 +17,7 @@ interface PercentageBarProps {
 export function PercentageBar({
   items,
   showLegend = true,
-  barHeight = 'h-8',
+  barHeight = 'h-2',
   rounded = true,
   showInBarLabels = false,
   valueType = 'percentage',
@@ -27,10 +27,10 @@ export function PercentageBar({
   const total = items.reduce((sum, item) => sum + item.value, 0)
 
   return (
-    <div>
+    <div className="w-full">
       {/* Visual bar */}
       <div
-        className={`${barHeight} ${rounded ? 'rounded-full' : 'rounded'} overflow-hidden flex ${showLegend ? 'mb-2' : ''}`}
+        className={`w-full ${barHeight} ${rounded ? 'rounded-full' : 'rounded'} overflow-hidden flex ${showLegend ? 'mb-2' : ''}`}
       >
         {items.map((item, idx) => {
           const percentage = (item.value / total) * 100
