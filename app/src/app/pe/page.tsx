@@ -4,7 +4,7 @@ import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
-import { PageH1, PageH2 } from '@/components/custom-ui/typography'
+import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
 
 export default async function EntitiesPage() {
   // Fetch all political entities
@@ -16,7 +16,7 @@ export default async function EntitiesPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
-        <PageH1 className="mb-2">Political Entities</PageH1>
+        <PageTitle className="mb-2">Political Entities</PageTitle>
         <p className="text-gray-600">
           Browse public administrations and their information
         </p>
@@ -43,7 +43,7 @@ export default async function EntitiesPage() {
                   />
                 )}
                 <div className="flex-1">
-                  <PageH2 className="mb-1">{entity.name}</PageH2>
+                  <SectionTitle className="mb-1">{entity.name}</SectionTitle>
                   {entity.nativeName && (
                     <p className="text-sm text-gray-500 mb-2">{entity.nativeName}</p>
                   )}

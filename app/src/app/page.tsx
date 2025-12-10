@@ -3,7 +3,7 @@ import { politicalEntities } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { PageH1, PageH2 } from '@/components/custom-ui/typography'
+import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
 
 export default async function Home() {
   // Fetch Comune di Milano
@@ -16,7 +16,7 @@ export default async function Home() {
     <div className="container mx-auto max-w-4xl py-16 px-4">
       {/* Hero Section */}
       <div className="mb-12 text-center">
-        <PageH1 className="mb-4">Pint - Public Interface</PageH1>
+        <PageTitle className="mb-4">Pint - Public Interface</PageTitle>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           A public policies platform providing up-to-date, UX-rich information
           about public administrations and their policies. Explore how cities
@@ -38,7 +38,7 @@ export default async function Home() {
               <div className="w-20 h-20 bg-gray-300 rounded-full" />
             )}
             <div className="flex-1">
-              <PageH2 className="mb-1">{milanoEntity.name}</PageH2>
+              <SectionTitle className="mb-1">{milanoEntity.name}</SectionTitle>
               {milanoEntity.population && (
                 <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
                   Population: {milanoEntity.population.toLocaleString()}

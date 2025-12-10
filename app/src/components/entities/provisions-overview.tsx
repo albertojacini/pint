@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
-import { PageH2 } from '@/components/custom-ui/typography'
+import { SectionTitle } from '@/components/custom-ui/typography'
 import type { ProvisionAggregates } from '@/lib/actions/provisions'
 
 interface ProvisionsOverviewProps {
@@ -217,7 +217,7 @@ export function ProvisionsOverview({ entity, aggregates }: ProvisionsOverviewPro
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-baseline gap-3">
-          <PageH2>Provisions</PageH2>
+          <SectionTitle>Provisions</SectionTitle>
           <span className="text-2xl font-bold text-gray-700">{total}</span>
         </div>
         <Link

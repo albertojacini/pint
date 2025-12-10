@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { getEventsByAdministration } from '@/lib/actions/events'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { PageH1, PageH2, PageH3, PageH4, CardTitle } from '@/components/custom-ui/typography'
+import { PageTitle, SectionTitle, SubsectionTitle } from '@/components/custom-ui/typography'
 
 interface AdministrationPageProps {
   params: Promise<{
@@ -94,7 +94,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
       <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
         <div className="mb-6">
           <div className="flex items-start justify-between gap-4 mb-4">
-            <PageH1>{administration.name}</PageH1>
+            <PageTitle>{administration.name}</PageTitle>
             <span className={`shrink-0 px-3 py-1 text-sm font-medium rounded ${statusColor}`}>
               {administration.status}
             </span>
@@ -110,7 +110,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
 
         {administration.description && (
           <div className="mb-6">
-            <PageH2 className="text-lg mb-2">Description</PageH2>
+            <SectionTitle className="text-lg mb-2">Description</SectionTitle>
             <p className="text-gray-700">{administration.description}</p>
           </div>
         )}
@@ -119,11 +119,11 @@ export default async function AdministrationPage({ params }: AdministrationPageP
       {/* Members */}
       {members.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
-          <PageH2 className="mb-6">Administration Members</PageH2>
+          <SectionTitle className="mb-6">Administration Members</SectionTitle>
 
           {mayor && (
             <div className="mb-8">
-              <PageH3 className="text-lg mb-4">Mayor</PageH3>
+              <SubsectionTitle className="text-lg mb-4">Mayor</SubsectionTitle>
               <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
                 {mayor.person.avatarUrl && (
                   <img
@@ -133,7 +133,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
                   />
                 )}
                 <div className="flex-1">
-                  <PageH4 className="text-lg">{mayor.person.fullName}</PageH4>
+                  <SubsectionTitle as="h4" className="text-lg">{mayor.person.fullName}</SubsectionTitle>
                   <p className="text-sm text-gray-600">{mayor.roleTitle || mayor.roleType}</p>
                   <p className="text-sm text-gray-500">
                     {format(new Date(mayor.appointedAt), 'MMM yyyy')} -{' '}
@@ -151,7 +151,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
 
           {otherMembers.length > 0 && (
             <div>
-              <PageH3 className="text-lg mb-4">Council Members</PageH3>
+              <SubsectionTitle className="text-lg mb-4">Council Members</SubsectionTitle>
               <div className="grid gap-4 md:grid-cols-2">
                 {otherMembers.map((member) => (
                   <div key={member.id} className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg">
@@ -163,7 +163,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <PageH4 className="truncate">{member.person.fullName}</PageH4>
+                      <SubsectionTitle as="h4" className="truncate">{member.person.fullName}</SubsectionTitle>
                       <p className="text-sm text-gray-600 truncate">{member.roleTitle || member.roleType}</p>
                       <p className="text-xs text-gray-500">
                         {format(new Date(member.appointedAt), 'MMM yyyy')} -{' '}
@@ -186,7 +186,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
       {/* Events Section */}
       {events.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
-          <PageH2 className="mb-6">Events</PageH2>
+          <SectionTitle className="mb-6">Events</SectionTitle>
           <div className="grid gap-4 md:grid-cols-2">
             {events.map((event) => (
               <Card key={event.id}>
@@ -197,7 +197,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
                       {event.type}
                     </Badge>
                   </div>
-                  <CardTitle>{event.title}</CardTitle>
+                  <SubsectionTitle>{event.title}</SubsectionTitle>
                   <div className="text-sm text-muted-foreground">
                     {format(new Date(event.occurredAt), 'PPP')}
                   </div>
@@ -215,7 +215,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
 
       {/* Metadata */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <PageH2 className="text-lg mb-4">Metadata</PageH2>
+        <SectionTitle className="text-lg mb-4">Metadata</SectionTitle>
         <div className="grid md:grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-gray-500">Created:</span>{' '}

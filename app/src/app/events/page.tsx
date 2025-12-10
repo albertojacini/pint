@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
-import { PageH1, CardTitle } from '@/components/custom-ui/typography'
+import { PageTitle, SubsectionTitle } from '@/components/custom-ui/typography'
 
 export default async function EventsPage() {
   const events = await getEvents()
@@ -11,7 +11,7 @@ export default async function EventsPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
-        <PageH1 className="mb-2">Events</PageH1>
+        <PageTitle className="mb-2">Events</PageTitle>
         <p className="text-muted-foreground">
           Temporal occurrences that shape provisions
         </p>
@@ -32,7 +32,7 @@ export default async function EventsPage() {
                     {event.type}
                   </Badge>
                 </div>
-                <CardTitle>{event.title}</CardTitle>
+                <SubsectionTitle>{event.title}</SubsectionTitle>
                 <CardDescription className="text-sm">
                   {format(new Date(event.occurredAt), 'PPP')}
                 </CardDescription>
