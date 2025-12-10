@@ -44,6 +44,7 @@ export async function getProvisionsByEntity(entityId: string) {
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
+      extraData: provisions.extraData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -51,6 +52,139 @@ export async function getProvisionsByEntity(entityId: string) {
     .orderBy(desc(provisions.effectiveFrom))
 
   return entityProvisions
+}
+
+// Aggregate types for the provisions overview
+export type ProvisionAggregates = {
+  total: number
+  byType: {
+    taxation: { count: number; totalRevenue: number | null; avgGrowth: number | null }
+    ownership: { count: number; totalValuation: number | null; totalCashFlow: number | null }
+    contract: { count: number; byContractType: Record<string, number> }
+    regulation: { count: number; byRegulationType: Record<string, number> }
+    allocation: { count: number }
+    designation: { count: number }
+  }
+  tags: Array<{ id: string; name: string; slug: string; category: string | null; count: number }>
+}
+
+export async function getProvisionAggregatesByEntity(entityId: string): Promise<ProvisionAggregates> {
+  // Fetch all provisions with extraData
+  const entityProvisions = await db
+    .select({
+      id: provisions.id,
+      type: provisions.type,
+      extraData: provisions.extraData,
+    })
+    .from(provisions)
+    .where(eq(provisions.entityId, entityId))
+
+  // Initialize aggregates
+  const byType: ProvisionAggregates['byType'] = {
+    taxation: { count: 0, totalRevenue: null, avgGrowth: null },
+    ownership: { count: 0, totalValuation: null, totalCashFlow: null },
+    contract: { count: 0, byContractType: {} },
+    regulation: { count: 0, byRegulationType: {} },
+    allocation: { count: 0 },
+    designation: { count: 0 },
+  }
+
+  // Temporary arrays for averaging
+  const taxationGrowths: number[] = []
+
+  // Process each provision
+  for (const p of entityProvisions) {
+    const extra = p.extraData as Record<string, unknown> | null
+
+    switch (p.type) {
+      case 'taxation':
+        byType.taxation.count++
+        if (extra?.taxRevenueAmount != null) {
+          byType.taxation.totalRevenue = (byType.taxation.totalRevenue ?? 0) + Number(extra.taxRevenueAmount)
+        }
+        if (extra?.revenueGrowth != null) {
+          taxationGrowths.push(Number(extra.revenueGrowth))
+        }
+        break
+
+      case 'ownership':
+        byType.ownership.count++
+        if (extra?.valuationAmount != null) {
+          byType.ownership.totalValuation = (byType.ownership.totalValuation ?? 0) + Number(extra.valuationAmount)
+        }
+        if (extra?.annualCashFlow != null) {
+          byType.ownership.totalCashFlow = (byType.ownership.totalCashFlow ?? 0) + Number(extra.annualCashFlow)
+        }
+        break
+
+      case 'contract':
+        byType.contract.count++
+        if (extra?.contractType) {
+          const ct = String(extra.contractType)
+          byType.contract.byContractType[ct] = (byType.contract.byContractType[ct] ?? 0) + 1
+        }
+        break
+
+      case 'regulation':
+        byType.regulation.count++
+        if (extra?.regulationType) {
+          const rt = String(extra.regulationType)
+          byType.regulation.byRegulationType[rt] = (byType.regulation.byRegulationType[rt] ?? 0) + 1
+        }
+        break
+
+      case 'allocation':
+        byType.allocation.count++
+        break
+
+      case 'designation':
+        byType.designation.count++
+        break
+    }
+  }
+
+  // Calculate average growth for taxation
+  if (taxationGrowths.length > 0) {
+    byType.taxation.avgGrowth = taxationGrowths.reduce((a, b) => a + b, 0) / taxationGrowths.length
+  }
+
+  // Fetch tags with counts for provisions of this entity
+  const provisionIds = entityProvisions.map(p => p.id)
+
+  let tagAggregates: Array<{ id: string; name: string; slug: string; category: string | null; count: number }> = []
+
+  if (provisionIds.length > 0) {
+    const tagResults = await db
+      .select({
+        id: tags.id,
+        name: tags.name,
+        slug: tags.slug,
+        category: tags.category,
+      })
+      .from(taggables)
+      .innerJoin(tags, eq(taggables.tagId, tags.id))
+      .where(and(
+        eq(taggables.taggableType, 'provision'),
+        inArray(taggables.taggableId, provisionIds)
+      ))
+
+    // Count occurrences of each tag
+    const tagCounts = tagResults.reduce((acc, t) => {
+      if (!acc[t.id]) {
+        acc[t.id] = { ...t, count: 0 }
+      }
+      acc[t.id].count++
+      return acc
+    }, {} as Record<string, { id: string; name: string; slug: string; category: string | null; count: number }>)
+
+    tagAggregates = Object.values(tagCounts).sort((a, b) => b.count - a.count)
+  }
+
+  return {
+    total: entityProvisions.length,
+    byType,
+    tags: tagAggregates,
+  }
 }
 
 export async function getProvisionById(provisionId: string): Promise<ProvisionWithTags | null> {

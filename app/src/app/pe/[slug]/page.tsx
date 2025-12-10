@@ -10,7 +10,7 @@ import {
 import { eq, desc, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getProvisionsByEntity } from '@/lib/actions/provisions'
+import { getProvisionAggregatesByEntity } from '@/lib/actions/provisions'
 import { getEventsByEntity } from '@/lib/actions/events'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
@@ -122,8 +122,8 @@ export default async function EntityPage({ params }: EntityPageProps) {
     })
   )
 
-  // Fetch provisions for this entity
-  const provisions = await getProvisionsByEntity(entity.id)
+  // Fetch provision aggregates for this entity
+  const provisionAggregates = await getProvisionAggregatesByEntity(entity.id)
 
   // Fetch events for this entity
   const events = await getEventsByEntity(entity.id)
@@ -184,11 +184,12 @@ export default async function EntityPage({ params }: EntityPageProps) {
         }
         entitySlug={urlSlug}
       />
+
+      <ProvisionsOverview entity={entity} aggregates={provisionAggregates} />
+      <h1>FINANCIALS WILL GO HERE</h1>
+      <EventsOverview entity={entity} events={events} />
       <PerformanceIndicators data={entity.performanceIndicators} />
       <CommunityMetrics data={entity.communityMetrics} />
-
-      <ProvisionsOverview entity={entity} provisions={provisions} />
-      <EventsOverview entity={entity} events={events} />
       <EntityMetadata id={entity.id} createdAt={entity.createdAt} updatedAt={entity.updatedAt} />
     </div>
   )

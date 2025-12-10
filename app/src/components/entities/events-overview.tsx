@@ -19,7 +19,7 @@ interface EventsOverviewProps {
 }
 
 export function EventsOverview({ entity, events }: EventsOverviewProps) {
-  if (events.length === 0) return null
+  if (events.length === 0) return <h1>EVENTS WILL GO HERE!!!!</h1>
 
   return (
     <div className="bg-white p-8 mb-6">
@@ -37,10 +37,15 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
       {/* Most recent 10 events */}
       <div className="space-y-4">
         {events.slice(0, 10).map((event) => (
-          <div key={event.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
+          <div
+            key={event.id}
+            className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+          >
             <div className="flex items-start justify-between gap-4 mb-2">
               <div className="flex flex-wrap gap-2">
-                <Badge variant="outline" className="text-xs font-mono">EVENT</Badge>
+                <Badge variant="outline" className="text-xs font-mono">
+                  EVENT
+                </Badge>
                 <Badge variant="secondary" className="text-xs">
                   {event.type}
                 </Badge>
@@ -50,14 +55,10 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
               </span>
             </div>
 
-            <h3 className="text-base font-semibold text-gray-900 mb-2">
-              {event.title}
-            </h3>
+            <h3 className="text-base font-semibold text-gray-900 mb-2">{event.title}</h3>
 
             {event.description && (
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                {event.description}
-              </p>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{event.description}</p>
             )}
 
             {event.administrationName && event.administrationId && (
