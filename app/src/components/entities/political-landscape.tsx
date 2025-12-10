@@ -197,6 +197,11 @@ function ElectionsSection({
   )
 }
 
+// Re-export for use in page (view all link)
+export function getPoliticalLandscapeViewAllLink(entitySlug: string) {
+  return `/pe/${entitySlug}/ad`
+}
+
 export function PoliticalLandscape({ data, entitySlug }: PoliticalLandscapeProps) {
   if (!data) return null
 
@@ -209,24 +214,10 @@ export function PoliticalLandscape({ data, entitySlug }: PoliticalLandscapeProps
   if (!hasContent) return null
 
   return (
-    <div className="py-4 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-gray-700">Amministrazione</h3>
-        {entitySlug && (
-          <Link
-            href={`/pe/${entitySlug}/ad`}
-            className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            View all →
-          </Link>
-        )}
-      </div>
-
-      <div className="space-y-6">
-        <LegislativeSection composition={data.councilComposition} />
-        <ExecutiveSection members={data.executiveMembers} />
-        <ElectionsSection nextElection={data.nextElection} history={data.electionHistory} />
-      </div>
+    <div className="space-y-6">
+      <LegislativeSection composition={data.councilComposition} />
+      <ExecutiveSection members={data.executiveMembers} />
+      <ElectionsSection nextElection={data.nextElection} history={data.electionHistory} />
     </div>
   )
 }

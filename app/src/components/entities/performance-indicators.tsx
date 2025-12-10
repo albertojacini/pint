@@ -65,10 +65,7 @@ export function PerformanceIndicators({ data }: PerformanceIndicatorsProps) {
   if (!data) return null
 
   return (
-    <div className="py-4">
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Performance Indicators</h3>
-
-      <div className="grid md:grid-cols-3 gap-6">
+    <div className="grid md:grid-cols-3 gap-6">
         {data.innovation && (
           <IndicatorCard
             title="Innovation"
@@ -90,7 +87,6 @@ export function PerformanceIndicators({ data }: PerformanceIndicatorsProps) {
             color={{ primary: 'bg-purple-600', secondary: 'bg-purple-400', text: 'text-purple-600' }}
           />
         )}
-      </div>
     </div>
   )
 }

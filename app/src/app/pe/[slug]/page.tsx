@@ -18,13 +18,17 @@ import {
   EntityActions,
   EssentialStats,
   PoliticalLandscape,
+  getPoliticalLandscapeViewAllLink,
   PerformanceIndicators,
   CommunityMetrics,
   ProvisionsOverview,
+  getProvisionsViewAllLink,
   EventsOverview,
+  getEventsViewAllLink,
   EntityMetadata,
   RelatedEntitiesSection,
 } from '@/components/entities'
+import { Section } from '@/components/custom-ui/section'
 import { Tags } from '@/components/custom-ui/tags'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
@@ -156,41 +160,90 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <RelatedEntitiesSection relationships={relationships} />
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
       <EntityActions entity={entity} />
-      <PoliticalLandscape
-        data={
-          activeAdmin
-            ? {
-                councilComposition: activeAdmin.councilComposition || undefined,
-                executiveMembers: executiveMembers.map((m) => ({
-                  name: m.name,
-                  role: m.role as 'mayor' | 'vice-mayor' | 'assessor' | 'councilor',
-                  roleTitle: m.roleTitle || undefined,
-                  icon: m.icon || undefined,
-                  party: m.party || undefined,
-                })),
-                nextElection: activeAdmin.electionData?.nextElection
-                  ? { date: activeAdmin.electionData.nextElection }
-                  : undefined,
-                electionHistory: entityAdministrations
-                  .filter((admin) => admin.electionData?.electionDate)
-                  .map((admin) => ({
-                    date: admin.electionData!.electionDate!,
-                    turnout: admin.electionData!.turnout,
-                    results: admin.electionData!.results || [],
-                  }))
-                  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
-              }
-            : null
+      <Section
+        title="Administration"
+        action={
+          <Link
+            href={getPoliticalLandscapeViewAllLink(urlSlug)}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            View all
+          </Link>
         }
-        entitySlug={urlSlug}
-      />
+      >
+        <PoliticalLandscape
+          data={
+            activeAdmin
+              ? {
+                  councilComposition: activeAdmin.councilComposition || undefined,
+                  executiveMembers: executiveMembers.map((m) => ({
+                    name: m.name,
+                    role: m.role as 'mayor' | 'vice-mayor' | 'assessor' | 'councilor',
+                    roleTitle: m.roleTitle || undefined,
+                    icon: m.icon || undefined,
+                    party: m.party || undefined,
+                  })),
+                  nextElection: activeAdmin.electionData?.nextElection
+                    ? { date: activeAdmin.electionData.nextElection }
+                    : undefined,
+                  electionHistory: entityAdministrations
+                    .filter((admin) => admin.electionData?.electionDate)
+                    .map((admin) => ({
+                      date: admin.electionData!.electionDate!,
+                      turnout: admin.electionData!.turnout,
+                      results: admin.electionData!.results || [],
+                    }))
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
+                }
+              : null
+          }
+          entitySlug={urlSlug}
+        />
+      </Section>
 
-      <ProvisionsOverview entity={entity} aggregates={provisionAggregates} />
-      <h1>FINANCIALS WILL GO HERE</h1>
-      <EventsOverview entity={entity} events={events} />
-      <PerformanceIndicators data={entity.performanceIndicators} />
-      <CommunityMetrics data={entity.communityMetrics} />
-      <EntityMetadata id={entity.id} createdAt={entity.createdAt} updatedAt={entity.updatedAt} />
+      <Section
+        title="Provisions"
+        action={
+          <Link
+            href={getProvisionsViewAllLink(entity)}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            View all
+          </Link>
+        }
+      >
+        <ProvisionsOverview entity={entity} aggregates={provisionAggregates} />
+      </Section>
+
+      <Section title="Financials">
+        <p className="text-muted-foreground">Coming soon...</p>
+      </Section>
+
+      <Section
+        title="Recent Events"
+        action={
+          <Link
+            href={getEventsViewAllLink(entity)}
+            className="text-sm text-blue-600 hover:underline"
+          >
+            View all
+          </Link>
+        }
+      >
+        <EventsOverview entity={entity} events={events} />
+      </Section>
+
+      <Section title="Performance Indicators">
+        <PerformanceIndicators data={entity.performanceIndicators} />
+      </Section>
+
+      <Section title="Pint Community">
+        <CommunityMetrics data={entity.communityMetrics} />
+      </Section>
+
+      <Section title="Metadata">
+        <EntityMetadata id={entity.id} createdAt={entity.createdAt} updatedAt={entity.updatedAt} />
+      </Section>
     </div>
   )
 }

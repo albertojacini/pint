@@ -18,24 +18,16 @@ interface EventsOverviewProps {
   events: Event[]
 }
 
+// Re-export for use in page (view all link)
+export function getEventsViewAllLink(entity: { id: string; slug: string }) {
+  return `${entityPath(entity)}/events`
+}
+
 export function EventsOverview({ entity, events }: EventsOverviewProps) {
-  if (events.length === 0) return <h1>EVENTS WILL GO HERE!!!!</h1>
+  if (events.length === 0) return null
 
   return (
-    <div className="bg-white p-8 mb-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Recent Events</h2>
-        <Link
-          href={`${entityPath(entity)}/events`}
-          className="text-blue-600 hover:underline text-sm font-medium"
-        >
-          View all
-        </Link>
-      </div>
-
-      {/* Most recent 10 events */}
-      <div className="space-y-4">
+    <div className="space-y-4">
         {events.slice(0, 10).map((event) => (
           <div
             key={event.id}
@@ -74,7 +66,6 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
             )}
           </div>
         ))}
-      </div>
     </div>
   )
 }

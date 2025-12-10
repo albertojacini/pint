@@ -1,11 +1,15 @@
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
-import { SectionTitle } from '@/components/custom-ui/typography'
 import type { ProvisionAggregates } from '@/lib/actions/provisions'
 
 interface ProvisionsOverviewProps {
   entity: { id: string; slug: string }
   aggregates: ProvisionAggregates
+}
+
+// Re-export for use in page (view all link)
+export function getProvisionsViewAllLink(entity: { id: string; slug: string }) {
+  return `${entityPath(entity)}/pr`
 }
 
 // Format currency values
@@ -213,23 +217,15 @@ export function ProvisionsOverview({ entity, aggregates }: ProvisionsOverviewPro
   const totalActivity = activityData.reduce((sum, m) => sum + m.items.length, 0)
 
   return (
-    <div className="bg-white p-8 mb-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-baseline gap-3">
-          <SectionTitle>Provisions</SectionTitle>
-          <span className="text-2xl font-bold text-gray-700">{total}</span>
-        </div>
-        <Link
-          href={`${entityPath(entity)}/pr`}
-          className="text-blue-600 hover:underline text-sm font-medium"
-        >
-          View all
-        </Link>
+    <>
+      {/* Count badge */}
+      <div className="flex items-baseline gap-3 mb-4">
+        <span className="text-2xl font-bold text-gray-700">{total}</span>
+        <span className="text-sm text-muted-foreground">provisions</span>
       </div>
 
       {/* Type Cards Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
         {activeTypes.map((type) => {
           const config = typeConfig[type]
 
@@ -297,7 +293,7 @@ export function ProvisionsOverview({ entity, aggregates }: ProvisionsOverviewPro
 
       {/* Tags Row */}
       {tags.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap mb-6">
+        <div className="flex items-center gap-2 flex-wrap mb-4">
           <span className="text-sm text-gray-500">Topics:</span>
           {tags.slice(0, 6).map((tag) => (
             <Link
@@ -338,6 +334,6 @@ export function ProvisionsOverview({ entity, aggregates }: ProvisionsOverviewPro
           ))}
         </div>
       </div>
-    </div>
+    </>
   )
 }
