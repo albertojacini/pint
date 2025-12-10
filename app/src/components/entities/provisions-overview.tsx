@@ -145,33 +145,39 @@ function generateMockActivity(entityId: string): MonthActivity[] {
   return result
 }
 
+// Consistent type order for stacking
+const typeOrder: ProvisionType[] = ['taxation', 'ownership', 'contract', 'regulation', 'allocation', 'designation']
+
 // Sparkline component
 function ActivitySparkline({ activity }: { activity: MonthActivity[] }) {
-  const maxItems = Math.max(...activity.map(m => m.items.length), 1)
   const maxHeight = 48 // pixels
   const brickHeight = 8
 
   return (
     <div className="flex items-end gap-1 h-16">
-      {activity.map((month, monthIndex) => (
-        <div
-          key={`${month.month}-${month.year}`}
-          className="flex-1 flex flex-col-reverse gap-0.5 min-w-0"
-          style={{ height: maxHeight }}
-        >
-          {month.items.map((item, itemIndex) => (
-            <div
-              key={`${monthIndex}-${itemIndex}`}
-              className={`w-full rounded-sm ${typeConfig[item.type].brickColor} hover:opacity-80 cursor-pointer transition-opacity`}
-              style={{ height: brickHeight }}
-              title={`${item.title} (${item.action}) - ${month.month} ${month.year}`}
-            />
-          ))}
-          {/* Month label */}
-          <div className="absolute -bottom-5 left-0 right-0 text-center">
+      {activity.map((month, monthIndex) => {
+        // Sort items by type order for consistent stacking
+        const sortedItems = [...month.items].sort(
+          (a, b) => typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type)
+        )
+
+        return (
+          <div
+            key={`${month.month}-${month.year}`}
+            className="flex-1 flex flex-col-reverse gap-0.5 min-w-0"
+            style={{ height: maxHeight }}
+          >
+            {sortedItems.map((item, itemIndex) => (
+              <div
+                key={`${monthIndex}-${itemIndex}`}
+                className={`w-full rounded-sm ${typeConfig[item.type].brickColor} hover:opacity-80 cursor-pointer transition-opacity`}
+                style={{ height: brickHeight }}
+                title={`${item.title} (${item.action}) - ${month.month} ${month.year}`}
+              />
+            ))}
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
