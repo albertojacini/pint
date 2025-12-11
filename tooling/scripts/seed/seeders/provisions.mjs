@@ -7,6 +7,8 @@
 import { provisions } from '../data/provisions-data.mjs'
 import { provisionResources } from '../data/provision-resources-data.mjs'
 import { taggablesData } from '../data/taggables-data.mjs'
+import { events } from '../data/events-data.mjs'
+import { changes } from '../data/changes-data.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -205,6 +207,114 @@ export async function seedProvisions(client, supabase, idMaps) {
   }
 
   logger.endSection('provision taggables', taggablesCount)
+
+  // ===== EVENTS =====
+  logger.startSection('events')
+
+  let eventsCount = 0
+  let eventsSkipped = 0
+
+  if (await hasData(client, 'events')) {
+    logger.skipSection('Events')
+  } else {
+    for (const event of events) {
+      // Look up administration ID
+      const administrationId = idMaps.administrations.get(event.administration)
+
+      if (!administrationId) {
+        logger.warning(`Skipping event "${event.title}" - administration not found: ${event.administration}`)
+        eventsSkipped++
+        continue
+      }
+
+      const id = generateUUID()
+
+      await insertQuery(client, {
+        table: 'events',
+        columns: ['id', 'administration_id', 'title', 'description', 'description_short', 'type', 'occurred_at'],
+        values: [
+          id,
+          administrationId,
+          event.title,
+          event.description,
+          event.descriptionShort || null,
+          event.type,
+          event.occurredAt
+        ],
+      })
+
+      eventsCount++
+      idMaps.events.set(event.title, id)
+    }
+
+    if (eventsSkipped > 0) {
+      logger.warning(`Skipped ${eventsSkipped} events due to missing dependencies`)
+    }
+
+    logger.endSection('events', eventsCount)
+  }
+
+  // ===== CHANGES =====
+  logger.startSection('changes')
+
+  let changesCount = 0
+  let changesSkipped = 0
+
+  if (await hasData(client, 'changes')) {
+    logger.skipSection('Changes')
+  } else {
+    for (const change of changes) {
+      // Look up event ID
+      const eventId = idMaps.events.get(change.event)
+
+      if (!eventId) {
+        logger.warning(`Skipping change for event "${change.event}" - event not found`)
+        changesSkipped++
+        continue
+      }
+
+      // Look up target ID based on target type
+      let targetId = null
+      if (change.targetType === 'provision') {
+        targetId = idMaps.provisions.get(change.targetName)
+      } else if (change.targetType === 'entity') {
+        targetId = idMaps.entities.get(change.targetName)
+      } else if (change.targetType === 'administration') {
+        targetId = idMaps.administrations.get(change.targetName)
+      }
+
+      if (!targetId) {
+        logger.warning(`Skipping change for "${change.targetName}" - ${change.targetType} not found`)
+        changesSkipped++
+        continue
+      }
+
+      const id = generateUUID()
+
+      await insertQuery(client, {
+        table: 'changes',
+        columns: ['id', 'event_id', 'target_type', 'target_id', 'change_type', 'description', 'effective_at'],
+        values: [
+          id,
+          eventId,
+          change.targetType,
+          targetId,
+          change.changeType,
+          change.description || null,
+          change.effectiveAt || null
+        ],
+      })
+
+      changesCount++
+      idMaps.changes.set(`${change.event}-${change.targetName}`, id)
+    }
+
+    if (changesSkipped > 0) {
+      logger.warning(`Skipped ${changesSkipped} changes due to missing dependencies`)
+    }
+
+    logger.endSection('changes', changesCount)
+  }
 
   return idMaps
 }

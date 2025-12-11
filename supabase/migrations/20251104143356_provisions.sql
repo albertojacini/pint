@@ -72,19 +72,21 @@ create trigger set_updated_at_events
   for each row
   execute function public.handle_updated_at();
 
--- Provision-Event relationships: how events relate to provisions
-create table if not exists public.provision_events (
+-- Changes: polymorphic bridge between events and their targets (provisions, entities, administrations)
+create table if not exists public.changes (
   id uuid primary key default uuid_generate_v4(),
-  provision_id uuid not null references public.provisions(id) on delete cascade,
-  event_id uuid not null references public.events(id) on delete cascade,
-  relationship_type text, -- 'establishes', 'repeals', 'modifies', 'influences'
-  created_at timestamptz default now(),
-  unique(provision_id, event_id)
+  event_id uuid references public.events(id) on delete cascade,
+  target_type text not null check (target_type in ('provision', 'entity', 'administration')),
+  target_id uuid not null,
+  change_type text not null check (change_type in ('create', 'update', 'deactivate', 'activate', 'merge', 'split')),
+  description text,
+  effective_at timestamptz,
+  created_at timestamptz default now()
 );
 
-create index if not exists idx_provision_events_provision_id on public.provision_events(provision_id);
-create index if not exists idx_provision_events_event_id on public.provision_events(event_id);
-create index if not exists idx_provision_events_relationship_type on public.provision_events(relationship_type);
+create index if not exists idx_changes_event_id on public.changes(event_id);
+create index if not exists idx_changes_target on public.changes(target_type, target_id);
+create index if not exists idx_changes_effective_at on public.changes(effective_at);
 
 -- Provision resources: URLs to be processed by the provision generator agent
 create table if not exists public.provision_resources (

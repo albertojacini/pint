@@ -312,16 +312,21 @@ export const events = pgTable('events', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-// Provision-Event relationships
-export const provisionEvents = pgTable('provision_events', {
+// Changes: polymorphic bridge between events and their targets (provisions, entities, administrations)
+export const changes = pgTable('changes', {
   id: uuid('id').primaryKey().defaultRandom(),
-  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
-  eventId: uuid('event_id').notNull().references(() => events.id, { onDelete: 'cascade' }),
-  relationshipType: text('relationship_type'), // 'establishes', 'repeals', 'modifies', 'influences'
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }),
+  targetType: text('target_type', {
+    enum: ['provision', 'entity', 'administration']
+  }).notNull(),
+  targetId: uuid('target_id').notNull(),
+  changeType: text('change_type', {
+    enum: ['create', 'update', 'deactivate', 'activate', 'merge', 'split']
+  }).notNull(),
+  description: text('description'),
+  effectiveAt: timestamp('effective_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  uniqueProvisionEvent: uniqueIndex('provision_events_unique').on(table.provisionId, table.eventId),
-}))
+})
 
 // Provision resources: URLs to be processed by the provision generator agent
 export const provisionResources = pgTable('provision_resources', {

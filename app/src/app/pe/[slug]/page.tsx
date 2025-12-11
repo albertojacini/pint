@@ -12,6 +12,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getProvisionAggregatesByEntity } from '@/lib/actions/provisions'
 import { getEventsByEntity } from '@/lib/actions/events'
+import { getChangesByEntity } from '@/lib/actions/changes'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
   EntityHeader,
@@ -132,6 +133,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
   // Fetch events for this entity
   const events = await getEventsByEntity(entity.id)
 
+  // Fetch changes for this entity (for provisions activity timeline)
+  const provisionChanges = await getChangesByEntity(entity.id)
+
   // Fetch relationships for this entity
   const relationships = await getGroupedEntityRelationships(entity.id)
 
@@ -212,7 +216,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <ProvisionsOverview entity={entity} aggregates={provisionAggregates} />
+        <ProvisionsOverview entity={entity} aggregates={provisionAggregates} changes={provisionChanges} />
       </Section>
 
       <Section title="Financials">

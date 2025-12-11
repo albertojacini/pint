@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import type { ProvisionAggregates } from '@/lib/actions/provisions'
+import type { ChangeWithContext } from '@/lib/actions/changes'
 
 interface ProvisionsOverviewProps {
   entity: { id: string; slug: string }
   aggregates: ProvisionAggregates
+  changes?: ChangeWithContext[]
 }
 
 // Re-export for use in page (view all link)
@@ -90,60 +92,57 @@ interface MonthActivity {
   items: ActivityItem[]
 }
 
-// Simple seeded random for deterministic mock data
-function seededRandom(seed: number): () => number {
-  return () => {
-    seed = (seed * 1103515245 + 12345) & 0x7fffffff
-    return seed / 0x7fffffff
+// Map change type to activity action
+function changeTypeToAction(changeType: string): 'created' | 'updated' | 'repealed' {
+  switch (changeType) {
+    case 'create':
+      return 'created'
+    case 'deactivate':
+      return 'repealed'
+    default:
+      return 'updated'
   }
 }
 
-// Generate mock activity data for last 12 months (deterministic based on entityId)
-function generateMockActivity(entityId: string): MonthActivity[] {
+// Convert changes data to activity format grouped by month
+function changesToActivity(changes: ChangeWithContext[]): MonthActivity[] {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const types: ProvisionType[] = ['taxation', 'ownership', 'contract', 'regulation', 'allocation', 'designation']
-  const actions: Array<'created' | 'updated' | 'repealed'> = ['created', 'updated', 'repealed']
 
-  const mockTitles: Record<ProvisionType, string[]> = {
-    taxation: ['Property Tax Rate', 'Business License Fee', 'Tourism Tax', 'Waste Collection Fee'],
-    ownership: ['City Hall Building', 'Public Library', 'Sports Complex', 'Water Treatment Plant'],
-    contract: ['Street Cleaning Service', 'IT Maintenance', 'Public Transport Concession', 'Waste Management'],
-    regulation: ['Building Height Limit', 'Noise Ordinance', 'Parking Rules', 'Green Space Requirements'],
-    allocation: ['Youth Programs Budget', 'Infrastructure Fund', 'Emergency Reserve', 'Cultural Events'],
-    designation: ['Historic District', 'Protected Green Area', 'Commercial Zone', 'Pedestrian Area'],
-  }
-
-  // Create deterministic seed from entityId
-  const seed = entityId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)
-  const random = seededRandom(seed)
-
+  // Initialize 12 months structure
   const now = new Date()
   const result: MonthActivity[] = []
 
   for (let i = 11; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const monthIndex = date.getMonth()
-    const year = date.getFullYear()
-
-    // Generate 0-5 activities per month
-    const activityCount = Math.floor(random() * 6)
-    const items: ActivityItem[] = []
-
-    for (let j = 0; j < activityCount; j++) {
-      const type = types[Math.floor(random() * types.length)]
-      const titles = mockTitles[type]
-      items.push({
-        type,
-        title: titles[Math.floor(random() * titles.length)],
-        action: actions[Math.floor(random() * actions.length)],
-      })
-    }
-
     result.push({
-      month: months[monthIndex],
-      year,
-      items,
+      month: months[date.getMonth()],
+      year: date.getFullYear(),
+      items: [],
     })
+  }
+
+  // Group changes by month
+  for (const change of changes) {
+    const effectiveDate = change.effectiveAt ? new Date(change.effectiveAt) : null
+    if (!effectiveDate) continue
+
+    // Find matching month bucket
+    for (const monthData of result) {
+      const monthStart = new Date(monthData.year, months.indexOf(monthData.month), 1)
+      const monthEnd = new Date(monthData.year, months.indexOf(monthData.month) + 1, 0)
+
+      if (effectiveDate >= monthStart && effectiveDate <= monthEnd) {
+        // Get provision type from the change data or default to regulation
+        const provisionType = (change.targetProvisionType as ProvisionType) || 'regulation'
+
+        monthData.items.push({
+          type: provisionType,
+          title: change.targetTitle || change.description || 'Unknown',
+          action: changeTypeToAction(change.changeType),
+        })
+        break
+      }
+    }
   }
 
   return result
@@ -202,7 +201,7 @@ function MonthLabels({ activity }: { activity: MonthActivity[] }) {
   )
 }
 
-export function ProvisionsOverview({ entity, aggregates }: ProvisionsOverviewProps) {
+export function ProvisionsOverview({ entity, aggregates, changes = [] }: ProvisionsOverviewProps) {
   const { total, byType, tags } = aggregates
 
   if (total === 0) return null
@@ -212,9 +211,9 @@ export function ProvisionsOverview({ entity, aggregates }: ProvisionsOverviewPro
     .filter((type) => byType[type].count > 0)
     .sort((a, b) => byType[b].count - byType[a].count)
 
-  // Generate mock activity data (will be replaced with real data later)
-  const activityData = generateMockActivity(entity.id)
-  const totalActivity = activityData.reduce((sum, m) => sum + m.items.length, 0)
+  // Use real changes data if available
+  const activityData = changesToActivity(changes)
+  const totalActivity = changes.length
 
   return (
     <>
