@@ -4,8 +4,7 @@
  * Dependencies: None
  */
 
-import { categoriesTree } from '../data/categories-tree.mjs'
-import { tagsData } from '../data/tags-data.mjs'
+import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -67,6 +66,10 @@ function flattenCategories(tree) {
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedTaxonomy(client, supabase, idMaps) {
+  // Load data dynamically
+  const { categoriesTree } = await loadData('categories-tree.mjs')
+  const { tagsData } = await loadData('tags-data.mjs')
+
   // ===== CATEGORIES =====
   logger.startSection('categories')
 

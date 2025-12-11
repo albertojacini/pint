@@ -105,13 +105,43 @@ export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
     )
   }
 
-  // Regulation type - Simple display
+  // Regulation type - Rich display matching taxation style
   if (type === 'regulation' && extraData) {
     const regulation = extraData as any
-    if (regulation.regulationType) {
+    const hasAnyData = regulation.regulationType || regulation.domain || regulation.complexity !== undefined
+
+    if (hasAnyData) {
       return (
-        <div className="text-sm text-muted-foreground mb-3">
-          Type: <span className="font-medium capitalize">{regulation.regulationType}</span>
+        <div className="mb-3 space-y-3">
+          {/* Row 1: Badges for categorical fields */}
+          {(regulation.regulationType || regulation.domain) && (
+            <div className="flex items-center gap-2 flex-wrap">
+              {regulation.regulationType && (
+                <Badge variant="secondary" className="text-xs capitalize">
+                  {regulation.regulationType.replace(/_/g, ' ')}
+                </Badge>
+              )}
+              {regulation.domain && (
+                <Badge variant="secondary" className="text-xs capitalize">
+                  {regulation.domain.replace(/_/g, ' ')}
+                </Badge>
+              )}
+            </div>
+          )}
+
+          {/* Row 2: Complexity score with progress bar */}
+          {regulation.complexity !== undefined && (
+            <div>
+              <div className="text-xs text-muted-foreground mb-1">Complexity</div>
+              <div className="text-sm font-semibold mb-1.5">{regulation.complexity}/10</div>
+              <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary rounded-full transition-all"
+                  style={{ width: `${(regulation.complexity / 10) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )
     }

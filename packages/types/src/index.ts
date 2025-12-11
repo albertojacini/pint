@@ -122,7 +122,29 @@ const ContractDataSchema = z.object({
 
 const RegulationDataSchema = z.object({
   type: z.literal('regulation'),
-  regulationType: z.enum(['rule', 'ordinance', 'code', 'standard']).optional(),
+
+  // Sub-type of regulation
+  regulationType: z
+    .enum(['ordinance', 'code', 'standard', 'permit_system', 'restriction', 'requirement', 'other'])
+    .optional(),
+
+  // Domain/sector the regulation applies to
+  domain: z
+    .enum([
+      'housing',
+      'land_use',
+      'environment',
+      'commerce',
+      'transport',
+      'public_space',
+      'health_safety',
+      'labor',
+      'other',
+    ])
+    .optional(),
+
+  // Complexity for affected parties (0 = trivial, 10 = extremely complex)
+  complexity: z.number().min(0).max(10).optional(),
 })
 
 const TaxationDataSchema = z.object({

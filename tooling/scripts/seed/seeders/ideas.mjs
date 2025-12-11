@@ -5,12 +5,7 @@
  * Dependencies: taxonomy (categories)
  */
 
-import { goals } from '../data/goals-data.mjs'
-import { stakeholderGroups } from '../data/stakeholder-groups-data.mjs'
-import { ideas } from '../data/ideas-data.mjs'
-import { measurables } from '../data/measurables-data.mjs'
-import { effects } from '../data/effects-data.mjs'
-import { contributions } from '../data/contributions-data.mjs'
+import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -22,6 +17,14 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedIdeas(client, supabase, idMaps) {
+  // Load data dynamically
+  const { goals } = await loadData('goals-data.mjs')
+  const { stakeholderGroups } = await loadData('stakeholder-groups-data.mjs')
+  const { ideas } = await loadData('ideas-data.mjs')
+  const { measurables } = await loadData('measurables-data.mjs')
+  const { effects } = await loadData('effects-data.mjs')
+  const { contributions } = await loadData('contributions-data.mjs')
+
   // ===== GOALS =====
   logger.startSection('goals')
 

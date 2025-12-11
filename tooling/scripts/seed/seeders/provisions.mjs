@@ -4,11 +4,7 @@
  * Dependencies: entities (political_entities)
  */
 
-import { provisions } from '../data/provisions-data.mjs'
-import { provisionResources } from '../data/provision-resources-data.mjs'
-import { taggablesData } from '../data/taggables-data.mjs'
-import { events } from '../data/events-data.mjs'
-import { changes } from '../data/changes-data.mjs'
+import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -35,6 +31,13 @@ function generateSlug(text) {
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedProvisions(client, supabase, idMaps) {
+  // Load data dynamically
+  const { provisions } = await loadData('provisions-data.mjs')
+  const { provisionResources } = await loadData('provision-resources-data.mjs')
+  const { taggablesData } = await loadData('taggables-data.mjs')
+  const { events } = await loadData('events-data.mjs')
+  const { changes } = await loadData('changes-data.mjs')
+
   // ===== PROVISIONS =====
   logger.startSection('provisions')
 

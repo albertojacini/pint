@@ -4,8 +4,7 @@
  * Dependencies: political_entities
  */
 
-import { people } from '../data/people-data.mjs'
-import { administrations, administrationMembers } from '../data/administrations-data.mjs'
+import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -17,6 +16,10 @@ import { hasData, insertQuery } from '../utils/db-helpers.mjs'
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedAdministrations(client, supabase, idMaps) {
+  // Load data dynamically
+  const { people } = await loadData('people-data.mjs')
+  const { administrations, administrationMembers } = await loadData('administrations-data.mjs')
+
   // ===== PEOPLE =====
   logger.startSection('people')
 

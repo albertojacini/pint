@@ -26,5 +26,20 @@ IMPORTANT: This is an early stage project:
 **ORM**: Schema at `app/src/lib/db/schema.ts`
 **Database Seeding**: Seeding scripts are located in `/tooling/scripts/seed/`
 
+## Database Seeding
+
+Two seed datasets are available:
+- **Base** (`tooling/scripts/seed/data/base/`) - Minimal data for understanding schema
+- **Extended** (`tooling/scripts/seed/data/extended/`) - Full realistic data
+
+**AI Instructions:**
+- ALWAYS check the base dataset first when understanding the data model
+- ONLY inspect extended dataset when explicitly requested by user
+- When modifying seed data, edit the base dataset unless told otherwise
+
+Commands:
+- `pnpm db:reset` - Reset with base dataset (default)
+- `pnpm db:reset:extended` - Reset with extended dataset
+
 
 

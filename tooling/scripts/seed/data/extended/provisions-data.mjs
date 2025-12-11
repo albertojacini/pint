@@ -44,7 +44,9 @@ export const provisions = [
     relevance: 6,
     extraData: {
       type: 'regulation',
-      regulationType: 'regulation',
+      regulationType: 'permit_system',
+      domain: 'public_space',
+      complexity: 5,
       source_url: 'https://www.comune.milano.it/comune/regolamenti',
       source_snippet: "Regolamento per l'occupazione di spazi ed aree pubbliche",
     },

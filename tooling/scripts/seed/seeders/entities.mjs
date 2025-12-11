@@ -4,9 +4,7 @@
  * Dependencies: None
  */
 
-import { politicalEntities } from '../data/political-entities-data.mjs'
-import { entityRelationships } from '../data/entity-relationships-data.mjs'
-import { taggablesData } from '../data/taggables-data.mjs'
+import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
@@ -33,6 +31,11 @@ function generateSlug(text) {
  * @param {object} idMaps - ID mapping object for foreign key references
  */
 export async function seedEntities(client, supabase, idMaps) {
+  // Load data dynamically
+  const { politicalEntities } = await loadData('political-entities-data.mjs')
+  const { entityRelationships } = await loadData('entity-relationships-data.mjs')
+  const { taggablesData } = await loadData('taggables-data.mjs')
+
   // ===== POLITICAL ENTITIES =====
   logger.startSection('political entities')
 
