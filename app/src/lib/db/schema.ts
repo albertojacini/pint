@@ -290,7 +290,7 @@ export const provisions = pgTable('provisions', {
                 // allocation: programs, subsidies, budgets, funds
                 // designation: zones, landmarks, protected areas, institutions
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
-  significance: integer('significance'),
+  relevance: integer('relevance'),
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),

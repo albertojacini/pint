@@ -23,7 +23,7 @@ create table if not exists public.provisions (
                       -- allocation: programs, subsidies, budgets, funds
                       -- designation: zones, landmarks, protected areas, institutions
   status text not null default 'active', -- 'active', 'repealed', 'suspended'
-  significance integer check (significance >= 0 and significance <= 10),
+  relevance integer check (relevance >= 0 and relevance <= 10),
   effective_from date,
   effective_until date,
   idea_id uuid references public.ideas(id) on delete set null,

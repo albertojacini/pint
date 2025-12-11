@@ -22,7 +22,7 @@ export type ProvisionWithTags = {
   avatarUrl: string | null
   type: string
   status: string
-  significance: number | null
+  relevance: number | null
   effectiveFrom: string | null
   effectiveUntil: string | null
   ideaId: string | null
@@ -39,7 +39,7 @@ export async function getProvisionsByEntity(entityId: string) {
       descriptionShort: provisions.descriptionShort,
       type: provisions.type,
       status: provisions.status,
-      significance: provisions.significance,
+      relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
@@ -198,7 +198,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       avatarUrl: provisions.avatarUrl,
       type: provisions.type,
       status: provisions.status,
-      significance: provisions.significance,
+      relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
@@ -239,7 +239,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     avatarUrl: provision.avatarUrl,
     type: provision.type,
     status: provision.status,
-    significance: provision.significance,
+    relevance: provision.relevance,
     effectiveFrom: provision.effectiveFrom,
     effectiveUntil: provision.effectiveUntil,
     ideaId: provision.ideaId,
@@ -294,7 +294,7 @@ export async function getFilteredProvisions(
       avatarUrl: provisions.avatarUrl,
       type: provisions.type,
       status: provisions.status,
-      significance: provisions.significance,
+      relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
@@ -369,7 +369,7 @@ export async function getFilteredProvisions(
     avatarUrl: p.avatarUrl,
     type: p.type,
     status: p.status,
-    significance: p.significance,
+    relevance: p.relevance,
     effectiveFrom: p.effectiveFrom,
     effectiveUntil: p.effectiveUntil,
     ideaId: p.ideaId,

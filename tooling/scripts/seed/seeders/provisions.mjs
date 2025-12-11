@@ -87,7 +87,7 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'provisions',
-        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'type', 'status', 'significance', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
+        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'type', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
         values: [
           id,
           entityId,
@@ -98,7 +98,7 @@ export async function seedProvisions(client, supabase, idMaps) {
           avatarUrl,
           provision.type,
           provision.status,
-          provision.significance || null,
+          provision.relevance || null,
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
           ideaId,

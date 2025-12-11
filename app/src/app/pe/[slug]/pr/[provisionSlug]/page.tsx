@@ -25,14 +25,14 @@ const getStatusColor = (status: string) => {
   return colors[status] || 'bg-gray-500'
 }
 
-// Map 0-10 significance to 1-5 dots
-function getSignificanceDots(significance: number | null): number {
-  if (significance === null || significance === undefined) return 0
-  return Math.ceil(significance / 2)
+// Map 0-10 to 1-5 dots
+function getScoreDots(score: number | null): number {
+  if (score === null || score === undefined) return 0
+  return Math.ceil(score / 2)
 }
 
-// Get color based on significance score (0-10 scale)
-function getSignificanceColor(score: number | null): string {
+// Get color based on score (0-10 scale)
+function getScoreColor(score: number | null): string {
   if (score === null || score === undefined) return 'rgb(209 213 219)'
   if (score >= 7) return 'rgb(34 197 94)'
   if (score >= 4) return 'rgb(234 179 8)'
@@ -65,7 +65,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       avatarUrl: provisions.avatarUrl,
       type: provisions.type,
       status: provisions.status,
-      significance: provisions.significance,
+      relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       extraData: provisions.extraData,
@@ -106,8 +106,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     ideaTitle,
   }
 
-  const significanceDots = getSignificanceDots(provision.significance)
-  const significanceColor = getSignificanceColor(provision.significance)
+  const relevanceDots = getScoreDots(provision.relevance)
+  const relevanceColor = getScoreColor(provision.relevance)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
@@ -131,18 +131,18 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           <Tags tags={visibleTags} maxTags={3} />
         </div>
 
-        {/* Row 2: Title + Importance Dots */}
+        {/* Row 2: Title + Relevance Dots */}
         <div className="flex items-center gap-4 mb-4">
           <h1 className="text-2xl font-bold flex-1">{provision.title}</h1>
 
-          {/* Significance indicator with 5 dots (0-10 scale mapped) */}
-          <div className="flex items-center gap-0.5 flex-shrink-0">
+          {/* Relevance indicator (5 dots) */}
+          <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
             {[1, 2, 3, 4, 5].map((dot) => (
               <div
                 key={dot}
                 className="w-2.5 h-2.5 rounded-full transition-colors"
                 style={{
-                  backgroundColor: dot <= significanceDots ? significanceColor : 'rgb(229 231 235)',
+                  backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)',
                 }}
               />
             ))}

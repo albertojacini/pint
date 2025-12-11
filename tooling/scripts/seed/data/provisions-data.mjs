@@ -16,7 +16,7 @@ export const provisions = [
     descriptionShort: '100% ownership of ATM public transport company',
     type: 'ownership',
     status: 'active',
-    significance: 10,
+    relevance: 8,
     extraData: {
       type: 'ownership',
       assetCategory: 'equity',
@@ -41,6 +41,7 @@ export const provisions = [
     descriptionShort: 'Outdoor seating permits for restaurants and bars (dehors)',
     type: 'regulation',
     status: 'active',
+    relevance: 6,
     extraData: {
       type: 'regulation',
       regulationType: 'regulation',
@@ -63,7 +64,7 @@ export const provisions = [
     avatarUrl: './assets/avatars/provisions/area-c-congestion-charge.webp',
     type: 'taxation',
     status: 'active',
-    significance: 9,
+    relevance: 10,
     idea: 'Urban congestion charge',
     extraData: {
       type: 'taxation',

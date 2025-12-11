@@ -17,7 +17,7 @@ interface ProvisionCardProps {
     avatarUrl: string | null
     type: string
     status: string
-    significance: number | null
+    relevance: number | null
     effectiveFrom: string | null
     effectiveUntil: string | null
     ideaId: string | null
@@ -38,14 +38,14 @@ const getStatusColor = (status: string) => {
   return colors[status] || 'bg-gray-500'
 }
 
-// Map 0-10 significance to 1-5 dots
-function getSignificanceDots(significance: number | null): number {
-  if (significance === null || significance === undefined) return 0
-  return Math.ceil(significance / 2) // 0→0, 1-2→1, 3-4→2, 5-6→3, 7-8→4, 9-10→5
+// Map 0-10 to 1-5 dots
+function getScoreDots(score: number | null): number {
+  if (score === null || score === undefined) return 0
+  return Math.ceil(score / 2) // 0→0, 1-2→1, 3-4→2, 5-6→3, 7-8→4, 9-10→5
 }
 
-// Get color based on significance score (0-10 scale)
-function getSignificanceColor(score: number | null): string {
+// Get color based on score (0-10 scale) - green for high values
+function getScoreColor(score: number | null): string {
   if (score === null || score === undefined) return 'rgb(209 213 219)' // gray-300 for unknown
   if (score >= 7) return 'rgb(34 197 94)' // green-500 (high: 7-10)
   if (score >= 4) return 'rgb(234 179 8)' // yellow-500 (medium: 4-6)
@@ -53,8 +53,8 @@ function getSignificanceColor(score: number | null): string {
 }
 
 export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
-  const significanceDots = getSignificanceDots(provision.significance)
-  const significanceColor = getSignificanceColor(provision.significance)
+  const relevanceDots = getScoreDots(provision.relevance)
+  const relevanceColor = getScoreColor(provision.relevance)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
@@ -72,7 +72,7 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
         <Tags tags={visibleTags} maxTags={3} />
       </div>
 
-      {/* Row 2: Title + Importance Dots */}
+      {/* Row 2: Title + Relevance Dots */}
       <div className="flex items-center gap-3 mb-3">
         <Link
           href={provisionPath(entity, provision)}
@@ -81,14 +81,14 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
           <SubsectionTitle>{provision.title}</SubsectionTitle>
         </Link>
 
-        {/* Significance indicator with 5 dots (0-10 scale mapped) */}
-        <div className="flex items-center gap-0.5 flex-shrink-0">
+        {/* Relevance indicator (5 dots) */}
+        <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
           {[1, 2, 3, 4, 5].map((dot) => (
             <div
               key={dot}
               className="w-2 h-2 rounded-full transition-colors"
               style={{
-                backgroundColor: dot <= significanceDots ? significanceColor : 'rgb(229 231 235)',
+                backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)',
               }}
             />
           ))}
