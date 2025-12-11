@@ -62,7 +62,7 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
   )
 
   return (
-    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200">
+    <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
       {/* Row 1: Type Badge + Tags */}
       <div className="flex items-center gap-2 mb-3">
         {/* Type badge */}
@@ -112,8 +112,10 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
         </p>
       </div>
 
-      {/* Row 4: Type-Specific Content */}
-      <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
+      {/* Row 4: Type-Specific Content - stretches to push footer down */}
+      <div className="flex-1">
+        <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
+      </div>
 
       {/* Row 5: Interaction Stats + Actions */}
       <div className="flex items-center justify-between pt-3">
