@@ -93,6 +93,10 @@ class RegulationExtraData(BaseModel):
     )
     complexity: int | None = Field(None, ge=0, le=10, description="0 = trivial, 10 = extremely complex")
 
+    # Summary fields
+    summary_md: str | None = Field(None, description="Markdown summary of the regulation")
+    summary_detailed_md: str | None = Field(None, description="Detailed markdown summary")
+
 
 class TaxationExtraData(BaseModel):
     """Extra data for taxation provisions."""
@@ -150,6 +154,9 @@ class ProvisionOutput(BaseModel):
     # Temporal validity
     effectiveFrom: str | None = Field(None, description="Start date in YYYY-MM-DD format")
     effectiveUntil: str | None = Field(None, description="End date in YYYY-MM-DD format")
+
+    # Relationships
+    ideaId: str | None = Field(None, description="UUID of related idea")
 
     # Type-specific data
     extraData: dict[str, Any] | None = Field(
