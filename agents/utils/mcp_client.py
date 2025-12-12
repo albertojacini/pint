@@ -24,7 +24,7 @@ def get_mcp_client() -> MultiServerMCPClient:
 
     # Get the absolute path to the wikipedia MCP server
     agents_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    wikipedia_server_path = os.path.join(agents_dir, "wikipedia_mcp_server.py")
+    wikipedia_server_path = os.path.join(agents_dir, "utils", "wikipedia_mcp_server.py")
 
     client = MultiServerMCPClient({
         "brightdata": {

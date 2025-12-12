@@ -9,6 +9,7 @@ from datetime import datetime
 
 from provision_generator.agent import create_provision_generator_agent
 from provision_generator.config import OUTPUT_DIR
+from provision_generator.models import ProvisionOutput, ProvisionGeneratorError
 
 
 def slugify(text: str) -> str:
@@ -136,7 +137,15 @@ If you cannot find reliable information or the description doesn't describe a va
         content = final_message.content if hasattr(final_message, 'content') else str(final_message)
         print(content)
 
-        # Extract JSON from response
+        # Try to get structured output first
+        if hasattr(final_message, 'parsed') and final_message.parsed:
+            # Structured output available
+            provision_data = final_message.parsed
+            if isinstance(provision_data, (ProvisionOutput, ProvisionGeneratorError)):
+                return provision_data.model_dump()
+            return provision_data
+
+        # Fallback to regex extraction for backward compatibility
         provision_data = extract_json_from_response(content)
         return provision_data
 

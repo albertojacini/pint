@@ -8,12 +8,20 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pathlib import Path
 from deepagents import create_deep_agent
 from utils.mcp_client import get_mcp_client
+from provision_generator.models import ProvisionOutput, ProvisionGeneratorError
+from pydantic import BaseModel
+from typing import Union
 
 
 def load_prompt(filename: str) -> str:
     """Load a prompt file from the prompts directory."""
     prompt_path = Path(__file__).parent / "prompts" / filename
     return prompt_path.read_text()
+
+
+class ProvisionResponse(BaseModel):
+    """Union response type for provision generation."""
+    result: Union[ProvisionOutput, ProvisionGeneratorError]
 
 
 async def create_provision_generator_agent():
@@ -56,6 +64,7 @@ async def create_provision_generator_agent():
         tools=mcp_tools,
         system_prompt=system_prompt,
         subagents=[general_researcher, type_researcher],
+        response_format=Union[ProvisionOutput, ProvisionGeneratorError],
     )
 
     return agent, mcp_client
