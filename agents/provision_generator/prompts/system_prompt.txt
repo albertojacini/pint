@@ -57,100 +57,17 @@ WHAT IS NOT A PROVISION:
 - Market outcomes ("Average rent prices")
 
 ================================================================================
-OUTPUT SCHEMA
+OUTPUT
 ================================================================================
 
-You must output a JSON object with this structure:
 
-{
-  "entityId": "uuid",           // Use placeholder, will be resolved
-  "title": "string",            // Clear, concise name (e.g., "Area C Access Fee")
-  "description": "string|null", // What it is and what the entity can do with it
-  "type": "ownership|contract|regulation|taxation|allocation|designation",
-  "status": "active|repealed|suspended",
-  "effectiveFrom": "YYYY-MM-DD|null",  // When provision took effect
-  "effectiveUntil": "YYYY-MM-DD|null", // When provision ended (null if active)
-  "extraData": { ... },         // Type-specific data (see below)
-  "sourceUrls": ["url1", "url2"],  // URLs used as sources
-  "confidence": 0.0-1.0         // Your confidence in the data quality
-}
-
-================================================================================
-EXTRA DATA SCHEMAS (by provision type)
-================================================================================
-
-For OWNERSHIP type:
-{
-  "type": "ownership",
-  "assetCategory": "equity|real_estate|intellectual_property|infrastructure|other",
-  "assetName": "string",
-  "ownershipPercentage": 0-100,  // The % owned by the entity
-  "purpose": "public_service|strategic_infrastructure|economic_development|revenue_generation",
-
-  // What they paid (acquisition)
-  "investmentAmount": number,
-  "investmentCurrency": "EUR|USD|...",
-  "acquisitionDate": "YYYY-MM-DD",
-
-  // What it's worth now (valuation)
-  "valuationAmount": number,
-  "valuationCurrency": "EUR|USD|...",
-  "valuationDate": "YYYY-MM-DD",
-
-  // Annual financial impact
-  "annualCashFlow": number,  // Positive = revenue, Negative = cost/subsidy
-  "annualCashFlowCurrency": "EUR|USD|...",
-  "annualCashFlowYear": "YYYY"
-}
-
-For CONTRACT type:
-{
-  "type": "contract",
-  "contractType": "service|concession|partnership"
-}
-
-For REGULATION type:
-{
-  "type": "regulation",
-  "regulationType": "ordinance|code|standard|permit_system|restriction|requirement|other",
-  "domain": "housing|land_use|environment|commerce|transport|public_space|health_safety|labor|other",
-  "complexity": 0-10  // 0 = trivial, 10 = extremely complex for affected parties
-}
-
-For TAXATION type:
-{
-  "type": "taxation",
-  "taxType": "tax|fee|tariff",
-  "rateDescription": "string",  // Human-readable rate (e.g., "5 EUR per vehicle entry")
-
-  // Revenue data
-  "taxRevenueFiscalYear": "YYYY",
-  "taxRevenueAmount": number,
-
-  // Collection costs
-  "collectionCostAmount": number,
-  "collectionCostYear": "YYYY",
-
-  // Growth trends
-  "revenueGrowth": number,  // YoY % change
-  "revenueGrowthPreviousYear": "YYYY",
-
-  // Fiscal importance
-  "taxRevenueShare": 0-100,  // % of entity's total revenue
-
-  // Tax design
-  "progressivity": "regressive|proportional|progressive|mixed"
-}
-
-For ALLOCATION type:
-{
-  "type": "allocation"
-}
-
-For DESIGNATION type:
-{
-  "type": "designation"
-}
+Key output requirements:
+- Output must be in the official language of the political entities
+- Only constant values (fixed options) must be in english or follow the options provided in the schemas
+- Populate type-specific extraData based on provision type
+- Use citizen-recognizable titles without jargon
+- List all authoritative source URLs used for research
+- Set confidence score based on source quality (see models.py for scale)
 
 ================================================================================
 YOUR WORKFLOW
