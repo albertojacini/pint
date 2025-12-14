@@ -48,7 +48,7 @@ def create_truncating_tool(original_tool: BaseTool) -> StructuredTool:
     )
 
 
-async def create_legislation_research_agent():
+async def create_legislation_research_agent(debug: bool = False):
     """
     Create deep agent with MCP tools for legislation research.
 
@@ -75,6 +75,7 @@ async def create_legislation_research_agent():
         system_prompt=system_prompt,
         subagents=[],  # No subagents - flat architecture
         response_format=Union[LegislationOutput, LegislationResearchError],
+        debug=debug,
     )
 
     return agent, mcp_client

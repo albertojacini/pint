@@ -62,7 +62,7 @@ def save_result(result: dict, description: str) -> str:
     return filepath
 
 
-async def run_agent(description: str) -> dict | None:
+async def run_agent(description: str, debug: bool = False) -> dict | None:
     """
     Run the legislation research agent.
 
@@ -79,7 +79,7 @@ async def run_agent(description: str) -> dict | None:
     print(f"{'='*60}\n")
 
     # Create the agent
-    agent, mcp_client = await create_legislation_research_agent()
+    agent, mcp_client = await create_legislation_research_agent(debug=debug)
 
     # Prepare the user message
     user_message = f"""Research the following legislation:
@@ -144,6 +144,11 @@ async def main():
         required=True,
         help="Description of the legislation to research (e.g., 'Milan congestion charge law')"
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Enable debug mode for the agent"
+    )
 
     args = parser.parse_args()
 
@@ -151,7 +156,7 @@ async def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # Run the agent
-    result = await run_agent(args.description)
+    result = await run_agent(args.description, debug=args.debug)
 
     print("\n" + "="*60)
 
