@@ -104,10 +104,29 @@ async def run_agent(description: str) -> dict | None:
 
         # Try to get structured output first
         if hasattr(final_message, 'parsed') and final_message.parsed:
+            print(f"Returning structured response: {final_message.parsed}")
             parsed = final_message.parsed
             if isinstance(parsed, (LegislationOutput, LegislationResearchError)):
                 return parsed.model_dump()
             return parsed
+
+        # Check if result has structured_response attribute (deepagents pattern)
+        if hasattr(result, 'structured_response') and result.structured_response:
+            print(f"Found structured_response: {result.structured_response}")
+            sr = result.structured_response
+            if isinstance(sr, (LegislationOutput, LegislationResearchError)):
+                return sr.model_dump()
+            return sr
+
+        # Check result dict for structured output
+        if 'structured_response' in result:
+            print(f"Found structured_response in result dict")
+            sr = result['structured_response']
+            if isinstance(sr, (LegislationOutput, LegislationResearchError)):
+                return sr.model_dump()
+            if hasattr(sr, 'model_dump'):
+                return sr.model_dump()
+            return sr
 
         # Fallback to regex extraction
         return extract_json_from_response(content)
