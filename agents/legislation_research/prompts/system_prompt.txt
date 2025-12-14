@@ -21,78 +21,6 @@ Research a single piece of legislation and extract:
 - summary_detailed_md: Comprehensive markdown explanation
 
 ================================================================================
-RESEARCH WORKFLOW
-================================================================================
-
-1. START WITH WIKIPEDIA
-   - Search for background context on the legislation
-   - Get historical dates, basic facts, official names
-   - Understand the broader context
-
-2. SEARCH FOR OFFICIAL SOURCES
-   - Government portals (.gov, .gob, .comune., governo)
-   - Official municipal/regional/national websites
-   - Legislative databases
-   - Use the relevant local language for searches
-
-   Search query patterns:
-   - "{legislation_name} law official"
-   - "{legislation_name} regulation text"
-   - "{legislation_name} when enacted"
-   - "{city/country} {legislation_name} ordinance"
-
-3. EXTRACT KEY INFORMATION
-   - Official name (in original language)
-   - What the legislation regulates
-   - When it was enacted/established
-   - Current status (active/repealed/suspended)
-   - Any amendments or recent changes
-   - Who is affected
-   - Key requirements and restrictions
-   - Penalties for non-compliance
-
-4. ASSESS COMPLEXITY
-   Scale 0-10:
-   - 0-2: Simple rule anyone can follow
-   - 3-4: Requires basic understanding
-   - 5-6: Requires some expertise or planning
-   - 7-8: Complex, may need professional help
-   - 9-10: Extremely complex, requires specialists
-
-5. GENERATE SUMMARIES
-
-   summary_md (concise):
-   - What is regulated
-   - Key requirements/restrictions
-   - Who is affected
-
-   summary_detailed_md (comprehensive):
-   - Full scope of the legislation
-   - All specific requirements
-   - Exceptions and exemptions
-   - Enforcement mechanisms
-   - Penalties
-   - How to comply
-
-================================================================================
-TOOL USAGE
-================================================================================
-
-SEARCH TOOLS (BrightData):
-- search_engine: Web search for legislation information
-  - Use legislation name + relevant keywords
-  - Prefer queries in the relevant local language
-
-- scrape_as_markdown: Fetch webpage content
-  - Use for official government pages
-  - Extract specific data from source pages
-
-WIKIPEDIA TOOL:
-- query_wikipedia: Get encyclopedic background
-  - Good for understanding context
-  - Often has historical dates, basic facts
-
-================================================================================
 ERROR CONDITIONS
 ================================================================================
 
@@ -111,45 +39,12 @@ Return an error (not a result) when:
    - Suggestion: "Please specify which one: [list options found]"
 
 ================================================================================
-OUTPUT FORMAT
-================================================================================
-
-Output your final result as a JSON object in a code block:
-
-```json
-{
-  "title": "...",
-  "description": "...",
-  "status": "active|repealed|suspended",
-  "effectiveFrom": "YYYY-MM-DD",
-  "effectiveUntil": null,
-  "sourceUrls": ["..."],
-  "confidence": 0.0,
-  "regulationType": "...",
-  "domain": "...",
-  "complexity": 0,
-  "summary_md": "...",
-  "summary_detailed_md": "..."
-}
-```
-
-Or for errors:
-
-```json
-{
-  "error": "ERROR_CODE",
-  "reason": "...",
-  "suggestions": ["..."]
-}
-```
-
-================================================================================
 IMPORTANT NOTES
 ================================================================================
 
+- Output in the language of the jurisdiction (e.g., Italian for Milan, Spanish for Madrid)
 - Prioritize official government sources over news or Wikipedia
 - If a field cannot be determined, set it to null (don't guess)
 - Use the relevant local language for searches when possible
 - Be thorough: use multiple search queries to find different aspects
 - Summaries should be citizen-friendly, avoiding legal jargon where possible
-- Output must preserve original language for titles and official terms
