@@ -40,6 +40,7 @@ async def create_research_agent(
     system_prompt: str,
     response_format: Type[BaseModel],
     tool_names: list[str] | None = None,
+    custom_tools: list[BaseTool] | None = None,
     debug: bool = False,
 ):
     """
@@ -51,6 +52,7 @@ async def create_research_agent(
         system_prompt: The system prompt for the agent (domain-specific)
         response_format: Pydantic model Union type for structured output
         tool_names: Optional list of tool names to use (None = all tools)
+        custom_tools: Optional list of custom LangChain tools to add
         debug: Enable debug mode
 
     Returns:
@@ -65,13 +67,18 @@ async def create_research_agent(
         mcp_tools = [t for t in mcp_tools if t.name in tool_names]
 
     # Wrap tools with truncation to prevent context overflow
-    wrapped_tools = [create_truncating_tool(tool) for tool in mcp_tools]
+    wrapped_mcp_tools = [create_truncating_tool(tool) for tool in mcp_tools]
 
-    print(f"Loaded {len(wrapped_tools)} MCP tools: {[t.name for t in wrapped_tools]}")
+    # Combine MCP tools with custom tools
+    all_tools = wrapped_mcp_tools
+    if custom_tools:
+        all_tools.extend(custom_tools)
+
+    print(f"Loaded {len(all_tools)} tools: {[t.name for t in all_tools]}")
 
     # Create flat deep agent (no subagents)
     agent = create_deep_agent(
-        tools=wrapped_tools,
+        tools=all_tools,
         system_prompt=system_prompt,
         subagents=[],  # No subagents - flat architecture
         response_format=response_format,
