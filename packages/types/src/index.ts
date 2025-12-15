@@ -147,8 +147,8 @@ const RegulationDataSchema = z.object({
   complexity: z.number().min(0).max(10).optional(),
 
   // Summary fields
-  summary_md: z.string().optional(),
-  summary_detailed_md: z.string().optional(),
+  summaryMd: z.string().optional(),
+  summaryDetailedMd: z.string().optional(),
 })
 
 const TaxationDataSchema = z.object({

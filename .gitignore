@@ -70,6 +70,7 @@ venv/
 ENV/
 env/
 .venv
+agents/**/output/
 
 # Misc
 *.pem
