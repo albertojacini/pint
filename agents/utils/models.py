@@ -62,10 +62,10 @@ class BaseResearchOutput(BaseModel):
     )
 
     # Summary fields
-    summary_md: str = Field(
+    summaryMd: str = Field(
         description="Concise markdown summary (2-3 paragraphs)"
     )
-    summary_detailed_md: str = Field(
+    summaryDetailedMd: str = Field(
         description="Comprehensive markdown explanation for citizen understanding"
     )
 
