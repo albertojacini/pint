@@ -1,19 +1,8 @@
 """Data models for the ownership research agent."""
 
 from enum import Enum
-from pydantic import BaseModel, Field
-
-
-class OwnershipStatus(str, Enum):
-    """Current status of the ownership.
-
-    - active: Currently held by the public entity
-    - divested: Sold or transferred
-    - suspended: Under review or temporarily frozen
-    """
-    ACTIVE = "active"
-    DIVESTED = "divested"
-    SUSPENDED = "suspended"
+from pydantic import Field
+from utils.models import BaseResearchOutput, BaseResearchError, ResearchStatus
 
 
 class AssetCategory(str, Enum):
@@ -33,54 +22,8 @@ class OwnershipPurpose(str, Enum):
     REVENUE_GENERATION = "revenue_generation"         # Financial returns
 
 
-# --- Output Model ---
-
-class OwnershipOutput(BaseModel):
+class OwnershipOutput(BaseResearchOutput):
     """Output public asset research object."""
-
-    # Basic identification
-    title: str = Field(
-        description=(
-            "Name of the public holding/asset in its original language. "
-            "Should be the commonly used name, clear and recognizable."
-        )
-    )
-    description: str = Field(
-        description=(
-            "Explanation of what the asset is and why it's publicly owned. "
-            "2-3 sentences covering the key aspects."
-        )
-    )
-    status: OwnershipStatus = Field(
-        description="Current status of the ownership"
-    )
-
-    # Temporal validity
-    effectiveFrom: str | None = Field(
-        None,
-        description="When the ownership was acquired (YYYY-MM-DD format)"
-    )
-    effectiveUntil: str | None = Field(
-        None,
-        description="When the ownership ended (YYYY-MM-DD format, null if still held)"
-    )
-
-    # Sources and confidence
-    sourceUrls: list[str] = Field(
-        default_factory=list,
-        description="List of authoritative URLs used as sources"
-    )
-    confidence: float = Field(
-        ge=0,
-        le=1,
-        description=(
-            "Confidence score (0-1) based on source quality. "
-            "0.9-1.0: Official government/company sources. "
-            "0.7-0.8: Good sources, some gaps. "
-            "0.5-0.6: Mixed sources. "
-            "<0.5: Poor sources."
-        )
-    )
 
     # Asset classification
     assetCategory: AssetCategory = Field(
@@ -145,37 +88,17 @@ class OwnershipOutput(BaseModel):
         description="Fiscal year for the cash flow data (YYYY format)"
     )
 
-    # Summary fields
-    summary_md: str = Field(
-        description=(
-            "Concise markdown summary (2-3 paragraphs): what the asset is, "
-            "why it's publicly owned, and its financial significance."
-        )
-    )
-    summary_detailed_md: str = Field(
-        description=(
-            "Comprehensive markdown explanation: full history, strategic importance, "
-            "governance structure, financial performance, public benefit, "
-            "and any controversies or debates about the ownership."
-        )
-    )
 
-
-class OwnershipResearchError(BaseModel):
+class OwnershipResearchError(BaseResearchError):
     """Error response when public asset cannot be researched."""
-    error: str = Field(
-        description=(
-            "Error code: "
-            "VAGUE_DESCRIPTION (cannot identify asset), "
-            "NOT_PUBLIC_ASSET (not a public holding), "
-            "NOT_FOUND (no reliable information), "
-            "MULTIPLE_MATCHES (ambiguous, multiple assets match)"
-        )
-    )
-    reason: str = Field(
-        description="Human-readable explanation of the error"
-    )
-    suggestions: list[str] = Field(
-        default_factory=list,
-        description="Actionable suggestions for reformulating the query"
-    )
+    pass
+
+
+# Re-export for convenience
+__all__ = [
+    "ResearchStatus",
+    "AssetCategory",
+    "OwnershipPurpose",
+    "OwnershipOutput",
+    "OwnershipResearchError",
+]
