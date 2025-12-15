@@ -29,5 +29,6 @@ async def create_regulation_research_agent(debug: bool = False):
     return await create_research_agent(
         system_prompt=system_prompt,
         response_format=Union[RegulationOutput, RegulationResearchError],
+        tool_names=["search_engine", "scrape_as_markdown", "query_wikipedia"],
         debug=debug,
     )

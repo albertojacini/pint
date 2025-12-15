@@ -39,6 +39,7 @@ def create_truncating_tool(original_tool: BaseTool) -> StructuredTool:
 async def create_research_agent(
     system_prompt: str,
     response_format: Type[BaseModel],
+    tool_names: list[str] | None = None,
     debug: bool = False,
 ):
     """
@@ -49,6 +50,7 @@ async def create_research_agent(
     Args:
         system_prompt: The system prompt for the agent (domain-specific)
         response_format: Pydantic model Union type for structured output
+        tool_names: Optional list of tool names to use (None = all tools)
         debug: Enable debug mode
 
     Returns:
@@ -57,6 +59,10 @@ async def create_research_agent(
     # Get MCP tools (BrightData search + Wikipedia)
     mcp_client = get_mcp_client()
     mcp_tools = await mcp_client.get_tools()
+
+    # Filter tools by name if specified
+    if tool_names is not None:
+        mcp_tools = [t for t in mcp_tools if t.name in tool_names]
 
     # Wrap tools with truncation to prevent context overflow
     wrapped_tools = [create_truncating_tool(tool) for tool in mcp_tools]
