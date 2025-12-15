@@ -1,4 +1,4 @@
-"""Data models for the ownership research domain."""
+"""Data models for the ownership research agent."""
 
 from enum import Enum
 from pydantic import BaseModel, Field

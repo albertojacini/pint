@@ -1,4 +1,4 @@
-"""CLI entry point for the domain-agnostic research agent."""
+"""CLI entry point for the taxation research agent."""
 
 import argparse
 import asyncio
@@ -7,9 +7,9 @@ import os
 import re
 from datetime import datetime
 
-from research.base_agent import create_research_agent
-from research.config import OUTPUT_DIR
-from research.domains import load_domain, list_domains
+from taxation_research.agent import create_taxation_research_agent
+from taxation_research.config import OUTPUT_DIR
+from taxation_research.models import TaxationOutput, TaxationResearchError
 
 
 def slugify(text: str) -> str:
@@ -46,17 +46,15 @@ def extract_json_from_response(content: str) -> dict | None:
     return None
 
 
-def save_result(result: dict, domain: str, description: str) -> str:
+def save_result(result: dict, description: str) -> str:
     """Save result to output directory and return filepath."""
-    # Create domain-specific output directory
-    domain_output_dir = os.path.join(OUTPUT_DIR, domain)
-    os.makedirs(domain_output_dir, exist_ok=True)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     desc_slug = slugify(description)
 
     filename = f'{desc_slug}_{timestamp}.json'
-    filepath = os.path.join(domain_output_dir, filename)
+    filepath = os.path.join(OUTPUT_DIR, filename)
 
     with open(filepath, 'w') as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
@@ -64,35 +62,29 @@ def save_result(result: dict, domain: str, description: str) -> str:
     return filepath
 
 
-async def run_agent(domain_key: str, description: str, debug: bool = False) -> dict | None:
+async def run_agent(description: str, debug: bool = False) -> dict | None:
     """
-    Run the research agent for a specific domain.
+    Run the taxation research agent.
 
     Args:
-        domain_key: The domain to research (e.g., 'regulation', 'taxation')
-        description: Description of the item to research
+        description: Description of the tax to research
 
     Returns:
         The research result or error object, or None if extraction failed
     """
-    # Load domain configuration
-    domain = load_domain(domain_key)
-
     print(f"\n{'='*60}")
-    print(f"{domain.name} Agent")
+    print(f"Taxation Research Agent")
     print(f"{'='*60}")
     print(f"Description: {description}")
     print(f"{'='*60}\n")
 
-    # Create the agent with domain-specific configuration
-    agent, mcp_client = await create_research_agent(
-        system_prompt=domain.system_prompt,
-        response_format=domain.response_format,
-        debug=debug,
-    )
+    # Create the agent
+    agent, mcp_client = await create_taxation_research_agent(debug=debug)
 
-    # Prepare the user message using domain's template
-    user_message = domain.user_message_template.format(description=description)
+    # Prepare the user message
+    user_message = f"""Research the following tax/fee/tariff:
+
+**Description**: {description}"""
 
     # Run the agent
     result = await agent.ainvoke({
@@ -114,7 +106,7 @@ async def run_agent(domain_key: str, description: str, debug: bool = False) -> d
         if hasattr(final_message, 'parsed') and final_message.parsed:
             print(f"Returning structured response: {final_message.parsed}")
             parsed = final_message.parsed
-            if isinstance(parsed, (domain.output_model, domain.error_model)):
+            if isinstance(parsed, (TaxationOutput, TaxationResearchError)):
                 return parsed.model_dump()
             return parsed
 
@@ -122,7 +114,7 @@ async def run_agent(domain_key: str, description: str, debug: bool = False) -> d
         if hasattr(result, 'structured_response') and result.structured_response:
             print(f"Found structured_response: {result.structured_response}")
             sr = result.structured_response
-            if isinstance(sr, (domain.output_model, domain.error_model)):
+            if isinstance(sr, (TaxationOutput, TaxationResearchError)):
                 return sr.model_dump()
             return sr
 
@@ -130,7 +122,7 @@ async def run_agent(domain_key: str, description: str, debug: bool = False) -> d
         if 'structured_response' in result:
             print(f"Found structured_response in result dict")
             sr = result['structured_response']
-            if isinstance(sr, (domain.output_model, domain.error_model)):
+            if isinstance(sr, (TaxationOutput, TaxationResearchError)):
                 return sr.model_dump()
             if hasattr(sr, 'model_dump'):
                 return sr.model_dump()
@@ -144,21 +136,13 @@ async def run_agent(domain_key: str, description: str, debug: bool = False) -> d
 
 async def main():
     """Main entry point."""
-    available_domains = list_domains()
-
     parser = argparse.ArgumentParser(
-        description="Research agent for various policy domains"
-    )
-    parser.add_argument(
-        "--domain", "-D",
-        required=True,
-        choices=available_domains,
-        help=f"Domain to research: {', '.join(available_domains)}"
+        description="Research taxes using AI"
     )
     parser.add_argument(
         "--description", "-d",
         required=True,
-        help="Description of the item to research (e.g., 'Milan congestion charge')"
+        help="Description of the tax to research (e.g., 'Milan tourist tax')"
     )
     parser.add_argument(
         "--debug",
@@ -172,7 +156,7 @@ async def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # Run the agent
-    result = await run_agent(args.domain, args.description, debug=args.debug)
+    result = await run_agent(args.description, debug=args.debug)
 
     print("\n" + "="*60)
 
@@ -180,10 +164,10 @@ async def main():
         if "error" in result:
             print("Error:")
             print(json.dumps(result, indent=2))
-            filepath = save_result(result, args.domain, args.description)
+            filepath = save_result(result, args.description)
             print(f"\nError saved to: {filepath}")
         else:
-            filepath = save_result(result, args.domain, args.description)
+            filepath = save_result(result, args.description)
             print("Success!")
             print(f"Result saved to: {filepath}")
     else:

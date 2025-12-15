@@ -1,4 +1,4 @@
-"""Data models for the regulation research domain."""
+"""Data models for the regulation research agent."""
 
 from enum import Enum
 from pydantic import BaseModel, Field

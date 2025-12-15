@@ -1,4 +1,4 @@
-"""CLI entry point for the legislation research agent."""
+"""CLI entry point for the ownership research agent."""
 
 import argparse
 import asyncio
@@ -7,9 +7,9 @@ import os
 import re
 from datetime import datetime
 
-from legislation_research.agent import create_legislation_research_agent
-from legislation_research.config import OUTPUT_DIR
-from legislation_research.models import LegislationOutput, LegislationResearchError
+from ownership_research.agent import create_ownership_research_agent
+from ownership_research.config import OUTPUT_DIR
+from ownership_research.models import OwnershipOutput, OwnershipResearchError
 
 
 def slugify(text: str) -> str:
@@ -64,25 +64,25 @@ def save_result(result: dict, description: str) -> str:
 
 async def run_agent(description: str, debug: bool = False) -> dict | None:
     """
-    Run the legislation research agent.
+    Run the ownership research agent.
 
     Args:
-        description: Description of the legislation to research
+        description: Description of the public asset to research
 
     Returns:
         The research result or error object, or None if extraction failed
     """
     print(f"\n{'='*60}")
-    print(f"Legislation Research Agent")
+    print(f"Ownership Research Agent")
     print(f"{'='*60}")
     print(f"Description: {description}")
     print(f"{'='*60}\n")
 
     # Create the agent
-    agent, mcp_client = await create_legislation_research_agent(debug=debug)
+    agent, mcp_client = await create_ownership_research_agent(debug=debug)
 
     # Prepare the user message
-    user_message = f"""Research the following legislation:
+    user_message = f"""Research the following public asset/holding:
 
 **Description**: {description}"""
 
@@ -106,7 +106,7 @@ async def run_agent(description: str, debug: bool = False) -> dict | None:
         if hasattr(final_message, 'parsed') and final_message.parsed:
             print(f"Returning structured response: {final_message.parsed}")
             parsed = final_message.parsed
-            if isinstance(parsed, (LegislationOutput, LegislationResearchError)):
+            if isinstance(parsed, (OwnershipOutput, OwnershipResearchError)):
                 return parsed.model_dump()
             return parsed
 
@@ -114,7 +114,7 @@ async def run_agent(description: str, debug: bool = False) -> dict | None:
         if hasattr(result, 'structured_response') and result.structured_response:
             print(f"Found structured_response: {result.structured_response}")
             sr = result.structured_response
-            if isinstance(sr, (LegislationOutput, LegislationResearchError)):
+            if isinstance(sr, (OwnershipOutput, OwnershipResearchError)):
                 return sr.model_dump()
             return sr
 
@@ -122,7 +122,7 @@ async def run_agent(description: str, debug: bool = False) -> dict | None:
         if 'structured_response' in result:
             print(f"Found structured_response in result dict")
             sr = result['structured_response']
-            if isinstance(sr, (LegislationOutput, LegislationResearchError)):
+            if isinstance(sr, (OwnershipOutput, OwnershipResearchError)):
                 return sr.model_dump()
             if hasattr(sr, 'model_dump'):
                 return sr.model_dump()
@@ -137,12 +137,12 @@ async def run_agent(description: str, debug: bool = False) -> dict | None:
 async def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Research legislation using AI"
+        description="Research public assets using AI"
     )
     parser.add_argument(
         "--description", "-d",
         required=True,
-        help="Description of the legislation to research (e.g., 'Milan congestion charge law')"
+        help="Description of the public asset to research (e.g., 'Milan public transport company ATM')"
     )
     parser.add_argument(
         "--debug",

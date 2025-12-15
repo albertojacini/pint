@@ -1,4 +1,4 @@
-"""Configuration for research agents."""
+"""Configuration for regulation research agent."""
 
 import os
 from dotenv import load_dotenv

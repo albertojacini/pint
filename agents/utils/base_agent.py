@@ -1,26 +1,14 @@
-"""Deep agent configuration for legislation research."""
+"""Base agent configuration - domain-agnostic research agent."""
 
-import sys
-import os
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from pathlib import Path
-from typing import Union, Any
+from typing import Any, Type
 from langchain_core.tools import BaseTool, StructuredTool
 from deepagents import create_deep_agent
 from utils.mcp_client import get_mcp_client
-from legislation_research.models import LegislationOutput, LegislationResearchError
+from pydantic import BaseModel
 
 
 # Maximum characters to keep from tool output (roughly 10k tokens)
 MAX_TOOL_OUTPUT_CHARS = 40000
-
-
-def load_prompt(filename: str) -> str:
-    """Load a prompt file from the prompts directory."""
-    prompt_path = Path(__file__).parent / "prompts" / filename
-    return prompt_path.read_text()
 
 
 def truncate_output(output: Any, max_chars: int = MAX_TOOL_OUTPUT_CHARS) -> Any:
@@ -48,11 +36,20 @@ def create_truncating_tool(original_tool: BaseTool) -> StructuredTool:
     )
 
 
-async def create_legislation_research_agent(debug: bool = False):
+async def create_research_agent(
+    system_prompt: str,
+    response_format: Type[BaseModel],
+    debug: bool = False,
+):
     """
-    Create deep agent with MCP tools for legislation research.
+    Create a domain-agnostic research agent with MCP tools.
 
-    This is a flat agent (no subagents) that performs all research directly.
+    This is a flat agent (no subagents) that performs research directly.
+
+    Args:
+        system_prompt: The system prompt for the agent (domain-specific)
+        response_format: Pydantic model Union type for structured output
+        debug: Enable debug mode
 
     Returns:
         Tuple of (agent, mcp_client)
@@ -66,15 +63,12 @@ async def create_legislation_research_agent(debug: bool = False):
 
     print(f"Loaded {len(wrapped_tools)} MCP tools: {[t.name for t in wrapped_tools]}")
 
-    # Load prompts
-    system_prompt = load_prompt("system_prompt.md")
-
     # Create flat deep agent (no subagents)
     agent = create_deep_agent(
         tools=wrapped_tools,
         system_prompt=system_prompt,
         subagents=[],  # No subagents - flat architecture
-        response_format=Union[LegislationOutput, LegislationResearchError],
+        response_format=response_format,
         debug=debug,
     )
 
