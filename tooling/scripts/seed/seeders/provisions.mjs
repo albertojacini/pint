@@ -1,6 +1,6 @@
 /**
  * Provisions Domain Seeder
- * Seeds provisions (actual policy data) and provision resources (URLs for the agent to process)
+ * Seeds provisions (actual policy data)
  * Dependencies: entities (political_entities)
  */
 
@@ -33,7 +33,6 @@ function generateSlug(text) {
 export async function seedProvisions(client, supabase, idMaps) {
   // Load data dynamically
   const { provisions } = await loadData('provisions-data.mjs')
-  const { provisionResources } = await loadData('provision-resources-data.mjs')
   const { taggablesData } = await loadData('taggables-data.mjs')
   const { events } = await loadData('events-data.mjs')
   const { changes } = await loadData('changes-data.mjs')
@@ -118,57 +117,6 @@ export async function seedProvisions(client, supabase, idMaps) {
     }
 
     logger.endSection('provisions', successCount)
-  }
-
-  // ===== PROVISION RESOURCES =====
-  logger.startSection('provision_resources')
-
-  successCount = 0
-  skipCount = 0
-
-  if (await hasData(client, 'provision_resources')) {
-    logger.skipSection('Provision resources')
-  } else {
-    for (const resource of provisionResources) {
-      // Try to get entity ID from idMaps, otherwise query database
-      let entityId = idMaps.entities.get(resource.entity)
-
-      if (!entityId) {
-        // Query database for entity ID
-        const result = await client.query(
-          'SELECT id FROM political_entities WHERE name = $1',
-          [resource.entity]
-        )
-        if (result.rows.length > 0) {
-          entityId = result.rows[0].id
-          // Cache it for future use
-          idMaps.entities.set(resource.entity, entityId)
-        }
-      }
-
-      if (!entityId) {
-        logger.warning(`Skipping resource "${resource.url}" - entity not found: ${resource.entity}`)
-        skipCount++
-        continue
-      }
-
-      const id = generateUUID()
-
-      await insertQuery(client, {
-        table: 'provision_resources',
-        columns: ['id', 'entity_id', 'url', 'status'],
-        values: [id, entityId, resource.url, 'pending'],
-      })
-
-      successCount++
-      idMaps.provisionResources.set(resource.url, id)
-    }
-
-    if (skipCount > 0) {
-      logger.warning(`Skipped ${skipCount} resources due to missing dependencies`)
-    }
-
-    logger.endSection('provision_resources', successCount)
   }
 
   // ===== PROVISION TAGGABLES =====

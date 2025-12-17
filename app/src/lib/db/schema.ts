@@ -329,14 +329,3 @@ export const changes = pgTable('changes', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-// Provision resources: URLs to be processed by the provision generator agent
-export const provisionResources = pgTable('provision_resources', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
-  url: text('url').notNull(),
-  status: text('status', { enum: ['pending', 'scraped', 'processed', 'failed'] }).notNull().default('pending'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  uniqueEntityUrl: uniqueIndex('provision_resources_unique').on(table.entityId, table.url),
-}))

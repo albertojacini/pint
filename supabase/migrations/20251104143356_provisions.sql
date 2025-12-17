@@ -89,21 +89,3 @@ create index if not exists idx_changes_event_id on public.changes(event_id);
 create index if not exists idx_changes_target on public.changes(target_type, target_id);
 create index if not exists idx_changes_effective_at on public.changes(effective_at);
 
--- Provision resources: URLs to be processed by the provision generator agent
-create table if not exists public.provision_resources (
-  id uuid primary key default uuid_generate_v4(),
-  entity_id uuid not null references public.political_entities(id) on delete cascade,
-  url text not null,
-  status text not null default 'pending' check (status in ('pending', 'scraped', 'processed', 'failed')),
-  created_at timestamptz default now(),
-  updated_at timestamptz default now(),
-  unique(entity_id, url)
-);
-
-create index if not exists idx_provision_resources_entity_id on public.provision_resources(entity_id);
-create index if not exists idx_provision_resources_status on public.provision_resources(status);
-
-create trigger set_updated_at_provision_resources
-  before update on public.provision_resources
-  for each row
-  execute function public.handle_updated_at();
