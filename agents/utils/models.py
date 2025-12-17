@@ -27,8 +27,13 @@ class BaseResearchOutput(BaseModel):
     title: str = Field(
         description="Official name in original language, clear and recognizable"
     )
+    descriptionShort: str = Field(
+        max_length=100,
+        description="Very brief one-line summary for UI cards (max 100 characters)"
+    )
     description: str = Field(
-        description="2-3 sentence explanation of purpose and key aspects"
+        max_length=1000,
+        description="2-3 sentence explanation of purpose and key aspects for detail pages (max 1000 characters)"
     )
     status: ResearchStatus = Field(
         description="Current status (active, repealed, or suspended)"
@@ -61,12 +66,22 @@ class BaseResearchOutput(BaseModel):
         )
     )
 
-    # Summary fields
-    summaryMd: str = Field(
-        description="Concise markdown summary (2-3 paragraphs)"
-    )
-    summaryDetailedMd: str = Field(
-        description="Comprehensive markdown explanation for citizen understanding"
+    # Comprehensive summary
+    summary: str = Field(
+        max_length=20000,
+        description=(
+            "Comprehensive markdown document (max 20000 characters) containing an extensive walkthrough "
+            "of ALL the most important points. This should be a complete reference document that covers:\n"
+            "- Overview and purpose\n"
+            "- Key requirements, rules, or specifications\n"
+            "- Important procedures and processes\n"
+            "- Financial data and impacts (if applicable)\n"
+            "- Historical context and evolution\n"
+            "- Benefits and drawbacks\n"
+            "- Enforcement and compliance details\n"
+            "Use markdown formatting with headers (##), lists, and **bold** for emphasis. "
+            "Write for citizen understanding, avoiding jargon where possible."
+        )
     )
 
 

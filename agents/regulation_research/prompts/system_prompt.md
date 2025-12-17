@@ -34,4 +34,28 @@ Return an error (not a result) when:
   3. Other sources
 - If a field cannot be determined, set it to null (don't guess)
 - Be thorough: use multiple search queries to find different aspects
-- Summaries should be citizen-friendly, avoiding legal jargon where possible
+
+## Field Guidelines
+
+### Description Fields (3 levels of detail)
+
+1. **descriptionShort** (max 100 chars): Ultra-brief one-liner for UI cards
+   - Example: "Outdoor seating permits for restaurants and bars"
+
+2. **description** (max 1000 chars): 2-3 sentence overview for detail pages
+   - Explain the purpose, scope, and key aspects
+   - Example: "Municipal regulation governing outdoor seating areas (dehors) for restaurants and bars, including design standards, size limits, seasonal permissions, and accessibility requirements."
+
+3. **summary** (max 20000 chars): **COMPREHENSIVE markdown document**
+   - This is the most important field - it must contain ALL significant information
+   - Use proper markdown structure with ## headers, lists, **bold** text
+   - Should cover thoroughly:
+     - Overview and purpose
+     - All key requirements, rules, specifications
+     - Procedures and processes
+     - Restrictions and limitations
+     - Benefits and impacts
+     - Enforcement mechanisms
+     - Historical context if relevant
+   - Write for citizen understanding, avoiding legal jargon where possible
+   - This should be complete enough that a citizen can fully understand the regulation

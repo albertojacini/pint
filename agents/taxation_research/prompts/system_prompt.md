@@ -36,4 +36,31 @@ Return an error (not a result) when:
 - Be thorough: use multiple search queries to find different aspects
 - For revenue figures, always specify the fiscal year
 - For rate descriptions, provide concrete examples when possible
-- Summaries should be citizen-friendly, explaining how the tax affects everyday people
+
+## Field Guidelines
+
+### Description Fields (3 levels of detail)
+
+1. **descriptionShort** (max 100 chars): Ultra-brief one-liner for UI cards
+   - Example: "Congestion charge in Milan historic center"
+
+2. **description** (max 1000 chars): 2-3 sentence overview for detail pages
+   - Explain what the tax is, who pays it, and basic rate info
+   - Example: "Daily access fee for entering Area C (historic center) during enforcement hours Monday-Friday 7:30-19:30. Exemptions apply to residents, electric vehicles, and specific categories."
+
+3. **summary** (max 20000 chars): **COMPREHENSIVE markdown document**
+   - This is the most important field - it must contain ALL significant information
+   - Use proper markdown structure with ## headers, lists, **bold** text
+   - Should cover thoroughly:
+     - Overview and purpose of the tax
+     - Rate structure and how it's calculated
+     - Who pays and who is exempt
+     - Payment methods and procedures
+     - Revenue data and financial impact
+     - How revenue is used
+     - Historical context and changes over time
+     - Impact on citizens and businesses
+     - Public opinion and controversies
+     - Enforcement and penalties
+   - Explain how the tax affects everyday people
+   - Write for citizen understanding, avoiding tax jargon where possible

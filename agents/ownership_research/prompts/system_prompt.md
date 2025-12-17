@@ -37,4 +37,29 @@ Return an error (not a result) when:
 - For financial figures, always specify the currency and date/year
 - Distinguish between acquisition cost (historical) and current valuation
 - For cash flow, positive values = income/dividends, negative = subsidies/costs
-- Summaries should explain why this matters to citizens and taxpayers
+
+## Field Guidelines
+
+### Description Fields (3 levels of detail)
+
+1. **descriptionShort** (max 100 chars): Ultra-brief one-liner for UI cards
+   - Example: "100% ownership of ATM public transport company"
+
+2. **description** (max 1000 chars): 2-3 sentence overview for detail pages
+   - Explain what the asset is, why it's owned, and its scale
+   - Example: "The Comune di Milano holds 100% ownership of ATM (Azienda Trasporti Milanesi), the public transport company managing metro, tram, bus, and trolleybus services in Milan and 95 surrounding municipalities."
+
+3. **summary** (max 20000 chars): **COMPREHENSIVE markdown document**
+   - This is the most important field - it must contain ALL significant information
+   - Use proper markdown structure with ## headers, lists, **bold** text
+   - Should cover thoroughly:
+     - Overview of the asset and ownership structure
+     - Strategic purpose and importance
+     - Scale and scope of operations
+     - Financial details (acquisition, valuation, cash flows)
+     - Governance and control mechanisms
+     - Historical context and evolution
+     - Impact on citizens and public services
+     - Performance and future outlook
+   - Explain why this matters to citizens and taxpayers
+   - Write for citizen understanding, avoiding financial jargon where possible
