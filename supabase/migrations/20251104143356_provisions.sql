@@ -12,8 +12,9 @@ create table if not exists public.provisions (
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   title text not null,
   slug text not null,
-  description text,
   description_short text check (length(description_short) <= 100),
+  description text check (length(description) <= 1000),
+  summary text check (length(summary) <= 20000),
   avatar_url text,
   type text not null check (type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
                       -- ownership: stakes in companies, property, infrastructure
@@ -47,8 +48,8 @@ create table if not exists public.events (
   id uuid primary key default uuid_generate_v4(),
   administration_id uuid references public.administrations(id) on delete cascade,
   title text not null,
-  description text,
   description_short text check (length(description_short) <= 100),
+  description text check (length(description) <= 1000),
   type text not null, -- Legislative: 'legislative_session', 'bill_proposal', 'referendum', 'amendment'
                       -- Executive: 'executive_order', 'appointment', 'regulation_update', 'administrative_reform'
                       -- Judicial: 'court_ruling', 'legal_challenge'

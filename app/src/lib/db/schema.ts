@@ -278,8 +278,9 @@ export const provisions = pgTable('provisions', {
   entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   slug: text('slug').notNull(),
-  description: text('description'),
   descriptionShort: text('description_short'),
+  description: text('description'),
+  summary: text('summary'),
   avatarUrl: text('avatar_url'),
   type: text('type', {
     enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
@@ -304,8 +305,8 @@ export const events = pgTable('events', {
   id: uuid('id').primaryKey().defaultRandom(),
   administrationId: uuid('administration_id').references(() => administrations.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
-  description: text('description'),
   descriptionShort: text('description_short'),
+  description: text('description'),
   type: text('type').notNull(), // 'judicial_decree', 'legislative_vote', 'protest', 'executive_order', etc.
   occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

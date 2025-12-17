@@ -145,10 +145,6 @@ const RegulationDataSchema = z.object({
 
   // Complexity for affected parties (0 = trivial, 10 = extremely complex)
   complexity: z.number().min(0).max(10).optional(),
-
-  // Summary fields
-  summaryMd: z.string().optional(),
-  summaryDetailedMd: z.string().optional(),
 })
 
 const TaxationDataSchema = z.object({
@@ -208,7 +204,9 @@ export const ProvisionSchema = z.object({
   id: z.string().uuid(),
   entityId: z.string().uuid(),
   title: z.string().min(1),
-  description: z.string().optional(),
+  descriptionShort: z.string().max(100, 'Short description must be at most 100 characters').optional(),
+  description: z.string().max(1000, 'Description must be at most 1000 characters').optional(),
+  summary: z.string().max(20000, 'Summary must be at most 20000 characters').optional(),
   type: z.enum(['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']),
   status: z.enum(['active', 'repealed', 'suspended']).default('active'),
   effectiveFrom: z.string().optional(), // YYYY-MM-DD
