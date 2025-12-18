@@ -23,7 +23,6 @@ import {
   PerformanceIndicators,
   CommunityMetrics,
   ProvisionsOverview,
-  getProvisionsViewAllLink,
   EventsOverview,
   getEventsViewAllLink,
   EntityMetadata,
@@ -208,12 +207,14 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <Section
         title="Provisions"
         action={
-          <Link
-            href={getProvisionsViewAllLink(entity)}
-            className="text-sm text-blue-600 hover:underline"
-          >
-            View all
-          </Link>
+          <div className="flex gap-3">
+            <Link href={`/pe/${urlSlug}/pr`} className="text-sm text-blue-600 hover:underline">
+              Overview
+            </Link>
+            <Link href={`/pe/${urlSlug}/pr/browse`} className="text-sm text-blue-600 hover:underline">
+              Browse
+            </Link>
+          </div>
         }
       >
         <ProvisionsOverview entity={entity} aggregates={provisionAggregates} changes={provisionChanges} />

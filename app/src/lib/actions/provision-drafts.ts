@@ -138,6 +138,7 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
       summary: draft.summary,
       type: draft.confirmedType,
       status: 'active',
+      relevance: draft.relevance,
       extraData: draft.extraData || {},
     })
     .returning({ id: provisions.id })

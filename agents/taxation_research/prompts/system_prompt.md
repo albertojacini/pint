@@ -39,6 +39,24 @@ Return an error (not a result) when:
 
 ## Field Guidelines
 
+### Relevance Score (0-10)
+
+Assess the importance/significance of this provision to the political entity:
+
+**Factors to consider:**
+- Financial impact (revenue, costs, budget size)
+- Number of citizens/businesses affected
+- Political significance and media attention
+- Impact on daily life and city operations
+- Controversy or public debate
+
+**Scale:**
+- **9-10**: Critical/transformative (e.g., major taxes like IMU, TARI; landmark regulations)
+- **7-8**: Major impact (e.g., congestion charges, significant fees, important regulations)
+- **5-6**: Important but not critical (e.g., specific permits, moderate-sized taxes)
+- **3-4**: Moderate impact on specific groups (e.g., niche regulations, small fees)
+- **0-2**: Minor administrative (e.g., small procedural fees, narrow regulations)
+
 ### Description Fields (3 levels of detail)
 
 1. **descriptionShort** (max 100 chars): Ultra-brief one-liner for UI cards

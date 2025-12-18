@@ -66,6 +66,21 @@ class BaseResearchOutput(BaseModel):
         )
     )
 
+    # Relevance scoring
+    relevance: int = Field(
+        ge=0,
+        le=10,
+        description=(
+            "Relevance/importance score (0-10) indicating how significant this provision is to the entity. "
+            "Consider: financial impact, number of citizens affected, political significance, media attention. "
+            "0-2: Minor administrative matter affecting few people. "
+            "3-4: Moderate impact on specific groups. "
+            "5-6: Important provision affecting many citizens. "
+            "7-8: Major provision with significant impact. "
+            "9-10: Critical provision with transformative/widespread impact."
+        )
+    )
+
     # Comprehensive summary
     summary: str = Field(
         max_length=20000,

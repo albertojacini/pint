@@ -117,6 +117,7 @@ create table if not exists public.provision_drafts (
   -- Metadata
   confidence float,
   source_urls text[],
+  relevance integer check (relevance >= 0 and relevance <= 10),
 
   created_at timestamptz default now(),
   updated_at timestamptz default now()

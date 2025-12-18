@@ -358,6 +358,7 @@ export const provisionDrafts = pgTable('provision_drafts', {
 
   confidence: numeric('confidence'),
   sourceUrls: text('source_urls').array(),
+  relevance: integer('relevance'),
 
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

@@ -61,6 +61,9 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
     draft.description || ''
   )
   const [editedSummary, setEditedSummary] = useState(draft.summary || '')
+  const [editedRelevance, setEditedRelevance] = useState<number | null>(
+    draft.relevance || null
+  )
 
   const router = useRouter()
   const { toast } = useToast()
@@ -177,6 +180,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           extraData: result,
           confidence: String(result.confidence || 0),
           sourceUrls: result.sourceUrls || [],
+          relevance: result.relevance || null,
         })
 
         setDraft((d) => ({
@@ -189,6 +193,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           extraData: result,
           confidence: String(result.confidence || 0),
           sourceUrls: result.sourceUrls || [],
+          relevance: result.relevance || null,
         }))
 
         // Update editable fields
@@ -196,6 +201,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         setEditedDescriptionShort(result.descriptionShort || '')
         setEditedDescription(result.description || '')
         setEditedSummary(result.summary || '')
+        setEditedRelevance(result.relevance || null)
 
         setLoading(false)
         toast({
@@ -251,6 +257,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         descriptionShort: editedDescriptionShort,
         description: editedDescription,
         summary: editedSummary,
+        relevance: editedRelevance,
       })
 
       // Then save to production
@@ -467,6 +474,26 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
               />
               <p className="text-xs text-gray-400">
                 {editedSummary.length}/20000
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="relevance">Relevance (0-10)</Label>
+              <Input
+                id="relevance"
+                type="number"
+                min="0"
+                max="10"
+                value={editedRelevance ?? ''}
+                onChange={(e) => {
+                  const val = e.target.value ? parseInt(e.target.value) : null
+                  if (val === null || (val >= 0 && val <= 10)) {
+                    setEditedRelevance(val)
+                  }
+                }}
+              />
+              <p className="text-xs text-gray-400">
+                AI-computed: {draft.relevance ?? 'N/A'} | Scale: 0=minor, 5=important, 10=critical
               </p>
             </div>
 
