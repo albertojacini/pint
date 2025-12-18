@@ -30,6 +30,7 @@ create table if not exists public.tags (
   slug text not null unique, -- URL-friendly version
   description text,
   category text, -- 'policy-topic', 'geographic', 'impact-area', 'maturity'
+  color text, -- hex color for UI display
   metadata jsonb default '{}', -- Flexible field for tag-specific data
   usage_count integer default 0, -- Track popularity
   created_at timestamptz default now(),

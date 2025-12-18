@@ -7,6 +7,7 @@
 create table if not exists public.political_entities (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
+  native_name text,
   slug text not null,
   description text,
   avatar_url text,

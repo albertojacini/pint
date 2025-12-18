@@ -28,6 +28,7 @@ export interface ProvisionDraft {
   summary: string | null
   extraData: Record<string, unknown> | null
   confidence: string | null
+  relevance: number | null
   sourceUrls: string[] | null
   createdAt: Date
   updatedAt: Date
@@ -78,6 +79,7 @@ export async function updateDraft(
     summary: string
     extraData: Record<string, unknown>
     confidence: string
+    relevance: number
     sourceUrls: string[]
   }>
 ): Promise<ApiResponse> {

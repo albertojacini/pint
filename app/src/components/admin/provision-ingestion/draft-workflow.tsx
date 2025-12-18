@@ -257,7 +257,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         descriptionShort: editedDescriptionShort,
         description: editedDescription,
         summary: editedSummary,
-        relevance: editedRelevance,
+        relevance: editedRelevance ?? undefined,
       })
 
       // Then save to production

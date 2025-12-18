@@ -1,4 +1,4 @@
-import type { EffectsDiagram } from '@repo/types'
+import type { EffectsDiagram, StakeholderGroupEffects, StakeholderEffect } from '@pint/types'
 
 interface StakeholderGroupData {
   id: string
@@ -29,7 +29,7 @@ export function EffectsDiagram({ effectsDiagram, stakeholderGroups }: EffectsDia
     <div className="border rounded-lg overflow-hidden">
       <table className="w-full">
         <tbody>
-          {effectsDiagram.stakeholderGroups.map((stakeholderGroupEffects, index) => {
+          {effectsDiagram.stakeholderGroups.map((stakeholderGroupEffects: StakeholderGroupEffects, index: number) => {
             const stakeholderGroup = stakeholderGroupMap.get(stakeholderGroupEffects.stakeholderGroupId)
 
             if (!stakeholderGroup) {
@@ -63,7 +63,7 @@ export function EffectsDiagram({ effectsDiagram, stakeholderGroups }: EffectsDia
                 <td className="p-0">
                   <table className="w-full">
                     <tbody>
-                      {stakeholderGroupEffects.effects.map((effect, effectIndex) => {
+                      {stakeholderGroupEffects.effects.map((effect: StakeholderEffect, effectIndex: number) => {
                         const isPositive = effect.sentiment === 'positive'
                         const severityDots = '●'.repeat(effect.severity)
 

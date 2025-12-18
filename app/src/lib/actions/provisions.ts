@@ -223,6 +223,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       tagName: tags.name,
       tagSlug: tags.slug,
       tagCategory: tags.category,
+      tagColor: tags.color,
     })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))
@@ -337,6 +338,7 @@ export async function getFilteredProvisions(
       tagName: tags.name,
       tagSlug: tags.slug,
       tagCategory: tags.category,
+      tagColor: tags.color,
     })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))

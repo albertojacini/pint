@@ -1,5 +1,5 @@
-import { pgTable, text, uuid, timestamp, integer, uniqueIndex, numeric, jsonb } from 'drizzle-orm/pg-core'
-import type { EffectsDiagram } from '@repo/types'
+import { pgTable, text, uuid, timestamp, integer, uniqueIndex, numeric, jsonb, type AnyPgColumn } from 'drizzle-orm/pg-core'
+import type { EffectsDiagram } from '@pint/types'
 
 // User profiles table
 export const userProfiles = pgTable('user_profiles', {
@@ -14,7 +14,7 @@ export const userProfiles = pgTable('user_profiles', {
 // Categories table (hierarchical policy categories)
 export const categories = pgTable('categories', {
   id: uuid('id').primaryKey().defaultRandom(),
-  parentId: uuid('parent_id').references(() => categories.id, { onDelete: 'cascade' }),
+  parentId: uuid('parent_id').references((): AnyPgColumn => categories.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   description: text('description'),
   orderIndex: integer('order_index').notNull().default(0),
@@ -27,6 +27,7 @@ export const categories = pgTable('categories', {
 export const politicalEntities = pgTable('political_entities', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
+  nativeName: text('native_name'),
   slug: text('slug').notNull(),
   description: text('description'),
   avatarUrl: text('avatar_url'),
@@ -105,6 +106,7 @@ export const tags = pgTable('tags', {
   slug: text('slug').notNull().unique(),
   description: text('description'),
   category: text('category'), // 'policy-topic', 'geographic', 'impact-area', 'maturity'
+  color: text('color'), // hex color for UI display
   metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}),
   usageCount: integer('usage_count').default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -150,7 +152,7 @@ export const stakeholderGroups = pgTable('stakeholder_groups', {
 export const posts = pgTable('posts', {
   id: uuid('id').primaryKey().defaultRandom(),
   authorId: uuid('author_id').notNull(),
-  title: text('title', { length: 200 }).notNull(),
+  title: text('title').notNull(),
   content: text('content').notNull(),
   status: text('status', { enum: ['draft', 'published', 'archived'] }).notNull().default('draft'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -224,7 +226,7 @@ export const ideas = pgTable('ideas', {
   title: text('title').notNull(),
   description: text('description'),
   categoryId: uuid('category_id').references(() => categories.id, { onDelete: 'set null' }),
-  effectsDiagram: jsonb('effects_diagram').$type<EffectsDiagram>().default({}),
+  effectsDiagram: jsonb('effects_diagram').$type<EffectsDiagram>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

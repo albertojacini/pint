@@ -13,6 +13,7 @@ import {
   stakeholderGroups
 } from '@/lib/db/schema'
 import { eq, sql, inArray } from 'drizzle-orm'
+import type { StakeholderGroupEffects } from '@pint/types'
 
 export async function getIdeas() {
   const ideasWithStats = await db
@@ -110,7 +111,7 @@ export async function getIdea(id: string) {
     .orderBy(provisions.status, provisions.effectiveFrom)
 
   // Get stakeholder groups referenced in the effects diagram
-  const stakeholderGroupIds = idea.effectsDiagram?.stakeholderGroups?.map(sg => sg.stakeholderGroupId) || []
+  const stakeholderGroupIds = idea.effectsDiagram?.stakeholderGroups?.map((sg: StakeholderGroupEffects) => sg.stakeholderGroupId) || []
 
   const stakeholderGroupsData = stakeholderGroupIds.length > 0
     ? await db
