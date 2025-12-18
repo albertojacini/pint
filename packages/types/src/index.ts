@@ -145,6 +145,9 @@ const RegulationDataSchema = z.object({
 
   // Complexity for affected parties (0 = trivial, 10 = extremely complex)
   complexity: z.number().min(0).max(10).optional(),
+
+  // AI-generated summary
+  summary_md: z.string().optional(),
 })
 
 const TaxationDataSchema = z.object({

@@ -180,13 +180,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
                 <ReactMarkdown>{(provision.extraData as RegulationData).summary_md}</ReactMarkdown>
               </div>
             )}
-
-            {(provision.extraData as RegulationData).summary_detailed_md && (
-              <div className="prose prose-sm max-w-none">
-                <h3 className="text-lg font-semibold mb-2">Detailed Summary</h3>
-                <ReactMarkdown>{(provision.extraData as RegulationData).summary_detailed_md}</ReactMarkdown>
-              </div>
-            )}
           </div>
         )}
 
