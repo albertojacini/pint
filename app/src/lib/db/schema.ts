@@ -329,3 +329,37 @@ export const changes = pgTable('changes', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
+// Provision drafts: work-in-progress provisions from AI ingestion pipeline
+export const provisionDrafts = pgTable('provision_drafts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  entityId: uuid('entity_id').notNull().references(() => politicalEntities.id, { onDelete: 'cascade' }),
+  createdBy: uuid('created_by'),
+
+  inputDescription: text('input_description').notNull(),
+
+  suggestedType: text('suggested_type', {
+    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
+  }),
+  confirmedType: text('confirmed_type', {
+    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
+  }),
+
+  jobId: text('job_id'),
+  jobStatus: text('job_status', {
+    enum: ['pending', 'classifying', 'classified', 'researching', 'completed', 'failed']
+  }).notNull().default('pending'),
+  errorMessage: text('error_message'),
+
+  title: text('title'),
+  descriptionShort: text('description_short'),
+  description: text('description'),
+  summary: text('summary'),
+  extraData: jsonb('extra_data').$type<Record<string, unknown>>(),
+
+  confidence: numeric('confidence'),
+  sourceUrls: text('source_urls').array(),
+
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+

@@ -89,3 +89,45 @@ create index if not exists idx_changes_event_id on public.changes(event_id);
 create index if not exists idx_changes_target on public.changes(target_type, target_id);
 create index if not exists idx_changes_effective_at on public.changes(effective_at);
 
+-- Provision drafts: work-in-progress provisions from AI ingestion pipeline
+create table if not exists public.provision_drafts (
+  id uuid primary key default uuid_generate_v4(),
+  entity_id uuid not null references public.political_entities(id) on delete cascade,
+  created_by uuid references auth.users(id) on delete set null,
+
+  -- User input
+  input_description text not null,
+
+  -- Classification step
+  suggested_type text check (suggested_type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
+  confirmed_type text check (confirmed_type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
+
+  -- Job tracking
+  job_id text,
+  job_status text not null default 'pending' check (job_status in ('pending', 'classifying', 'classified', 'researching', 'completed', 'failed')),
+  error_message text,
+
+  -- Research results (populated after job completes)
+  title text,
+  description_short text check (length(description_short) <= 100),
+  description text check (length(description) <= 1000),
+  summary text check (length(summary) <= 20000),
+  extra_data jsonb default '{}',
+
+  -- Metadata
+  confidence float,
+  source_urls text[],
+
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_provision_drafts_entity_id on public.provision_drafts(entity_id);
+create index if not exists idx_provision_drafts_job_status on public.provision_drafts(job_status);
+create index if not exists idx_provision_drafts_created_by on public.provision_drafts(created_by);
+
+create trigger set_updated_at_provision_drafts
+  before update on public.provision_drafts
+  for each row
+  execute function public.handle_updated_at();
+
