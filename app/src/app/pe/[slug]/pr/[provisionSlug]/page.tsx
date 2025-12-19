@@ -7,6 +7,7 @@ import { ProvisionCardRow4 } from '@/components/provisions/provision-card-row4'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
+import { getMediaUrl } from '@/lib/storage'
 import ReactMarkdown from 'react-markdown'
 import type { RegulationData } from '@pint/types'
 
@@ -110,6 +111,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
   const relevanceDots = getScoreDots(provision.relevance)
   const relevanceColor = getScoreColor(provision.relevance)
+  const mediaUrl = getMediaUrl(provision.avatarUrl)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
@@ -154,9 +156,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         {/* Row 3: Avatar Image + Description */}
         <div className="flex gap-4 mb-6">
           {/* Avatar image (only show if exists) */}
-          {provision.avatarUrl && (
+          {mediaUrl && (
             <img
-              src={provision.avatarUrl}
+              src={mediaUrl}
               alt={provision.title}
               className="w-16 h-16 flex-shrink-0 rounded-lg object-cover"
             />

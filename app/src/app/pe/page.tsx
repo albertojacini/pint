@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
+import { getAvatarUrl } from '@/lib/storage'
 
 export default async function EntitiesPage() {
   // Fetch all political entities
@@ -30,21 +31,23 @@ export default async function EntitiesPage() {
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {entities.map((entity) => (
-            <Link
-              key={entity.id}
-              href={entityPath(entity)}
-              className="block p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow"
-            >
-              <div className="flex items-start gap-4">
-                {entity.avatarUrl && (
-                  <img
-                    src={entity.avatarUrl}
-                    alt={entity.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                )}
-                <div className="flex-1">
+          {entities.map((entity) => {
+            const avatarUrl = getAvatarUrl(entity.avatarUrl)
+            return (
+              <Link
+                key={entity.id}
+                href={entityPath(entity)}
+                className="block p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow"
+              >
+                <div className="flex items-start gap-4">
+                  {avatarUrl && (
+                    <img
+                      src={avatarUrl}
+                      alt={entity.name}
+                      className="w-16 h-16 rounded-full object-cover"
+                    />
+                  )}
+                  <div className="flex-1">
                   <SectionTitle className="mb-1">{entity.name}</SectionTitle>
                   {entity.nativeName && (
                     <p className="text-sm text-gray-500 mb-2">{entity.nativeName}</p>
@@ -90,8 +93,9 @@ export default async function EntitiesPage() {
                   )}
                 </div>
               )}
-            </Link>
-          ))}
+              </Link>
+            )
+          })}
         </div>
       )}
     </div>

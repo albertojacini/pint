@@ -171,3 +171,44 @@ export function validateImageFile(file: File, maxSizeMB: number = 5): void {
     throw new Error(`File too large. Max size: ${maxSizeMB}MB`)
   }
 }
+
+/**
+ * Get Supabase Storage URL for an avatar
+ * Returns null if path is null/empty
+ */
+export function getAvatarUrl(
+  path: string | null,
+  options?: {
+    width?: number
+    height?: number
+    quality?: number
+  }
+): string | null {
+  if (!path) return null
+  return getPublicUrl('avatars', path, options)
+}
+
+/**
+ * Get Supabase Storage URL for a media file
+ * Returns null if path is null/empty
+ */
+export function getMediaUrl(
+  path: string | null,
+  options?: {
+    width?: number
+    height?: number
+    quality?: number
+  }
+): string | null {
+  if (!path) return null
+  return getPublicUrl('media', path, options)
+}
+
+/**
+ * Get Supabase Storage URL for a document
+ * Returns null if path is null/empty
+ */
+export function getDocumentUrl(path: string | null): string | null {
+  if (!path) return null
+  return getPublicUrl('documents', path)
+}

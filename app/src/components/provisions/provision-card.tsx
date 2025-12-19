@@ -7,6 +7,7 @@ import { provisionPath } from '@/lib/utils'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { getMediaUrl } from '@/lib/storage'
 
 interface ProvisionCardProps {
   provision: {
@@ -55,6 +56,7 @@ function getScoreColor(score: number | null): string {
 export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
   const relevanceDots = getScoreDots(provision.relevance)
   const relevanceColor = getScoreColor(provision.relevance)
+  const mediaUrl = getMediaUrl(provision.avatarUrl)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
@@ -98,9 +100,9 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
       {/* Row 3: Avatar Image + Description */}
       <div className="flex gap-3 mb-6">
         {/* Avatar image (only show if exists) */}
-        {provision.avatarUrl && (
+        {mediaUrl && (
           <img
-            src={provision.avatarUrl}
+            src={mediaUrl}
             alt={provision.title}
             className="w-10 h-10 flex-shrink-0 rounded-lg object-cover"
           />

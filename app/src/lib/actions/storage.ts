@@ -34,28 +34,25 @@ export async function updateEntityAvatar(entityId: string, formData: FormData) {
 
   // Upload new avatar
   const path = generateFilePath('avatars', 'entities', entityId, file)
-  const { url } = await uploadFileServer('avatars', path, file)
+  const { path: storagePath } = await uploadFileServer('avatars', path, file)
 
-  // Update database
+  // Update database with storage path (not full URL)
   await db
     .update(politicalEntities)
-    .set({ avatarUrl: url })
+    .set({ avatarUrl: storagePath })
     .where(eq(politicalEntities.id, entityId))
 
-  // Delete old avatar if exists (extract path from URL)
+  // Delete old avatar if exists
   if (entity?.avatarUrl) {
     try {
-      const oldPath = entity.avatarUrl.split('/storage/v1/object/public/avatars/')[1]
-      if (oldPath) {
-        await deleteFileServer('avatars', oldPath)
-      }
+      await deleteFileServer('avatars', entity.avatarUrl)
     } catch (error) {
       console.error('Failed to delete old avatar:', error)
     }
   }
 
   revalidatePath(`/entities/${entityId}`)
-  return { success: true, url }
+  return { success: true, path: storagePath }
 }
 
 /**
@@ -86,28 +83,25 @@ export async function updatePersonAvatar(personId: string, formData: FormData) {
 
   // Upload new avatar
   const path = generateFilePath('avatars', 'people', personId, file)
-  const { url } = await uploadFileServer('avatars', path, file)
+  const { path: storagePath } = await uploadFileServer('avatars', path, file)
 
-  // Update database
+  // Update database with storage path (not full URL)
   await db
     .update(people)
-    .set({ avatarUrl: url })
+    .set({ avatarUrl: storagePath })
     .where(eq(people.id, personId))
 
   // Delete old avatar if exists
   if (person?.avatarUrl) {
     try {
-      const oldPath = person.avatarUrl.split('/storage/v1/object/public/avatars/')[1]
-      if (oldPath) {
-        await deleteFileServer('avatars', oldPath)
-      }
+      await deleteFileServer('avatars', person.avatarUrl)
     } catch (error) {
       console.error('Failed to delete old avatar:', error)
     }
   }
 
   revalidatePath(`/people/${personId}`)
-  return { success: true, url }
+  return { success: true, path: storagePath }
 }
 
 /**
@@ -138,26 +132,23 @@ export async function updateUserAvatar(userId: string, formData: FormData) {
 
   // Upload new avatar
   const path = generateFilePath('avatars', 'users', userId, file)
-  const { url } = await uploadFileServer('avatars', path, file)
+  const { path: storagePath } = await uploadFileServer('avatars', path, file)
 
-  // Update database
+  // Update database with storage path (not full URL)
   await db
     .update(userProfiles)
-    .set({ avatarUrl: url })
+    .set({ avatarUrl: storagePath })
     .where(eq(userProfiles.id, userId))
 
   // Delete old avatar if exists
   if (user?.avatarUrl) {
     try {
-      const oldPath = user.avatarUrl.split('/storage/v1/object/public/avatars/')[1]
-      if (oldPath) {
-        await deleteFileServer('avatars', oldPath)
-      }
+      await deleteFileServer('avatars', user.avatarUrl)
     } catch (error) {
       console.error('Failed to delete old avatar:', error)
     }
   }
 
   revalidatePath(`/profile`)
-  return { success: true, url }
+  return { success: true, path: storagePath }
 }

@@ -1,5 +1,6 @@
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { PageTitle } from '@/components/custom-ui/typography'
+import { getAvatarUrl } from '@/lib/storage'
 
 interface EntityHeaderProps {
   entity: {
@@ -10,14 +11,16 @@ interface EntityHeaderProps {
 }
 
 export function EntityHeader({ entity }: EntityHeaderProps) {
+  const avatarUrl = getAvatarUrl(entity.avatarUrl)
+
   return (
     <div className="mb-6">
       <div className="flex items-center gap-4 mb-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
-          {entity.avatarUrl ? (
+          {avatarUrl ? (
             <img
-              src={entity.avatarUrl}
+              src={avatarUrl}
               alt={entity.name}
               className="w-12 h-12 rounded-full object-cover"
             />
