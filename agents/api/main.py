@@ -25,11 +25,12 @@ app = FastAPI(
 allowed_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://pint-seven.vercel.app",  # Production frontend
 ]
 
-# Add production frontend URL if set
+# Add additional frontend URL if set
 frontend_url = os.getenv("FRONTEND_URL")
-if frontend_url:
+if frontend_url and frontend_url not in allowed_origins:
     allowed_origins.append(frontend_url)
 
 app.add_middleware(
