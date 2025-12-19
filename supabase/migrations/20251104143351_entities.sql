@@ -5,7 +5,7 @@
 -- Dependencies: None (root domain)
 
 create table if not exists public.political_entities (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   native_name text,
   slug text not null,
@@ -32,7 +32,7 @@ create trigger set_updated_at
 
 -- Entity relationships (hierarchical: city → region → country)
 create table if not exists public.entity_relationships (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   related_entity_id uuid not null references public.political_entities(id) on delete cascade,
   relationship_type text not null, -- e.g., 'parent city', 'parent region', 'parent country'

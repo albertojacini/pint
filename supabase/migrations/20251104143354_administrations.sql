@@ -5,7 +5,7 @@
 -- Dependencies: political_entities
 
 create table if not exists public.people (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   full_name text not null,
   avatar_url text,
   created_at timestamptz default now(),
@@ -19,7 +19,7 @@ create trigger set_updated_at
 
 -- Government terms/periods
 create table if not exists public.administrations (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   name text not null,
   term_start timestamptz not null,
@@ -43,7 +43,7 @@ create trigger set_updated_at
 
 -- Many-to-many join table with roles
 create table if not exists public.administration_members (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   administration_id uuid not null references public.administrations(id) on delete cascade,
   person_id uuid not null references public.people(id) on delete cascade,
   role_type text not null check (role_type in ('mayor', 'councilor', 'minister', 'president', 'governor', 'member')),

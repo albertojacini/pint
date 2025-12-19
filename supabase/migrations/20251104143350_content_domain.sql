@@ -5,7 +5,7 @@
 -- Dependencies: auth.users only
 
 create table if not exists public.posts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   author_id uuid not null references auth.users(id) on delete cascade,
   title varchar(200) not null,
   content text not null,

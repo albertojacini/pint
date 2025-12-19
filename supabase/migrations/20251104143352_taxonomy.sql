@@ -6,7 +6,7 @@
 
 -- Hierarchical policy categories (self-referential tree)
 create table if not exists public.categories (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   parent_id uuid references public.categories(id) on delete cascade,
   title text not null,
   description text,
@@ -25,7 +25,7 @@ create trigger set_updated_at
 
 -- Unified tags table for all content types
 create table if not exists public.tags (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   name text not null,
   slug text not null unique, -- URL-friendly version
   description text,
@@ -39,7 +39,7 @@ create table if not exists public.tags (
 
 -- Polymorphic tagging junction table
 create table if not exists public.taggables (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   tag_id uuid not null references public.tags(id) on delete cascade,
   taggable_type text not null, -- 'entity', 'provision', 'idea', 'event', 'administration'
   taggable_id uuid not null, -- ID of the tagged item

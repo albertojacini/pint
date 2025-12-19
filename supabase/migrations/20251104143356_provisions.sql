@@ -8,7 +8,7 @@
 
 -- Provisions: institutional/legal/operational infrastructure owned by entities
 create table if not exists public.provisions (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   title text not null,
   slug text not null,
@@ -45,7 +45,7 @@ create trigger set_updated_at_provisions
 
 -- Events: temporal occurrences that shape provisions (government activities, judicial decrees, etc.)
 create table if not exists public.events (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   administration_id uuid references public.administrations(id) on delete cascade,
   title text not null,
   description_short text check (length(description_short) <= 100),
@@ -75,7 +75,7 @@ create trigger set_updated_at_events
 
 -- Changes: polymorphic bridge between events and their targets (provisions, entities, administrations)
 create table if not exists public.changes (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   event_id uuid references public.events(id) on delete cascade,
   target_type text not null check (target_type in ('provision', 'entity', 'administration')),
   target_id uuid not null,
@@ -91,7 +91,7 @@ create index if not exists idx_changes_effective_at on public.changes(effective_
 
 -- Provision drafts: work-in-progress provisions from AI ingestion pipeline
 create table if not exists public.provision_drafts (
-  id uuid primary key default uuid_generate_v4(),
+  id uuid primary key default gen_random_uuid(),
   entity_id uuid not null references public.political_entities(id) on delete cascade,
   created_by uuid references auth.users(id) on delete set null,
 
