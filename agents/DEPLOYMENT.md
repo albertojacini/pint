@@ -7,6 +7,7 @@
 
 ## Step 1: Push to GitHub
 ```bash
+cd /Users/albertojacini/Projects/pint
 git add .
 git commit -m "Add Render deployment configuration"
 git push
@@ -18,7 +19,8 @@ git push
 2. Click **"New +"** → **"Blueprint"**
 3. Connect your GitHub repository
 4. Select the repository containing this code
-5. Render will auto-detect `render.yaml` and create the service
+5. Render will auto-detect `render.yaml` (at repository root) and create the service
+   - The config tells Render to build from the `agents/` subdirectory
 
 ## Step 3: Set Environment Variables
 
