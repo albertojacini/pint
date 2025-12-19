@@ -81,15 +81,17 @@ Should return:
 {"status":"healthy"}
 ```
 
-## Step 6: Update Next.js App
+## Step 6: Update Next.js App in Vercel
 
-In your Next.js app (Vercel), add environment variable:
+Go to your Vercel project → **Settings** → **Environment Variables** and add:
 
 ```
 NEXT_PUBLIC_AGENTS_API_URL=https://pint-agents.onrender.com
 ```
 
-Then update your API calls to use this URL.
+(Replace with your actual Render URL once deployed)
+
+Then redeploy your Vercel app for the changes to take effect.
 
 ## Notes
 

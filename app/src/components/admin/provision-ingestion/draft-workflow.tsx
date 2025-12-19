@@ -16,7 +16,7 @@ import {
   type ProvisionType,
 } from '@/lib/actions/provision-drafts'
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = process.env.NEXT_PUBLIC_AGENTS_API_URL || 'http://localhost:8000'
 
 const PROVISION_TYPES: ProvisionType[] = [
   'ownership',
