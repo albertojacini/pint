@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
-import { getAvatarUrl } from '@/lib/storage'
+import { getStorageUrl } from '@/lib/storage'
 
 export default async function EntitiesPage() {
   // Fetch all political entities
@@ -32,7 +32,7 @@ export default async function EntitiesPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {entities.map((entity) => {
-            const avatarUrl = getAvatarUrl(entity.avatarUrl)
+            const avatarUrl = getStorageUrl('avatars', entity.avatarUrl)
             return (
               <Link
                 key={entity.id}

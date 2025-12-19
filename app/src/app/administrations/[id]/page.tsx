@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { getEventsByAdministration } from '@/lib/actions/events'
-import { getAvatarUrl } from '@/lib/storage'
+import { getStorageUrl } from '@/lib/storage'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { PageTitle, SectionTitle, SubsectionTitle } from '@/components/custom-ui/typography'
@@ -126,9 +126,9 @@ export default async function AdministrationPage({ params }: AdministrationPageP
             <div className="mb-8">
               <SubsectionTitle className="text-lg mb-4">Mayor</SubsectionTitle>
               <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
-                {getAvatarUrl(mayor.person.avatarUrl) && (
+                {getStorageUrl('avatars', mayor.person.avatarUrl) && (
                   <img
-                    src={getAvatarUrl(mayor.person.avatarUrl)!}
+                    src={getStorageUrl('avatars', mayor.person.avatarUrl)!}
                     alt={mayor.person.fullName}
                     className="w-16 h-16 rounded-full object-cover"
                   />
@@ -156,9 +156,9 @@ export default async function AdministrationPage({ params }: AdministrationPageP
               <div className="grid gap-4 md:grid-cols-2">
                 {otherMembers.map((member) => (
                   <div key={member.id} className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg">
-                    {getAvatarUrl(member.person.avatarUrl) && (
+                    {getStorageUrl('avatars', member.person.avatarUrl) && (
                       <img
-                        src={getAvatarUrl(member.person.avatarUrl)!}
+                        src={getStorageUrl('avatars', member.person.avatarUrl)!}
                         alt={member.person.fullName}
                         className="w-12 h-12 rounded-full object-cover"
                       />

@@ -6,7 +6,7 @@ import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
-import { getAvatarUrl } from '@/lib/storage'
+import { getStorageUrl } from '@/lib/storage'
 
 export default async function Home() {
   // Fetch Comune di Milano
@@ -15,7 +15,7 @@ export default async function Home() {
     .from(politicalEntities)
     .where(eq(politicalEntities.name, 'Comune di Milano'))
 
-  const milanoAvatarUrl = milanoEntity ? getAvatarUrl(milanoEntity.avatarUrl) : null
+  const milanoAvatarUrl = milanoEntity ? getStorageUrl('avatars', milanoEntity.avatarUrl) : null
 
   return (
     <div className="container mx-auto max-w-4xl py-16 px-4">

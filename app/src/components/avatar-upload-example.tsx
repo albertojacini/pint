@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { updateEntityAvatar } from '@/lib/actions/storage'
-import { getAvatarUrl } from '@/lib/storage'
+import { getStorageUrl } from '@/lib/storage'
 
 /**
  * Example component showing how to upload an avatar for a political entity
@@ -38,7 +38,7 @@ export function AvatarUploadExample({
 
     try {
       const result = await updateEntityAvatar(entityId, formData)
-      setAvatarUrl(getAvatarUrl(result.path))
+      setAvatarUrl(getStorageUrl('avatars', result.path))
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -140,14 +140,14 @@ export function BrowserUploadExample({ entityId }: { entityId: string }) {
 
     try {
       // Import the storage utilities dynamically (client-side only)
-      const { uploadEntityAvatar, validateImageFile, getAvatarUrl } = await import('@/lib/storage')
+      const { uploadEntityAvatar, validateImageFile, getStorageUrl } = await import('@/lib/storage')
 
       // Validate first
       validateImageFile(file)
 
       // Upload
       const result = await uploadEntityAvatar(entityId, file)
-      setAvatarUrl(getAvatarUrl(result.path))
+      setAvatarUrl(getStorageUrl('avatars', result.path))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')
     } finally {

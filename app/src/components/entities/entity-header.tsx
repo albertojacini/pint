@@ -1,6 +1,6 @@
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { PageTitle } from '@/components/custom-ui/typography'
-import { getAvatarUrl } from '@/lib/storage'
+import { getStorageUrl } from '@/lib/storage'
 
 interface EntityHeaderProps {
   entity: {
@@ -11,7 +11,7 @@ interface EntityHeaderProps {
 }
 
 export function EntityHeader({ entity }: EntityHeaderProps) {
-  const avatarUrl = getAvatarUrl(entity.avatarUrl)
+  const avatarUrl = getStorageUrl('avatars', entity.avatarUrl)
 
   return (
     <div className="mb-6">
