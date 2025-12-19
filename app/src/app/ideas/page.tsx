@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getIdeas } from '@/lib/actions/ideas'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'

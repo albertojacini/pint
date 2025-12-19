@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { getDrafts } from '@/lib/actions/provision-drafts'
 import { PageTitle } from '@/components/custom-ui/typography'

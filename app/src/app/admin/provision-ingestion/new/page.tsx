@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getEntities } from '@/lib/actions/provision-drafts'
 import { PageTitle } from '@/components/custom-ui/typography'
 import { NewDraftForm } from '@/components/admin/provision-ingestion/new-draft-form'

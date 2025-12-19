@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { getPosts } from '@/lib/actions/posts'
 import Link from 'next/link'
 import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'

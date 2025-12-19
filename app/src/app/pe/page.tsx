@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { db } from '@/lib/db/client'
 import { politicalEntities } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
