@@ -4,9 +4,8 @@ services:
     runtime: docker
     plan: free
     region: frankfurt  # or oregon, singapore - choose closest to your users
-    rootDirectory: agents  # Build from the agents subdirectory
-    dockerfilePath: ./Dockerfile
-    dockerContext: ./
+    dockerfilePath: ./agents/Dockerfile
+    dockerContext: ./agents
     healthCheckPath: /health
     envVars:
       # Database
