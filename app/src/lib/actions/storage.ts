@@ -3,7 +3,8 @@
 import { db } from '@/lib/db/client'
 import { politicalEntities, people, userProfiles } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
-import { uploadFileServer, deleteFileServer, generateFilePath } from '@/lib/storage'
+import { generateFilePath } from '@/lib/storage'
+import { uploadFileServer, deleteFileServer } from '@/lib/storage-server'
 import { revalidatePath } from 'next/cache'
 
 /**
