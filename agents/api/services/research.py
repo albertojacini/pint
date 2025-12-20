@@ -153,6 +153,14 @@ async def run_ownership_agent(description: str) -> dict[str, Any] | None:
     return None
 
 
+async def run_ownership_agent_sdk(description: str) -> dict[str, Any] | None:
+    """Run Claude SDK ownership research agent."""
+    from ownership_research_sdk.agent import run_ownership_research_sdk
+
+    result = await run_ownership_research_sdk(description, debug=False)
+    return result  # Already a dict from model_dump()
+
+
 async def run_research_job(job_id: str):
     """
     Run a research job in the background.
@@ -177,6 +185,8 @@ async def run_research_job(job_id: str):
             result = await run_regulation_agent(description)
         elif provision_type == "ownership":
             result = await run_ownership_agent(description)
+        elif provision_type == "ownership_sdk":
+            result = await run_ownership_agent_sdk(description)
         else:
             # For unsupported types, return a placeholder error
             job_manager.set_job_error(
