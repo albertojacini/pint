@@ -51,6 +51,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
   const [selectedType, setSelectedType] = useState<ProvisionType | null>(
     draft.confirmedType
   )
+  const [selectedAgent, setSelectedAgent] = useState<string>('lcdeep')
 
   // Editable fields for review step
   const [editedTitle, setEditedTitle] = useState(draft.title || '')
@@ -131,6 +132,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           description: draft.inputDescription,
           provision_type: selectedType,
           entity_name: draft.entityName || '',
+          agent: selectedAgent,
         }),
       })
 
@@ -378,6 +380,43 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
               ))}
             </div>
           </div>
+
+          {/* Agent selection - only for ownership type */}
+          {selectedType === 'ownership' && (
+            <div className="space-y-2">
+              <Label>Select research agent</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAgent('lcdeep')}
+                  className={`p-3 border rounded-lg text-left transition-colors ${
+                    selectedAgent === 'lcdeep'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <p className="font-medium">LangChain + MCP</p>
+                  <p className="text-xs text-gray-500">
+                    Uses MCP tools (search_engine, scrape_as_markdown, query_wikipedia)
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedAgent('claude')}
+                  className={`p-3 border rounded-lg text-left transition-colors ${
+                    selectedAgent === 'claude'
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <p className="font-medium">Claude SDK</p>
+                  <p className="text-xs text-gray-500">
+                    Uses built-in tools (WebSearch, WebFetch)
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-3">
             <Button onClick={handleStartResearch} disabled={!selectedType || loading}>

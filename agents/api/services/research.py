@@ -175,6 +175,7 @@ async def run_research_job(job_id: str):
 
     try:
         provision_type = job.provision_type
+        agent_name = job.agent  # Get agent from job
         description = f"{job.description} ({job.entity_name})"
 
         result = None
@@ -184,9 +185,14 @@ async def run_research_job(job_id: str):
         elif provision_type == "regulation":
             result = await run_regulation_agent(description)
         elif provision_type == "ownership":
-            result = await run_ownership_agent(description)
-        elif provision_type == "ownership_sdk":
-            result = await run_ownership_agent_sdk(description)
+            # Use agent registry for ownership research
+            from ownership_research.agents import get_agent
+            try:
+                agent_runner = get_agent(agent_name)
+                result = await agent_runner.run(description)
+            except ValueError as e:
+                job_manager.set_job_error(job_id, f"Unknown agent: {agent_name}. {str(e)}")
+                return
         else:
             # For unsupported types, return a placeholder error
             job_manager.set_job_error(

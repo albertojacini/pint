@@ -31,6 +31,7 @@ async def start_research(
         description=request.description,
         provision_type=request.provision_type.value,
         entity_name=request.entity_name,
+        agent=request.agent,
     )
 
     # Run the research job in the background
@@ -87,6 +88,7 @@ async def revise_result(
         description=revised_description,
         provision_type=original_job.provision_type,
         entity_name=original_job.entity_name,
+        agent=original_job.agent,  # Preserve agent from original job
     )
 
     # Run the research job in the background

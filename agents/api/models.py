@@ -29,6 +29,7 @@ class ResearchRequest(BaseModel):
     description: str
     provision_type: ProvisionType
     entity_name: str
+    agent: str = "lcdeep"  # Agent implementation to use (default: lcdeep)
 
 
 class ResearchResponse(BaseModel):

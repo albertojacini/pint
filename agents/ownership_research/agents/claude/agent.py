@@ -1,4 +1,4 @@
-"""Claude SDK agent for ownership research."""
+"""Claude SDK ownership research agent."""
 
 import sys
 import os
@@ -7,15 +7,10 @@ from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
 import re
 import json
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
 
-from ownership_research_sdk.models import OwnershipOutput, OwnershipResearchError
-
-
-def load_prompt(filename: str) -> str:
-    """Load prompt from prompts directory."""
-    prompt_path = Path(__file__).parent / "prompts" / filename
-    return prompt_path.read_text()
+from ownership_research.models import OwnershipOutput, OwnershipResearchError
+from ownership_research.utils.prompt_builder import build_prompt
 
 
 def extract_json_from_response(content: str) -> dict | None:
@@ -96,12 +91,12 @@ def extract_structured_output(messages) -> dict | None:
     return None
 
 
-async def run_ownership_research_sdk(
+async def run_claude_ownership_agent(
     description: str,
     debug: bool = False
 ) -> dict | None:
     """
-    Run ownership research using Claude SDK with built-in tools only.
+    Run Claude SDK ownership research agent.
 
     Args:
         description: Public asset description to research
@@ -110,7 +105,7 @@ async def run_ownership_research_sdk(
     Returns:
         OwnershipOutput or OwnershipResearchError as dict, or None if extraction failed
     """
-    system_prompt = load_prompt("system_prompt.md")
+    system_prompt = build_prompt("claude")
 
     # Configure Claude SDK options
     options = ClaudeAgentOptions(
@@ -187,3 +182,24 @@ Return a JSON object matching the OwnershipOutput schema, or an OwnershipResearc
         print("...\n")
 
     return result
+
+
+class ClaudeRunner:
+    """Claude SDK implementation wrapper."""
+
+    async def run(self, description: str, debug: bool = False) -> dict:
+        """
+        Run the claude agent on a description.
+
+        Args:
+            description: Public asset description to research
+            debug: Enable debug logging
+
+        Returns:
+            Result dict (OwnershipOutput or OwnershipResearchError as dict)
+        """
+        return await run_claude_ownership_agent(description, debug=debug)
+
+
+# Create singleton instance
+claude_runner = ClaudeRunner()

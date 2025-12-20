@@ -21,6 +21,7 @@ class Job:
     description: str
     provision_type: str
     entity_name: str
+    agent: str = "lcdeep"  # Agent implementation to use
     result: Optional[dict[str, Any]] = None
     error: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.now)
@@ -33,7 +34,7 @@ class JobManager:
     def __init__(self):
         self._jobs: dict[str, Job] = {}
 
-    def create_job(self, description: str, provision_type: str, entity_name: str) -> Job:
+    def create_job(self, description: str, provision_type: str, entity_name: str, agent: str = "lcdeep") -> Job:
         """Create a new pending job."""
         job_id = str(uuid.uuid4())
         job = Job(
@@ -42,6 +43,7 @@ class JobManager:
             description=description,
             provision_type=provision_type,
             entity_name=entity_name,
+            agent=agent,
         )
         self._jobs[job_id] = job
         return job
