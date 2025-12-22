@@ -1,7 +1,8 @@
 import { Badge } from '@/components/ui/badge'
+import type { ProvisionType } from '@/lib/actions/provisions'
 
 interface ProvisionCardRow4Props {
-  type: string
+  types: ProvisionType[]
   extraData: Record<string, unknown> | null
 }
 
@@ -46,7 +47,15 @@ function calculateGrowth(current: number | undefined, previous: number | undefin
   return ((current - previous) / previous) * 100
 }
 
-export function ProvisionCardRow4({ type, extraData }: ProvisionCardRow4Props) {
+export function ProvisionCardRow4({ types, extraData }: ProvisionCardRow4Props) {
+  // If no types or multiple types, show generic display
+  if (types.length === 0 || types.length > 1) {
+    return null
+  }
+
+  // Get the single type
+  const type = types[0].code
+
   // Ownership type - Rich display
   if (type === 'ownership' && extraData) {
     const ownership = extraData as any

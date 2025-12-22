@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { db } from '@/lib/db/client'
-import { politicalEntities, provisions, tags, taggables, ideas } from '@/lib/db/schema'
+import { politicalEntities, provisions, tags, taggables, ideas, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { ProvisionCardRow4 } from '@/components/provisions/provision-card-row4'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -66,7 +66,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       description: provisions.description,
       descriptionShort: provisions.descriptionShort,
       avatarUrl: provisions.avatarUrl,
-      type: provisions.type,
       status: provisions.status,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
@@ -80,6 +79,20 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   if (!provisionResult) {
     notFound()
   }
+
+  // Fetch types for this provision
+  const provisionTypesList = await db
+    .select({
+      id: provisionTypes.id,
+      code: provisionTypes.code,
+      label: provisionTypes.label,
+      description: provisionTypes.description,
+      icon: provisionTypes.icon,
+      color: provisionTypes.color,
+    })
+    .from(provisionTypeAssociations)
+    .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
+    .where(eq(provisionTypeAssociations.provisionId, provisionResult.id))
 
   // Fetch idea if linked
   let ideaTitle: string | null = null
@@ -129,9 +142,11 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       </Link>
 
       <div className="border border-border/50 rounded-lg p-6 bg-card">
-        {/* Row 1: Type Badge + Tags */}
-        <div className="flex items-center gap-2 mb-4">
-          <ProvisionClassificationBadge type={provision.type as any} />
+        {/* Row 1: Type Badges + Tags */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {provisionTypesList.map((type) => (
+            <ProvisionClassificationBadge key={type.id} type={type.code as any} />
+          ))}
           <Tags tags={visibleTags} maxTags={3} />
         </div>
 
@@ -171,10 +186,10 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         </div>
 
         {/* Row 4: Type-Specific Content */}
-        <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
+        <ProvisionCardRow4 types={provisionTypesList} extraData={provision.extraData} />
 
         {/* Regulation Summary (Markdown) - Only for regulation type */}
-        {provision.type === 'regulation' && provision.extraData && 'summary_md' in provision.extraData && (
+        {provisionTypesList.some(t => t.code === 'regulation') && provision.extraData && 'summary_md' in provision.extraData && (
           <div className="mt-6 space-y-6">
             {(provision.extraData as RegulationData).summary_md && (
               <div className="prose prose-sm max-w-none">

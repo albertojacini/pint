@@ -35,12 +35,12 @@ export default async function ProvisionsPage({ params }: ProvisionsPageProps) {
     active: provisions.filter(p => p.status === 'active').length,
     inactive: provisions.filter(p => p.status !== 'active').length,
     byType: {
-      ownership: provisions.filter(p => p.type === 'ownership').length,
-      contract: provisions.filter(p => p.type === 'contract').length,
-      regulation: provisions.filter(p => p.type === 'regulation').length,
-      taxation: provisions.filter(p => p.type === 'taxation').length,
-      allocation: provisions.filter(p => p.type === 'allocation').length,
-      designation: provisions.filter(p => p.type === 'designation').length,
+      ownership: provisions.filter(p => p.types.some(t => t.code === 'ownership')).length,
+      contract: provisions.filter(p => p.types.some(t => t.code === 'contract')).length,
+      regulation: provisions.filter(p => p.types.some(t => t.code === 'regulation')).length,
+      taxation: provisions.filter(p => p.types.some(t => t.code === 'taxation')).length,
+      allocation: provisions.filter(p => p.types.some(t => t.code === 'allocation')).length,
+      designation: provisions.filter(p => p.types.some(t => t.code === 'designation')).length,
     }
   }
 

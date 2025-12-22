@@ -97,7 +97,6 @@ export async function getIdea(id: string) {
       provisionId: provisions.id,
       provisionTitle: provisions.title,
       provisionDescription: provisions.description,
-      type: provisions.type,
       status: provisions.status,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,

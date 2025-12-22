@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db/client'
-import { provisionDrafts, provisions, politicalEntities } from '@/lib/db/schema'
+import { provisionDrafts, provisions, politicalEntities, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { requireUser } from '@/lib/auth'
 import type { ApiResponse } from '@pint/types'
@@ -137,13 +137,25 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
       slug,
       descriptionShort: draft.descriptionShort,
       description: draft.description,
-      summary: draft.summary_md,
-      type: draft.confirmedType,
+      summary: draft.summary,
       status: 'active',
       relevance: draft.relevance,
       extraData: draft.extraData || {},
     })
     .returning({ id: provisions.id })
+
+  // Create type association from confirmedType
+  const [typeResult] = await db
+    .select({ id: provisionTypes.id })
+    .from(provisionTypes)
+    .where(eq(provisionTypes.code, draft.confirmedType))
+
+  if (typeResult) {
+    await db.insert(provisionTypeAssociations).values({
+      provisionId: provision.id,
+      typeId: typeResult.id,
+    })
+  }
 
   // Delete the draft
   await db.delete(provisionDrafts).where(eq(provisionDrafts.id, draftId))
@@ -174,6 +186,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       summary_md: provisionDrafts.summary,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
+      relevance: provisionDrafts.relevance,
       sourceUrls: provisionDrafts.sourceUrls,
       createdAt: provisionDrafts.createdAt,
       updatedAt: provisionDrafts.updatedAt,
@@ -206,6 +219,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       summary_md: provisionDrafts.summary,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
+      relevance: provisionDrafts.relevance,
       sourceUrls: provisionDrafts.sourceUrls,
       createdAt: provisionDrafts.createdAt,
       updatedAt: provisionDrafts.updatedAt,

@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { changes, events, provisions, administrations } from '@/lib/db/schema'
+import { changes, events, provisions, administrations, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
 import { eq, desc, and, or, inArray, sql } from 'drizzle-orm'
 
 export interface ChangeWithContext {
@@ -12,7 +12,7 @@ export interface ChangeWithContext {
   targetType: string
   targetId: string
   targetTitle: string | null
-  targetProvisionType: string | null // provision type (taxation, ownership, etc.)
+  targetProvisionTypes: string[] // provision type codes (taxation, ownership, etc.)
   eventId: string | null
   eventTitle: string | null
   eventType: string | null
@@ -89,22 +89,30 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
   const enrichedChanges: ChangeWithContext[] = await Promise.all(
     result.map(async (change) => {
       let targetTitle: string | null = null
-      let targetProvisionType: string | null = null
+      let targetProvisionTypes: string[] = []
 
       if (change.targetType === 'provision') {
         const [provision] = await db
-          .select({ title: provisions.title, type: provisions.type })
+          .select({ title: provisions.title })
           .from(provisions)
           .where(eq(provisions.id, change.targetId))
           .limit(1)
         targetTitle = provision?.title || null
-        targetProvisionType = provision?.type || null
+
+        // Fetch types for this provision
+        const types = await db
+          .select({ code: provisionTypes.code })
+          .from(provisionTypeAssociations)
+          .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
+          .where(eq(provisionTypeAssociations.provisionId, change.targetId))
+
+        targetProvisionTypes = types.map(t => t.code)
       }
 
       return {
         ...change,
         targetTitle,
-        targetProvisionType,
+        targetProvisionTypes,
       }
     })
   )

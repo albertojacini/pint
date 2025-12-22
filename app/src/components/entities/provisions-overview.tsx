@@ -133,7 +133,8 @@ function changesToActivity(changes: ChangeWithContext[]): MonthActivity[] {
 
       if (effectiveDate >= monthStart && effectiveDate <= monthEnd) {
         // Get provision type from the change data or default to regulation
-        const provisionType = (change.targetProvisionType as ProvisionType) || 'regulation'
+        // Use first type if multiple types exist
+        const provisionType = (change.targetProvisionTypes?.[0] as ProvisionType) || 'regulation'
 
         monthData.items.push({
           type: provisionType,

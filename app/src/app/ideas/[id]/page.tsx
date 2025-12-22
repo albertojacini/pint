@@ -177,9 +177,6 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                 <CardHeader>
                   <div className="mb-2 flex gap-2">
                     <Badge variant="outline" className="text-xs font-mono">PROVISION</Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {provision.type}
-                    </Badge>
                   </div>
                   <div className="flex items-start justify-between gap-2">
                     <SubsectionTitle>{provision.provisionTitle}</SubsectionTitle>

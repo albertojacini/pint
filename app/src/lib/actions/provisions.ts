@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { provisions, politicalEntities, ideas, tags, taggables } from '@/lib/db/schema'
+import { provisions, politicalEntities, ideas, tags, taggables, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
 import { eq, desc, asc, or, ilike, and, SQL, inArray } from 'drizzle-orm'
 
 // Tag type definition
@@ -13,6 +13,16 @@ export type Tag = {
   color: string | null
 }
 
+// Provision type definition
+export type ProvisionType = {
+  id: string
+  code: string
+  label: string
+  description: string | null
+  icon: string | null
+  color: string | null
+}
+
 // Provision with tags and extraData
 export type ProvisionWithTags = {
   id: string
@@ -20,7 +30,7 @@ export type ProvisionWithTags = {
   title: string
   descriptionShort: string | null
   avatarUrl: string | null
-  type: string
+  types: ProvisionType[]
   status: string
   relevance: number | null
   effectiveFrom: string | null
@@ -31,13 +41,49 @@ export type ProvisionWithTags = {
   tags: Tag[]
 }
 
+/**
+ * Helper function to fetch types for provisions
+ */
+async function getProvisionTypes(provisionIds: string[]): Promise<Record<string, ProvisionType[]>> {
+  if (provisionIds.length === 0) return {}
+
+  const typeResults = await db
+    .select({
+      provisionId: provisionTypeAssociations.provisionId,
+      typeId: provisionTypes.id,
+      code: provisionTypes.code,
+      label: provisionTypes.label,
+      description: provisionTypes.description,
+      icon: provisionTypes.icon,
+      color: provisionTypes.color,
+    })
+    .from(provisionTypeAssociations)
+    .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
+    .where(inArray(provisionTypeAssociations.provisionId, provisionIds))
+
+  // Group types by provision
+  return typeResults.reduce((acc, row) => {
+    if (!acc[row.provisionId]) {
+      acc[row.provisionId] = []
+    }
+    acc[row.provisionId].push({
+      id: row.typeId,
+      code: row.code,
+      label: row.label,
+      description: row.description,
+      icon: row.icon,
+      color: row.color,
+    })
+    return acc
+  }, {} as Record<string, ProvisionType[]>)
+}
+
 export async function getProvisionsByEntity(entityId: string) {
   const entityProvisions = await db
     .select({
       id: provisions.id,
       title: provisions.title,
       descriptionShort: provisions.descriptionShort,
-      type: provisions.type,
       status: provisions.status,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
@@ -51,7 +97,15 @@ export async function getProvisionsByEntity(entityId: string) {
     .where(eq(provisions.entityId, entityId))
     .orderBy(desc(provisions.effectiveFrom))
 
-  return entityProvisions
+  // Fetch types for all provisions
+  const provisionIds = entityProvisions.map(p => p.id)
+  const typesByProvision = await getProvisionTypes(provisionIds)
+
+  // Merge types with provisions
+  return entityProvisions.map(p => ({
+    ...p,
+    types: typesByProvision[p.id] || []
+  }))
 }
 
 // Aggregate types for the provisions overview
@@ -73,11 +127,14 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
   const entityProvisions = await db
     .select({
       id: provisions.id,
-      type: provisions.type,
       extraData: provisions.extraData,
     })
     .from(provisions)
     .where(eq(provisions.entityId, entityId))
+
+  // Fetch types for all provisions
+  const provisionIds = entityProvisions.map(p => p.id)
+  const typesByProvision = await getProvisionTypes(provisionIds)
 
   // Initialize aggregates
   const byType: ProvisionAggregates['byType'] = {
@@ -95,51 +152,55 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
   // Process each provision
   for (const p of entityProvisions) {
     const extra = p.extraData as Record<string, unknown> | null
+    const provisionTypes = typesByProvision[p.id] || []
 
-    switch (p.type) {
-      case 'taxation':
-        byType.taxation.count++
-        if (extra?.taxRevenueAmount != null) {
-          byType.taxation.totalRevenue = (byType.taxation.totalRevenue ?? 0) + Number(extra.taxRevenueAmount)
-        }
-        if (extra?.revenueGrowth != null) {
-          taxationGrowths.push(Number(extra.revenueGrowth))
-        }
-        break
+    // Process each type associated with this provision
+    for (const type of provisionTypes) {
+      switch (type.code) {
+        case 'taxation':
+          byType.taxation.count++
+          if (extra?.taxRevenueAmount != null) {
+            byType.taxation.totalRevenue = (byType.taxation.totalRevenue ?? 0) + Number(extra.taxRevenueAmount)
+          }
+          if (extra?.revenueGrowth != null) {
+            taxationGrowths.push(Number(extra.revenueGrowth))
+          }
+          break
 
-      case 'ownership':
-        byType.ownership.count++
-        if (extra?.valuationAmount != null) {
-          byType.ownership.totalValuation = (byType.ownership.totalValuation ?? 0) + Number(extra.valuationAmount)
-        }
-        if (extra?.annualCashFlow != null) {
-          byType.ownership.totalCashFlow = (byType.ownership.totalCashFlow ?? 0) + Number(extra.annualCashFlow)
-        }
-        break
+        case 'ownership':
+          byType.ownership.count++
+          if (extra?.valuationAmount != null) {
+            byType.ownership.totalValuation = (byType.ownership.totalValuation ?? 0) + Number(extra.valuationAmount)
+          }
+          if (extra?.annualCashFlow != null) {
+            byType.ownership.totalCashFlow = (byType.ownership.totalCashFlow ?? 0) + Number(extra.annualCashFlow)
+          }
+          break
 
-      case 'contract':
-        byType.contract.count++
-        if (extra?.contractType) {
-          const ct = String(extra.contractType)
-          byType.contract.byContractType[ct] = (byType.contract.byContractType[ct] ?? 0) + 1
-        }
-        break
+        case 'contract':
+          byType.contract.count++
+          if (extra?.contractType) {
+            const ct = String(extra.contractType)
+            byType.contract.byContractType[ct] = (byType.contract.byContractType[ct] ?? 0) + 1
+          }
+          break
 
-      case 'regulation':
-        byType.regulation.count++
-        if (extra?.regulationType) {
-          const rt = String(extra.regulationType)
-          byType.regulation.byRegulationType[rt] = (byType.regulation.byRegulationType[rt] ?? 0) + 1
-        }
-        break
+        case 'regulation':
+          byType.regulation.count++
+          if (extra?.regulationType) {
+            const rt = String(extra.regulationType)
+            byType.regulation.byRegulationType[rt] = (byType.regulation.byRegulationType[rt] ?? 0) + 1
+          }
+          break
 
-      case 'allocation':
-        byType.allocation.count++
-        break
+        case 'allocation':
+          byType.allocation.count++
+          break
 
-      case 'designation':
-        byType.designation.count++
-        break
+        case 'designation':
+          byType.designation.count++
+          break
+      }
     }
   }
 
@@ -149,8 +210,6 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
   }
 
   // Fetch tags with counts for provisions of this entity
-  const provisionIds = entityProvisions.map(p => p.id)
-
   let tagAggregates: Array<{ id: string; name: string; slug: string; category: string | null; count: number }> = []
 
   if (provisionIds.length > 0) {
@@ -196,7 +255,6 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       title: provisions.title,
       descriptionShort: provisions.descriptionShort,
       avatarUrl: provisions.avatarUrl,
-      type: provisions.type,
       status: provisions.status,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
@@ -215,6 +273,9 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
   }
 
   const provision = provisionResult[0]
+
+  // Fetch types
+  const typesByProvision = await getProvisionTypes([provisionId])
 
   // Fetch tags
   const provisionTags = await db
@@ -238,7 +299,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     title: provision.title,
     descriptionShort: provision.descriptionShort,
     avatarUrl: provision.avatarUrl,
-    type: provision.type,
+    types: typesByProvision[provisionId] || [],
     status: provision.status,
     relevance: provision.relevance,
     effectiveFrom: provision.effectiveFrom,
@@ -277,23 +338,18 @@ export async function getFilteredProvisions(
     )
   }
 
-  if (filters.type) {
-    conditions.push(eq(provisions.type, filters.type as any))
-  }
-
   if (filters.status) {
     conditions.push(eq(provisions.status, filters.status as any))
   }
 
-  // Build base query with extraData included
-  const baseQuery = db
+  // Build base query
+  let baseQuery = db
     .select({
       id: provisions.id,
       slug: provisions.slug,
       title: provisions.title,
       descriptionShort: provisions.descriptionShort,
       avatarUrl: provisions.avatarUrl,
-      type: provisions.type,
       status: provisions.status,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
@@ -304,7 +360,17 @@ export async function getFilteredProvisions(
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
-    .where(and(...conditions))
+    .$dynamic()
+
+  // If filtering by type, join with type associations
+  if (filters.type) {
+    baseQuery = baseQuery
+      .innerJoin(provisionTypeAssociations, eq(provisions.id, provisionTypeAssociations.provisionId))
+      .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
+      .where(and(...conditions, eq(provisionTypes.code, filters.type)))
+  } else {
+    baseQuery = baseQuery.where(and(...conditions))
+  }
 
   // Apply sorting and execute
   let provisionResults: any[]
@@ -328,9 +394,11 @@ export async function getFilteredProvisions(
     return []
   }
 
-  // Fetch tags for all provisions (two-query approach)
+  // Fetch types for all provisions
   const provisionIds = provisionResults.map(p => p.id)
+  const typesByProvision = await getProvisionTypes(provisionIds)
 
+  // Fetch tags for all provisions
   const provisionTags = await db
     .select({
       provisionId: taggables.taggableId,
@@ -362,14 +430,14 @@ export async function getFilteredProvisions(
     return acc
   }, {} as Record<string, Tag[]>)
 
-  // Merge provisions with tags
+  // Merge provisions with types and tags
   return provisionResults.map(p => ({
     id: p.id,
     slug: p.slug,
     title: p.title,
     descriptionShort: p.descriptionShort,
     avatarUrl: p.avatarUrl,
-    type: p.type,
+    types: typesByProvision[p.id] || [],
     status: p.status,
     relevance: p.relevance,
     effectiveFrom: p.effectiveFrom,

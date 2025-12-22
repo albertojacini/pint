@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import type { Tag } from '@/lib/actions/provisions'
+import type { Tag, ProvisionType } from '@/lib/actions/provisions'
 import { ProvisionCardRow4 } from './provision-card-row4'
 import { provisionPath } from '@/lib/utils'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -16,7 +16,7 @@ interface ProvisionCardProps {
     title: string
     descriptionShort: string | null
     avatarUrl: string | null
-    type: string
+    types: ProvisionType[]
     status: string
     relevance: number | null
     effectiveFrom: string | null
@@ -65,10 +65,12 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
 
   return (
     <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
-      {/* Row 1: Type Badge + Tags */}
-      <div className="flex items-center gap-2 mb-3">
-        {/* Type badge */}
-        <ProvisionClassificationBadge type={provision.type as any} />
+      {/* Row 1: Type Badges + Tags */}
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        {/* Type badges */}
+        {provision.types.map((type) => (
+          <ProvisionClassificationBadge key={type.id} type={type.code as any} />
+        ))}
 
         {/* Tags */}
         <Tags tags={visibleTags} maxTags={3} />
@@ -116,7 +118,7 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
 
       {/* Row 4: Type-Specific Content - stretches to push footer down */}
       <div className="flex-1">
-        <ProvisionCardRow4 type={provision.type} extraData={provision.extraData} />
+        <ProvisionCardRow4 types={provision.types} extraData={provision.extraData} />
       </div>
 
       {/* Row 5: Interaction Stats + Actions */}
