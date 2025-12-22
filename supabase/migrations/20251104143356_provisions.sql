@@ -14,7 +14,7 @@ create table if not exists public.provisions (
   slug text not null,
   description_short text check (length(description_short) <= 100),
   description text check (length(description) <= 1000),
-  summary text check (length(summary) <= 20000),
+  summary_md text check (length(summary_md) <= 20000),
   avatar_url text,
   type text not null check (type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
                       -- ownership: stakes in companies, property, infrastructure
@@ -111,7 +111,7 @@ create table if not exists public.provision_drafts (
   title text,
   description_short text check (length(description_short) <= 100),
   description text check (length(description) <= 1000),
-  summary text check (length(summary) <= 20000),
+  summary_md text check (length(summary_md) <= 20000),
   extra_data jsonb default '{}',
 
   -- Metadata

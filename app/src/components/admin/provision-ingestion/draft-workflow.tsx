@@ -61,7 +61,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
   const [editedDescription, setEditedDescription] = useState(
     draft.description || ''
   )
-  const [editedSummary, setEditedSummary] = useState(draft.summary || '')
+  const [editedSummary, setEditedSummary] = useState(draft.summary_md || '')
   const [editedRelevance, setEditedRelevance] = useState<number | null>(
     draft.relevance || null
   )
@@ -178,7 +178,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           title: result.title,
           descriptionShort: result.descriptionShort,
           description: result.description,
-          summary: result.summary,
+          summary_md: result.summary,
           extraData: result,
           confidence: String(result.confidence || 0),
           sourceUrls: result.sourceUrls || [],
@@ -191,7 +191,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           title: result.title,
           descriptionShort: result.descriptionShort,
           description: result.description,
-          summary: result.summary,
+          summary_md: result.summary,
           extraData: result,
           confidence: String(result.confidence || 0),
           sourceUrls: result.sourceUrls || [],
@@ -258,7 +258,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         title: editedTitle,
         descriptionShort: editedDescriptionShort,
         description: editedDescription,
-        summary: editedSummary,
+        summary_md: editedSummary,
         relevance: editedRelevance ?? undefined,
       })
 

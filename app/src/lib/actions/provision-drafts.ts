@@ -25,7 +25,7 @@ export interface ProvisionDraft {
   title: string | null
   descriptionShort: string | null
   description: string | null
-  summary: string | null
+  summary_md: string | null
   extraData: Record<string, unknown> | null
   confidence: string | null
   relevance: number | null
@@ -137,7 +137,7 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
       slug,
       descriptionShort: draft.descriptionShort,
       description: draft.description,
-      summary: draft.summary,
+      summary: draft.summary_md,
       type: draft.confirmedType,
       status: 'active',
       relevance: draft.relevance,
@@ -171,7 +171,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
-      summary: provisionDrafts.summary,
+      summary_md: provisionDrafts.summary,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
       sourceUrls: provisionDrafts.sourceUrls,
@@ -203,7 +203,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
-      summary: provisionDrafts.summary,
+      summary_md: provisionDrafts.summary,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
       sourceUrls: provisionDrafts.sourceUrls,

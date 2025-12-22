@@ -270,7 +270,7 @@ export const provisions = pgTable('provisions', {
   slug: text('slug').notNull(),
   descriptionShort: text('description_short'),
   description: text('description'),
-  summary: text('summary'),
+  summary: text('summary_md'),
   avatarUrl: text('avatar_url'),
   type: text('type', {
     enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
@@ -343,7 +343,7 @@ export const provisionDrafts = pgTable('provision_drafts', {
   title: text('title'),
   descriptionShort: text('description_short'),
   description: text('description'),
-  summary: text('summary'),
+  summary: text('summary_md'),
   extraData: jsonb('extra_data').$type<Record<string, unknown>>(),
 
   confidence: numeric('confidence'),

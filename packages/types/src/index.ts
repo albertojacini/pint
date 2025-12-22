@@ -179,7 +179,7 @@ export const ProvisionSchema = z.object({
   title: z.string().min(1),
   descriptionShort: z.string().max(100, 'Short description must be at most 100 characters').optional(),
   description: z.string().max(1000, 'Description must be at most 1000 characters').optional(),
-  summary: z.string().max(20000, 'Summary must be at most 20000 characters').optional(),
+  summary_md: z.string().max(20000, 'Summary must be at most 20000 characters').optional(),
   type: z.enum(['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']),
   status: z.enum(['active', 'repealed', 'suspended']).default('active'),
   effectiveFrom: z.string().optional(), // YYYY-MM-DD
