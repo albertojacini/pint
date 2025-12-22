@@ -147,18 +147,6 @@ export const stakeholderGroups = pgTable('stakeholder_groups', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-
-// Posts table (simple content for testing forms and UI)
-export const posts = pgTable('posts', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  authorId: uuid('author_id').notNull(),
-  title: text('title').notNull(),
-  content: text('content').notNull(),
-  status: text('status', { enum: ['draft', 'published', 'archived'] }).notNull().default('draft'),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
-
 // People table (politicians, officials, etc.)
 export const people = pgTable('people', {
   id: uuid('id').primaryKey().defaultRandom(),

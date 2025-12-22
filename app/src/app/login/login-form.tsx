@@ -37,7 +37,7 @@ export function LoginForm() {
           title: 'Success',
           description: 'Logged in successfully',
         })
-        router.push('/posts')
+        router.push('/')
         router.refresh()
       }
     } catch (error) {
