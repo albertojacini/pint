@@ -89,7 +89,7 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'provisions',
-        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'type', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'extra_data'],
+        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'extra_data', 'summary_md'],
         values: [
           id,
           entityId,
@@ -98,15 +98,39 @@ export async function seedProvisions(client, supabase, idMaps) {
           provision.description,
           provision.descriptionShort || null,
           avatarUrl,
-          provision.type,
           provision.status,
           provision.relevance || null,
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
           ideaId,
-          JSON.stringify(provision.extraData || {})
+          JSON.stringify(provision.extraData || {}),
+          provision.summary_md || null
         ],
       })
+
+      // Create type associations
+      if (provision.types && provision.types.length > 0) {
+        for (const typeCode of provision.types) {
+          // Look up type ID from provision_types table
+          const typeResult = await client.query(
+            'SELECT id FROM provision_types WHERE code = $1',
+            [typeCode]
+          )
+
+          if (typeResult.rows.length > 0) {
+            const typeId = typeResult.rows[0].id
+            const associationId = generateUUID()
+
+            await insertQuery(client, {
+              table: 'provision_type_associations',
+              columns: ['id', 'provision_id', 'type_id'],
+              values: [associationId, id, typeId]
+            })
+          } else {
+            logger.warning(`Type "${typeCode}" not found for provision "${provision.title}"`)
+          }
+        }
+      }
 
       successCount++
       idMaps.provisions.set(provision.title, id)

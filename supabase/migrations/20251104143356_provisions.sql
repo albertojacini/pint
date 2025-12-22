@@ -6,6 +6,26 @@
 -- Events: occurrences that shape, create, modify, or repeal provisions
 -- Dependencies: ideas, entities (political_entities), administrations
 
+-- Provision types reference table
+create table if not exists public.provision_types (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,
+  label text not null,
+  description text,
+  icon text,
+  color text,
+  created_at timestamptz default now()
+);
+
+-- Seed the 6 provision types
+insert into public.provision_types (code, label, description) values
+  ('ownership', 'Ownership', 'Stakes in companies, property, infrastructure'),
+  ('contract', 'Contract', 'Service agreements, concessions, partnerships'),
+  ('regulation', 'Regulation', 'Rules, ordinances, codes, standards'),
+  ('taxation', 'Taxation', 'Taxes, fees, tariffs'),
+  ('allocation', 'Allocation', 'Programs, subsidies, budgets, funds'),
+  ('designation', 'Designation', 'Zones, landmarks, protected areas, institutions');
+
 -- Provisions: institutional/legal/operational infrastructure owned by entities
 create table if not exists public.provisions (
   id uuid primary key default gen_random_uuid(),
@@ -16,27 +36,30 @@ create table if not exists public.provisions (
   description text check (length(description) <= 1000),
   summary_md text check (length(summary_md) <= 20000),
   avatar_url text,
-  type text not null check (type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
-                      -- ownership: stakes in companies, property, infrastructure
-                      -- contract: service agreements, concessions, partnerships
-                      -- regulation: rules, ordinances, codes, standards
-                      -- taxation: taxes, fees, tariffs
-                      -- allocation: programs, subsidies, budgets, funds
-                      -- designation: zones, landmarks, protected areas, institutions
   status text not null default 'active', -- 'active', 'repealed', 'suspended'
   relevance integer check (relevance >= 0 and relevance <= 10),
   effective_from date,
   effective_until date,
   idea_id uuid references public.ideas(id) on delete set null,
-  extra_data jsonb default '{}', -- Type-specific data: utility→{revenues}, tax→{rate}, etc.
+  extra_data jsonb default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
+-- Provision type associations (many-to-many junction table)
+create table if not exists public.provision_type_associations (
+  id uuid primary key default gen_random_uuid(),
+  provision_id uuid not null references public.provisions(id) on delete cascade,
+  type_id uuid not null references public.provision_types(id) on delete cascade,
+  created_at timestamptz default now(),
+  unique(provision_id, type_id)
+);
+
 create index if not exists idx_provisions_entity_id on public.provisions(entity_id);
 create index if not exists idx_provisions_idea_id on public.provisions(idea_id);
-create index if not exists idx_provisions_type on public.provisions(type);
 create index if not exists idx_provisions_status on public.provisions(status);
+create index if not exists idx_provision_type_associations_provision_id on public.provision_type_associations(provision_id);
+create index if not exists idx_provision_type_associations_type_id on public.provision_type_associations(type_id);
 
 create trigger set_updated_at_provisions
   before update on public.provisions

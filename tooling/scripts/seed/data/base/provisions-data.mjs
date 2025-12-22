@@ -10,11 +10,10 @@ export const provisions = [
     descriptionShort: '100% ownership of ATM public transport company',
     description: 'The Comune di Milano holds 100% ownership of ATM (Azienda Trasporti Milanesi), the public transport company managing metro, tram, bus, and trolleybus services across Milan and surrounding municipalities.',
     summary_md: 'The Comune di Milano maintains complete ownership of ATM (Azienda Trasporti Milanesi S.p.A.), the public transport operator serving Milan and 95 surrounding municipalities. This 100% stake provides full control over all aspects of the public transportation network including metro lines, trams, buses, and trolleybuses. The ownership structure enables the municipality to directly influence strategic decisions on fare policies, service expansion, route planning, infrastructure investments, and operational standards. ATM serves as a critical public service provider, ensuring mobility for millions of residents and visitors while aligning transport policy with broader urban planning and sustainability goals.',
-    type: 'ownership',
+    types: ['ownership'],
     status: 'active',
     relevance: 8,
     extraData: {
-      type: 'ownership',
       assetCategory: 'equity',
       assetName: 'ATM - Azienda Trasporti Milanesi S.p.A.',
       ownershipPercentage: 100,
@@ -28,12 +27,11 @@ export const provisions = [
     description: 'Daily access fee for entering Area C (historic center) during enforcement hours Monday-Friday 7:30-19:30. Exemptions apply to residents, electric vehicles, and specific categories.',
     summary_md: 'Area C is a congestion charging zone covering Milan\'s historic center, operational since January 2012. The system requires drivers to pay a €7.50 daily fee to access the zone during enforcement hours (Monday-Friday 7:30-19:30, excluding public holidays). The charge aims to reduce traffic congestion, improve air quality, and encourage use of public transportation. Exemptions include residents within Area C, motorcycles and scooters, fully electric and hydrogen vehicles, vehicles for disabled persons, emergency vehicles, and public transport. The system uses automatic license plate recognition cameras at 43 entry gates. Revenues fund sustainable mobility initiatives, public transport improvements, and road maintenance. In 2023, Area C generated approximately €85 million in revenue while contributing to a 30% reduction in vehicle traffic within the zone and measurable improvements in air quality indicators.',
     avatarUrl: './assets/avatars/provisions/area-c-congestion-charge.webp',
-    type: 'taxation',
+    types: ['taxation'],
     status: 'active',
     relevance: 10,
     idea: 'Urban congestion charge',
     extraData: {
-      type: 'taxation',
       taxType: 'fee',
       rateDescription: 'EUR 7.50 daily access fee per non-exempt vehicle',
       dataYear: '2023',
@@ -80,11 +78,10 @@ Approved permits enable businesses to:
 ## Enforcement
 
 The Municipal Police conduct regular inspections. Violations may result in permit suspension, fines, or mandatory removal of structures.`,
-    type: 'regulation',
+    types: ['regulation'],
     status: 'active',
     relevance: 6,
     extraData: {
-      type: 'regulation',
       regulationType: 'permit_system',
       domain: 'public_space',
     },

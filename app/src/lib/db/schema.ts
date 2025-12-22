@@ -262,6 +262,17 @@ export const contributions = pgTable('contributions', {
 // ============================================================================
 // State infrastructure (provisions), temporal events, and their relationships
 
+// Provision types reference table
+export const provisionTypes = pgTable('provision_types', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  code: text('code').notNull().unique(),
+  label: text('label').notNull(),
+  description: text('description'),
+  icon: text('icon'),
+  color: text('color'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
 // Provisions: institutional/legal/operational infrastructure owned by entities
 export const provisions = pgTable('provisions', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -272,23 +283,25 @@ export const provisions = pgTable('provisions', {
   description: text('description'),
   summary: text('summary_md'),
   avatarUrl: text('avatar_url'),
-  type: text('type', {
-    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
-  }).notNull(), // ownership: stakes in companies, property, infrastructure
-                // contract: service agreements, concessions, partnerships
-                // regulation: rules, ordinances, codes, standards
-                // taxation: taxes, fees, tariffs
-                // allocation: programs, subsidies, budgets, funds
-                // designation: zones, landmarks, protected areas, institutions
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   relevance: integer('relevance'),
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
-  extraData: jsonb('extra_data').$type<Record<string, unknown>>(), // Type-specific data validated with Zod
+  extraData: jsonb('extra_data').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
+
+// Provision type associations (many-to-many junction table)
+export const provisionTypeAssociations = pgTable('provision_type_associations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
+  typeId: uuid('type_id').notNull().references(() => provisionTypes.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueAssociation: uniqueIndex('provision_type_associations_unique').on(table.provisionId, table.typeId),
+}))
 
 // Events: temporal occurrences that shape provisions
 export const events = pgTable('events', {
