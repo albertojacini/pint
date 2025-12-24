@@ -48,7 +48,6 @@ async def chat(initial_query: str = None):
     # Load prompts
     lead_agent_prompt = load_prompt("lead_agent.txt")
     researcher_prompt = load_prompt("researcher.txt")
-    data_analyst_prompt = load_prompt("data_analyst.txt")
     report_writer_prompt = load_prompt("report_writer.txt")
 
     # Initialize subagent tracker with transcript writer and session directory
@@ -68,26 +67,12 @@ async def chat(initial_query: str = None):
             prompt=researcher_prompt,
             model="haiku"
         ),
-        "data-analyst": AgentDefinition(
-            description=(
-                "Use this agent AFTER researchers have completed their work to generate quantitative "
-                "analysis and visualizations. The data-analyst reads research notes from files/research_notes/, "
-                "extracts numerical data (percentages, rankings, trends, comparisons), and generates "
-                "charts using Python/matplotlib via Bash. Saves charts to files/charts/ and writes "
-                "a data summary to files/data/. Use this before the report-writer to add visual insights."
-            ),
-            tools=["Glob", "Read", "Bash", "Write"],
-            prompt=data_analyst_prompt,
-            model="haiku"
-        ),
         "report-writer": AgentDefinition(
             description=(
-                "Use this agent when you need to create a formal research report document. "
-                "The report-writer reads research findings from files/research_notes/, data analysis "
-                "from files/data/, and charts from files/charts/, then synthesizes them into clear, "
-                "concise, professionally formatted PDF reports in files/reports/ using reportlab. "
-                "Ideal for creating structured documents with proper citations, data, and embedded visuals. "
-                "Does NOT conduct web searches - only reads existing research notes and creates PDF reports."
+                "Use this agent to create a formal research report document. "
+                "The report-writer reads research findings from files/research_notes/ and synthesizes "
+                "them into clear, professionally formatted PDF reports in files/reports/. "
+                "Does NOT conduct web searches - only reads existing research and creates PDF reports."
             ),
             tools=["Skill", "Write", "Glob", "Read", "Bash"],
             prompt=report_writer_prompt,
@@ -124,8 +109,7 @@ async def chat(initial_query: str = None):
     print("\n" + "=" * 50)
     print("  Research Agent")
     print("=" * 50)
-    print("\nResearch any topic and get a comprehensive PDF")
-    print("report with data visualizations.")
+    print("\nResearch any topic and get a comprehensive PDF report.")
     if not initial_query:
         print("\nType 'exit' to quit.\n")
 
