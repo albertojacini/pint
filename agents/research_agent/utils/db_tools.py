@@ -263,5 +263,15 @@ class DatabaseTools:
             )
 
 
-# Global instance
-db_tools = DatabaseTools()
+# Global instance (lazy initialization)
+_db_tools = None
+
+def get_db_tools() -> DatabaseTools:
+    """Get or create the global database tools instance."""
+    global _db_tools
+    if _db_tools is None:
+        _db_tools = DatabaseTools()
+    return _db_tools
+
+# For backward compatibility
+db_tools = None

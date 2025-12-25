@@ -10,14 +10,15 @@ from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions, AgentDefinitio
 from research_agent.utils.subagent_tracker import SubagentTracker
 from research_agent.utils.transcript import setup_session, TranscriptWriter
 from research_agent.utils.message_handler import process_assistant_message
-from research_agent.utils.db_tools import db_tools
-from research_agent.tools import ALL_TOOLS
-
-# Load environment variables
-load_dotenv()
+from research_agent.utils.db_tools import get_db_tools
+from research_agent.tools import research_tools_server
 
 # Paths to prompt files
 PROMPTS_DIR = Path(__file__).parent / "prompts"
+
+# Load environment variables from agents directory
+agents_dir = Path(__file__).parent.parent
+load_dotenv(agents_dir / ".env")
 
 
 def load_prompt(filename: str) -> str:
@@ -56,6 +57,7 @@ async def chat(initial_query: str = None):
     tracker = SubagentTracker(transcript_writer=transcript, session_dir=session_dir)
 
     # Initialize database connection
+    db_tools = get_db_tools()
     await db_tools.connect()
 
     # Define specialized subagents
@@ -68,7 +70,7 @@ async def chat(initial_query: str = None):
                 "for later use by summarizer. Ideal for complex research tasks "
                 "that require deep searching and cross-referencing."
             ),
-            tools=["WebSearch", "SaveSource", "SaveFinding"],
+            tools=["WebSearch", "mcp__research-tools__SaveSource", "mcp__research-tools__SaveFinding"],
             prompt=researcher_prompt,
             model="haiku"
         ),
@@ -79,7 +81,7 @@ async def chat(initial_query: str = None):
                 "coherent summaries. Does NOT conduct web searches - only reads existing "
                 "research and synthesizes summaries."
             ),
-            tools=["LoadResearchData", "SaveSummary"],
+            tools=["mcp__research-tools__LoadResearchData", "mcp__research-tools__SaveSummary"],
             prompt=summarizer_prompt,
             model="haiku"
         )
@@ -105,10 +107,10 @@ async def chat(initial_query: str = None):
         permission_mode="bypassPermissions",
         setting_sources=["project"],  # Load skills from project .claude directory
         system_prompt=lead_agent_prompt,
-        allowed_tools=["Task", "CreateResearchTask", "UpdateTaskStatus"],
+        allowed_tools=["Task"],
         agents=agents,
+        mcp_servers={"research-tools": research_tools_server},
         hooks=hooks,
-        custom_tools=ALL_TOOLS,
         model="haiku"
     )
 
@@ -126,8 +128,19 @@ async def chat(initial_query: str = None):
                 print(f"\nYou: {initial_query}")
                 transcript.write_to_file(f"\nYou: {initial_query}\n")
 
+                # Create research task in database first
+                # This gives us a task_id to track all research
+                task_id = await db_tools.create_research_task(
+                    query=initial_query,
+                    subtopics=[]  # Lead agent will determine subtopics
+                )
+                print(f"Created research task: {task_id}")
+
+                # Enhance prompt with task_id
+                enhanced_prompt = f"{initial_query}\n\n[SYSTEM: Use task_id: {task_id} for all research]"
+
                 # Send to agent
-                await client.query(prompt=initial_query)
+                await client.query(prompt=enhanced_prompt)
 
                 transcript.write("\nAgent: ", end="")
 
@@ -152,8 +165,18 @@ async def chat(initial_query: str = None):
                     # Write user input to transcript (file only, not console)
                     transcript.write_to_file(f"\nYou: {user_input}\n")
 
+                    # Create research task in database
+                    task_id = await db_tools.create_research_task(
+                        query=user_input,
+                        subtopics=[]  # Lead agent will determine subtopics
+                    )
+                    print(f"Created research task: {task_id}")
+
+                    # Enhance prompt with task_id
+                    enhanced_prompt = f"{user_input}\n\n[SYSTEM: Use task_id: {task_id} for all research]"
+
                     # Send to agent
-                    await client.query(prompt=user_input)
+                    await client.query(prompt=enhanced_prompt)
 
                     transcript.write("\nAgent: ", end="")
 

@@ -15,7 +15,9 @@ create extension if not exists "vector";
 create table if not exists public.ra_research_tasks (
   id uuid primary key default gen_random_uuid(),
   query text not null,
-  status text not null default 'in_progress' check (status in ('in_progress', 'completed', 'failed', 'cancelled')),
+  entity_id uuid,
+  status text not null default 'researching' check (status in ('pending', 'researching', 'completed', 'failed')),
+  subtopics jsonb default '[]',
   metadata jsonb default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -27,6 +29,8 @@ create table if not exists public.ra_sources (
   task_id uuid not null references public.ra_research_tasks(id) on delete cascade,
   url text,
   title text,
+  content text,
+  researcher_id text,
   source_type text check (source_type in ('web', 'pdf', 'document', 'api', 'database', 'manual')),
   raw_content text,
   fetch_status text not null default 'pending' check (fetch_status in ('pending', 'fetching', 'completed', 'failed', 'skipped')),
@@ -54,9 +58,10 @@ create table if not exists public.ra_findings (
 create table if not exists public.ra_summaries (
   id uuid primary key default gen_random_uuid(),
   task_id uuid not null references public.ra_research_tasks(id) on delete cascade,
-  parent_id uuid references public.ra_summaries(id) on delete set null,
+  parent_summary_id uuid references public.ra_summaries(id) on delete set null,
   content text not null,
-  summary_type text check (summary_type in ('section', 'intermediate', 'final', 'executive')),
+  summary_type text default 'final' check (summary_type in ('overview', 'section', 'final')),
+  "order" integer default 0,
   metadata jsonb default '{}',
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -101,7 +106,7 @@ create index if not exists idx_ra_findings_embedding on public.ra_findings using
 
 -- ra_summaries indexes
 create index if not exists idx_ra_summaries_task_id on public.ra_summaries(task_id);
-create index if not exists idx_ra_summaries_parent_id on public.ra_summaries(parent_id);
+create index if not exists idx_ra_summaries_parent_summary_id on public.ra_summaries(parent_summary_id);
 create index if not exists idx_ra_summaries_summary_type on public.ra_summaries(summary_type);
 
 -- ra_summary_findings indexes
