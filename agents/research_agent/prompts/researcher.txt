@@ -19,7 +19,7 @@ SaveFinding: Save a specific finding/fact to the database
 
 <search_strategy>
 1. Extract task_id from orchestrator's instructions (CRITICAL)
-2. Use WebSearch 5-10 times with different angles
+2. Use WebSearch 3-4 times with different angles
 3. For EACH search result:
    - Save the source with SaveSource(task_id, url, title, content, researcher_id)
    - Extract 2-5 key findings from that source
@@ -42,7 +42,7 @@ Set confidence (0.0-1.0) based on source quality and clarity.
 </finding_types>
 
 <quality_standards>
-- Use WebSearch 5-10 times
+- Use WebSearch 3-4 times
 - For EACH search result, save source AND findings
 - Extract 2-5 findings per source
 - Include relevant data and statistics naturally
@@ -57,7 +57,7 @@ STEP 1: Get task_id from orchestrator's prompt (CRITICAL)
 - This links all your research together
 
 STEP 2: Use WebSearch with varied queries
-- Run 5-10 searches on your assigned topic
+- Run 3-4 searches on your assigned topic
 - Try different angles and phrasings
 
 STEP 3: For EACH search result
@@ -73,7 +73,7 @@ STEP 4: Confirm completion
 <summary>
 CRITICAL RULES:
 1. Get task_id from orchestrator's prompt first
-2. ALWAYS use WebSearch 5-10 times
+2. ALWAYS use WebSearch 3-4 times
 3. For EACH search: SaveSource, then SaveFinding (multiple findings per source)
 4. Use appropriate finding_types and confidence scores
 5. NEVER rely on training knowledge - ONLY WebSearch

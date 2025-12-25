@@ -53,14 +53,11 @@ async def save_source_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
 @tool(
     "SaveFinding",
-    "Save a specific research finding/fact extracted from a source",
+    "Save a specific research finding/fact extracted from a source. Required: task_id, source_id, content. Optional: finding_type ('statistic'|'policy'|'event'|'general', default 'general'), confidence (0.0-1.0, default 0.8), metadata (dict)",
     {
         "task_id": str,
         "source_id": str,
-        "content": str,
-        "finding_type": str,
-        "confidence": float,
-        "metadata": dict
+        "content": str
     }
 )
 async def save_finding_tool(args: Dict[str, Any]) -> Dict[str, Any]:
@@ -117,14 +114,10 @@ async def load_research_data_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
 @tool(
     "SaveSummary",
-    "Save a synthesized research summary to the database",
+    "Save a synthesized research summary to the database. Only task_id and content are required. Optional: summary_type (default 'final'), finding_ids (list of UUIDs), parent_summary_id (UUID), order (int, default 0)",
     {
         "task_id": str,
-        "content": str,
-        "summary_type": str,
-        "finding_ids": list,
-        "parent_summary_id": str,
-        "order": int
+        "content": str
     }
 )
 async def save_summary_tool(args: Dict[str, Any]) -> Dict[str, Any]:
