@@ -10,6 +10,8 @@ from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions, AgentDefinitio
 from research_agent.utils.subagent_tracker import SubagentTracker
 from research_agent.utils.transcript import setup_session, TranscriptWriter
 from research_agent.utils.message_handler import process_assistant_message
+from research_agent.utils.db_tools import db_tools
+from research_agent.tools import ALL_TOOLS
 
 # Load environment variables
 load_dotenv()
@@ -48,10 +50,13 @@ async def chat(initial_query: str = None):
     # Load prompts
     lead_agent_prompt = load_prompt("lead_agent.txt")
     researcher_prompt = load_prompt("researcher.txt")
-    report_writer_prompt = load_prompt("report_writer.txt")
+    summarizer_prompt = load_prompt("summarizer.txt")
 
     # Initialize subagent tracker with transcript writer and session directory
     tracker = SubagentTracker(transcript_writer=transcript, session_dir=session_dir)
+
+    # Initialize database connection
+    await db_tools.connect()
 
     # Define specialized subagents
     agents = {
@@ -59,23 +64,23 @@ async def chat(initial_query: str = None):
             description=(
                 "Use this agent when you need to gather research information on any topic. "
                 "The researcher uses web search to find relevant information, articles, and sources "
-                "from across the internet. Writes research findings to files/research_notes/ "
-                "for later use by report writers. Ideal for complex research tasks "
+                "from across the internet. Saves research findings to database "
+                "for later use by summarizer. Ideal for complex research tasks "
                 "that require deep searching and cross-referencing."
             ),
-            tools=["WebSearch", "Write"],
+            tools=["WebSearch", "SaveSource", "SaveFinding"],
             prompt=researcher_prompt,
             model="haiku"
         ),
-        "report-writer": AgentDefinition(
+        "summarizer": AgentDefinition(
             description=(
-                "Use this agent to create a formal research report document. "
-                "The report-writer reads research findings from files/research_notes/ and synthesizes "
-                "them into clear, professionally formatted PDF reports in files/reports/. "
-                "Does NOT conduct web searches - only reads existing research and creates PDF reports."
+                "Use this agent to synthesize research findings into summaries. "
+                "The summarizer reads research findings from the database and creates "
+                "coherent summaries. Does NOT conduct web searches - only reads existing "
+                "research and synthesizes summaries."
             ),
-            tools=["Skill", "Write", "Glob", "Read", "Bash"],
-            prompt=report_writer_prompt,
+            tools=["LoadResearchData", "SaveSummary"],
+            prompt=summarizer_prompt,
             model="haiku"
         )
     }
@@ -100,16 +105,17 @@ async def chat(initial_query: str = None):
         permission_mode="bypassPermissions",
         setting_sources=["project"],  # Load skills from project .claude directory
         system_prompt=lead_agent_prompt,
-        allowed_tools=["Task"],
+        allowed_tools=["Task", "CreateResearchTask", "UpdateTaskStatus"],
         agents=agents,
         hooks=hooks,
+        custom_tools=ALL_TOOLS,
         model="haiku"
     )
 
     print("\n" + "=" * 50)
     print("  Research Agent")
     print("=" * 50)
-    print("\nResearch any topic and get a comprehensive PDF report.")
+    print("\nResearch any topic and store findings in database.")
     if not initial_query:
         print("\nType 'exit' to quit.\n")
 
@@ -161,6 +167,7 @@ async def chat(initial_query: str = None):
         transcript.write("\n\nGoodbye!\n")
         transcript.close()
         tracker.close()
+        await db_tools.close()
         print(f"\nSession logs saved to: {session_dir}")
         print(f"  - Transcript: {transcript_file}")
         print(f"  - Tool calls: {session_dir / 'tool_calls.jsonl'}")
