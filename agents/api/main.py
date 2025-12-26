@@ -12,7 +12,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from api.routes.classify import router as classify_router
 from api.routes.research import router as research_router
 
 app = FastAPI(
@@ -42,7 +41,6 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(classify_router, tags=["Classification"])
 app.include_router(research_router, tags=["Research"])
 
 

@@ -262,6 +262,95 @@ class DatabaseTools:
                 task_id
             )
 
+    async def get_task(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get a research task by ID.
+
+        Args:
+            task_id: UUID of the research task
+
+        Returns:
+            Task dict or None if not found
+        """
+        if not self.pool:
+            await self.connect()
+
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                """
+                SELECT id, query, entity_id, status, subtopics, metadata, created_at, updated_at
+                FROM ra_research_tasks
+                WHERE id = $1
+                """,
+                task_id
+            )
+            if row:
+                return dict(row)
+            return None
+
+    async def get_task_results(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get full research results for a task including sources, findings, and summaries.
+
+        Args:
+            task_id: UUID of the research task
+
+        Returns:
+            Dict with task info, sources, findings, summaries, and counts
+        """
+        if not self.pool:
+            await self.connect()
+
+        async with self.pool.acquire() as conn:
+            # Get task
+            task = await conn.fetchrow(
+                """
+                SELECT id, query, entity_id, status, subtopics, metadata, created_at, updated_at
+                FROM ra_research_tasks
+                WHERE id = $1
+                """,
+                task_id
+            )
+            if not task:
+                return None
+
+            # Get sources count
+            sources_count = await conn.fetchval(
+                "SELECT COUNT(*) FROM ra_sources WHERE task_id = $1",
+                task_id
+            )
+
+            # Get findings count
+            findings_count = await conn.fetchval(
+                "SELECT COUNT(*) FROM ra_findings WHERE task_id = $1",
+                task_id
+            )
+
+            # Get final summary
+            summary = await conn.fetchrow(
+                """
+                SELECT id, content, summary_type, created_at
+                FROM ra_summaries
+                WHERE task_id = $1 AND summary_type = 'final'
+                ORDER BY created_at DESC
+                LIMIT 1
+                """,
+                task_id
+            )
+
+            return {
+                "task_id": str(task["id"]),
+                "query": task["query"],
+                "entity_id": str(task["entity_id"]) if task["entity_id"] else None,
+                "status": task["status"],
+                "subtopics": json.loads(task["subtopics"]) if task["subtopics"] else [],
+                "sources_count": sources_count,
+                "findings_count": findings_count,
+                "summary": summary["content"] if summary else None,
+                "created_at": task["created_at"].isoformat() if task["created_at"] else None,
+                "updated_at": task["updated_at"].isoformat() if task["updated_at"] else None,
+            }
+
 
 # Global instance (lazy initialization)
 _db_tools = None

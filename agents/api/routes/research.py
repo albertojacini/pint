@@ -1,18 +1,19 @@
-"""Research and jobs endpoints."""
+"""Research endpoints."""
 
-import asyncio
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 
 from api.models import (
     ResearchRequest,
     ResearchResponse,
-    JobStatusResponse,
-    JobStatus,
+    ResearchResultResponse,
     ReviseRequest,
     ReviseResponse,
 )
-from api.services.job_manager import job_manager, JobStatus as JobStatusEnum
-from api.services.research import run_research_job
+from api.services.research import (
+    create_research_task,
+    run_research_job,
+    get_task_status,
+)
 
 router = APIRouter()
 
@@ -23,75 +24,63 @@ async def start_research(
     background_tasks: BackgroundTasks,
 ) -> ResearchResponse:
     """
-    Start a research job for a provision.
+    Start a research job.
 
-    Returns immediately with a job_id. Poll /jobs/{job_id} for status.
+    Returns immediately with a task_id. Poll /research/{task_id} for status.
     """
-    job = job_manager.create_job(
-        description=request.description,
-        provision_type=request.provision_type.value,
+    task_id = await create_research_task(
+        query=request.description,
+        entity_id=request.entity_id,
         entity_name=request.entity_name,
-        agent=request.agent,
     )
 
     # Run the research job in the background
-    background_tasks.add_task(run_research_job, job.id)
+    background_tasks.add_task(run_research_job, task_id)
 
-    return ResearchResponse(job_id=job.id)
+    return ResearchResponse(task_id=task_id)
 
 
-@router.get("/jobs/{job_id}", response_model=JobStatusResponse)
-async def get_job_status(job_id: str) -> JobStatusResponse:
+@router.get("/research/{task_id}", response_model=ResearchResultResponse)
+async def get_research_status(task_id: str) -> ResearchResultResponse:
     """
-    Get the status of a research job.
+    Get the status of a research task.
 
-    Poll this endpoint to check if the job is complete.
+    Poll this endpoint to check if the task is complete.
+    Returns full results including summary when completed.
     """
-    job = job_manager.get_job(job_id)
+    result = await get_task_status(task_id)
 
-    if not job:
-        raise HTTPException(status_code=404, detail="Job not found")
+    if not result:
+        raise HTTPException(status_code=404, detail="Task not found")
 
-    return JobStatusResponse(
-        job_id=job.id,
-        status=JobStatus(job.status.value),
-        result=job.result,
-        error=job.error,
-    )
+    return ResearchResultResponse(**result)
 
 
-@router.post("/revise", response_model=ReviseResponse)
-async def revise_result(
+@router.post("/research/{task_id}/revise", response_model=ReviseResponse)
+async def revise_research(
+    task_id: str,
     request: ReviseRequest,
     background_tasks: BackgroundTasks,
 ) -> ReviseResponse:
     """
-    Ask the agent to revise a completed result based on feedback.
+    Re-run research with user feedback incorporated.
 
-    Creates a new job with the feedback incorporated.
+    Creates a new task with the feedback appended to the original query.
     """
-    original_job = job_manager.get_job(request.job_id)
+    original = await get_task_status(task_id)
 
-    if not original_job:
-        raise HTTPException(status_code=404, detail="Original job not found")
+    if not original:
+        raise HTTPException(status_code=404, detail="Original task not found")
 
-    if original_job.status != JobStatusEnum.COMPLETED:
-        raise HTTPException(
-            status_code=400,
-            detail="Can only revise completed jobs"
-        )
+    # Create new query with feedback
+    new_query = f"{original['query']}\n\nUser feedback: {request.feedback}"
 
-    # Create new job with feedback incorporated into description
-    revised_description = f"{original_job.description}\n\nUser feedback: {request.feedback}"
-
-    new_job = job_manager.create_job(
-        description=revised_description,
-        provision_type=original_job.provision_type,
-        entity_name=original_job.entity_name,
-        agent=original_job.agent,  # Preserve agent from original job
+    new_task_id = await create_research_task(
+        query=new_query,
+        entity_id=original.get("entity_id"),
     )
 
     # Run the research job in the background
-    background_tasks.add_task(run_research_job, new_job.id)
+    background_tasks.add_task(run_research_job, new_task_id)
 
-    return ReviseResponse(job_id=new_job.id)
+    return ReviseResponse(task_id=new_task_id, original_task_id=task_id)

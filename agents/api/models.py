@@ -1,59 +1,45 @@
 """Request and response models for the API."""
 
+from datetime import datetime
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional, Any, List
 from pydantic import BaseModel
 
 
-class ProvisionType(str, Enum):
-    OWNERSHIP = "ownership"
-    CONTRACT = "contract"
-    REGULATION = "regulation"
-    TAXATION = "taxation"
-    ALLOCATION = "allocation"
-    DESIGNATION = "designation"
-
-
-class ClassifyRequest(BaseModel):
-    description: str
-    entity_name: str
-
-
-class ClassifyResponse(BaseModel):
-    suggested_type: ProvisionType
-    confidence: float
-    reasoning: str
-
-
-class ResearchRequest(BaseModel):
-    description: str
-    provision_type: ProvisionType
-    entity_name: str
-    agent: str = "lcdeep"  # Agent implementation to use (default: lcdeep)
-
-
-class ResearchResponse(BaseModel):
-    job_id: str
-
-
-class JobStatus(str, Enum):
+class TaskStatus(str, Enum):
     PENDING = "pending"
-    RUNNING = "running"
+    RESEARCHING = "researching"
     COMPLETED = "completed"
     FAILED = "failed"
 
 
-class JobStatusResponse(BaseModel):
-    job_id: str
-    status: JobStatus
-    result: Optional[dict[str, Any]] = None
-    error: Optional[str] = None
+class ResearchRequest(BaseModel):
+    description: str
+    entity_name: Optional[str] = None
+    entity_id: Optional[str] = None
+
+
+class ResearchResponse(BaseModel):
+    task_id: str
+
+
+class ResearchResultResponse(BaseModel):
+    task_id: str
+    status: TaskStatus
+    query: str
+    entity_id: Optional[str] = None
+    sources_count: int
+    findings_count: int
+    summary: Optional[str] = None
+    subtopics: List[str] = []
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
 
 
 class ReviseRequest(BaseModel):
-    job_id: str
     feedback: str
 
 
 class ReviseResponse(BaseModel):
-    job_id: str
+    task_id: str
+    original_task_id: str
