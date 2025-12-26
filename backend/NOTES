@@ -1,0 +1,17 @@
+I want to build a proper provision drafting/creation workflow. It must be: - User assisted. At least for the drafting part (research can be one shot agent run) - the 'reasearch' app (agent) should be not dependent on provision app. Provision app can
+ be loosely dependend on research. The provision drafting process should follow this state machine:
+- User provides a provision research topic (stored in draft, just a quick hint of what the provision should be about. Ex: 'Ownership of Metropolitane Milanesi Spa'
+- The research topic is validated and passed to an llm for transformation into an research prompt
+- the prompt is approved and the research agent run
+- research summary is stored
+- provision draft is derived by research summary
+- provision draft is reviewed and saved -> provision is created.
+- provision is published How to structure this code: rename
+
+Question: how would you reorganize the backend/agents dirs (create a /backend dir an move /agents inside it???)
+
+Add backend apps:
+- 'researches' to store agent status and data
+- 'provisions'
+
+Please help me to plan all this.

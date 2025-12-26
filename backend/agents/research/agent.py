@@ -7,11 +7,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions, AgentDefinition, HookMatcher
 
-from research_agent.utils.subagent_tracker import SubagentTracker
-from research_agent.utils.transcript import setup_session, TranscriptWriter
-from research_agent.utils.message_handler import process_assistant_message
-from research_agent.utils.db_tools import get_db_tools
-from research_agent.tools import research_tools_server
+from agents.research.utils.subagent_tracker import SubagentTracker
+from agents.research.utils.transcript import setup_session, TranscriptWriter
+from agents.research.utils.message_handler import process_assistant_message
+from agents.research.utils.db_tools import get_db_tools
+from agents.research.tools import research_tools_server
 
 # Paths to prompt files
 PROMPTS_DIR = Path(__file__).parent / "prompts"

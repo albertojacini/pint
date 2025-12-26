@@ -10,7 +10,7 @@ IMPORTANT: This is an early stage project:
 - ALWAYS use `uv` for package management (NEVER use `pip`)
 - ALWAYS activate the virtual environment before running Python commands:
   ```bash
-  cd /Users/albertojacini/Projects/pint/agents && source .venv/bin/activate
+  cd /Users/albertojacini/Projects/pint/backend && source .venv/bin/activate
   ```
 - Package installation: `uv add <package>` or `uv pip install <package>`
 - Run Python scripts: Always prepend with activation command

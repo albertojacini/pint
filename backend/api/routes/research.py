@@ -9,7 +9,7 @@ from api.models import (
     ReviseRequest,
     ReviseResponse,
 )
-from api.services.research import (
+from services.research import (
     create_research_task,
     run_research_job,
     get_task_status,

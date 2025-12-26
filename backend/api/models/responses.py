@@ -1,8 +1,7 @@
-"""Request and response models for the API."""
+"""Response models for the API."""
 
-from datetime import datetime
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Optional, List
 from pydantic import BaseModel
 
 
@@ -11,12 +10,6 @@ class TaskStatus(str, Enum):
     RESEARCHING = "researching"
     COMPLETED = "completed"
     FAILED = "failed"
-
-
-class ResearchRequest(BaseModel):
-    description: str
-    entity_name: Optional[str] = None
-    entity_id: Optional[str] = None
 
 
 class ResearchResponse(BaseModel):
@@ -34,10 +27,6 @@ class ResearchResultResponse(BaseModel):
     subtopics: List[str] = []
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
-
-
-class ReviseRequest(BaseModel):
-    feedback: str
 
 
 class ReviseResponse(BaseModel):
