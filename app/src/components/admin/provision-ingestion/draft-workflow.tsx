@@ -43,68 +43,61 @@ interface DraftWorkflowProps {
 export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
   const [draft, setDraft] = useState(initialDraft)
   const [loading, setLoading] = useState(false)
-  const [classifyResult, setClassifyResult] = useState<{
-    suggested_type: ProvisionType
-    confidence: number
-    reasoning: string
-  } | null>(null)
-  const [selectedType, setSelectedType] = useState<ProvisionType | null>(
-    draft.confirmedType
-  )
-  const [selectedAgent, setSelectedAgent] = useState<string>('lcdeep')
+
+  // Research prompt state
+  const [researchPrompt, setResearchPrompt] = useState(draft.researchPrompt || '')
 
   // Editable fields for review step
   const [editedTitle, setEditedTitle] = useState(draft.title || '')
-  const [editedDescriptionShort, setEditedDescriptionShort] = useState(
-    draft.descriptionShort || ''
-  )
-  const [editedDescription, setEditedDescription] = useState(
-    draft.description || ''
-  )
+  const [editedDescriptionShort, setEditedDescriptionShort] = useState(draft.descriptionShort || '')
+  const [editedDescription, setEditedDescription] = useState(draft.description || '')
   const [editedSummary, setEditedSummary] = useState(draft.summary_md || '')
-  const [editedRelevance, setEditedRelevance] = useState<number | null>(
-    draft.relevance || null
-  )
+  const [editedRelevance, setEditedRelevance] = useState<number | null>(draft.relevance || null)
+  const [editedProvisionType, setEditedProvisionType] = useState<ProvisionType | null>(draft.provisionType || null)
 
   const router = useRouter()
   const { toast } = useToast()
 
-  // Step 1: Classification
-  const handleClassify = async () => {
+  // Step 1: Generate research prompt
+  const handleGeneratePrompt = async () => {
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE}/classify`, {
+      const response = await fetch(`${API_BASE}/provision/generate-prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          description: draft.inputDescription,
+          input_description: draft.inputDescription,
           entity_name: draft.entityName || '',
         }),
       })
 
       if (!response.ok) {
-        throw new Error('Classification failed')
+        throw new Error('Failed to generate research prompt')
       }
 
       const result = await response.json()
-      setClassifyResult(result)
-      setSelectedType(result.suggested_type)
+      setResearchPrompt(result.research_prompt)
 
       // Update draft status
       await updateDraft(draft.id, {
-        suggestedType: result.suggested_type,
-        jobStatus: 'classified',
+        researchPrompt: result.research_prompt,
+        jobStatus: 'prompt_generated',
       })
 
       setDraft((d) => ({
         ...d,
-        suggestedType: result.suggested_type,
-        jobStatus: 'classified',
+        researchPrompt: result.research_prompt,
+        jobStatus: 'prompt_generated',
       }))
+
+      toast({
+        title: 'Prompt generated',
+        description: 'Review and approve the research prompt',
+      })
     } catch (error) {
       toast({
         variant: 'destructive',
-        title: 'Classification failed',
+        title: 'Failed to generate prompt',
         description: String(error),
       })
     } finally {
@@ -112,27 +105,26 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
     }
   }
 
-  // Step 2: Confirm type and start research
+  // Step 2: Start research with approved prompt
   const handleStartResearch = async () => {
-    if (!selectedType) return
+    if (!researchPrompt) return
 
     setLoading(true)
     try {
-      // Update confirmed type
+      // Save the potentially edited prompt
       await updateDraft(draft.id, {
-        confirmedType: selectedType,
+        researchPrompt,
         jobStatus: 'researching',
       })
 
       // Start research job
-      const response = await fetch(`${API_BASE}/research`, {
+      const response = await fetch(`${API_BASE}/provision/start-research`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          description: draft.inputDescription,
-          provision_type: selectedType,
+          research_prompt: researchPrompt,
           entity_name: draft.entityName || '',
-          agent: selectedAgent,
+          entity_id: draft.entityId,
         }),
       })
 
@@ -140,15 +132,15 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         throw new Error('Failed to start research')
       }
 
-      const { job_id } = await response.json()
+      const { task_id } = await response.json()
 
-      await updateDraft(draft.id, { jobId: job_id })
+      await updateDraft(draft.id, { researchTaskId: task_id })
 
       setDraft((d) => ({
         ...d,
-        confirmedType: selectedType,
+        researchPrompt,
         jobStatus: 'researching',
-        jobId: job_id,
+        researchTaskId: task_id,
       }))
     } catch (error) {
       toast({
@@ -160,94 +152,156 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
     }
   }
 
-  // Poll for job status
-  const pollJobStatus = useCallback(async () => {
-    if (!draft.jobId || draft.jobStatus !== 'researching') return
+  // Poll for research status
+  const pollResearchStatus = useCallback(async () => {
+    if (!draft.researchTaskId || draft.jobStatus !== 'researching') return
 
     try {
-      const response = await fetch(`${API_BASE}/jobs/${draft.jobId}`)
+      const response = await fetch(`${API_BASE}/provision/research-status/${draft.researchTaskId}`)
       if (!response.ok) return
 
-      const job = await response.json()
+      const result = await response.json()
 
-      if (job.status === 'completed' && job.result) {
-        // Update draft with results
-        const result = job.result
+      if (result.status === 'completed' && result.summary) {
+        // Update draft with research summary
         await updateDraft(draft.id, {
-          jobStatus: 'completed',
-          title: result.title,
-          descriptionShort: result.descriptionShort,
-          description: result.description,
-          summary: result.summary,
-          extraData: result,
-          confidence: String(result.confidence || 0),
-          sourceUrls: result.sourceUrls || [],
-          relevance: result.relevance || null,
+          researchSummary: result.summary,
+          jobStatus: 'research_complete',
         })
 
         setDraft((d) => ({
           ...d,
-          jobStatus: 'completed',
-          title: result.title,
-          descriptionShort: result.descriptionShort,
-          description: result.description,
-          summary_md: result.summary,
-          extraData: result,
-          confidence: String(result.confidence || 0),
-          sourceUrls: result.sourceUrls || [],
-          relevance: result.relevance || null,
+          researchSummary: result.summary,
+          jobStatus: 'research_complete',
         }))
-
-        // Update editable fields
-        setEditedTitle(result.title || '')
-        setEditedDescriptionShort(result.descriptionShort || '')
-        setEditedDescription(result.description || '')
-        setEditedSummary(result.summary || '')
-        setEditedRelevance(result.relevance || null)
 
         setLoading(false)
         toast({
           title: 'Research complete',
-          description: 'Review the results below',
+          description: 'Generating provision draft...',
         })
-      } else if (job.status === 'failed') {
+      } else if (result.status === 'failed') {
         await updateDraft(draft.id, {
           jobStatus: 'failed',
-          errorMessage: job.error,
+          errorMessage: 'Research failed',
         })
 
         setDraft((d) => ({
           ...d,
           jobStatus: 'failed',
-          errorMessage: job.error,
+          errorMessage: 'Research failed',
         }))
 
         setLoading(false)
         toast({
           variant: 'destructive',
           title: 'Research failed',
-          description: job.error,
+          description: 'Please try again',
         })
       }
     } catch (error) {
       console.error('Poll error:', error)
     }
-  }, [draft.jobId, draft.jobStatus, draft.id, toast])
+  }, [draft.researchTaskId, draft.jobStatus, draft.id, toast])
 
   useEffect(() => {
     if (draft.jobStatus !== 'researching') return
 
-    const interval = setInterval(pollJobStatus, 3000)
+    const interval = setInterval(pollResearchStatus, 3000)
     return () => clearInterval(interval)
-  }, [draft.jobStatus, pollJobStatus])
+  }, [draft.jobStatus, pollResearchStatus])
 
-  // Auto-classify on mount if pending
+  // Step 3: Generate provision draft from research summary
+  const handleGenerateDraft = async () => {
+    if (!draft.researchSummary) return
+
+    setLoading(true)
+    try {
+      await updateDraft(draft.id, { jobStatus: 'generating_draft' })
+      setDraft((d) => ({ ...d, jobStatus: 'generating_draft' }))
+
+      const response = await fetch(`${API_BASE}/provision/generate-draft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          research_summary: draft.researchSummary,
+          entity_name: draft.entityName || '',
+          input_description: draft.inputDescription,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to generate draft')
+      }
+
+      const result = await response.json()
+
+      // Update draft with generated content
+      await updateDraft(draft.id, {
+        title: result.title,
+        descriptionShort: result.description_short,
+        description: result.description,
+        summary: result.summary_md,
+        provisionType: result.provision_type,
+        relevance: result.relevance,
+        confidence: String(result.confidence),
+        sourceUrls: result.source_urls,
+        jobStatus: 'review',
+      })
+
+      setDraft((d) => ({
+        ...d,
+        title: result.title,
+        descriptionShort: result.description_short,
+        description: result.description,
+        summary_md: result.summary_md,
+        provisionType: result.provision_type,
+        relevance: result.relevance,
+        confidence: String(result.confidence),
+        sourceUrls: result.source_urls,
+        jobStatus: 'review',
+      }))
+
+      // Update editable fields
+      setEditedTitle(result.title || '')
+      setEditedDescriptionShort(result.description_short || '')
+      setEditedDescription(result.description || '')
+      setEditedSummary(result.summary_md || '')
+      setEditedRelevance(result.relevance || null)
+      setEditedProvisionType(result.provision_type || null)
+
+      toast({
+        title: 'Draft generated',
+        description: 'Review and edit the provision details',
+      })
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to generate draft',
+        description: String(error),
+      })
+      await updateDraft(draft.id, { jobStatus: 'research_complete' })
+      setDraft((d) => ({ ...d, jobStatus: 'research_complete' }))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Auto-generate prompt on mount if in input state
   useEffect(() => {
-    if (draft.jobStatus === 'pending') {
-      handleClassify()
+    if (draft.jobStatus === 'input') {
+      handleGeneratePrompt()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Auto-generate draft when research completes
+  useEffect(() => {
+    if (draft.jobStatus === 'research_complete' && draft.researchSummary) {
+      handleGenerateDraft()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draft.jobStatus, draft.researchSummary])
 
   // Save to production
   const handleSave = async () => {
@@ -259,6 +313,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         descriptionShort: editedDescriptionShort,
         description: editedDescription,
         summary: editedSummary,
+        provisionType: editedProvisionType ?? undefined,
         relevance: editedRelevance ?? undefined,
       })
 
@@ -297,14 +352,14 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
     }
   }
 
-  // Retry research
+  // Retry from beginning
   const handleRetry = async () => {
     await updateDraft(draft.id, {
-      jobStatus: 'pending',
+      jobStatus: 'input',
       errorMessage: undefined,
     })
-    setDraft((d) => ({ ...d, jobStatus: 'pending', errorMessage: null }))
-    handleClassify()
+    setDraft((d) => ({ ...d, jobStatus: 'input', errorMessage: null }))
+    handleGeneratePrompt()
   }
 
   // Render based on status
@@ -315,112 +370,61 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         <span className="text-sm text-gray-500">Status:</span>
         <Badge
           className={
-            draft.jobStatus === 'completed'
+            draft.jobStatus === 'review' || draft.jobStatus === 'completed'
               ? 'bg-green-100 text-green-800'
               : draft.jobStatus === 'failed'
                 ? 'bg-red-100 text-red-800'
-                : draft.jobStatus === 'researching'
+                : draft.jobStatus === 'researching' || draft.jobStatus === 'generating_draft'
                   ? 'bg-yellow-100 text-yellow-800'
                   : 'bg-gray-100 text-gray-800'
           }
         >
-          {draft.jobStatus}
+          {draft.jobStatus.replace('_', ' ')}
         </Badge>
-        {draft.confirmedType && (
+        {draft.provisionType && (
           <Badge className="bg-indigo-100 text-indigo-800">
-            {draft.confirmedType}
+            {draft.provisionType}
           </Badge>
         )}
       </div>
 
-      {/* Step 1: Classifying */}
-      {(draft.jobStatus === 'pending' || draft.jobStatus === 'classifying') && (
+      {/* Input description */}
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <p className="text-sm font-medium text-gray-700">Research Topic</p>
+        <p className="text-sm text-gray-600 mt-1">{draft.inputDescription}</p>
+      </div>
+
+      {/* Step 1: Generating prompt */}
+      {draft.jobStatus === 'input' && (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4" />
-          <p className="text-gray-500">Analyzing provision type...</p>
+          <p className="text-gray-500">Generating research prompt...</p>
         </div>
       )}
 
-      {/* Step 2: Classified - confirm type */}
-      {draft.jobStatus === 'classified' && (
+      {/* Step 2: Prompt generated - review and approve */}
+      {draft.jobStatus === 'prompt_generated' && (
         <div className="space-y-4">
-          {classifyResult && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm font-medium text-blue-800">
-                AI Suggestion: {classifyResult.suggested_type}
-              </p>
-              <p className="text-sm text-blue-600 mt-1">
-                {classifyResult.reasoning}
-              </p>
-              <p className="text-xs text-blue-500 mt-1">
-                Confidence: {Math.round(classifyResult.confidence * 100)}%
-              </p>
-            </div>
-          )}
-
           <div className="space-y-2">
-            <Label>Select provision type</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {PROVISION_TYPES.map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setSelectedType(type)}
-                  className={`p-3 border rounded-lg text-left transition-colors ${
-                    selectedType === type
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <p className="font-medium capitalize">{type}</p>
-                  <p className="text-xs text-gray-500">
-                    {typeDescriptions[type]}
-                  </p>
-                </button>
-              ))}
-            </div>
+            <Label htmlFor="research-prompt">Research Prompt (AI Generated)</Label>
+            <Textarea
+              id="research-prompt"
+              value={researchPrompt}
+              onChange={(e) => setResearchPrompt(e.target.value)}
+              rows={10}
+              className="font-mono text-sm"
+            />
+            <p className="text-xs text-gray-500">
+              Review and edit the prompt if needed before starting research
+            </p>
           </div>
 
-          {/* Agent selection - only for ownership type */}
-          {selectedType === 'ownership' && (
-            <div className="space-y-2">
-              <Label>Select research agent</Label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedAgent('lcdeep')}
-                  className={`p-3 border rounded-lg text-left transition-colors ${
-                    selectedAgent === 'lcdeep'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <p className="font-medium">LangChain + MCP</p>
-                  <p className="text-xs text-gray-500">
-                    Uses MCP tools (search_engine, scrape_as_markdown, query_wikipedia)
-                  </p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedAgent('claude')}
-                  className={`p-3 border rounded-lg text-left transition-colors ${
-                    selectedAgent === 'claude'
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <p className="font-medium">Claude SDK</p>
-                  <p className="text-xs text-gray-500">
-                    Uses built-in tools (WebSearch, WebFetch)
-                  </p>
-                </button>
-              </div>
-            </div>
-          )}
-
           <div className="flex gap-3">
-            <Button onClick={handleStartResearch} disabled={!selectedType || loading}>
+            <Button onClick={handleStartResearch} disabled={!researchPrompt || loading}>
               {loading ? 'Starting...' : 'Start Research'}
+            </Button>
+            <Button variant="outline" onClick={handleGeneratePrompt} disabled={loading}>
+              Regenerate
             </Button>
             <Button variant="outline" onClick={handleDelete} disabled={loading}>
               Delete Draft
@@ -433,20 +437,24 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
       {draft.jobStatus === 'researching' && (
         <div className="text-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4" />
-          <p className="text-gray-500">
-            Researching {draft.confirmedType} provision...
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            This may take a few minutes
-          </p>
+          <p className="text-gray-500">Researching provision...</p>
+          <p className="text-xs text-gray-400 mt-2">This may take a few minutes</p>
         </div>
       )}
 
-      {/* Step 4: Failed */}
+      {/* Step 4: Generating draft */}
+      {(draft.jobStatus === 'research_complete' || draft.jobStatus === 'generating_draft') && (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4" />
+          <p className="text-gray-500">Generating provision draft...</p>
+        </div>
+      )}
+
+      {/* Step 5: Failed */}
       {draft.jobStatus === 'failed' && (
         <div className="space-y-4">
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-red-800">Research Failed</p>
+            <p className="text-sm font-medium text-red-800">Process Failed</p>
             <p className="text-sm text-red-600 mt-1">{draft.errorMessage}</p>
           </div>
 
@@ -459,9 +467,19 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         </div>
       )}
 
-      {/* Step 5: Completed - review and edit */}
-      {draft.jobStatus === 'completed' && (
+      {/* Step 6: Review and edit */}
+      {draft.jobStatus === 'review' && (
         <div className="space-y-6">
+          {/* Research summary (collapsed by default) */}
+          <details className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <summary className="text-sm font-medium text-blue-800 cursor-pointer">
+              View Research Summary
+            </summary>
+            <pre className="text-xs text-blue-600 mt-2 whitespace-pre-wrap overflow-auto max-h-64">
+              {draft.researchSummary}
+            </pre>
+          </details>
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
@@ -473,18 +491,35 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="descriptionShort">
-                Short Description (max 100 chars)
-              </Label>
+              <Label>Provision Type</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {PROVISION_TYPES.map((type) => (
+                  <button
+                    key={type}
+                    type="button"
+                    onClick={() => setEditedProvisionType(type)}
+                    className={`p-3 border rounded-lg text-left transition-colors ${
+                      editedProvisionType === type
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <p className="font-medium capitalize">{type}</p>
+                    <p className="text-xs text-gray-500">{typeDescriptions[type]}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="descriptionShort">Short Description (max 100 chars)</Label>
               <Input
                 id="descriptionShort"
                 value={editedDescriptionShort}
                 onChange={(e) => setEditedDescriptionShort(e.target.value)}
                 maxLength={100}
               />
-              <p className="text-xs text-gray-400">
-                {editedDescriptionShort.length}/100
-              </p>
+              <p className="text-xs text-gray-400">{editedDescriptionShort.length}/100</p>
             </div>
 
             <div className="space-y-2">
@@ -496,9 +531,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
                 maxLength={1000}
                 rows={3}
               />
-              <p className="text-xs text-gray-400">
-                {editedDescription.length}/1000
-              </p>
+              <p className="text-xs text-gray-400">{editedDescription.length}/1000</p>
             </div>
 
             <div className="space-y-2">
@@ -511,9 +544,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
                 rows={10}
                 className="font-mono text-sm"
               />
-              <p className="text-xs text-gray-400">
-                {editedSummary.length}/20000
-              </p>
+              <p className="text-xs text-gray-400">{editedSummary.length}/20000</p>
             </div>
 
             <div className="space-y-2">
@@ -564,7 +595,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           </div>
 
           <div className="flex gap-3 pt-4 border-t">
-            <Button onClick={handleSave} disabled={loading}>
+            <Button onClick={handleSave} disabled={loading || !editedProvisionType}>
               {loading ? 'Saving...' : 'Save to Production'}
             </Button>
             <Button variant="outline" onClick={handleDelete} disabled={loading}>

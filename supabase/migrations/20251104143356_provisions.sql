@@ -121,20 +121,32 @@ create table if not exists public.provision_drafts (
   -- User input
   input_description text not null,
 
-  -- Classification step
-  suggested_type text check (suggested_type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
-  confirmed_type text check (confirmed_type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
+  -- Prompt generation phase
+  research_prompt text,
 
-  -- Job tracking
-  job_id text,
-  job_status text not null default 'pending' check (job_status in ('pending', 'classifying', 'classified', 'researching', 'completed', 'failed')),
+  -- Research phase (loose coupling via task_id)
+  research_task_id uuid,                   -- Links to ra_research_tasks (no FK)
+  research_summary text,                   -- Cached summary from research
+
+  -- Simplified job status (no classification steps)
+  job_status text not null default 'input' check (job_status in (
+    'input',              -- Initial: user provides topic
+    'prompt_generated',   -- LLM generated research prompt
+    'researching',        -- Research agent running
+    'research_complete',  -- Research done
+    'generating_draft',   -- LLM generating provision draft
+    'review',             -- User reviewing/editing
+    'completed',          -- Ready for production
+    'failed'
+  )),
   error_message text,
 
-  -- Research results (populated after job completes)
+  -- Draft content (populated by LLM after research)
   title text,
   description_short text check (length(description_short) <= 100),
   description text check (length(description) <= 1000),
   summary_md text check (length(summary_md) <= 20000),
+  provision_type text check (provision_type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
   extra_data jsonb default '{}',
 
   -- Metadata

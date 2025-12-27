@@ -340,25 +340,30 @@ export const provisionDrafts = pgTable('provision_drafts', {
 
   inputDescription: text('input_description').notNull(),
 
-  suggestedType: text('suggested_type', {
-    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
-  }),
-  confirmedType: text('confirmed_type', {
-    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
-  }),
+  // Prompt generation phase
+  researchPrompt: text('research_prompt'),
 
-  jobId: text('job_id'),
+  // Research phase (loose coupling via task_id)
+  researchTaskId: uuid('research_task_id'),  // Links to ra_research_tasks (no FK)
+  researchSummary: text('research_summary'),
+
+  // Simplified job status (no classification steps)
   jobStatus: text('job_status', {
-    enum: ['pending', 'classifying', 'classified', 'researching', 'completed', 'failed']
-  }).notNull().default('pending'),
+    enum: ['input', 'prompt_generated', 'researching', 'research_complete', 'generating_draft', 'review', 'completed', 'failed']
+  }).notNull().default('input'),
   errorMessage: text('error_message'),
 
+  // Draft content (populated by LLM after research)
   title: text('title'),
   descriptionShort: text('description_short'),
   description: text('description'),
   summary: text('summary_md'),
+  provisionType: text('provision_type', {
+    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
+  }),
   extraData: jsonb('extra_data').$type<Record<string, unknown>>(),
 
+  // Metadata
   confidence: numeric('confidence'),
   sourceUrls: text('source_urls').array(),
   relevance: integer('relevance'),

@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from api.routes.research import router as research_router
+from api.routes.provision import router as provision_router
 
 app = FastAPI(
     title="Provision Ingestion API",
@@ -42,6 +43,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(research_router, tags=["Research"])
+app.include_router(provision_router, tags=["Provision"])
 
 
 @app.get("/health")

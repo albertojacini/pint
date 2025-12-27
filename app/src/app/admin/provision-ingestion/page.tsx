@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-gray-100 text-gray-800',
-  classifying: 'bg-blue-100 text-blue-800',
-  classified: 'bg-purple-100 text-purple-800',
+  input: 'bg-gray-100 text-gray-800',
+  prompt_generated: 'bg-blue-100 text-blue-800',
   researching: 'bg-yellow-100 text-yellow-800',
-  completed: 'bg-green-100 text-green-800',
+  research_complete: 'bg-purple-100 text-purple-800',
+  generating_draft: 'bg-orange-100 text-orange-800',
+  review: 'bg-green-100 text-green-800',
+  completed: 'bg-green-200 text-green-900',
   failed: 'bg-red-100 text-red-800',
 }
 
@@ -62,13 +64,13 @@ export default async function ProvisionIngestionPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    {draft.confirmedType && (
-                      <Badge className={typeColors[draft.confirmedType]}>
-                        {draft.confirmedType}
+                    {draft.provisionType && (
+                      <Badge className={typeColors[draft.provisionType]}>
+                        {draft.provisionType}
                       </Badge>
                     )}
-                    <Badge className={statusColors[draft.jobStatus]}>
-                      {draft.jobStatus}
+                    <Badge className={statusColors[draft.jobStatus] || 'bg-gray-100 text-gray-800'}>
+                      {draft.jobStatus.replace('_', ' ')}
                     </Badge>
                   </div>
                 </div>

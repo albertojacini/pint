@@ -9,7 +9,7 @@ import type { ApiResponse } from '@pint/types'
 
 // Provision types
 export type ProvisionType = 'ownership' | 'contract' | 'regulation' | 'taxation' | 'allocation' | 'designation'
-export type JobStatus = 'pending' | 'classifying' | 'classified' | 'researching' | 'completed' | 'failed'
+export type JobStatus = 'input' | 'prompt_generated' | 'researching' | 'research_complete' | 'generating_draft' | 'review' | 'completed' | 'failed'
 
 export interface ProvisionDraft {
   id: string
@@ -17,15 +17,16 @@ export interface ProvisionDraft {
   entityName?: string
   createdBy: string | null
   inputDescription: string
-  suggestedType: ProvisionType | null
-  confirmedType: ProvisionType | null
-  jobId: string | null
+  researchPrompt: string | null
+  researchTaskId: string | null
+  researchSummary: string | null
   jobStatus: JobStatus
   errorMessage: string | null
   title: string | null
   descriptionShort: string | null
   description: string | null
   summary_md: string | null
+  provisionType: ProvisionType | null
   extraData: Record<string, unknown> | null
   confidence: string | null
   relevance: number | null
@@ -57,7 +58,7 @@ export async function createDraft(input: {
       entityId: input.entityId,
       createdBy: user.id,
       inputDescription: input.description,
-      jobStatus: 'pending',
+      jobStatus: 'input',
     })
     .returning({ id: provisionDrafts.id })
 
@@ -68,15 +69,16 @@ export async function createDraft(input: {
 export async function updateDraft(
   id: string,
   data: Partial<{
-    suggestedType: ProvisionType
-    confirmedType: ProvisionType
-    jobId: string
+    researchPrompt: string
+    researchTaskId: string
+    researchSummary: string
     jobStatus: JobStatus
     errorMessage: string
     title: string
     descriptionShort: string
     description: string
     summary: string
+    provisionType: ProvisionType
     extraData: Record<string, unknown>
     confidence: string
     relevance: number
@@ -119,12 +121,12 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
     return { ok: false, error: 'Draft not found' }
   }
 
-  if (draft.jobStatus !== 'completed') {
-    return { ok: false, error: 'Draft is not complete' }
+  if (draft.jobStatus !== 'review' && draft.jobStatus !== 'completed') {
+    return { ok: false, error: 'Draft is not ready for production' }
   }
 
-  if (!draft.title || !draft.confirmedType) {
-    return { ok: false, error: 'Draft is missing required fields' }
+  if (!draft.title || !draft.provisionType) {
+    return { ok: false, error: 'Draft is missing required fields (title or provision type)' }
   }
 
   const slug = generateSlug(draft.title)
@@ -144,11 +146,11 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
     })
     .returning({ id: provisions.id })
 
-  // Create type association from confirmedType
+  // Create type association from provisionType
   const [typeResult] = await db
     .select({ id: provisionTypes.id })
     .from(provisionTypes)
-    .where(eq(provisionTypes.code, draft.confirmedType))
+    .where(eq(provisionTypes.code, draft.provisionType))
 
   if (typeResult) {
     await db.insert(provisionTypeAssociations).values({
@@ -175,15 +177,16 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       entityName: politicalEntities.name,
       createdBy: provisionDrafts.createdBy,
       inputDescription: provisionDrafts.inputDescription,
-      suggestedType: provisionDrafts.suggestedType,
-      confirmedType: provisionDrafts.confirmedType,
-      jobId: provisionDrafts.jobId,
+      researchPrompt: provisionDrafts.researchPrompt,
+      researchTaskId: provisionDrafts.researchTaskId,
+      researchSummary: provisionDrafts.researchSummary,
       jobStatus: provisionDrafts.jobStatus,
       errorMessage: provisionDrafts.errorMessage,
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
       summary_md: provisionDrafts.summary,
+      provisionType: provisionDrafts.provisionType,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
       relevance: provisionDrafts.relevance,
@@ -208,15 +211,16 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       entityName: politicalEntities.name,
       createdBy: provisionDrafts.createdBy,
       inputDescription: provisionDrafts.inputDescription,
-      suggestedType: provisionDrafts.suggestedType,
-      confirmedType: provisionDrafts.confirmedType,
-      jobId: provisionDrafts.jobId,
+      researchPrompt: provisionDrafts.researchPrompt,
+      researchTaskId: provisionDrafts.researchTaskId,
+      researchSummary: provisionDrafts.researchSummary,
       jobStatus: provisionDrafts.jobStatus,
       errorMessage: provisionDrafts.errorMessage,
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
       summary_md: provisionDrafts.summary,
+      provisionType: provisionDrafts.provisionType,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
       relevance: provisionDrafts.relevance,
