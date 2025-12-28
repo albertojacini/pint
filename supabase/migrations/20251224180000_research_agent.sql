@@ -47,7 +47,6 @@ create table if not exists public.ra_findings (
   task_id uuid not null references public.ra_research_tasks(id) on delete cascade,
   source_id uuid references public.ra_sources(id) on delete set null,
   content text not null,
-  finding_type text check (finding_type in ('fact', 'claim', 'statistic', 'quote', 'definition', 'opinion')),
   confidence float check (confidence >= 0.0 and confidence <= 1.0),
   embedding vector(1536),
   metadata jsonb default '{}',
@@ -101,7 +100,6 @@ create index if not exists idx_ra_sources_url on public.ra_sources(url);
 -- ra_findings indexes
 create index if not exists idx_ra_findings_task_id on public.ra_findings(task_id);
 create index if not exists idx_ra_findings_source_id on public.ra_findings(source_id);
-create index if not exists idx_ra_findings_finding_type on public.ra_findings(finding_type);
 create index if not exists idx_ra_findings_embedding on public.ra_findings using ivfflat (embedding vector_cosine_ops) where embedding is not null;
 
 -- ra_summaries indexes

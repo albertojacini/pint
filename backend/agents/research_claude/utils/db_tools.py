@@ -106,7 +106,6 @@ class DatabaseTools:
         task_id: str,
         source_id: str,
         content: str,
-        finding_type: str = 'general',
         confidence: float = 0.8,
         metadata: Optional[Dict[str, Any]] = None
     ) -> str:
@@ -117,7 +116,6 @@ class DatabaseTools:
             task_id: UUID of the research task
             source_id: UUID of the source this finding came from
             content: The finding/fact/claim
-            finding_type: Type of finding ('statistic', 'policy', 'event', 'general')
             confidence: Confidence score (0.0-1.0)
             metadata: Extra structured data
 
@@ -130,14 +128,13 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             finding_id = await conn.fetchval(
                 """
-                INSERT INTO ra_findings (task_id, source_id, content, finding_type, confidence, metadata, created_at)
-                VALUES ($1, $2, $3, $4, $5, $6, NOW())
+                INSERT INTO ra_findings (task_id, source_id, content, confidence, metadata, created_at)
+                VALUES ($1, $2, $3, $4, $5, NOW())
                 RETURNING id
                 """,
                 task_id,
                 source_id,
                 content,
-                finding_type,
                 confidence,
                 json.dumps(metadata) if metadata else None
             )
@@ -171,7 +168,7 @@ class DatabaseTools:
             # Get all findings
             findings = await conn.fetch(
                 """
-                SELECT f.id, f.source_id, f.content, f.finding_type, f.confidence, f.metadata, s.url as source_url
+                SELECT f.id, f.source_id, f.content, f.confidence, f.metadata, s.url as source_url
                 FROM ra_findings f
                 JOIN ra_sources s ON s.id = f.source_id
                 WHERE f.task_id = $1

@@ -53,7 +53,7 @@ async def save_source_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
 @tool(
     "SaveFinding",
-    "Save a specific research finding/fact extracted from a source. Required: task_id, source_id, content. Optional: finding_type ('statistic'|'policy'|'event'|'general', default 'general'), confidence (0.0-1.0, default 0.8), metadata (dict)",
+    "Save a specific research finding/fact extracted from a source. Required: task_id, source_id, content. Optional: confidence (0.0-1.0, default 0.8), metadata (dict)",
     {
         "task_id": str,
         "source_id": str,
@@ -67,7 +67,6 @@ async def save_finding_tool(args: Dict[str, Any]) -> Dict[str, Any]:
         args["task_id"],
         args["source_id"],
         args["content"],
-        args.get("finding_type", "general"),
         args.get("confidence", 0.8),
         args.get("metadata")
     )
@@ -100,7 +99,7 @@ async def load_research_data_tool(args: Dict[str, Any]) -> Dict[str, Any]:
     # Format findings
     findings_text = f"## Findings ({len(data['findings'])} total)\n\n"
     for finding in data['findings']:
-        findings_text += f"- [{finding['finding_type']}] {finding['content']}\n"
+        findings_text += f"- {finding['content']}\n"
         findings_text += f"  Source: {finding['source_url']}\n"
         findings_text += f"  Confidence: {finding['confidence']}\n\n"
 

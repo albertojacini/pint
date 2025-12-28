@@ -34,7 +34,11 @@ async def get_search_tools() -> list[BaseTool]:
     Get BrightData and Wikipedia search tools from MCP client.
 
     Returns only: search_engine, scrape_as_markdown, query_wikipedia
+
+    Optimized for reduced token usage with aggressive truncation.
     """
+    from langchain_core.tools import StructuredTool
+
     mcp_client = get_mcp_client()
     all_tools = await mcp_client.get_tools()
 
@@ -42,8 +46,25 @@ async def get_search_tools() -> list[BaseTool]:
     tool_names = {"search_engine", "scrape_as_markdown", "query_wikipedia"}
     search_tools = [t for t in all_tools if t.name in tool_names]
 
-    # Wrap with truncation to prevent context overflow
-    wrapped_tools = [create_truncating_tool(tool) for tool in search_tools]
+    # Wrap with MORE aggressive truncation (20k chars = ~5k tokens instead of 40k/10k)
+    MAX_CHARS_LCDEEP = 20000
+
+    def create_truncating_tool_lcdeep(original_tool: BaseTool) -> StructuredTool:
+        """Create tool with aggressive truncation for lcdeep agent."""
+        async def truncated_func(**kwargs) -> str:
+            result = await original_tool.ainvoke(kwargs)
+            if isinstance(result, str) and len(result) > MAX_CHARS_LCDEEP:
+                return f"{result[:MAX_CHARS_LCDEEP]}\n\n[... TRUNCATED - {len(result) - MAX_CHARS_LCDEEP} characters removed for efficiency ...]"
+            return result
+
+        return StructuredTool.from_function(
+            coroutine=truncated_func,
+            name=original_tool.name,
+            description=original_tool.description,
+            args_schema=original_tool.args_schema,
+        )
+
+    wrapped_tools = [create_truncating_tool_lcdeep(tool) for tool in search_tools]
 
     return wrapped_tools
 

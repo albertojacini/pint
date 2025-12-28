@@ -45,8 +45,10 @@ Use markdown formatting: headings, lists, bold, links.
 </requirements>
 
 <summary>
-1. Call LoadResearchData(task_id) to get all research
-2. Synthesize findings into clear markdown summary
-3. Call SaveSummary(task_id, content, summary_type='final')
-4. Confirm completion with summary_id
+1. Extract task_id UUID from prompt (look for "TASK_ID: [uuid]")
+   - task_id is a UUID (32+ chars with dashes), NOT the research topic!
+2. Call LoadResearchData(task_id) to get all research
+3. Synthesize findings into clear markdown summary
+4. Call SaveSummary(task_id, content, summary_type='final')
+5. Confirm completion with summary_id
 </summary>

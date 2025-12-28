@@ -24,10 +24,6 @@ class SaveFindingInput(BaseModel):
     task_id: str = Field(description="UUID of the research task")
     source_id: str = Field(description="UUID of the source this finding came from")
     content: str = Field(description="The finding/fact/claim")
-    finding_type: str = Field(
-        default="general",
-        description="Type of finding: 'statistic', 'policy', 'event', or 'general'"
-    )
     confidence: float = Field(
         default=0.8,
         ge=0.0,
@@ -95,14 +91,13 @@ async def save_finding_impl(
     task_id: str,
     source_id: str,
     content: str,
-    finding_type: str = "general",
     confidence: float = 0.8,
     metadata: Optional[Dict[str, Any]] = None
 ) -> str:
     """Save a research finding to the database."""
     db_tools = get_db_tools()
     finding_id = await db_tools.save_finding(
-        task_id, source_id, content, finding_type, confidence, metadata
+        task_id, source_id, content, confidence, metadata
     )
     return f"Saved finding with ID: {finding_id}"
 
@@ -123,7 +118,7 @@ async def load_research_data_impl(task_id: str) -> str:
     # Format findings
     findings_text = f"## Findings ({len(data['findings'])} total)\n\n"
     for finding in data['findings']:
-        findings_text += f"- [{finding['finding_type']}] {finding['content']}\n"
+        findings_text += f"- {finding['content']}\n"
         findings_text += f"  Source: {finding['source_url']}\n"
         findings_text += f"  Confidence: {finding['confidence']}\n\n"
 
