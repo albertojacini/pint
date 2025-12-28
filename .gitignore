@@ -72,3 +72,4 @@ agents/**/output/
 # Misc
 *.pem
 .cache
+**/NOTES
