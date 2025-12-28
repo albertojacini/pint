@@ -155,7 +155,7 @@ Generate the structured provision draft as JSON."""
         Returns:
             task_id from research agent
         """
-        task_id = await create_research_task(
+        task_id, _agent_type = await create_research_task(
             query=research_prompt,
             entity_id=entity_id,
             entity_name=entity_name
