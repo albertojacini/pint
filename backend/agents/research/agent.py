@@ -6,6 +6,10 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions, AgentDefinition, HookMatcher
+from langsmith.integrations.claude_agent_sdk import configure_claude_agent_sdk
+
+# Enable LangSmith tracing for observability
+configure_claude_agent_sdk()
 
 from agents.research.utils.subagent_tracker import SubagentTracker
 from agents.research.utils.transcript import setup_session, TranscriptWriter
