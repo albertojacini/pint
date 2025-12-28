@@ -76,14 +76,19 @@ User can:
 {
   "research_prompt": "...",
   "entity_name": "Milan",
-  "entity_id": "uuid"
+  "entity_id": "uuid",
+  "agent_type": "claude"  // or "lcdeep"
 }
 ```
+
+**Agent Selection** (via dropdown in UI):
+- **"claude"** (default): Claude SDK with built-in WebSearch
+- **"lcdeep"**: LangChain Deep Agents with BrightData (search_engine, scrape_as_markdown, query_wikipedia)
 
 **Backend Process**:
 1. Creates research task in `ra_research_tasks` table
 2. Returns `task_id` immediately
-3. Runs research agent in background (async)
+3. Runs selected research agent in background (async)
 
 **Output:**
 ```json
@@ -94,7 +99,8 @@ User can:
 
 **Research Agent**: Spawns subagents to:
 - Search web for information
-- Scrape relevant pages
+- Scrape relevant pages (lcdeep only)
+- Query Wikipedia (lcdeep only)
 - Extract findings
 - Save to `ra_sources` and `ra_findings` tables
 
@@ -299,7 +305,7 @@ The workflow includes automatic transitions:
    - Transitions to `review`
 
 **User interaction required**:
-- Approve research prompt (click "Start Research")
+- Approve research prompt and select agent (click "Start Research")
 - Review and edit final draft (click "Save to Production")
 
 ---

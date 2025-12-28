@@ -1,7 +1,7 @@
 """Provision drafting workflow service with inline LLM calls."""
 
 import json
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Literal
 
 from anthropic import Anthropic
 
@@ -140,7 +140,8 @@ Generate the structured provision draft as JSON."""
         self,
         research_prompt: str,
         entity_id: Optional[str] = None,
-        entity_name: Optional[str] = None
+        entity_name: Optional[str] = None,
+        agent_type: Literal["claude", "lcdeep"] = "claude"
     ) -> str:
         """
         Start research using the research agent.
@@ -151,6 +152,7 @@ Generate the structured provision draft as JSON."""
             research_prompt: The approved research prompt
             entity_id: Optional entity UUID
             entity_name: Optional entity name for context
+            agent_type: Which agent to use - "claude" or "lcdeep"
 
         Returns:
             task_id from research agent
@@ -158,7 +160,8 @@ Generate the structured provision draft as JSON."""
         task_id, _agent_type = await create_research_task(
             query=research_prompt,
             entity_id=entity_id,
-            entity_name=entity_name
+            entity_name=entity_name,
+            agent_type=agent_type
         )
         return task_id
 

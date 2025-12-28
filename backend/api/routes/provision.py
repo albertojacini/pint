@@ -1,8 +1,8 @@
 """Provision workflow endpoints."""
 
-from typing import Optional, List
+from typing import Optional, List, Literal
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from services.provision import get_provision_service
 from services.research import run_research_job
@@ -20,6 +20,10 @@ class StartResearchRequest(BaseModel):
     research_prompt: str
     entity_id: Optional[str] = None
     entity_name: Optional[str] = None
+    agent_type: Literal["claude", "lcdeep"] = Field(
+        default="claude",
+        description="Which research agent to use: 'claude' (Claude SDK) or 'lcdeep' (LangChain Deep Agents)"
+    )
 
 
 class GenerateDraftRequest(BaseModel):
@@ -74,16 +78,21 @@ async def start_research(
 
     Step 3 of workflow: kicks off research agent.
     Returns immediately with task_id. Poll /provision/research-status/{task_id} for results.
+
+    You can choose which agent to use via agent_type:
+    - "claude": Use Claude SDK research agent (default)
+    - "lcdeep": Use LangChain Deep Agents research agent
     """
     service = get_provision_service()
     task_id = await service.start_research(
         research_prompt=request.research_prompt,
         entity_id=request.entity_id,
         entity_name=request.entity_name,
+        agent_type=request.agent_type,
     )
 
-    # Run research in background
-    background_tasks.add_task(run_research_job, task_id)
+    # Run research in background with selected agent
+    background_tasks.add_task(run_research_job, task_id, request.agent_type)
 
     return StartResearchResponse(task_id=task_id)
 
