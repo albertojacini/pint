@@ -1,16 +1,18 @@
-"""Research service using the unified research_agent."""
+"""Research service supporting both research_claude and research_lcdeep agents."""
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Literal
 
 from agents.research_claude.utils.db_tools import get_db_tools
-from agents.research_claude.agent import run as run_research_agent
+from agents.research_claude.agent import run as run_research_claude
+from agents.research_lcdeep.agent import run as run_research_lcdeep
 
 
 async def create_research_task(
     query: str,
     entity_id: Optional[str] = None,
-    entity_name: Optional[str] = None
-) -> str:
+    entity_name: Optional[str] = None,
+    agent_type: Literal["claude", "lcdeep"] = "claude"
+) -> tuple[str, Literal["claude", "lcdeep"]]:
     """
     Create a new research task in the database.
 
@@ -18,9 +20,10 @@ async def create_research_task(
         query: The research question/description
         entity_id: Optional UUID of the entity being researched
         entity_name: Optional name of the entity (appended to query for context)
+        agent_type: Which agent to use - "claude" (Claude SDK) or "lcdeep" (LangChain Deep Agents)
 
     Returns:
-        task_id: UUID of the created task
+        tuple of (task_id, agent_type)
     """
     db = get_db_tools()
     await db.connect()
@@ -35,17 +38,21 @@ async def create_research_task(
         subtopics=[],
         entity_id=entity_id
     )
-    return task_id
+    return task_id, agent_type
 
 
-async def run_research_job(task_id: str):
+async def run_research_job(task_id: str, agent_type: Literal["claude", "lcdeep"] = "claude"):
     """
     Run research agent for a task. Designed to be run as a background task.
 
     Args:
         task_id: UUID of the research task
+        agent_type: Which agent to use - "claude" or "lcdeep"
     """
-    await run_research_agent(task_id)
+    if agent_type == "lcdeep":
+        await run_research_lcdeep(task_id)
+    else:
+        await run_research_claude(task_id)
 
 
 async def get_task_status(task_id: str) -> Optional[Dict[str, Any]]:

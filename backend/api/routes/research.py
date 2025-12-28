@@ -27,15 +27,20 @@ async def start_research(
     Start a research job.
 
     Returns immediately with a task_id. Poll /research/{task_id} for status.
+
+    You can choose which agent to use via agent_type:
+    - "claude": Use Claude SDK research agent (default)
+    - "lcdeep": Use LangChain Deep Agents research agent
     """
-    task_id = await create_research_task(
+    task_id, agent_type = await create_research_task(
         query=request.description,
         entity_id=request.entity_id,
         entity_name=request.entity_name,
+        agent_type=request.agent_type,
     )
 
     # Run the research job in the background
-    background_tasks.add_task(run_research_job, task_id)
+    background_tasks.add_task(run_research_job, task_id, agent_type)
 
     return ResearchResponse(task_id=task_id)
 
@@ -66,6 +71,10 @@ async def revise_research(
     Re-run research with user feedback incorporated.
 
     Creates a new task with the feedback appended to the original query.
+
+    You can choose which agent to use via agent_type:
+    - "claude": Use Claude SDK research agent (default)
+    - "lcdeep": Use LangChain Deep Agents research agent
     """
     original = await get_task_status(task_id)
 
@@ -75,12 +84,13 @@ async def revise_research(
     # Create new query with feedback
     new_query = f"{original['query']}\n\nUser feedback: {request.feedback}"
 
-    new_task_id = await create_research_task(
+    new_task_id, agent_type = await create_research_task(
         query=new_query,
         entity_id=original.get("entity_id"),
+        agent_type=request.agent_type,
     )
 
     # Run the research job in the background
-    background_tasks.add_task(run_research_job, new_task_id)
+    background_tasks.add_task(run_research_job, new_task_id, agent_type)
 
     return ReviseResponse(task_id=new_task_id, original_task_id=task_id)
