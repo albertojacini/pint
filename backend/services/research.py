@@ -2,8 +2,8 @@
 
 from typing import Optional, Dict, Any
 
-from agents.research.utils.db_tools import get_db_tools
-from agents.research.agent import run as run_research_agent
+from agents.research_claude.utils.db_tools import get_db_tools
+from agents.research_claude.agent import run as run_research_agent
 
 
 async def create_research_task(

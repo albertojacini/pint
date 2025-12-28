@@ -11,11 +11,11 @@ from langsmith.integrations.claude_agent_sdk import configure_claude_agent_sdk
 # Enable LangSmith tracing for observability
 configure_claude_agent_sdk()
 
-from agents.research.utils.subagent_tracker import SubagentTracker
-from agents.research.utils.transcript import setup_session, TranscriptWriter
-from agents.research.utils.message_handler import process_assistant_message
-from agents.research.utils.db_tools import get_db_tools
-from agents.research.tools import research_tools_server
+from agents.research_claude.utils.subagent_tracker import SubagentTracker
+from agents.research_claude.utils.transcript import setup_session, TranscriptWriter
+from agents.research_claude.utils.message_handler import process_assistant_message
+from agents.research_claude.utils.db_tools import get_db_tools
+from agents.research_claude.mcp_server import research_tools_server
 
 # Paths to prompt files
 PROMPTS_DIR = Path(__file__).parent / "prompts"
