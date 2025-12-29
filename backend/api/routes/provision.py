@@ -1,4 +1,35 @@
-"""Provision workflow endpoints."""
+"""Provision workflow endpoints.
+
+WORKFLOW: Multi-step provision generation with user approval points
+----------------------------------------------------------------------
+Step 1: Generate research prompt
+  POST /provision/generate-prompt
+  - Input: Brief user description + entity name
+  - Output: Detailed research prompt (AI-generated)
+  - User can review/edit before proceeding
+
+Step 2: Start research
+  POST /provision/start-research
+  - Input: Approved research prompt + agent type (claude/lcdeep)
+  - Output: task_id for polling
+  - Research runs in background
+
+Step 3: Poll for research completion
+  GET /provision/research-status/{task_id}
+  - Returns research status and summary when complete
+
+Step 4: Generate provision draft
+  POST /provision/generate-draft
+  - Input: Research summary from step 3
+  - Output: Structured provision draft with all metadata
+  - Decisions made: type, relevance, confidence, structure
+
+Step 5: User review and save (handled in frontend)
+  - User edits draft fields as needed
+  - Saves to production via server action
+
+See /backend/WORKFLOW.md for full architecture documentation.
+"""
 
 from typing import Optional, List, Literal
 from fastapi import APIRouter, HTTPException, BackgroundTasks

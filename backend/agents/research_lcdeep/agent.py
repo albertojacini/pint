@@ -1,4 +1,20 @@
-"""Entry point for research agent using LangChain Deep Agents."""
+"""Entry point for research agent using LangChain Deep Agents.
+
+SCOPE: Domain-agnostic information gathering only
+------------------------------------------------------
+This research agent is responsible for:
+- Gathering information from web sources (BrightData search tools)
+- Saving raw sources and findings to database (ra_* tables)
+- Synthesizing findings into research summaries (markdown)
+
+This research agent is NOT responsible for:
+- Provision-specific decisions (type, relevance, confidence)
+- Business logic or schema enforcement
+- Structuring data for provision format
+
+The research agent is domain-agnostic and could be used for any research task,
+not just provisions. All provision-specific logic belongs in the provision service.
+"""
 
 import asyncio
 import os

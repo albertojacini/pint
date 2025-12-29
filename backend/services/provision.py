@@ -1,4 +1,26 @@
-"""Provision drafting workflow service with inline LLM calls."""
+"""Provision drafting workflow service with inline LLM calls.
+
+SCOPE: Provision business logic and orchestration
+------------------------------------------------------
+This service is responsible for:
+- Generating research prompts from user input (inline LLM)
+- Orchestrating research agents for information gathering
+- Generating provision drafts from research summaries (inline LLM)
+- Making ALL provision-specific decisions:
+  * provision_type (ownership, contract, regulation, etc.)
+  * relevance scores (0-10)
+  * confidence scores (0.0-1.0)
+  * structuring data for provision schema
+  * enforcing business constraints (e.g., character limits)
+
+This service acts as the orchestration layer between:
+- User input (via API routes)
+- Research agents (domain-agnostic information gathering)
+- Database (persistence)
+
+The research agents provide raw information; this service transforms it into
+structured provisions with all necessary metadata and business logic applied.
+"""
 
 import json
 from typing import Optional, Dict, Any, Literal
