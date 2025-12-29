@@ -5,6 +5,7 @@ import json
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 import asyncpg
+from agents.utils.task_context import get_current_task_id
 
 
 class DatabaseTools:
@@ -64,7 +65,6 @@ class DatabaseTools:
 
     async def save_source(
         self,
-        task_id: str,
         url: str,
         title: str,
         content: str,
@@ -73,8 +73,9 @@ class DatabaseTools:
         """
         Save a web source discovered during research.
 
+        Note: task_id is automatically retrieved from context.
+
         Args:
-            task_id: UUID of the research task
             url: Source URL from WebSearch
             title: Page title
             content: Relevant excerpt from the source
@@ -85,6 +86,8 @@ class DatabaseTools:
         """
         if not self.pool:
             await self.connect()
+
+        task_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             source_id = await conn.fetchval(
@@ -103,7 +106,6 @@ class DatabaseTools:
 
     async def save_finding(
         self,
-        task_id: str,
         source_id: str,
         content: str,
         confidence: float = 0.8,
@@ -112,8 +114,9 @@ class DatabaseTools:
         """
         Save a research finding extracted from a source.
 
+        Note: task_id is automatically retrieved from context.
+
         Args:
-            task_id: UUID of the research task
             source_id: UUID of the source this finding came from
             content: The finding/fact/claim
             confidence: Confidence score (0.0-1.0)
@@ -124,6 +127,8 @@ class DatabaseTools:
         """
         if not self.pool:
             await self.connect()
+
+        task_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             finding_id = await conn.fetchval(
@@ -140,18 +145,19 @@ class DatabaseTools:
             )
             return str(finding_id)
 
-    async def load_research_data(self, task_id: str) -> Dict[str, Any]:
+    async def load_research_data(self) -> Dict[str, Any]:
         """
         Load all sources and findings for a research task.
 
-        Args:
-            task_id: UUID of the research task
+        Note: task_id is automatically retrieved from context.
 
         Returns:
             Dictionary containing sources and findings
         """
         if not self.pool:
             await self.connect()
+
+        task_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             # Get all sources
@@ -184,7 +190,6 @@ class DatabaseTools:
 
     async def save_summary(
         self,
-        task_id: str,
         content: str,
         summary_type: str = 'final',
         finding_ids: Optional[List[str]] = None,
@@ -194,8 +199,9 @@ class DatabaseTools:
         """
         Save a research summary to the database.
 
+        Note: task_id is automatically retrieved from context.
+
         Args:
-            task_id: UUID of the research task
             content: Markdown summary content
             summary_type: Type of summary ('overview', 'section', 'final')
             finding_ids: List of finding UUIDs to link
@@ -207,6 +213,8 @@ class DatabaseTools:
         """
         if not self.pool:
             await self.connect()
+
+        task_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             # Insert summary

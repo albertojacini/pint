@@ -16,6 +16,7 @@ from agents.research_claude.utils.transcript import setup_session, TranscriptWri
 from agents.research_claude.utils.message_handler import process_assistant_message
 from agents.research_claude.utils.db_tools import get_db_tools
 from agents.research_claude.mcp_server import research_tools_server
+from agents.utils.task_context import set_current_task_id
 
 # Paths to prompt files
 PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -274,12 +275,12 @@ async def run(task_id: str) -> str:
     )
 
     try:
-        async with ClaudeSDKClient(options=options) as client:
-            # Enhance prompt with task_id
-            enhanced_prompt = f"{query}\n\n[SYSTEM: Use task_id: {task_id} for all research]"
+        # Set task_id in context for all tool calls
+        set_current_task_id(task_id)
 
-            # Send to agent
-            await client.query(prompt=enhanced_prompt)
+        async with ClaudeSDKClient(options=options) as client:
+            # Send query to agent (no need to pass task_id - it's in context)
+            await client.query(prompt=query)
 
             # Process response (non-interactive, just consume the stream)
             async for msg in client.receive_response():

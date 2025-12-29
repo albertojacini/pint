@@ -13,6 +13,7 @@ from agents.mcp.client import get_mcp_client
 from agents.research_lcdeep.tools import get_database_tools
 from agents.research_claude.utils.db_tools import get_db_tools
 from agents.tools.agent_helpers import create_truncating_tool
+from agents.utils.task_context import set_current_task_id
 
 # Paths to prompt files
 PROMPTS_DIR = Path(__file__).parent / "prompts"
@@ -265,12 +266,12 @@ async def run(task_id: str) -> str:
     agent, mcp_client, _ = await create_agent()
 
     try:
-        # Enhance prompt with task_id
-        enhanced_prompt = f"{query}\n\n[SYSTEM: Use task_id: {task_id} for all research]"
+        # Set task_id in context for all tool calls
+        set_current_task_id(task_id)
 
-        # Invoke agent
+        # Invoke agent (no need to pass task_id - it's in context)
         await agent.ainvoke({
-            "messages": [{"role": "user", "content": enhanced_prompt}]
+            "messages": [{"role": "user", "content": query}]
         })
 
         # Mark task as completed

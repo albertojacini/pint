@@ -4,11 +4,11 @@ from typing import Optional, List, Dict, Any
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, Field
 from agents.research_claude.utils.db_tools import get_db_tools
+from agents.utils.task_context import get_current_task_id
 
 
 # Pydantic schemas for tool inputs
 class SaveSourceInput(BaseModel):
-    task_id: str = Field(description="UUID of the research task")
     url: str = Field(description="Source URL from search results")
     title: str = Field(description="Page title")
     content: str = Field(description="Relevant excerpt from the source")
@@ -16,7 +16,6 @@ class SaveSourceInput(BaseModel):
 
 
 class SaveFindingInput(BaseModel):
-    task_id: str = Field(description="UUID of the research task")
     source_id: str = Field(description="UUID of the source this finding came from")
     content: str = Field(description="The finding/fact/claim")
     confidence: float = Field(
@@ -32,11 +31,10 @@ class SaveFindingInput(BaseModel):
 
 
 class LoadResearchDataInput(BaseModel):
-    task_id: str = Field(description="UUID of the research task")
+    pass  # No parameters needed - task_id from context
 
 
 class SaveSummaryInput(BaseModel):
-    task_id: str = Field(description="UUID of the research task")
     content: str = Field(description="Markdown summary content")
     summary_type: str = Field(
         default="final",
@@ -63,37 +61,35 @@ class UpdateTaskStatusInput(BaseModel):
 
 # Tool implementation functions
 async def save_source_impl(
-    task_id: str,
     url: str,
     title: str,
     content: str,
     researcher_id: str
 ) -> str:
-    """Save a web source to the database."""
+    """Save a web source to the database. Task ID automatically from context."""
     db_tools = get_db_tools()
-    source_id = await db_tools.save_source(task_id, url, title, content, researcher_id)
+    source_id = await db_tools.save_source(url, title, content, researcher_id)
     return f"Saved source with ID: {source_id}"
 
 
 async def save_finding_impl(
-    task_id: str,
     source_id: str,
     content: str,
     confidence: float = 0.8,
     metadata: Optional[Dict[str, Any]] = None
 ) -> str:
-    """Save a research finding to the database."""
+    """Save a research finding to the database. Task ID automatically from context."""
     db_tools = get_db_tools()
     finding_id = await db_tools.save_finding(
-        task_id, source_id, content, confidence, metadata
+        source_id, content, confidence, metadata
     )
     return f"Saved finding with ID: {finding_id}"
 
 
-async def load_research_data_impl(task_id: str) -> str:
-    """Load all sources and findings for a research task."""
+async def load_research_data_impl() -> str:
+    """Load all sources and findings for a research task. Task ID automatically from context."""
     db_tools = get_db_tools()
-    data = await db_tools.load_research_data(task_id)
+    data = await db_tools.load_research_data()
 
     # Format sources
     sources_text = f"## Sources ({len(data['sources'])} total)\n\n"
@@ -114,17 +110,16 @@ async def load_research_data_impl(task_id: str) -> str:
 
 
 async def save_summary_impl(
-    task_id: str,
     content: str,
     summary_type: str = "final",
     finding_ids: Optional[List[str]] = None,
     parent_summary_id: Optional[str] = None,
     order: int = 0
 ) -> str:
-    """Save a research summary to the database."""
+    """Save a research summary to the database. Task ID automatically from context."""
     db_tools = get_db_tools()
     summary_id = await db_tools.save_summary(
-        task_id, content, summary_type, finding_ids, parent_summary_id, order
+        content, summary_type, finding_ids, parent_summary_id, order
     )
     return f"Saved summary with ID: {summary_id}"
 

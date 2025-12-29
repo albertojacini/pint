@@ -13,7 +13,6 @@ from agents.research_claude.utils.db_tools import get_db_tools
     "SaveSource",
     "Save a web source discovered during research to the database",
     {
-        "task_id": str,
         "url": str,
         "title": str,
         "content": str,
@@ -21,10 +20,9 @@ from agents.research_claude.utils.db_tools import get_db_tools
     }
 )
 async def save_source_tool(args: Dict[str, Any]) -> Dict[str, Any]:
-    """Save a web source to the database."""
+    """Save a web source to the database. Task ID is automatically from context."""
     db_tools = get_db_tools()
     source_id = await db_tools.save_source(
-        args["task_id"],
         args["url"],
         args["title"],
         args["content"],
@@ -40,18 +38,16 @@ async def save_source_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
 @tool(
     "SaveFinding",
-    "Save a specific research finding/fact extracted from a source. Required: task_id, source_id, content. Optional: confidence (0.0-1.0, default 0.8), metadata (dict)",
+    "Save a specific research finding/fact extracted from a source. Required: source_id, content. Optional: confidence (0.0-1.0, default 0.8), metadata (dict)",
     {
-        "task_id": str,
         "source_id": str,
         "content": str
     }
 )
 async def save_finding_tool(args: Dict[str, Any]) -> Dict[str, Any]:
-    """Save a research finding to the database."""
+    """Save a research finding to the database. Task ID is automatically from context."""
     db_tools = get_db_tools()
     finding_id = await db_tools.save_finding(
-        args["task_id"],
         args["source_id"],
         args["content"],
         args.get("confidence", 0.8),
@@ -67,13 +63,13 @@ async def save_finding_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
 @tool(
     "LoadResearchData",
-    "Load all research sources and findings from the database for a task",
-    {"task_id": str}
+    "Load all research sources and findings from the database for the current task",
+    {}
 )
 async def load_research_data_tool(args: Dict[str, Any]) -> Dict[str, Any]:
-    """Load all sources and findings for a research task."""
+    """Load all sources and findings for a research task. Task ID is automatically from context."""
     db_tools = get_db_tools()
-    data = await db_tools.load_research_data(args["task_id"])
+    data = await db_tools.load_research_data()
 
     # Format sources
     sources_text = f"## Sources ({len(data['sources'])} total)\n\n"
@@ -100,17 +96,15 @@ async def load_research_data_tool(args: Dict[str, Any]) -> Dict[str, Any]:
 
 @tool(
     "SaveSummary",
-    "Save a synthesized research summary to the database. Only task_id and content are required. Optional: summary_type (default 'final'), finding_ids (list of UUIDs), parent_summary_id (UUID), order (int, default 0)",
+    "Save a synthesized research summary to the database. Only content is required. Optional: summary_type (default 'final'), finding_ids (list of UUIDs), parent_summary_id (UUID), order (int, default 0)",
     {
-        "task_id": str,
         "content": str
     }
 )
 async def save_summary_tool(args: Dict[str, Any]) -> Dict[str, Any]:
-    """Save a research summary to the database."""
+    """Save a research summary to the database. Task ID is automatically from context."""
     db_tools = get_db_tools()
     summary_id = await db_tools.save_summary(
-        args["task_id"],
         args["content"],
         args.get("summary_type", "final"),
         args.get("finding_ids"),
