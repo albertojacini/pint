@@ -98,7 +98,7 @@ Given research findings, extract and structure the provision information.
 Respond with valid JSON only (no markdown code blocks, no extra text):
 {
   "title": "Official name of the provision (clear, concise)",
-  "description_short": "One-sentence summary (max 100 chars)",
+  "description_short": "One-sentence summary (STRICT LIMIT: exactly 100 characters or less)",
   "description": "Detailed description explaining what this provision is (max 1000 chars)",
   "summary_md": "Full markdown summary with sections: Overview, Key Details, History, Current Status (max 20000 chars)",
   "provision_type": "one of: ownership, contract, regulation, taxation, allocation, designation",
@@ -107,8 +107,10 @@ Respond with valid JSON only (no markdown code blocks, no extra text):
   "source_urls": ["list", "of", "source", "urls"]
 }
 
-Choose the provision_type that best matches the nature of what's being described.
-Ensure all text is factual and based on the research provided."""
+CRITICAL CONSTRAINTS:
+- description_short MUST be 100 characters or less (hard database constraint - will fail if longer)
+- Choose the provision_type that best matches the nature of what's being described
+- Ensure all text is factual and based on the research provided"""
 
         user_message = f"""Generate a provision draft from this research:
 
@@ -134,7 +136,14 @@ Generate the structured provision draft as JSON."""
             lines = response_text.split("\n")
             response_text = "\n".join(lines[1:-1])
 
-        return json.loads(response_text)
+        result = json.loads(response_text)
+
+        # Enforce database constraint: description_short must be <= 100 chars
+        if "description_short" in result and len(result["description_short"]) > 100:
+            # Truncate to 97 chars and add ellipsis
+            result["description_short"] = result["description_short"][:97] + "..."
+
+        return result
 
     async def start_research(
         self,
