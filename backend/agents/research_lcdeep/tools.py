@@ -7,11 +7,6 @@ from agents.research_claude.utils.db_tools import get_db_tools
 
 
 # Pydantic schemas for tool inputs
-class CreateResearchTaskInput(BaseModel):
-    query: str = Field(description="The research question or topic")
-    subtopics: List[str] = Field(description="List of 2-4 research subtopics to explore")
-
-
 class SaveSourceInput(BaseModel):
     task_id: str = Field(description="UUID of the research task")
     url: str = Field(description="Source URL from search results")
@@ -67,13 +62,6 @@ class UpdateTaskStatusInput(BaseModel):
 
 
 # Tool implementation functions
-async def create_research_task_impl(query: str, subtopics: List[str]) -> str:
-    """Create a new research task in the database."""
-    db_tools = get_db_tools()
-    task_id = await db_tools.create_research_task(query, subtopics)
-    return f"Created research task with ID: {task_id}"
-
-
 async def save_source_impl(
     task_id: str,
     url: str,
@@ -153,16 +141,13 @@ def get_database_tools() -> List[StructuredTool]:
     """
     Get LangChain tools for database operations.
 
+    Note: Does NOT include CreateResearchTask - tasks are created by the API layer
+    before the agent runs.
+
     Returns:
         List of StructuredTool instances
     """
     return [
-        StructuredTool.from_function(
-            coroutine=create_research_task_impl,
-            name="CreateResearchTask",
-            description="Create a new research task in the database to track research progress",
-            args_schema=CreateResearchTaskInput,
-        ),
         StructuredTool.from_function(
             coroutine=save_source_impl,
             name="SaveSource",

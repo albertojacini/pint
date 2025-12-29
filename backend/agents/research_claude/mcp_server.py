@@ -1,25 +1,12 @@
-"""Tool definitions for Claude Agent SDK to access database functions."""
+"""Tool definitions for Claude Agent SDK to access database functions.
+
+Note: CreateResearchTask is NOT included - tasks are created by the API layer
+before the agent runs.
+"""
 
 from typing import Dict, List, Any
 from claude_agent_sdk import tool, create_sdk_mcp_server
 from agents.research_claude.utils.db_tools import get_db_tools
-
-
-@tool(
-    "CreateResearchTask",
-    "Create a new research task in the database to track research progress",
-    {"query": str, "subtopics": list}
-)
-async def create_research_task_tool(args: Dict[str, Any]) -> Dict[str, Any]:
-    """Create a new research task in the database."""
-    db_tools = get_db_tools()
-    task_id = await db_tools.create_research_task(args["query"], args["subtopics"])
-    return {
-        "content": [{
-            "type": "text",
-            "text": f"Created research task with ID: {task_id}"
-        }]
-    }
 
 
 @tool(
@@ -163,7 +150,6 @@ research_tools_server = create_sdk_mcp_server(
     name="research-tools",
     version="1.0.0",
     tools=[
-        create_research_task_tool,
         save_source_tool,
         save_finding_tool,
         load_research_data_tool,

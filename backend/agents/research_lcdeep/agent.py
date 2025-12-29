@@ -99,7 +99,7 @@ async def create_agent():
     # Initialize model (using Haiku for efficiency like research_claude)
     model = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0)
 
-    # Define researcher subagent (gets search + database tools)
+    # Define researcher subagent (gets search + save tools only)
     researcher_subagent = SubAgent(
         name="researcher",
         description=(
@@ -109,7 +109,7 @@ async def create_agent():
             "Saves research findings to database for later use by summarizer. "
             "Ideal for complex research tasks that require deep searching and cross-referencing."
         ),
-        tools=search_tools + db_tools_list,  # Gets both search and database tools
+        tools=search_tools + [t for t in db_tools_list if t.name in {"SaveSource", "SaveFinding"}],
         system_prompt=researcher_prompt,
         model=model,
     )
