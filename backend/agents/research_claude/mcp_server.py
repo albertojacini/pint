@@ -6,7 +6,7 @@ before the agent runs.
 
 from typing import Dict, List, Any
 from claude_agent_sdk import tool, create_sdk_mcp_server
-from agents.research_claude.utils.db_tools import get_db_tools
+from agents.utils.db_tools import get_db_tools
 
 
 @tool(

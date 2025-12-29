@@ -67,19 +67,27 @@ class DatabaseTools:
         self,
         url: str,
         title: str,
-        content: str,
-        researcher_id: str
+        relevance_score: float,
+        reliability_score: float,
+        evaluation_notes: str,
+        researcher_id: str,
+        raw_content: Optional[str] = None,
+        fetch_status: str = 'completed'
     ) -> str:
         """
-        Save a web source discovered during research.
+        Save a web source discovered and evaluated during research.
 
         Note: task_id is automatically retrieved from context.
 
         Args:
-            url: Source URL from WebSearch
+            url: Source URL
             title: Page title
-            content: Relevant excerpt from the source
-            researcher_id: Identifier of the researcher (e.g., "RESEARCHER-1")
+            relevance_score: How relevant the source is to the query (0.0-1.0)
+            reliability_score: How reliable/credible the source is (0.0-1.0)
+            evaluation_notes: Agent's notes explaining the evaluation
+            researcher_id: Identifier of the evaluator (e.g., "EVALUATOR-1")
+            raw_content: Full scraped content (optional, set by tool layer)
+            fetch_status: Status of content fetch ('pending', 'completed', 'failed')
 
         Returns:
             source_id: UUID of the saved source
@@ -92,67 +100,33 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             source_id = await conn.fetchval(
                 """
-                INSERT INTO ra_sources (task_id, url, title, content, researcher_id, fetched_at)
-                VALUES ($1, $2, $3, $4, $5, NOW())
+                INSERT INTO ra_sources (
+                    task_id, url, title, researcher_id, raw_content,
+                    fetch_status, fetched_at, relevance_score, reliability_score, evaluation_notes
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8, $9)
                 RETURNING id
                 """,
                 task_id,
                 url,
                 title,
-                content,
-                researcher_id
+                researcher_id,
+                raw_content,
+                fetch_status,
+                relevance_score,
+                reliability_score,
+                evaluation_notes
             )
             return str(source_id)
 
-    async def save_finding(
-        self,
-        source_id: str,
-        content: str,
-        confidence: float = 0.8,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> str:
-        """
-        Save a research finding extracted from a source.
-
-        Note: task_id is automatically retrieved from context.
-
-        Args:
-            source_id: UUID of the source this finding came from
-            content: The finding/fact/claim
-            confidence: Confidence score (0.0-1.0)
-            metadata: Extra structured data
-
-        Returns:
-            finding_id: UUID of the saved finding
-        """
-        if not self.pool:
-            await self.connect()
-
-        task_id = get_current_task_id()
-
-        async with self.pool.acquire() as conn:
-            finding_id = await conn.fetchval(
-                """
-                INSERT INTO ra_findings (task_id, source_id, content, confidence, metadata, created_at)
-                VALUES ($1, $2, $3, $4, $5, NOW())
-                RETURNING id
-                """,
-                task_id,
-                source_id,
-                content,
-                confidence,
-                json.dumps(metadata) if metadata else None
-            )
-            return str(finding_id)
-
     async def load_research_data(self) -> Dict[str, Any]:
         """
-        Load all sources and findings for a research task.
+        Load all sources for a research task.
 
         Note: task_id is automatically retrieved from context.
 
         Returns:
-            Dictionary containing sources and findings
+            Dictionary containing sources with raw_content
         """
         if not self.pool:
             await self.connect()
@@ -160,39 +134,26 @@ class DatabaseTools:
         task_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
-            # Get all sources
+            # Get all successfully fetched sources
             sources = await conn.fetch(
                 """
-                SELECT id, url, title, content, researcher_id, fetched_at
+                SELECT id, url, title, researcher_id, raw_content,
+                       relevance_score, reliability_score, evaluation_notes, fetched_at
                 FROM ra_sources
-                WHERE task_id = $1
-                ORDER BY fetched_at ASC
-                """,
-                task_id
-            )
-
-            # Get all findings
-            findings = await conn.fetch(
-                """
-                SELECT f.id, f.source_id, f.content, f.confidence, f.metadata, s.url as source_url
-                FROM ra_findings f
-                JOIN ra_sources s ON s.id = f.source_id
-                WHERE f.task_id = $1
-                ORDER BY f.created_at ASC
+                WHERE task_id = $1 AND fetch_status = 'completed'
+                ORDER BY relevance_score DESC NULLS LAST, fetched_at ASC
                 """,
                 task_id
             )
 
             return {
-                "sources": [dict(row) for row in sources],
-                "findings": [dict(row) for row in findings]
+                "sources": [dict(row) for row in sources]
             }
 
     async def save_summary(
         self,
         content: str,
         summary_type: str = 'final',
-        finding_ids: Optional[List[str]] = None,
         parent_summary_id: Optional[str] = None,
         order: int = 0
     ) -> str:
@@ -204,7 +165,6 @@ class DatabaseTools:
         Args:
             content: Markdown summary content
             summary_type: Type of summary ('overview', 'section', 'final')
-            finding_ids: List of finding UUIDs to link
             parent_summary_id: UUID of parent summary (for hierarchical summaries)
             order: Display order
 
@@ -217,7 +177,6 @@ class DatabaseTools:
         task_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
-            # Insert summary
             summary_id = await conn.fetchval(
                 """
                 INSERT INTO ra_summaries (task_id, summary_type, content, parent_summary_id, "order", created_at)
@@ -230,19 +189,6 @@ class DatabaseTools:
                 parent_summary_id,
                 order
             )
-
-            # Link findings if provided
-            if finding_ids:
-                for finding_id in finding_ids:
-                    await conn.execute(
-                        """
-                        INSERT INTO ra_summary_findings (summary_id, finding_id)
-                        VALUES ($1, $2)
-                        """,
-                        summary_id,
-                        finding_id
-                    )
-
             return str(summary_id)
 
     async def update_task_status(self, task_id: str, status: str):
@@ -295,13 +241,13 @@ class DatabaseTools:
 
     async def get_task_results(self, task_id: str) -> Optional[Dict[str, Any]]:
         """
-        Get full research results for a task including sources, findings, and summaries.
+        Get full research results for a task including sources and summaries.
 
         Args:
             task_id: UUID of the research task
 
         Returns:
-            Dict with task info, sources, findings, summaries, and counts
+            Dict with task info, sources, summaries, and counts
         """
         if not self.pool:
             await self.connect()
@@ -321,13 +267,7 @@ class DatabaseTools:
 
             # Get sources count
             sources_count = await conn.fetchval(
-                "SELECT COUNT(*) FROM ra_sources WHERE task_id = $1",
-                task_id
-            )
-
-            # Get findings count
-            findings_count = await conn.fetchval(
-                "SELECT COUNT(*) FROM ra_findings WHERE task_id = $1",
+                "SELECT COUNT(*) FROM ra_sources WHERE task_id = $1 AND fetch_status = 'completed'",
                 task_id
             )
 
@@ -350,7 +290,6 @@ class DatabaseTools:
                 "status": task["status"],
                 "subtopics": json.loads(task["subtopics"]) if task["subtopics"] else [],
                 "sources_count": sources_count,
-                "findings_count": findings_count,
                 "summary": summary["content"] if summary else None,
                 "created_at": task["created_at"].isoformat() if task["created_at"] else None,
                 "updated_at": task["updated_at"].isoformat() if task["updated_at"] else None,

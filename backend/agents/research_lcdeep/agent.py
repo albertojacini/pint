@@ -3,9 +3,9 @@
 SCOPE: Domain-agnostic information gathering only
 ------------------------------------------------------
 This research agent is responsible for:
-- Gathering information from web sources (BrightData search tools)
-- Saving raw sources and findings to database (ra_* tables)
-- Synthesizing findings into research summaries (markdown)
+- Evaluating search results for relevance and reliability
+- Saving evaluated sources with auto-scraped content to database (ra_* tables)
+- Synthesizing source content into research summaries (markdown)
 
 This research agent is NOT responsible for:
 - Provision-specific decisions (type, relevance, confidence)
@@ -23,12 +23,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 from deepagents import create_deep_agent, SubAgent
 from langchain_anthropic import ChatAnthropic
-from langchain_core.tools import BaseTool
+from langchain_core.tools import BaseTool, StructuredTool
 
 from agents.mcp.client import get_mcp_client
-from agents.research_lcdeep.tools import get_database_tools
-from agents.research_claude.utils.db_tools import get_db_tools
-from agents.tools.agent_helpers import create_truncating_tool
+from agents.research_lcdeep.tools import get_database_tools, set_scrape_tool
+from agents.utils.db_tools import get_db_tools
 from agents.utils.task_context import set_current_task_id
 
 # Paths to prompt files
@@ -46,32 +45,37 @@ def load_prompt(filename: str) -> str:
         return f.read().strip()
 
 
-async def get_search_tools() -> list[BaseTool]:
+async def get_search_tools() -> tuple[list[BaseTool], BaseTool]:
     """
-    Get BrightData and Wikipedia search tools from MCP client.
+    Get BrightData search tools and scrape tool separately from MCP client.
 
-    Returns only: search_engine, scrape_as_markdown, query_wikipedia
+    Returns:
+        Tuple of (search_tools, scrape_tool)
+        - search_tools: search_engine, query_wikipedia (for agent to use)
+        - scrape_tool: scrape_as_markdown (for internal use by SaveSource)
 
-    Optimized for reduced token usage with aggressive truncation.
+    The scrape tool is separated because it's used internally by SaveSource,
+    not exposed directly to the evaluator agent.
     """
-    from langchain_core.tools import StructuredTool
-
     mcp_client = get_mcp_client()
     all_tools = await mcp_client.get_tools()
 
-    # Filter to only the tools we want
-    tool_names = {"search_engine", "scrape_as_markdown", "query_wikipedia"}
-    search_tools = [t for t in all_tools if t.name in tool_names]
+    # Search tools for the agent (no scrape - that's internal)
+    search_tool_names = {"search_engine", "query_wikipedia"}
+    search_tools = [t for t in all_tools if t.name in search_tool_names]
 
-    # Wrap with MORE aggressive truncation (20k chars = ~5k tokens instead of 40k/10k)
-    MAX_CHARS_LCDEEP = 20000
+    # Scrape tool for internal use by SaveSource
+    scrape_tool = next((t for t in all_tools if t.name == "scrape_as_markdown"), None)
 
-    def create_truncating_tool_lcdeep(original_tool: BaseTool) -> StructuredTool:
-        """Create tool with aggressive truncation for lcdeep agent."""
+    # Wrap search tools with truncation for token efficiency
+    MAX_CHARS = 20000
+
+    def create_truncating_tool(original_tool: BaseTool) -> StructuredTool:
+        """Create tool with aggressive truncation."""
         async def truncated_func(**kwargs) -> str:
             result = await original_tool.ainvoke(kwargs)
-            if isinstance(result, str) and len(result) > MAX_CHARS_LCDEEP:
-                return f"{result[:MAX_CHARS_LCDEEP]}\n\n[... TRUNCATED - {len(result) - MAX_CHARS_LCDEEP} characters removed for efficiency ...]"
+            if isinstance(result, str) and len(result) > MAX_CHARS:
+                return f"{result[:MAX_CHARS]}\n\n[... TRUNCATED - {len(result) - MAX_CHARS} chars removed ...]"
             return result
 
         return StructuredTool.from_function(
@@ -81,9 +85,9 @@ async def get_search_tools() -> list[BaseTool]:
             args_schema=original_tool.args_schema,
         )
 
-    wrapped_tools = [create_truncating_tool_lcdeep(tool) for tool in search_tools]
+    wrapped_search_tools = [create_truncating_tool(tool) for tool in search_tools]
 
-    return wrapped_tools
+    return wrapped_search_tools, scrape_tool
 
 
 async def create_agent():
@@ -103,31 +107,38 @@ async def create_agent():
 
     # Load prompts
     lead_agent_prompt = load_prompt("lead_agent.md")
-    researcher_prompt = load_prompt("researcher.md")
+    evaluator_prompt = load_prompt("evaluator.md")
     summarizer_prompt = load_prompt("summarizer.md")
 
-    # Get tools
-    search_tools = await get_search_tools()
+    # Get tools - search tools for agent, scrape tool for internal use
+    search_tools, scrape_tool = await get_search_tools()
     db_tools_list = get_database_tools()
+
+    # Set scrape tool for internal use by SaveSource
+    if scrape_tool:
+        set_scrape_tool(scrape_tool)
+        print(f"Scrape tool initialized for internal use")
+    else:
+        print("WARNING: scrape_as_markdown tool not available")
 
     print(f"Loaded {len(search_tools)} search tools: {[t.name for t in search_tools]}")
     print(f"Loaded {len(db_tools_list)} database tools: {[t.name for t in db_tools_list]}")
 
-    # Initialize model (using Haiku for efficiency like research_claude)
+    # Initialize model (using Haiku for efficiency)
     model = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0)
 
-    # Define researcher subagent (gets search + save tools only)
-    researcher_subagent = SubAgent(
-        name="researcher",
+    # Define search_evaluator subagent (gets search + SaveSource only)
+    search_evaluator_subagent = SubAgent(
+        name="search_evaluator",
         description=(
-            "Use this agent when you need to gather research information on any topic. "
-            "The researcher uses search tools (search_engine, scrape_as_markdown, query_wikipedia) "
-            "to find relevant information from across the internet and Wikipedia. "
-            "Saves research findings to database for later use by summarizer. "
-            "Ideal for complex research tasks that require deep searching and cross-referencing."
+            "Use this agent to evaluate search results for relevance and reliability. "
+            "The evaluator searches for information using search_engine and query_wikipedia, "
+            "then evaluates source quality and saves high-quality sources with scores. "
+            "Sources are automatically scraped when saved. Does NOT extract findings - "
+            "just evaluates and saves sources with relevance/reliability scores."
         ),
-        tools=search_tools + [t for t in db_tools_list if t.name in {"SaveSource", "SaveFinding"}],
-        system_prompt=researcher_prompt,
+        tools=search_tools + [t for t in db_tools_list if t.name == "SaveSource"],
+        system_prompt=evaluator_prompt,
         model=model,
     )
 
@@ -135,10 +146,10 @@ async def create_agent():
     summarizer_subagent = SubAgent(
         name="summarizer",
         description=(
-            "Use this agent to synthesize research findings into summaries. "
-            "The summarizer reads research findings from the database and creates "
+            "Use this agent to synthesize research into summaries. "
+            "The summarizer reads raw source content from the database and creates "
             "coherent summaries. Does NOT conduct searches - only reads existing "
-            "research and synthesizes summaries."
+            "source content and synthesizes summaries."
         ),
         tools=[t for t in db_tools_list if t.name in {"LoadResearchData", "SaveSummary"}],
         system_prompt=summarizer_prompt,
@@ -150,7 +161,7 @@ async def create_agent():
         model=model,
         tools=[],  # Lead agent only uses built-in `task` tool for delegation
         system_prompt=lead_agent_prompt,
-        subagents=[researcher_subagent, summarizer_subagent],
+        subagents=[search_evaluator_subagent, summarizer_subagent],
     )
 
     # Get MCP client and db_tools for cleanup
@@ -170,7 +181,7 @@ async def chat(initial_query: str = None):
     print("\n" + "=" * 50)
     print("  Research Agent (LangChain Deep Agents)")
     print("=" * 50)
-    print("\nResearch any topic and store findings in database.")
+    print("\nResearch any topic and store sources in database.")
     if not initial_query:
         print("\nType 'exit' to quit.\n")
 
@@ -192,13 +203,13 @@ async def chat(initial_query: str = None):
             )
             print(f"Created research task: {task_id}")
 
-            # Enhance prompt with task_id
-            enhanced_prompt = f"{initial_query}\n\n[SYSTEM: Use task_id: {task_id} for all research]"
+            # Set task_id in context
+            set_current_task_id(task_id)
 
             # Invoke agent
             print("\nAgent: ", end="")
             result = await agent.ainvoke({
-                "messages": [{"role": "user", "content": enhanced_prompt}]
+                "messages": [{"role": "user", "content": initial_query}]
             })
 
             # Print response
@@ -227,13 +238,13 @@ async def chat(initial_query: str = None):
                 )
                 print(f"Created research task: {task_id}")
 
-                # Enhance prompt with task_id
-                enhanced_prompt = f"{user_input}\n\n[SYSTEM: Use task_id: {task_id} for all research]"
+                # Set task_id in context
+                set_current_task_id(task_id)
 
                 # Invoke agent
                 print("\nAgent: ", end="")
                 result = await agent.ainvoke({
-                    "messages": [{"role": "user", "content": enhanced_prompt}]
+                    "messages": [{"role": "user", "content": user_input}]
                 })
 
                 # Print response

@@ -14,7 +14,7 @@ configure_claude_agent_sdk()
 from agents.research_claude.utils.subagent_tracker import SubagentTracker
 from agents.research_claude.utils.transcript import setup_session, TranscriptWriter
 from agents.research_claude.utils.message_handler import process_assistant_message
-from agents.research_claude.utils.db_tools import get_db_tools
+from agents.utils.db_tools import get_db_tools
 from agents.research_claude.mcp_server import research_tools_server
 from agents.utils.task_context import set_current_task_id
 
