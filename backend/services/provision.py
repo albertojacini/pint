@@ -58,14 +58,14 @@ class ProvisionService:
 Given a short description of a public policy provision, generate a comprehensive research prompt that will help a research agent find accurate, detailed information.
 
 The research prompt should:
-1. Clearly identify what needs to be researched
-2. Specify the political entity context
-3. List 3-5 specific questions to investigate
+1. Clearly state the language the whole research (search keywords, results, summaries) must be performed with
+2. Clearly identify what needs to be researched
+3. Specify the political entity context
 4. Mention key aspects: legal status, history, current state, stakeholders, financial details
 
 A provision is a piece of state infrastructure: laws, regulations, contracts, ownership stakes, allocations, or designations that a political entity maintains.
 
-Keep the prompt focused and under 500 words. Write in a clear, professional tone."""
+Keep the prompt focused and under 200 words. Write in a concise, clear, professional tone."""
 
         user_message = f"""Transform this into a research prompt:
 
