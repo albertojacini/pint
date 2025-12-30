@@ -228,7 +228,7 @@ async def run(task_id: str) -> str:
         await db_tools.close()
         raise ValueError(f"Task not found: {task_id}")
 
-    query = task["query"]
+    query = task["input"]
 
     # Load prompts
     lead_agent_prompt = load_prompt("lead_agent.md")

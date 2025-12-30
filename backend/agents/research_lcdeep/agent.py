@@ -297,7 +297,7 @@ async def run(task_id: str) -> str:
         await db_tools.close()
         raise ValueError(f"Task not found: {task_id}")
 
-    query = task["query"]
+    query = task["input"]
 
     # Create agent
     agent, mcp_client, _ = await create_agent()
