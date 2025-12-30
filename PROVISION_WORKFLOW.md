@@ -86,7 +86,7 @@ User can:
 - **"lcdeep"**: LangChain Deep Agents with BrightData (search_engine, scrape_as_markdown, query_wikipedia)
 
 **Backend Process**:
-1. Creates research task in `ra_research_tasks` table
+1. Creates research task in `ra_researches` table
 2. Returns `task_id` immediately
 3. Runs selected research agent in background (async)
 
@@ -99,10 +99,10 @@ User can:
 
 **Research Agent**: Spawns subagents to:
 - Search web for information
-- Scrape relevant pages (lcdeep only)
-- Query Wikipedia (lcdeep only)
-- Extract findings
-- Save to `ra_sources` and `ra_findings` tables
+- Evaluate sources with relevance/reliability scores
+- Auto-scrape and summarize source content
+- Save evaluated sources to `ra_sources` table
+- Synthesize final research summary
 
 ---
 
@@ -115,7 +115,6 @@ User can:
 {
   "status": "researching",
   "sources_count": 5,
-  "findings_count": 12,
   "summary": null
 }
 ```
@@ -125,7 +124,6 @@ User can:
 {
   "status": "completed",
   "sources_count": 8,
-  "findings_count": 25,
   "summary": "# ATM Ownership\n\nATM is owned by the Municipality of Milan..."
 }
 ```
@@ -239,10 +237,8 @@ CREATE TABLE provision_drafts (
 **Statuses**: `input`, `prompt_generated`, `researching`, `research_complete`, `generating_draft`, `review`, `completed`, `failed`
 
 ### Research Tables: `ra_*`
-- `ra_research_tasks` - Research metadata and status
-- `ra_sources` - Web sources discovered
-- `ra_findings` - Facts extracted from sources
-- `ra_summaries` - Synthesized summaries
+- `ra_researches` - Research tasks with input, status, and final summary
+- `ra_sources` - Web sources with evaluations, raw content, and AI-generated summaries
 
 ### Production Table: `provisions`
 Final provisions visible to public users

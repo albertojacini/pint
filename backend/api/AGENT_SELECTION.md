@@ -16,8 +16,8 @@ The Research API now supports two research agents that can be selected via the `
 
 Both agents:
 - Use the same database schema
-- Follow the same subagent architecture (lead → researchers → summarizer)
-- Save results to the same tables (`ra_research_tasks`, `ra_sources`, `ra_findings`, `ra_summaries`)
+- Follow the same subagent architecture (lead → search_evaluator → summarizer)
+- Save results to the same tables (`ra_researches`, `ra_sources`)
 
 ## API Usage
 
@@ -76,9 +76,7 @@ curl http://localhost:8000/research/{task_id}
   "query": "string",
   "entity_id": "uuid | null",
   "sources_count": 0,
-  "findings_count": 0,
   "summary": "string | null",
-  "subtopics": ["string"],
   "created_at": "ISO timestamp",
   "updated_at": "ISO timestamp"
 }
@@ -151,7 +149,6 @@ async def research_with_lcdeep():
             if result["status"] == "completed":
                 print(f"Research complete!")
                 print(f"Sources: {result['sources_count']}")
-                print(f"Findings: {result['findings_count']}")
                 print(f"Summary:\n{result['summary']}")
                 break
             elif result["status"] == "failed":

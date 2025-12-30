@@ -51,18 +51,6 @@ class LoadResearchDataInput(BaseModel):
 
 class SaveSummaryInput(BaseModel):
     content: str = Field(description="Markdown summary content")
-    summary_type: str = Field(
-        default="final",
-        description="Type of summary: 'overview', 'section', or 'final'"
-    )
-    parent_summary_id: Optional[str] = Field(
-        default=None,
-        description="UUID of parent summary (for hierarchical summaries)"
-    )
-    order: int = Field(
-        default=0,
-        description="Display order"
-    )
 
 
 class UpdateTaskStatusInput(BaseModel):
@@ -188,18 +176,11 @@ async def load_research_data_impl() -> str:
     return output
 
 
-async def save_summary_impl(
-    content: str,
-    summary_type: str = "final",
-    parent_summary_id: Optional[str] = None,
-    order: int = 0
-) -> str:
+async def save_summary_impl(content: str) -> str:
     """Save a research summary to the database. Task ID automatically from context."""
     db_tools = get_db_tools()
-    summary_id = await db_tools.save_summary(
-        content, summary_type, parent_summary_id, order
-    )
-    return f"Saved summary with ID: {summary_id}"
+    research_id = await db_tools.save_summary(content)
+    return f"Saved summary for research: {research_id}"
 
 
 async def update_task_status_impl(task_id: str, status: str) -> str:

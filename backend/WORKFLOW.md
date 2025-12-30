@@ -21,10 +21,10 @@ User Input → Provision Service → Research Agent → Provision Service → Us
 
 **What Research Agents DO**:
 - Search for information using web search tools (BrightData or Claude's built-in search)
-- Save raw sources to database (`ra_sources` table)
-- Extract and save findings to database (`ra_findings` table)
-- Synthesize findings into markdown research summaries (`ra_summaries` table)
-- Track research progress (`ra_research_tasks` table)
+- Evaluate and save sources with relevance/reliability scores (`ra_sources` table)
+- Automatically fetch and summarize source content (stored in `ra_sources.source_summary`)
+- Synthesize all sources into final research summary (stored in `ra_researches.summary`)
+- Track research progress and status (`ra_researches` table)
 
 **What Research Agents DO NOT DO**:
 - ❌ Determine provision type (ownership, contract, regulation, etc.)
@@ -35,12 +35,8 @@ User Input → Provision Service → Research Agent → Provision Service → Us
 - ❌ Make any provision-specific decisions
 
 **Database Tables** (all prefixed with `ra_`):
-- `ra_research_tasks` - Top-level research tasks
-- `ra_sources` - Web sources discovered
-- `ra_findings` - Individual facts extracted
-- `ra_summaries` - Synthesized research summaries
-- `ra_summary_findings` - Links summaries to findings
-- `ra_agent_actions` - Audit trail
+- `ra_researches` - Research tasks with status, input, and final summary
+- `ra_sources` - Web sources with evaluations, raw content, and AI-generated summaries
 
 **Key Concept**: Research agents are **domain-agnostic**. They could be used for any research task, not just provisions.
 
@@ -91,9 +87,9 @@ User Input → Provision Service → Research Agent → Provision Service → Us
 **Output**: `task_id` for polling
 
 ### Step 3: Research Execution (Background)
-**Agent**: Research agent searches web, saves sources/findings, generates research summary
+**Agent**: Research agent searches web, evaluates sources, generates research summary
 **Database**: All research data saved to `ra_*` tables
-**Output**: Research summary (markdown) saved to `ra_summaries` table
+**Output**: Research summary (markdown) saved to `ra_researches.summary`
 
 ### Step 4: Generate Provision Draft
 **Input**: Research summary from database
@@ -196,7 +192,7 @@ python -m uvicorn api.main:app --reload
 # Visit http://localhost:3000/admin/provision-ingestion
 
 # 3. Monitor research progress
-# Check ra_research_tasks, ra_sources, ra_findings, ra_summaries tables
+# Check ra_researches and ra_sources tables
 
 # 4. Review generated draft
 # Check provision_drafts table

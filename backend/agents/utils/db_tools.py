@@ -192,12 +192,12 @@ class DatabaseTools:
 
         Args:
             content: Markdown summary content
-            summary_type: Type of summary ('overview', 'section', 'final')
-            parent_summary_id: UUID of parent summary (for hierarchical summaries)
-            order: Display order
+            summary_type: Ignored (kept for backward compatibility)
+            parent_summary_id: Ignored (kept for backward compatibility)
+            order: Ignored (kept for backward compatibility)
 
         Returns:
-            summary_id: UUID of the saved summary
+            research_id: UUID of the updated research
         """
         if not self.pool:
             await self.connect()
@@ -205,19 +205,16 @@ class DatabaseTools:
         research_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
-            summary_id = await conn.fetchval(
+            await conn.execute(
                 """
-                INSERT INTO ra_summaries (research_id, summary_type, content, parent_summary_id, "order", created_at)
-                VALUES ($1, $2, $3, $4, $5, NOW())
-                RETURNING id
+                UPDATE ra_researches
+                SET summary = $1, updated_at = NOW()
+                WHERE id = $2
                 """,
-                research_id,
-                summary_type,
                 content,
-                parent_summary_id,
-                order
+                research_id
             )
-            return str(summary_id)
+            return research_id
 
     async def update_task_status(self, research_id: str, status: str):
         """
@@ -257,7 +254,7 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
-                SELECT id, input, status, created_at, updated_at
+                SELECT id, input, summary, status, created_at, updated_at
                 FROM ra_researches
                 WHERE id = $1
                 """,
@@ -269,22 +266,22 @@ class DatabaseTools:
 
     async def get_task_results(self, research_id: str) -> Optional[Dict[str, Any]]:
         """
-        Get full research results including sources and summaries.
+        Get full research results including sources and summary.
 
         Args:
             research_id: UUID of the research
 
         Returns:
-            Dict with research info, sources, summaries, and counts
+            Dict with research info, sources, summary, and counts
         """
         if not self.pool:
             await self.connect()
 
         async with self.pool.acquire() as conn:
-            # Get research
+            # Get research with summary
             research = await conn.fetchrow(
                 """
-                SELECT id, input, status, created_at, updated_at
+                SELECT id, input, summary, status, created_at, updated_at
                 FROM ra_researches
                 WHERE id = $1
                 """,
@@ -299,24 +296,12 @@ class DatabaseTools:
                 research_id
             )
 
-            # Get final summary
-            summary = await conn.fetchrow(
-                """
-                SELECT id, content, summary_type, created_at
-                FROM ra_summaries
-                WHERE research_id = $1 AND summary_type = 'final'
-                ORDER BY created_at DESC
-                LIMIT 1
-                """,
-                research_id
-            )
-
             return {
                 "research_id": str(research["id"]),
                 "input": research["input"],
                 "status": research["status"],
                 "sources_count": sources_count,
-                "summary": summary["content"] if summary else None,
+                "summary": research["summary"],
                 "created_at": research["created_at"].isoformat() if research["created_at"] else None,
                 "updated_at": research["updated_at"].isoformat() if research["updated_at"] else None,
             }

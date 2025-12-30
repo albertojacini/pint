@@ -15,6 +15,7 @@ create extension if not exists "vector";
 create table if not exists public.ra_researches (
   id uuid primary key default gen_random_uuid(),
   input text not null,
+  summary text,  -- Final synthesized research summary (markdown)
   status text not null default 'researching' check (status in ('pending', 'researching', 'completed', 'failed')),
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -40,18 +41,6 @@ create table if not exists public.ra_sources (
   updated_at timestamptz default now()
 );
 
--- 3. Summaries (synthesized summaries at various levels - hierarchical)
-create table if not exists public.ra_summaries (
-  id uuid primary key default gen_random_uuid(),
-  research_id uuid not null references public.ra_researches(id) on delete cascade,
-  parent_summary_id uuid references public.ra_summaries(id) on delete set null,
-  content text not null,
-  summary_type text default 'final' check (summary_type in ('overview', 'section', 'final')),
-  "order" integer default 0,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
-);
-
 -- ============================================================================
 -- INDEXES
 -- ============================================================================
@@ -63,11 +52,6 @@ create index if not exists idx_ra_researches_status on public.ra_researches(stat
 create index if not exists idx_ra_sources_research_id on public.ra_sources(research_id);
 create index if not exists idx_ra_sources_fetch_status on public.ra_sources(fetch_status);
 create index if not exists idx_ra_sources_url on public.ra_sources(url);
-
--- ra_summaries indexes
-create index if not exists idx_ra_summaries_research_id on public.ra_summaries(research_id);
-create index if not exists idx_ra_summaries_parent_summary_id on public.ra_summaries(parent_summary_id);
-create index if not exists idx_ra_summaries_summary_type on public.ra_summaries(summary_type);
 
 -- ============================================================================
 -- TRIGGERS
@@ -82,11 +66,5 @@ create trigger set_updated_at_ra_researches
 -- ra_sources trigger
 create trigger set_updated_at_ra_sources
   before update on public.ra_sources
-  for each row
-  execute function public.handle_updated_at();
-
--- ra_summaries trigger
-create trigger set_updated_at_ra_summaries
-  before update on public.ra_summaries
   for each row
   execute function public.handle_updated_at();

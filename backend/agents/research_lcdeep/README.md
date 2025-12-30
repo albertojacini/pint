@@ -28,11 +28,9 @@ Lead Agent (task delegation only)
 - `query_wikipedia` - Query Wikipedia API for baseline info
 
 **Database Tools (LangChain wrappers):**
-- `CreateResearchTask` - Create a new research task
-- `SaveSource` - Save a web source to the database
-- `SaveFinding` - Save a specific finding/fact
-- `LoadResearchData` - Load all sources and findings for a task
-- `SaveSummary` - Save a synthesized summary
+- `SaveSource` - Evaluate and save a web source with auto-scraping and summarization
+- `LoadResearchData` - Load all sources with summaries for a task
+- `SaveSummary` - Save the final synthesized summary to ra_researches.summary
 - `UpdateTaskStatus` - Update task status
 
 ## Usage
@@ -109,23 +107,20 @@ DATABASE_URL=postgresql://user:pass@host:port/db
 
 Both agents use the same database tables:
 
-- `ra_research_tasks` - Research task metadata
-- `ra_sources` - Web sources discovered during research
-- `ra_findings` - Specific findings extracted from sources
-- `ra_summaries` - Synthesized summaries
+- `ra_researches` - Research tasks with input, status, and final summary
+- `ra_sources` - Web sources with evaluations, raw content, and AI-generated summaries
 
 ## Development
 
 The agent follows the same workflow as research_claude:
 
 1. User provides a research query
-2. Lead agent creates a task in the database
-3. Lead agent breaks query into 2-4 subtopics
-4. Lead agent spawns 2-4 researcher subagents in parallel
-5. Each researcher searches, scrapes, and saves findings to database
-6. Lead agent spawns summarizer subagent
-7. Summarizer loads findings and creates a comprehensive summary
-8. All data is stored in the database for later retrieval
+2. API creates a task in ra_researches table
+3. Lead agent delegates to search_evaluator subagent
+4. Search evaluator searches web, evaluates sources, and saves to ra_sources (with auto-scraping and summarization)
+5. Lead agent spawns summarizer subagent
+6. Summarizer loads source summaries and creates comprehensive final summary
+7. Final summary is saved to ra_researches.summary field
 
 ## Files
 
