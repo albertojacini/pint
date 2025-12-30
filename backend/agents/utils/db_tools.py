@@ -31,37 +31,31 @@ class DatabaseTools:
 
     async def create_research_task(
         self,
-        query: str,
-        subtopics: List[str],
-        entity_id: Optional[str] = None
+        input_text: str
     ) -> str:
         """
-        Create a new research task in the database.
+        Create a new research in the database.
 
         Args:
-            query: The original user question
-            subtopics: List of research angles/subtopics
-            entity_id: Optional UUID of the entity being researched (set by API)
+            input_text: The original user question/input
 
         Returns:
-            task_id: UUID of the created task
+            research_id: UUID of the created research
         """
         if not self.pool:
             await self.connect()
 
         async with self.pool.acquire() as conn:
-            task_id = await conn.fetchval(
+            research_id = await conn.fetchval(
                 """
-                INSERT INTO ra_research_tasks (query, entity_id, status, subtopics, created_at, updated_at)
-                VALUES ($1, $2, $3, $4, NOW(), NOW())
+                INSERT INTO ra_researches (input, status, created_at, updated_at)
+                VALUES ($1, $2, NOW(), NOW())
                 RETURNING id
                 """,
-                query,
-                entity_id,
-                'researching',
-                json.dumps(subtopics)
+                input_text,
+                'researching'
             )
-            return str(task_id)
+            return str(research_id)
 
     async def save_source(
         self,
@@ -77,12 +71,12 @@ class DatabaseTools:
         """
         Save a web source discovered and evaluated during research.
 
-        Note: task_id is automatically retrieved from context.
+        Note: research_id is automatically retrieved from context.
 
         Args:
             url: Source URL
             title: Page title
-            relevance_score: How relevant the source is to the query (0.0-1.0)
+            relevance_score: How relevant the source is to the input (0.0-1.0)
             reliability_score: How reliable/credible the source is (0.0-1.0)
             evaluation_notes: Agent's notes explaining the evaluation
             researcher_id: Identifier of the evaluator (e.g., "EVALUATOR-1")
@@ -95,19 +89,19 @@ class DatabaseTools:
         if not self.pool:
             await self.connect()
 
-        task_id = get_current_task_id()
+        research_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             source_id = await conn.fetchval(
                 """
                 INSERT INTO ra_sources (
-                    task_id, url, title, researcher_id, raw_content,
+                    research_id, url, title, researcher_id, raw_content,
                     fetch_status, fetched_at, relevance_score, reliability_score, evaluation_notes
                 )
                 VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8, $9)
                 RETURNING id
                 """,
-                task_id,
+                research_id,
                 url,
                 title,
                 researcher_id,
@@ -121,9 +115,9 @@ class DatabaseTools:
 
     async def load_research_data(self) -> Dict[str, Any]:
         """
-        Load all sources for a research task.
+        Load all sources for a research.
 
-        Note: task_id is automatically retrieved from context.
+        Note: research_id is automatically retrieved from context.
 
         Returns:
             Dictionary containing sources with raw_content
@@ -131,7 +125,7 @@ class DatabaseTools:
         if not self.pool:
             await self.connect()
 
-        task_id = get_current_task_id()
+        research_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             # Get all successfully fetched sources
@@ -140,10 +134,10 @@ class DatabaseTools:
                 SELECT id, url, title, researcher_id, raw_content,
                        relevance_score, reliability_score, evaluation_notes, fetched_at
                 FROM ra_sources
-                WHERE task_id = $1 AND fetch_status = 'completed'
+                WHERE research_id = $1 AND fetch_status = 'completed'
                 ORDER BY relevance_score DESC NULLS LAST, fetched_at ASC
                 """,
-                task_id
+                research_id
             )
 
             return {
@@ -160,7 +154,7 @@ class DatabaseTools:
         """
         Save a research summary to the database.
 
-        Note: task_id is automatically retrieved from context.
+        Note: research_id is automatically retrieved from context.
 
         Args:
             content: Markdown summary content
@@ -174,16 +168,16 @@ class DatabaseTools:
         if not self.pool:
             await self.connect()
 
-        task_id = get_current_task_id()
+        research_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
             summary_id = await conn.fetchval(
                 """
-                INSERT INTO ra_summaries (task_id, summary_type, content, parent_summary_id, "order", created_at)
+                INSERT INTO ra_summaries (research_id, summary_type, content, parent_summary_id, "order", created_at)
                 VALUES ($1, $2, $3, $4, $5, NOW())
                 RETURNING id
                 """,
-                task_id,
+                research_id,
                 summary_type,
                 content,
                 parent_summary_id,
@@ -191,12 +185,12 @@ class DatabaseTools:
             )
             return str(summary_id)
 
-    async def update_task_status(self, task_id: str, status: str):
+    async def update_task_status(self, research_id: str, status: str):
         """
-        Update the status of a research task.
+        Update the status of a research.
 
         Args:
-            task_id: UUID of the research task
+            research_id: UUID of the research
             status: New status ('pending', 'researching', 'completed', 'failed')
         """
         if not self.pool:
@@ -205,23 +199,23 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             await conn.execute(
                 """
-                UPDATE ra_research_tasks
+                UPDATE ra_researches
                 SET status = $1, updated_at = NOW()
                 WHERE id = $2
                 """,
                 status,
-                task_id
+                research_id
             )
 
-    async def get_task(self, task_id: str) -> Optional[Dict[str, Any]]:
+    async def get_task(self, research_id: str) -> Optional[Dict[str, Any]]:
         """
-        Get a research task by ID.
+        Get a research by ID.
 
         Args:
-            task_id: UUID of the research task
+            research_id: UUID of the research
 
         Returns:
-            Task dict or None if not found
+            Research dict or None if not found
         """
         if not self.pool:
             await self.connect()
@@ -229,46 +223,46 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
-                SELECT id, query, entity_id, status, subtopics, metadata, created_at, updated_at
-                FROM ra_research_tasks
+                SELECT id, input, status, created_at, updated_at
+                FROM ra_researches
                 WHERE id = $1
                 """,
-                task_id
+                research_id
             )
             if row:
                 return dict(row)
             return None
 
-    async def get_task_results(self, task_id: str) -> Optional[Dict[str, Any]]:
+    async def get_task_results(self, research_id: str) -> Optional[Dict[str, Any]]:
         """
-        Get full research results for a task including sources and summaries.
+        Get full research results including sources and summaries.
 
         Args:
-            task_id: UUID of the research task
+            research_id: UUID of the research
 
         Returns:
-            Dict with task info, sources, summaries, and counts
+            Dict with research info, sources, summaries, and counts
         """
         if not self.pool:
             await self.connect()
 
         async with self.pool.acquire() as conn:
-            # Get task
-            task = await conn.fetchrow(
+            # Get research
+            research = await conn.fetchrow(
                 """
-                SELECT id, query, entity_id, status, subtopics, metadata, created_at, updated_at
-                FROM ra_research_tasks
+                SELECT id, input, status, created_at, updated_at
+                FROM ra_researches
                 WHERE id = $1
                 """,
-                task_id
+                research_id
             )
-            if not task:
+            if not research:
                 return None
 
             # Get sources count
             sources_count = await conn.fetchval(
-                "SELECT COUNT(*) FROM ra_sources WHERE task_id = $1 AND fetch_status = 'completed'",
-                task_id
+                "SELECT COUNT(*) FROM ra_sources WHERE research_id = $1 AND fetch_status = 'completed'",
+                research_id
             )
 
             # Get final summary
@@ -276,23 +270,21 @@ class DatabaseTools:
                 """
                 SELECT id, content, summary_type, created_at
                 FROM ra_summaries
-                WHERE task_id = $1 AND summary_type = 'final'
+                WHERE research_id = $1 AND summary_type = 'final'
                 ORDER BY created_at DESC
                 LIMIT 1
                 """,
-                task_id
+                research_id
             )
 
             return {
-                "task_id": str(task["id"]),
-                "query": task["query"],
-                "entity_id": str(task["entity_id"]) if task["entity_id"] else None,
-                "status": task["status"],
-                "subtopics": json.loads(task["subtopics"]) if task["subtopics"] else [],
+                "research_id": str(research["id"]),
+                "input": research["input"],
+                "status": research["status"],
                 "sources_count": sources_count,
                 "summary": summary["content"] if summary else None,
-                "created_at": task["created_at"].isoformat() if task["created_at"] else None,
-                "updated_at": task["updated_at"].isoformat() if task["updated_at"] else None,
+                "created_at": research["created_at"].isoformat() if research["created_at"] else None,
+                "updated_at": research["updated_at"].isoformat() if research["updated_at"] else None,
             }
 
 

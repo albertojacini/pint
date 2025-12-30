@@ -198,8 +198,7 @@ async def chat(initial_query: str = None):
 
             # Create research task in database first
             task_id = await db_tools.create_research_task(
-                query=initial_query,
-                subtopics=[]  # Lead agent will determine subtopics
+                input_text=initial_query
             )
             print(f"Created research task: {task_id}")
 
@@ -233,8 +232,7 @@ async def chat(initial_query: str = None):
 
                 # Create research task in database
                 task_id = await db_tools.create_research_task(
-                    query=user_input,
-                    subtopics=[]  # Lead agent will determine subtopics
+                    input_text=user_input
                 )
                 print(f"Created research task: {task_id}")
 

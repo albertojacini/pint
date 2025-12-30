@@ -343,8 +343,8 @@ export const provisionDrafts = pgTable('provision_drafts', {
   // Prompt generation phase
   researchPrompt: text('research_prompt'),
 
-  // Research phase (loose coupling via task_id)
-  researchTaskId: uuid('research_task_id'),  // Links to ra_research_tasks (no FK)
+  // Research phase (loose coupling via research_id)
+  researchId: uuid('research_id'),           // Links to ra_researches (no FK)
   researchSummary: text('research_summary'),
 
   // Simplified job status (no classification steps)

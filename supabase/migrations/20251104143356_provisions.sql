@@ -124,8 +124,8 @@ create table if not exists public.provision_drafts (
   -- Prompt generation phase
   research_prompt text,
 
-  -- Research phase (loose coupling via task_id)
-  research_task_id uuid,                   -- Links to ra_research_tasks (no FK)
+  -- Research phase (loose coupling via research_id)
+  research_id uuid,                        -- Links to ra_researches (no FK)
   research_summary text,                   -- Cached summary from research
 
   -- Simplified job status (no classification steps)
