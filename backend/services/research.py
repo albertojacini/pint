@@ -34,9 +34,7 @@ async def create_research_task(
         full_query = f"{query} ({entity_name})"
 
     task_id = await db.create_research_task(
-        query=full_query,
-        subtopics=[],
-        entity_id=entity_id
+        input_text=full_query
     )
     return task_id, agent_type
 

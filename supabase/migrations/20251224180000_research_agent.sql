@@ -28,6 +28,9 @@ create table if not exists public.ra_sources (
   title text,
   researcher_id text,
   raw_content text,
+  source_summary text,  -- LLM-generated summary of the source content
+  source_type text check (source_type in ('wikipedia', 'web', 'pdf', 'other')),
+  content_quality text check (content_quality in ('good', 'partial', 'failed')),
   fetch_status text not null default 'pending' check (fetch_status in ('pending', 'fetching', 'completed', 'failed', 'skipped')),
   fetched_at timestamptz,
   relevance_score float check (relevance_score >= 0.0 and relevance_score <= 1.0),

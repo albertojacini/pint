@@ -66,6 +66,9 @@ class DatabaseTools:
         evaluation_notes: str,
         researcher_id: str,
         raw_content: Optional[str] = None,
+        source_summary: Optional[str] = None,
+        source_type: Optional[str] = None,
+        content_quality: Optional[str] = None,
         fetch_status: str = 'completed'
     ) -> str:
         """
@@ -81,6 +84,9 @@ class DatabaseTools:
             evaluation_notes: Agent's notes explaining the evaluation
             researcher_id: Identifier of the evaluator (e.g., "EVALUATOR-1")
             raw_content: Full scraped content (optional, set by tool layer)
+            source_summary: LLM-generated summary of the content
+            source_type: Type of source ('wikipedia', 'web', 'pdf', 'other')
+            content_quality: Quality assessment ('good', 'partial', 'failed')
             fetch_status: Status of content fetch ('pending', 'completed', 'failed')
 
         Returns:
@@ -96,9 +102,10 @@ class DatabaseTools:
                 """
                 INSERT INTO ra_sources (
                     research_id, url, title, researcher_id, raw_content,
+                    source_summary, source_type, content_quality,
                     fetch_status, fetched_at, relevance_score, reliability_score, evaluation_notes
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, NOW(), $7, $8, $9)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), $10, $11, $12)
                 RETURNING id
                 """,
                 research_id,
@@ -106,6 +113,9 @@ class DatabaseTools:
                 title,
                 researcher_id,
                 raw_content,
+                source_summary,
+                source_type,
+                content_quality,
                 fetch_status,
                 relevance_score,
                 reliability_score,
@@ -120,7 +130,7 @@ class DatabaseTools:
         Note: research_id is automatically retrieved from context.
 
         Returns:
-            Dictionary containing sources with raw_content
+            Dictionary containing sources with source_summary (preferred) or raw_content
         """
         if not self.pool:
             await self.connect()
@@ -128,13 +138,16 @@ class DatabaseTools:
         research_id = get_current_task_id()
 
         async with self.pool.acquire() as conn:
-            # Get all successfully fetched sources
+            # Get all successfully fetched sources with good/partial quality
             sources = await conn.fetch(
                 """
-                SELECT id, url, title, researcher_id, raw_content,
-                       relevance_score, reliability_score, evaluation_notes, fetched_at
+                SELECT id, url, title, researcher_id, raw_content, source_summary,
+                       source_type, content_quality, relevance_score, reliability_score,
+                       evaluation_notes, fetched_at
                 FROM ra_sources
-                WHERE research_id = $1 AND fetch_status = 'completed'
+                WHERE research_id = $1
+                  AND fetch_status = 'completed'
+                  AND (content_quality IS NULL OR content_quality != 'failed')
                 ORDER BY relevance_score DESC NULLS LAST, fetched_at ASC
                 """,
                 research_id
@@ -143,6 +156,27 @@ class DatabaseTools:
             return {
                 "sources": [dict(row) for row in sources]
             }
+
+    async def get_research_context(self) -> Optional[str]:
+        """
+        Get the research input/query for the current task.
+
+        Note: research_id is automatically retrieved from context.
+
+        Returns:
+            The research input text, or None if not found
+        """
+        if not self.pool:
+            await self.connect()
+
+        research_id = get_current_task_id()
+
+        async with self.pool.acquire() as conn:
+            result = await conn.fetchval(
+                "SELECT input FROM ra_researches WHERE id = $1",
+                research_id
+            )
+            return result
 
     async def save_summary(
         self,

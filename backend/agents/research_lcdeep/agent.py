@@ -26,7 +26,8 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.tools import BaseTool, StructuredTool
 
 from agents.mcp.client import get_mcp_client
-from agents.research_lcdeep.tools import get_database_tools, set_scrape_tool
+from agents.research_lcdeep.tools import get_database_tools, set_source_loader
+from agents.research_lcdeep.source_loader import SourceLoader
 from agents.utils.db_tools import get_db_tools
 from agents.utils.task_context import set_current_task_id
 
@@ -45,17 +46,18 @@ def load_prompt(filename: str) -> str:
         return f.read().strip()
 
 
-async def get_search_tools() -> tuple[list[BaseTool], BaseTool]:
+async def get_search_tools() -> tuple[list[BaseTool], BaseTool, BaseTool]:
     """
-    Get BrightData search tools and scrape tool separately from MCP client.
+    Get BrightData search tools and internal tools from MCP client.
 
     Returns:
-        Tuple of (search_tools, scrape_tool)
+        Tuple of (search_tools, scrape_tool, wikipedia_tool)
         - search_tools: search_engine, query_wikipedia (for agent to use)
-        - scrape_tool: scrape_as_markdown (for internal use by SaveSource)
+        - scrape_tool: scrape_as_markdown (for SourceLoader)
+        - wikipedia_tool: query_wikipedia (for SourceLoader)
 
-    The scrape tool is separated because it's used internally by SaveSource,
-    not exposed directly to the evaluator agent.
+    The scrape and wikipedia tools are used internally by SourceLoader
+    for fetching content, not exposed directly to the evaluator agent.
     """
     mcp_client = get_mcp_client()
     all_tools = await mcp_client.get_tools()
@@ -64,8 +66,9 @@ async def get_search_tools() -> tuple[list[BaseTool], BaseTool]:
     search_tool_names = {"search_engine", "query_wikipedia"}
     search_tools = [t for t in all_tools if t.name in search_tool_names]
 
-    # Scrape tool for internal use by SaveSource
+    # Tools for internal use by SourceLoader
     scrape_tool = next((t for t in all_tools if t.name == "scrape_as_markdown"), None)
+    wikipedia_tool = next((t for t in all_tools if t.name == "query_wikipedia"), None)
 
     # Wrap search tools with truncation for token efficiency
     MAX_CHARS = 20000
@@ -87,7 +90,7 @@ async def get_search_tools() -> tuple[list[BaseTool], BaseTool]:
 
     wrapped_search_tools = [create_truncating_tool(tool) for tool in search_tools]
 
-    return wrapped_search_tools, scrape_tool
+    return wrapped_search_tools, scrape_tool, wikipedia_tool
 
 
 async def create_agent():
@@ -110,16 +113,25 @@ async def create_agent():
     evaluator_prompt = load_prompt("evaluator.md")
     summarizer_prompt = load_prompt("summarizer.md")
 
-    # Get tools - search tools for agent, scrape tool for internal use
-    search_tools, scrape_tool = await get_search_tools()
+    # Get tools - search tools for agent, scrape/wikipedia tools for SourceLoader
+    search_tools, scrape_tool, wikipedia_tool = await get_search_tools()
     db_tools_list = get_database_tools()
 
-    # Set scrape tool for internal use by SaveSource
-    if scrape_tool:
-        set_scrape_tool(scrape_tool)
-        print(f"Scrape tool initialized for internal use")
-    else:
-        print("WARNING: scrape_as_markdown tool not available")
+    # Initialize model for summarization (same model as agent for consistency)
+    summarizer_model = ChatAnthropic(
+        model="claude-3-5-haiku-20241022",
+        temperature=0,
+        max_tokens=1000
+    )
+
+    # Create and set SourceLoader for internal use by SaveSource
+    source_loader = SourceLoader(
+        scrape_tool=scrape_tool,
+        wikipedia_tool=wikipedia_tool,
+        model=summarizer_model
+    )
+    set_source_loader(source_loader)
+    print(f"SourceLoader initialized (scrape: {scrape_tool is not None}, wikipedia: {wikipedia_tool is not None})")
 
     print(f"Loaded {len(search_tools)} search tools: {[t.name for t in search_tools]}")
     print(f"Loaded {len(db_tools_list)} database tools: {[t.name for t in db_tools_list]}")

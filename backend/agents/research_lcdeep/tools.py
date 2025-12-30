@@ -4,21 +4,22 @@ from typing import Optional, List
 from langchain_core.tools import StructuredTool, BaseTool
 from pydantic import BaseModel, Field
 from agents.utils.db_tools import get_db_tools
+from agents.research_lcdeep.source_loader import SourceLoader
 
 
-# Module-level scrape tool holder (set by agent.py during initialization)
-_scrape_tool: Optional[BaseTool] = None
+# Module-level source loader holder (set by agent.py during initialization)
+_source_loader: Optional[SourceLoader] = None
 
 
-def set_scrape_tool(tool: BaseTool):
-    """Set the scrape tool for internal use by SaveSource."""
-    global _scrape_tool
-    _scrape_tool = tool
+def set_source_loader(loader: SourceLoader):
+    """Set the source loader for use by SaveSource."""
+    global _source_loader
+    _source_loader = loader
 
 
-def get_scrape_tool() -> Optional[BaseTool]:
-    """Get the scrape tool."""
-    return _scrape_tool
+def get_source_loader() -> Optional[SourceLoader]:
+    """Get the source loader."""
+    return _source_loader
 
 
 # Pydantic schemas for tool inputs
@@ -79,29 +80,47 @@ async def save_source_impl(
     researcher_id: str = "EVALUATOR-1"
 ) -> str:
     """
-    Evaluate and save a source. Internally scrapes the URL.
+    Evaluate and save a source. Internally fetches, validates, and summarizes the URL.
 
     Task ID automatically from context.
     """
     db_tools = get_db_tools()
+    source_loader = get_source_loader()
 
-    # Scrape the URL internally using BrightData MCP
+    # Default values if loader not available
     raw_content = None
+    source_summary = None
+    source_type = "web"
+    content_quality = "failed"
     fetch_status = "failed"
-    scrape_error = None
+    error_msg = None
 
-    scrape_tool = get_scrape_tool()
-    if scrape_tool is not None:
-        try:
-            raw_content = await scrape_tool.ainvoke({"url": url})
+    if source_loader is not None:
+        # Get research context for focused summarization
+        research_context = await db_tools.get_research_context()
+        if not research_context:
+            research_context = "general research"
+
+        # Use SourceLoader to fetch, validate, and summarize
+        result = await source_loader.load(url, research_context)
+
+        raw_content = result.raw_content
+        source_summary = result.source_summary
+        source_type = result.source_type
+        content_quality = result.content_quality
+        error_msg = result.error
+
+        # Set fetch_status based on content_quality
+        if content_quality == "good":
             fetch_status = "completed"
-        except Exception as e:
-            scrape_error = str(e)
+        elif content_quality == "partial":
+            fetch_status = "completed"  # Still save, but quality is partial
+        else:
             fetch_status = "failed"
     else:
-        scrape_error = "Scrape tool not initialized"
+        error_msg = "Source loader not initialized"
 
-    # Save to database with scraped content
+    # Save to database with all metadata
     source_id = await db_tools.save_source(
         url=url,
         title=title,
@@ -110,14 +129,20 @@ async def save_source_impl(
         evaluation_notes=evaluation_notes,
         researcher_id=researcher_id,
         raw_content=raw_content,
+        source_summary=source_summary,
+        source_type=source_type,
+        content_quality=content_quality,
         fetch_status=fetch_status
     )
 
-    if fetch_status == "completed":
-        content_len = len(raw_content) if raw_content else 0
-        return f"Saved and scraped source (ID: {source_id}, {content_len} chars)"
+    # Build response message
+    if content_quality == "good":
+        summary_len = len(source_summary) if source_summary else 0
+        return f"Saved source [{source_type}] with summary ({summary_len} chars) (ID: {source_id})"
+    elif content_quality == "partial":
+        return f"Saved source [{source_type}] with partial quality - no summary (ID: {source_id})"
     else:
-        return f"Saved source but scrape failed: {scrape_error} (ID: {source_id})"
+        return f"Saved source but fetch failed: {error_msg} (ID: {source_id})"
 
 
 async def load_research_data_impl() -> str:
@@ -129,25 +154,34 @@ async def load_research_data_impl() -> str:
     if not sources:
         return "No sources found for this research task."
 
-    # Format sources with raw_content (truncated for display)
+    # Format sources with source_summary (preferred) or raw_content (fallback)
     output = f"## Research Sources ({len(sources)} total)\n\n"
 
     for source in sources:
+        source_type = source.get('source_type') or 'web'
+        content_quality = source.get('content_quality') or 'unknown'
+
         output += f"### {source['title']}\n"
         output += f"- **URL:** {source['url']}\n"
+        output += f"- **Type:** {source_type}\n"
+        output += f"- **Quality:** {content_quality}\n"
         output += f"- **Relevance:** {source['relevance_score']:.1f}\n"
         output += f"- **Reliability:** {source['reliability_score']:.1f}\n"
         output += f"- **Evaluator Notes:** {source['evaluation_notes']}\n"
 
-        # Include raw content (truncated to avoid context overflow)
-        raw_content = source.get('raw_content') or ''
-        if raw_content:
-            # Truncate to ~5000 chars per source
-            if len(raw_content) > 5000:
-                raw_content = raw_content[:5000] + "\n\n[... CONTENT TRUNCATED ...]"
-            output += f"\n**Content:**\n{raw_content}\n"
+        # Prefer source_summary over raw_content
+        source_summary = source.get('source_summary')
+        if source_summary:
+            output += f"\n**Summary:**\n{source_summary}\n"
         else:
-            output += "\n**Content:** (not available)\n"
+            # Fallback to raw_content (truncated)
+            raw_content = source.get('raw_content') or ''
+            if raw_content:
+                if len(raw_content) > 3000:
+                    raw_content = raw_content[:3000] + "\n\n[... CONTENT TRUNCATED ...]"
+                output += f"\n**Content (no summary available):**\n{raw_content}\n"
+            else:
+                output += "\n**Content:** (not available)\n"
 
         output += "\n---\n\n"
 
