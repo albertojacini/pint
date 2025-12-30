@@ -28,6 +28,7 @@ from langchain_core.tools import BaseTool, StructuredTool
 from agents.mcp.client import get_mcp_client
 from agents.research_lcdeep.tools import get_database_tools, set_source_loader
 from agents.research_lcdeep.source_loader import SourceLoader
+from agents.research_lcdeep.config import MAIN_MODEL, SUMMARIZER_MODEL, DEFAULT_TEMPERATURE, DEFAULT_MAX_TOKENS
 from agents.utils.db_tools import get_db_tools
 from agents.utils.task_context import set_current_task_id
 
@@ -119,9 +120,9 @@ async def create_agent():
 
     # Initialize model for summarization (same model as agent for consistency)
     summarizer_model = ChatAnthropic(
-        model="claude-3-5-haiku-20241022",
-        temperature=0,
-        max_tokens=1000
+        model=SUMMARIZER_MODEL,
+        temperature=DEFAULT_TEMPERATURE,
+        max_tokens=DEFAULT_MAX_TOKENS
     )
 
     # Create and set SourceLoader for internal use by SaveSource
@@ -137,7 +138,7 @@ async def create_agent():
     print(f"Loaded {len(db_tools_list)} database tools: {[t.name for t in db_tools_list]}")
 
     # Initialize model (using Haiku for efficiency)
-    model = ChatAnthropic(model="claude-3-5-haiku-20241022", temperature=0)
+    model = ChatAnthropic(model=MAIN_MODEL, temperature=DEFAULT_TEMPERATURE)
 
     # Define search_evaluator subagent (gets search + SaveSource only)
     search_evaluator_subagent = SubAgent(

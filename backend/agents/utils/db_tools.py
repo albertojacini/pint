@@ -8,6 +8,13 @@ import asyncpg
 from agents.utils.task_context import get_current_task_id
 
 
+def sanitize_text(text: Optional[str]) -> Optional[str]:
+    """Remove null bytes from text to make it PostgreSQL-compatible."""
+    if text is None:
+        return None
+    return text.replace('\x00', '')
+
+
 class DatabaseTools:
     """Provides database operations for the research agent."""
 
@@ -44,6 +51,9 @@ class DatabaseTools:
         """
         if not self.pool:
             await self.connect()
+
+        # Sanitize input text to remove null bytes
+        input_text = sanitize_text(input_text)
 
         async with self.pool.acquire() as conn:
             research_id = await conn.fetchval(
@@ -96,6 +106,12 @@ class DatabaseTools:
             await self.connect()
 
         research_id = get_current_task_id()
+
+        # Sanitize text fields to remove null bytes
+        raw_content = sanitize_text(raw_content)
+        source_summary = sanitize_text(source_summary)
+        title = sanitize_text(title)
+        evaluation_notes = sanitize_text(evaluation_notes)
 
         async with self.pool.acquire() as conn:
             source_id = await conn.fetchval(
@@ -203,6 +219,9 @@ class DatabaseTools:
             await self.connect()
 
         research_id = get_current_task_id()
+
+        # Sanitize content to remove null bytes
+        content = sanitize_text(content)
 
         async with self.pool.acquire() as conn:
             await conn.execute(
