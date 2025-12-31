@@ -123,7 +123,7 @@ Respond with valid JSON only (no markdown code blocks, no extra text):
   "description_short": "One-sentence summary (STRICT LIMIT: exactly 100 characters or less)",
   "description": "Detailed description explaining what this provision is (max 1000 chars)",
   "summary_md": "Full markdown summary with sections: Overview, Key Details, History, Current Status (max 20000 chars)",
-  "provision_type": "one of: ownership, contract, regulation, taxation, allocation, designation",
+  "provision_type_codes": ["array", "of", "types"],
   "relevance": 0-10 (how important is this provision to the entity),
   "confidence": 0.0-1.0 (confidence in accuracy of information),
   "source_urls": ["list", "of", "source", "urls"]
@@ -131,7 +131,8 @@ Respond with valid JSON only (no markdown code blocks, no extra text):
 
 CRITICAL CONSTRAINTS:
 - description_short MUST be 100 characters or less (hard database constraint - will fail if longer)
-- Choose the provision_type that best matches the nature of what's being described
+- provision_type_codes is an array that can contain multiple types (e.g., ["ownership", "contract"] for a company stake with service agreements)
+- Choose ALL provision types that apply - provisions can have multiple types simultaneously
 - Ensure all text is factual and based on the research provided"""
 
         user_message = f"""Generate a provision draft from this research:

@@ -64,11 +64,11 @@ export default async function ProvisionIngestionPage() {
                     </p>
                   </div>
                   <div className="flex gap-2">
-                    {draft.provisionType && (
-                      <Badge className={typeColors[draft.provisionType]}>
-                        {draft.provisionType}
+                    {draft.provisionTypeCodes?.map((typeCode) => (
+                      <Badge key={typeCode} className={typeColors[typeCode]}>
+                        {typeCode}
                       </Badge>
-                    )}
+                    ))}
                     <Badge className={statusColors[draft.jobStatus] || 'bg-gray-100 text-gray-800'}>
                       {draft.jobStatus.replace('_', ' ')}
                     </Badge>

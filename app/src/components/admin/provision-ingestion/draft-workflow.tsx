@@ -54,7 +54,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
   const [editedDescription, setEditedDescription] = useState(draft.description || '')
   const [editedSummary, setEditedSummary] = useState(draft.summary_md || '')
   const [editedRelevance, setEditedRelevance] = useState<number | null>(draft.relevance || null)
-  const [editedProvisionType, setEditedProvisionType] = useState<ProvisionType | null>(draft.provisionType || null)
+  const [editedProvisionTypeCodes, setEditedProvisionTypeCodes] = useState<string[]>(draft.provisionTypeCodes || [])
 
   const router = useRouter()
   const { toast } = useToast()
@@ -244,7 +244,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         descriptionShort: result.description_short,
         description: result.description,
         summary: result.summary_md,
-        provisionType: result.provision_type,
+        provisionTypeCodes: result.provision_type_codes,
         relevance: result.relevance,
         confidence: String(result.confidence),
         sourceUrls: result.source_urls,
@@ -257,7 +257,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         descriptionShort: result.description_short,
         description: result.description,
         summary_md: result.summary_md,
-        provisionType: result.provision_type,
+        provisionTypeCodes: result.provision_type_codes,
         relevance: result.relevance,
         confidence: String(result.confidence),
         sourceUrls: result.source_urls,
@@ -270,7 +270,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
       setEditedDescription(result.description || '')
       setEditedSummary(result.summary_md || '')
       setEditedRelevance(result.relevance || null)
-      setEditedProvisionType(result.provision_type || null)
+      setEditedProvisionTypeCodes(result.provision_type_codes || [])
 
       toast({
         title: 'Draft generated',
@@ -315,7 +315,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         descriptionShort: editedDescriptionShort,
         description: editedDescription,
         summary: editedSummary,
-        provisionType: editedProvisionType ?? undefined,
+        provisionTypeCodes: editedProvisionTypeCodes,
         relevance: editedRelevance ?? undefined,
       })
 
@@ -383,11 +383,11 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         >
           {draft.jobStatus.replace('_', ' ')}
         </Badge>
-        {draft.provisionType && (
-          <Badge className="bg-indigo-100 text-indigo-800">
-            {draft.provisionType}
+        {draft.provisionTypeCodes?.map((typeCode) => (
+          <Badge key={typeCode} className="bg-indigo-100 text-indigo-800">
+            {typeCode}
           </Badge>
-        )}
+        ))}
       </div>
 
       {/* Input description */}
@@ -509,15 +509,21 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
             </div>
 
             <div className="space-y-2">
-              <Label>Provision Type</Label>
+              <Label>Provision Types (select all that apply)</Label>
               <div className="grid grid-cols-2 gap-2">
                 {PROVISION_TYPES.map((type) => (
                   <button
                     key={type}
                     type="button"
-                    onClick={() => setEditedProvisionType(type)}
+                    onClick={() => {
+                      setEditedProvisionTypeCodes((prev) =>
+                        prev.includes(type)
+                          ? prev.filter((t) => t !== type)
+                          : [...prev, type]
+                      )
+                    }}
                     className={`p-3 border rounded-lg text-left transition-colors ${
-                      editedProvisionType === type
+                      editedProvisionTypeCodes.includes(type)
                         ? 'border-blue-500 bg-blue-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
@@ -613,7 +619,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           </div>
 
           <div className="flex gap-3 pt-4 border-t">
-            <Button onClick={handleSave} disabled={loading || !editedProvisionType}>
+            <Button onClick={handleSave} disabled={loading || editedProvisionTypeCodes.length === 0}>
               {loading ? 'Saving...' : 'Save to Production'}
             </Button>
             <Button variant="outline" onClick={handleDelete} disabled={loading}>

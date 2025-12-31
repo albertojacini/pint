@@ -146,7 +146,7 @@ create table if not exists public.provision_drafts (
   description_short text check (length(description_short) <= 100),
   description text check (length(description) <= 1000),
   summary_md text check (length(summary_md) <= 20000),
-  provision_type text check (provision_type in ('ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation')),
+  provision_type_codes text[], -- Array of provision type codes
   extra_data jsonb default '{}',
 
   -- Metadata

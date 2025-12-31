@@ -78,7 +78,7 @@ class GenerateDraftResponse(BaseModel):
     description_short: str
     description: str
     summary_md: str
-    provision_type: str
+    provision_type_codes: List[str]
     relevance: int
     confidence: float
     source_urls: List[str]

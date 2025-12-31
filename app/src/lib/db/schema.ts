@@ -358,9 +358,7 @@ export const provisionDrafts = pgTable('provision_drafts', {
   descriptionShort: text('description_short'),
   description: text('description'),
   summary: text('summary_md'),
-  provisionType: text('provision_type', {
-    enum: ['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']
-  }),
+  provisionTypeCodes: text('provision_type_codes').array(), // Array of provision type codes
   extraData: jsonb('extra_data').$type<Record<string, unknown>>(),
 
   // Metadata

@@ -26,7 +26,7 @@ export interface ProvisionDraft {
   descriptionShort: string | null
   description: string | null
   summary_md: string | null
-  provisionType: ProvisionType | null
+  provisionTypeCodes: string[] | null
   extraData: Record<string, unknown> | null
   confidence: string | null
   relevance: number | null
@@ -78,7 +78,7 @@ export async function updateDraft(
     descriptionShort: string
     description: string
     summary: string
-    provisionType: ProvisionType
+    provisionTypeCodes: string[]
     extraData: Record<string, unknown>
     confidence: string
     relevance: number
@@ -125,8 +125,8 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
     return { ok: false, error: 'Draft is not ready for production' }
   }
 
-  if (!draft.title || !draft.provisionType) {
-    return { ok: false, error: 'Draft is missing required fields (title or provision type)' }
+  if (!draft.title || !draft.provisionTypeCodes || draft.provisionTypeCodes.length === 0) {
+    return { ok: false, error: 'Draft is missing required fields (title or provision types)' }
   }
 
   const slug = generateSlug(draft.title)
@@ -146,17 +146,19 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
     })
     .returning({ id: provisions.id })
 
-  // Create type association from provisionType
-  const [typeResult] = await db
-    .select({ id: provisionTypes.id })
-    .from(provisionTypes)
-    .where(eq(provisionTypes.code, draft.provisionType))
+  // Create type associations from provisionTypeCodes
+  for (const typeCode of draft.provisionTypeCodes) {
+    const [typeResult] = await db
+      .select({ id: provisionTypes.id })
+      .from(provisionTypes)
+      .where(eq(provisionTypes.code, typeCode))
 
-  if (typeResult) {
-    await db.insert(provisionTypeAssociations).values({
-      provisionId: provision.id,
-      typeId: typeResult.id,
-    })
+    if (typeResult) {
+      await db.insert(provisionTypeAssociations).values({
+        provisionId: provision.id,
+        typeId: typeResult.id,
+      })
+    }
   }
 
   // Delete the draft
@@ -186,7 +188,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
       summary_md: provisionDrafts.summary,
-      provisionType: provisionDrafts.provisionType,
+      provisionTypeCodes: provisionDrafts.provisionTypeCodes,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
       relevance: provisionDrafts.relevance,
@@ -220,7 +222,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
       summary_md: provisionDrafts.summary,
-      provisionType: provisionDrafts.provisionType,
+      provisionTypeCodes: provisionDrafts.provisionTypeCodes,
       extraData: provisionDrafts.extraData,
       confidence: provisionDrafts.confidence,
       relevance: provisionDrafts.relevance,

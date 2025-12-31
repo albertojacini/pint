@@ -236,6 +236,58 @@ class SourceLoader:
 
         return "good", None
 
+    def _detect_language(self, url: str, content: str) -> str:
+        """
+        Detect the appropriate language for summarization.
+
+        Args:
+            url: Source URL
+            content: Source content
+
+        Returns:
+            Language code (it, fr, es, en, etc.)
+        """
+        # Check URL domain for language hints
+        parsed = urlparse(url)
+        domain = parsed.netloc.lower()
+
+        # Italian domains
+        if ".it" in domain or "it.wikipedia.org" in domain:
+            return "it"
+
+        # French domains
+        if ".fr" in domain or "fr.wikipedia.org" in domain:
+            return "fr"
+
+        # Spanish domains
+        if ".es" in domain or "es.wikipedia.org" in domain:
+            return "es"
+
+        # German domains
+        if ".de" in domain or "de.wikipedia.org" in domain:
+            return "de"
+
+        # Check content for language markers (simple heuristic)
+        content_lower = content.lower()[:1000]  # Check first 1000 chars
+
+        # Italian markers
+        italian_words = ["della", "degli", "comune", "provincia", "regione", "società"]
+        if sum(1 for word in italian_words if word in content_lower) >= 2:
+            return "it"
+
+        # French markers
+        french_words = ["de la", "des", "commune", "département", "région", "société"]
+        if sum(1 for word in french_words if word in content_lower) >= 2:
+            return "fr"
+
+        # Spanish markers
+        spanish_words = ["de la", "de los", "municipio", "provincia", "comunidad", "sociedad"]
+        if sum(1 for word in spanish_words if word in content_lower) >= 2:
+            return "es"
+
+        # Default to English
+        return "en"
+
     async def _summarize(self, content: str, research_context: str, url: str) -> str:
         """
         Summarize source content focused on the research context.
@@ -248,6 +300,20 @@ class SourceLoader:
         Returns:
             Focused summary of the content
         """
+        # Detect language from URL and content
+        lang = self._detect_language(url, content)
+
+        # Language-specific instructions
+        lang_instructions = {
+            "it": "Scrivi il riassunto in italiano.",
+            "fr": "Écrivez le résumé en français.",
+            "es": "Escriba el resumen en español.",
+            "de": "Schreiben Sie die Zusammenfassung auf Deutsch.",
+            "en": "Write the summary in English."
+        }
+
+        lang_instruction = lang_instructions.get(lang, lang_instructions["en"])
+
         # Truncate content to avoid token overflow
         truncated_content = content[:self.MAX_CONTENT_FOR_SUMMARY]
         if len(content) > self.MAX_CONTENT_FOR_SUMMARY:
@@ -265,6 +331,8 @@ Extract and summarize:
 
 Be concise but comprehensive. Focus on information relevant to the research topic.
 Output 200-400 words in clear prose.
+
+IMPORTANT: {lang_instruction}
 
 ---
 SOURCE CONTENT:
