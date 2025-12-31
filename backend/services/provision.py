@@ -22,11 +22,11 @@ The research agents provide raw information; this service transforms it into
 structured provisions with all necessary metadata and business logic applied.
 """
 
-import json
 from typing import Optional, Dict, Any, Literal
 
-from anthropic import Anthropic
+from langchain.chat_models import init_chat_model
 
+from models.db import ProvisionDraftOutput, ResearchPromptOutput
 from services.research import create_research_task, get_task_status, run_research_job
 
 
@@ -34,7 +34,14 @@ class ProvisionService:
     """Service for provision drafting workflow."""
 
     def __init__(self):
-        self.client = Anthropic()
+        # Initialize LangChain chat model for Anthropic
+        self.llm = init_chat_model(
+            "claude-sonnet-4-20250514",
+            model_provider="anthropic"
+        )
+
+        # Create structured output model for provision drafts
+        self.structured_llm = self.llm.with_structured_output(ProvisionDraftOutput)
 
     async def generate_research_prompt(
         self,
@@ -74,15 +81,16 @@ Political Entity: {entity_name}
 
 Generate a detailed research prompt that will guide comprehensive research on this provision."""
 
-        response = self.client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1024,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_message}]
-        )
+        # Use LangChain's invoke with system and user messages
+        messages = [
+            ("system", system_prompt),
+            ("user", user_message)
+        ]
+
+        response = await self.llm.ainvoke(messages)
 
         return {
-            "research_prompt": response.content[0].text,
+            "research_prompt": response.content,
             "reasoning": f"Generated from topic: {input_description}"
         }
 
@@ -95,7 +103,7 @@ Generate a detailed research prompt that will guide comprehensive research on th
         """
         Generate provision draft content from research summary.
 
-        This is an inline LLM call (not a separate agent).
+        This is an inline LLM call (not a separate agent) using structured output.
 
         Args:
             research_summary: Summary from research agent
@@ -115,19 +123,7 @@ A provision is a piece of state infrastructure that a political entity maintains
 - allocation: Programs, subsidies, budgets, funds
 - designation: Zones, landmarks, protected areas, institutions
 
-Given research findings, extract and structure the provision information.
-
-Respond with valid JSON only (no markdown code blocks, no extra text):
-{
-  "title": "Official name of the provision (clear, concise)",
-  "description_short": "One-sentence summary (STRICT LIMIT: exactly 100 characters or less)",
-  "description": "Detailed description explaining what this provision is (max 1000 chars)",
-  "summary_md": "Full markdown summary with sections: Overview, Key Details, History, Current Status (max 20000 chars)",
-  "provision_type_codes": ["array", "of", "types"],
-  "relevance": 0-10 (how important is this provision to the entity),
-  "confidence": 0.0-1.0 (confidence in accuracy of information),
-  "source_urls": ["list", "of", "source", "urls"]
-}
+Given research findings, extract and structure the provision information according to the schema.
 
 CRITICAL CONSTRAINTS:
 - description_short MUST be 100 characters or less (hard database constraint - will fail if longer)
@@ -143,30 +139,19 @@ Political Entity: {entity_name}
 Research Summary:
 {research_summary}
 
-Generate the structured provision draft as JSON."""
+Generate the structured provision draft."""
 
-        response = self.client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=4096,
-            system=system_prompt,
-            messages=[{"role": "user", "content": user_message}]
-        )
+        # Use LangChain's structured output
+        messages = [
+            ("system", system_prompt),
+            ("user", user_message)
+        ]
 
-        # Parse JSON response
-        response_text = response.content[0].text.strip()
-        # Handle case where response might be wrapped in markdown code block
-        if response_text.startswith("```"):
-            lines = response_text.split("\n")
-            response_text = "\n".join(lines[1:-1])
+        # Invoke with structured output - returns ProvisionDraftOutput Pydantic model
+        result: ProvisionDraftOutput = await self.structured_llm.ainvoke(messages)
 
-        result = json.loads(response_text)
-
-        # Enforce database constraint: description_short must be <= 100 chars
-        if "description_short" in result and len(result["description_short"]) > 100:
-            # Truncate to 97 chars and add ellipsis
-            result["description_short"] = result["description_short"][:97] + "..."
-
-        return result
+        # Convert Pydantic model to dict for backwards compatibility
+        return result.model_dump()
 
     async def start_research(
         self,
