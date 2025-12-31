@@ -29,21 +29,34 @@ insert into public.provision_types (code, label, description) values
 -- Provisions: institutional/legal/operational infrastructure owned by entities
 create table if not exists public.provisions (
   id uuid primary key default gen_random_uuid(),
-  entity_id uuid not null references public.political_entities(id) on delete cascade,
   title text not null,
   slug text not null,
+  avatar_url text,
+
+  -- Relationships
+  entity_id uuid not null references public.political_entities(id) on delete cascade,
+  idea_id uuid references public.ideas(id) on delete set null,
+
+  -- Taxonomy and filtering
+  -- tags and provision_types_associations are used for taxonomy and filtering
+
+  -- Master data / source of truth
+  summary_md text check (length(summary_md) <= 20000),
+
+  -- UI fields - Extracted from summary_md
   description_short text check (length(description_short) <= 100),
   description text check (length(description) <= 1000),
-  summary_md text check (length(summary_md) <= 20000),
-  avatar_url text,
-  status text not null default 'active', -- 'active', 'repealed', 'suspended'
   relevance integer check (relevance >= 0 and relevance <= 10),
+  extra_data jsonb default '{}',
+
+  -- Metadata
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+
+  -- Status data - DEPRECATED - This is deprecated because the provision table represents the current state of the political entities' provisions. Provisions that don't exist any more should just be deleted
+  status text not null default 'active', -- 'active', 'repealed', 'suspended'
   effective_from date,
   effective_until date,
-  idea_id uuid references public.ideas(id) on delete set null,
-  extra_data jsonb default '{}',
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
 );
 
 -- Provision type associations (many-to-many junction table)
