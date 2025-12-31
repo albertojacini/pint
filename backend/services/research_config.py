@@ -10,8 +10,8 @@ from typing import Literal
 # AGENT SELECTION - Comment/uncomment to switch
 # ============================================================================
 
-# Option 1: Claude SDK research agent (default)
-RESEARCH_AGENT: Literal["claude", "lcdeep"] = "claude"
+# Option 1: LangChain Deep Agents research agent (RECOMMENDED)
+RESEARCH_AGENT: Literal["claude", "lcdeep"] = "lcdeep"
 
-# Option 2: LangChain Deep Agents research agent
-# RESEARCH_AGENT: Literal["claude", "lcdeep"] = "lcdeep"
+# Option 2: Claude SDK research agent (DEPRECATED - delegates to lcdeep)
+# RESEARCH_AGENT: Literal["claude", "lcdeep"] = "claude"
