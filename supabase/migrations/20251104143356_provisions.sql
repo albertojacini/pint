@@ -56,7 +56,7 @@ create table if not exists public.provisions (
   -- Status data - DEPRECATED - This is deprecated because the provision table represents the current state of the political entities' provisions. Provisions that don't exist any more should just be deleted
   status text not null default 'active', -- 'active', 'repealed', 'suspended'
   effective_from date,
-  effective_until date,
+  effective_until date
 );
 
 -- Provision type associations (many-to-many junction table)
