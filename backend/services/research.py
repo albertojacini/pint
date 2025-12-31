@@ -1,18 +1,21 @@
-"""Research service supporting both research_claude and research_lcdeep agents."""
+"""Research service supporting both research_claude and research_lcdeep agents.
 
-from typing import Optional, Dict, Any, Literal
+Agent selection is configured in research_config.py - comment/uncomment to switch.
+"""
+
+from typing import Optional, Dict, Any
 
 from agents.utils.db_tools import get_db_tools
 from agents.research_claude.agent import run as run_research_claude
 from agents.research_lcdeep.agent import run as run_research_lcdeep
+from services.research_config import RESEARCH_AGENT
 
 
 async def create_research_task(
     query: str,
     entity_id: Optional[str] = None,
     entity_name: Optional[str] = None,
-    agent_type: Literal["claude", "lcdeep"] = "claude"
-) -> tuple[str, Literal["claude", "lcdeep"]]:
+) -> str:
     """
     Create a new research task in the database.
 
@@ -20,10 +23,9 @@ async def create_research_task(
         query: The research question/description
         entity_id: Optional UUID of the entity being researched
         entity_name: Optional name of the entity (appended to query for context)
-        agent_type: Which agent to use - "claude" (Claude SDK) or "lcdeep" (LangChain Deep Agents)
 
     Returns:
-        tuple of (task_id, agent_type)
+        task_id
     """
     db = get_db_tools()
     await db.connect()
@@ -36,18 +38,19 @@ async def create_research_task(
     task_id = await db.create_research_task(
         input_text=full_query
     )
-    return task_id, agent_type
+    return task_id
 
 
-async def run_research_job(task_id: str, agent_type: Literal["claude", "lcdeep"] = "claude"):
+async def run_research_job(task_id: str):
     """
     Run research agent for a task. Designed to be run as a background task.
 
+    Uses the agent configured in research_config.RESEARCH_AGENT.
+
     Args:
         task_id: UUID of the research task
-        agent_type: Which agent to use - "claude" or "lcdeep"
     """
-    if agent_type == "lcdeep":
+    if RESEARCH_AGENT == "lcdeep":
         await run_research_lcdeep(task_id)
     else:
         await run_research_claude(task_id)

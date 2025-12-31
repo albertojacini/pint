@@ -1,6 +1,6 @@
 # Agent Selection in Research API
 
-The Research API now supports two research agents that can be selected via the `agent_type` parameter.
+The Research API supports two research agents. Agent selection is configured server-side in `services/research_config.py`.
 
 ## Available Agents
 
@@ -18,38 +18,43 @@ Both agents:
 - Use the same database schema
 - Follow the same subagent architecture (lead → search_evaluator → summarizer)
 - Save results to the same tables (`ra_researches`, `ra_sources`)
+- Have identical interfaces (`run(task_id: str) -> str`)
+
+## Configuration
+
+To switch between agents, edit `backend/services/research_config.py`:
+
+```python
+# Option 1: Claude SDK research agent (default)
+RESEARCH_AGENT: Literal["claude", "lcdeep"] = "claude"
+
+# Option 2: LangChain Deep Agents research agent
+# RESEARCH_AGENT: Literal["claude", "lcdeep"] = "lcdeep"
+```
+
+Simply comment/uncomment the desired agent and restart the server.
 
 ## API Usage
 
-### POST /research
+### POST /provision/start-research
 
-Start a new research job with agent selection:
+Start a provision research job:
 
 ```bash
-# Using Claude SDK (default)
-curl -X POST http://localhost:8000/research \
+curl -X POST http://localhost:8000/provision/start-research \
   -H "Content-Type: application/json" \
   -d '{
-    "description": "Research electric vehicles",
-    "agent_type": "claude"
-  }'
-
-# Using LangChain Deep Agents
-curl -X POST http://localhost:8000/research \
-  -H "Content-Type: application/json" \
-  -d '{
-    "description": "Research electric vehicles",
-    "agent_type": "lcdeep"
+    "research_prompt": "Research electric vehicles",
+    "entity_name": "California"
   }'
 ```
 
 **Request Body:**
 ```json
 {
-  "description": "string",        // Required: research question
+  "research_prompt": "string",    // Required: research question
   "entity_name": "string",        // Optional: entity context
-  "entity_id": "uuid",           // Optional: entity UUID
-  "agent_type": "claude" | "lcdeep"  // Optional: which agent to use (default: "claude")
+  "entity_id": "uuid"            // Optional: entity UUID
 }
 ```
 
@@ -60,12 +65,12 @@ curl -X POST http://localhost:8000/research \
 }
 ```
 
-### GET /research/{task_id}
+### GET /provision/research-status/{task_id}
 
-Get research status and results (works for both agents):
+Poll research status and results:
 
 ```bash
-curl http://localhost:8000/research/{task_id}
+curl http://localhost:8000/provision/research-status/{task_id}
 ```
 
 **Response:**
@@ -82,58 +87,20 @@ curl http://localhost:8000/research/{task_id}
 }
 ```
 
-### POST /research/{task_id}/revise
-
-Revise research with feedback:
-
-```bash
-# Revise using Claude SDK
-curl -X POST http://localhost:8000/research/{task_id}/revise \
-  -H "Content-Type: application/json" \
-  -d '{
-    "feedback": "Focus more on environmental impact",
-    "agent_type": "claude"
-  }'
-
-# Revise using LangChain Deep Agents
-curl -X POST http://localhost:8000/research/{task_id}/revise \
-  -H "Content-Type: application/json" \
-  -d '{
-    "feedback": "Focus more on environmental impact",
-    "agent_type": "lcdeep"
-  }'
-```
-
-**Request Body:**
-```json
-{
-  "feedback": "string",           // Required: revision instructions
-  "agent_type": "claude" | "lcdeep"  // Optional: which agent to use (default: "claude")
-}
-```
-
-**Response:**
-```json
-{
-  "task_id": "uuid",           // New task ID
-  "original_task_id": "uuid"   // Original task reference
-}
-```
-
 ## Python Client Example
 
 ```python
 import httpx
 import asyncio
 
-async def research_with_lcdeep():
+async def research_provision():
     async with httpx.AsyncClient() as client:
-        # Start research with LangChain Deep Agents
+        # Start research (uses configured agent)
         response = await client.post(
-            "http://localhost:8000/research",
+            "http://localhost:8000/provision/start-research",
             json={
-                "description": "Research renewable energy trends in Europe",
-                "agent_type": "lcdeep"
+                "research_prompt": "Research renewable energy trends in Europe",
+                "entity_name": "European Union"
             }
         )
         task_id = response.json()["task_id"]
@@ -142,7 +109,7 @@ async def research_with_lcdeep():
         # Poll for results
         while True:
             status_response = await client.get(
-                f"http://localhost:8000/research/{task_id}"
+                f"http://localhost:8000/provision/research-status/{task_id}"
             )
             result = status_response.json()
 
@@ -158,7 +125,7 @@ async def research_with_lcdeep():
             print(f"Status: {result['status']}...")
             await asyncio.sleep(5)
 
-asyncio.run(research_with_lcdeep())
+asyncio.run(research_provision())
 ```
 
 ## Comparison

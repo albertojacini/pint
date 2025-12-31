@@ -46,7 +46,6 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
 
   // Research prompt state
   const [researchPrompt, setResearchPrompt] = useState(draft.researchPrompt || '')
-  const [agentType, setAgentType] = useState<'claude' | 'lcdeep'>('claude')
 
   // Editable fields for review step
   const [editedTitle, setEditedTitle] = useState(draft.title || '')
@@ -126,7 +125,6 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           research_prompt: researchPrompt,
           entity_name: draft.entityName || '',
           entity_id: draft.entityId,
-          agent_type: agentType,
         }),
       })
 
@@ -418,22 +416,6 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
             />
             <p className="text-xs text-gray-500">
               Review and edit the prompt if needed before starting research
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="agent-type">Research Agent</Label>
-            <select
-              id="agent-type"
-              value={agentType}
-              onChange={(e) => setAgentType(e.target.value as 'claude' | 'lcdeep')}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <option value="claude">Claude SDK (WebSearch)</option>
-              <option value="lcdeep">LangChain Deep Agents (BrightData)</option>
-            </select>
-            <p className="text-xs text-gray-500">
-              Claude SDK uses built-in search. LangChain uses BrightData for web scraping and Wikipedia.
             </p>
           </div>
 

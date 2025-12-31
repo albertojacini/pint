@@ -76,12 +76,11 @@ User can:
 {
   "research_prompt": "...",
   "entity_name": "Milan",
-  "entity_id": "uuid",
-  "agent_type": "claude"  // or "lcdeep"
+  "entity_id": "uuid"
 }
 ```
 
-**Agent Selection** (via dropdown in UI):
+**Agent Selection** (configured in `backend/services/research_config.py`):
 - **"claude"** (default): Claude SDK with built-in WebSearch
 - **"lcdeep"**: LangChain Deep Agents with BrightData (search_engine, scrape_as_markdown, query_wikipedia)
 
@@ -255,16 +254,10 @@ GET    /provision/research-status/:id  # Step 3: Poll research
 POST   /provision/generate-draft       # Step 4: Structure draft
 ```
 
-### Research Agent
-```
-POST   /research                       # Direct research (alternative)
-GET    /research/:task_id              # Get research status
-POST   /research/:task_id/revise       # Re-run with feedback
-```
-
-**Agent Selection**: Both provision and research endpoints support `agent_type` parameter:
+**Agent Selection**: Configured server-side in `backend/services/research_config.py`:
 - `"claude"` (default): Claude SDK agent with WebSearch
 - `"lcdeep"`: LangChain Deep Agents with BrightData search
+- Simply comment/uncomment the desired agent and restart the server
 
 ---
 

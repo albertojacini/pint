@@ -10,9 +10,10 @@ Step 1: Generate research prompt
 
 Step 2: Start research
   POST /provision/start-research
-  - Input: Approved research prompt + agent type (claude/lcdeep)
+  - Input: Approved research prompt
   - Output: task_id for polling
   - Research runs in background
+  - Agent selection configured in backend/services/research_config.py
 
 Step 3: Poll for research completion
   GET /provision/research-status/{task_id}
@@ -31,9 +32,9 @@ Step 5: User review and save (handled in frontend)
 See /backend/WORKFLOW.md for full architecture documentation.
 """
 
-from typing import Optional, List, Literal
+from typing import Optional, List
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from services.provision import get_provision_service
 from services.research import run_research_job
@@ -51,10 +52,6 @@ class StartResearchRequest(BaseModel):
     research_prompt: str
     entity_id: Optional[str] = None
     entity_name: Optional[str] = None
-    agent_type: Literal["claude", "lcdeep"] = Field(
-        default="claude",
-        description="Which research agent to use: 'claude' (Claude SDK) or 'lcdeep' (LangChain Deep Agents)"
-    )
 
 
 class GenerateDraftRequest(BaseModel):
@@ -110,20 +107,17 @@ async def start_research(
     Step 3 of workflow: kicks off research agent.
     Returns immediately with task_id. Poll /provision/research-status/{task_id} for results.
 
-    You can choose which agent to use via agent_type:
-    - "claude": Use Claude SDK research agent (default)
-    - "lcdeep": Use LangChain Deep Agents research agent
+    Agent selection is configured in backend/services/research_config.py.
     """
     service = get_provision_service()
     task_id = await service.start_research(
         research_prompt=request.research_prompt,
         entity_id=request.entity_id,
         entity_name=request.entity_name,
-        agent_type=request.agent_type,
     )
 
-    # Run research in background with selected agent
-    background_tasks.add_task(run_research_job, task_id, request.agent_type)
+    # Run research in background
+    background_tasks.add_task(run_research_job, task_id)
 
     return StartResearchResponse(task_id=task_id)
 

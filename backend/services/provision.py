@@ -22,7 +22,7 @@ The research agents provide raw information; this service transforms it into
 structured provisions with all necessary metadata and business logic applied.
 """
 
-from typing import Optional, Dict, Any, Literal
+from typing import Optional, Dict, Any
 
 from langchain.chat_models import init_chat_model
 
@@ -158,27 +158,25 @@ Generate the structured provision draft."""
         research_prompt: str,
         entity_id: Optional[str] = None,
         entity_name: Optional[str] = None,
-        agent_type: Literal["claude", "lcdeep"] = "claude"
     ) -> str:
         """
         Start research using the research agent.
 
         Delegates to research service (loose coupling via API).
+        Agent selection is configured in services/research_config.py.
 
         Args:
             research_prompt: The approved research prompt
             entity_id: Optional entity UUID
             entity_name: Optional entity name for context
-            agent_type: Which agent to use - "claude" or "lcdeep"
 
         Returns:
             task_id from research agent
         """
-        task_id, _agent_type = await create_research_task(
+        task_id = await create_research_task(
             query=research_prompt,
             entity_id=entity_id,
             entity_name=entity_name,
-            agent_type=agent_type
         )
         return task_id
 
