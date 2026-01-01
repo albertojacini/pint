@@ -64,14 +64,6 @@ class ProvisionDraftOutput(BaseModel):
         description="List of source URLs used for research"
     )
 
-    extra_data: dict[str, str] = Field(
-        default_factory=dict,
-        description="Extra data for the provision",
-        extra={
-            "additionalProperties": True
-        }
-    )
-
     @field_validator('description_short')
     @classmethod
     def validate_description_short_length(cls, v: str) -> str:

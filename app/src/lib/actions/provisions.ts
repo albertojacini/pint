@@ -23,7 +23,7 @@ export type ProvisionType = {
   color: string | null
 }
 
-// Provision with tags and extraData
+// Provision with tags
 export type ProvisionWithTags = {
   id: string
   slug: string
@@ -37,7 +37,6 @@ export type ProvisionWithTags = {
   effectiveUntil: string | null
   ideaId: string | null
   ideaTitle: string | null
-  extraData: Record<string, unknown> | null
   tags: Tag[]
 }
 
@@ -90,7 +89,6 @@ export async function getProvisionsByEntity(entityId: string) {
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
-      extraData: provisions.extraData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -112,10 +110,10 @@ export async function getProvisionsByEntity(entityId: string) {
 export type ProvisionAggregates = {
   total: number
   byType: {
-    taxation: { count: number; totalRevenue: number | null; avgGrowth: number | null }
-    ownership: { count: number; totalValuation: number | null; totalCashFlow: number | null }
-    contract: { count: number; byContractType: Record<string, number> }
-    regulation: { count: number; byRegulationType: Record<string, number> }
+    taxation: { count: number }
+    ownership: { count: number }
+    contract: { count: number }
+    regulation: { count: number }
     allocation: { count: number }
     designation: { count: number }
   }
@@ -123,11 +121,10 @@ export type ProvisionAggregates = {
 }
 
 export async function getProvisionAggregatesByEntity(entityId: string): Promise<ProvisionAggregates> {
-  // Fetch all provisions with extraData
+  // Fetch all provisions
   const entityProvisions = await db
     .select({
       id: provisions.id,
-      extraData: provisions.extraData,
     })
     .from(provisions)
     .where(eq(provisions.entityId, entityId))
@@ -138,20 +135,16 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
 
   // Initialize aggregates
   const byType: ProvisionAggregates['byType'] = {
-    taxation: { count: 0, totalRevenue: null, avgGrowth: null },
-    ownership: { count: 0, totalValuation: null, totalCashFlow: null },
-    contract: { count: 0, byContractType: {} },
-    regulation: { count: 0, byRegulationType: {} },
+    taxation: { count: 0 },
+    ownership: { count: 0 },
+    contract: { count: 0 },
+    regulation: { count: 0 },
     allocation: { count: 0 },
     designation: { count: 0 },
   }
 
-  // Temporary arrays for averaging
-  const taxationGrowths: number[] = []
-
   // Process each provision
   for (const p of entityProvisions) {
-    const extra = p.extraData as Record<string, unknown> | null
     const provisionTypes = typesByProvision[p.id] || []
 
     // Process each type associated with this provision
@@ -159,38 +152,18 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
       switch (type.code) {
         case 'taxation':
           byType.taxation.count++
-          if (extra?.taxRevenueAmount != null) {
-            byType.taxation.totalRevenue = (byType.taxation.totalRevenue ?? 0) + Number(extra.taxRevenueAmount)
-          }
-          if (extra?.revenueGrowth != null) {
-            taxationGrowths.push(Number(extra.revenueGrowth))
-          }
           break
 
         case 'ownership':
           byType.ownership.count++
-          if (extra?.valuationAmount != null) {
-            byType.ownership.totalValuation = (byType.ownership.totalValuation ?? 0) + Number(extra.valuationAmount)
-          }
-          if (extra?.annualCashFlow != null) {
-            byType.ownership.totalCashFlow = (byType.ownership.totalCashFlow ?? 0) + Number(extra.annualCashFlow)
-          }
           break
 
         case 'contract':
           byType.contract.count++
-          if (extra?.contractType) {
-            const ct = String(extra.contractType)
-            byType.contract.byContractType[ct] = (byType.contract.byContractType[ct] ?? 0) + 1
-          }
           break
 
         case 'regulation':
           byType.regulation.count++
-          if (extra?.regulationType) {
-            const rt = String(extra.regulationType)
-            byType.regulation.byRegulationType[rt] = (byType.regulation.byRegulationType[rt] ?? 0) + 1
-          }
           break
 
         case 'allocation':
@@ -202,11 +175,6 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
           break
       }
     }
-  }
-
-  // Calculate average growth for taxation
-  if (taxationGrowths.length > 0) {
-    byType.taxation.avgGrowth = taxationGrowths.reduce((a, b) => a + b, 0) / taxationGrowths.length
   }
 
   // Fetch tags with counts for provisions of this entity
@@ -261,7 +229,6 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
-      extraData: provisions.extraData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -306,7 +273,6 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     effectiveUntil: provision.effectiveUntil,
     ideaId: provision.ideaId,
     ideaTitle: provision.ideaTitle,
-    extraData: provision.extraData as Record<string, unknown> | null,
     tags: provisionTags.map(t => ({
       id: t.tagId,
       name: t.tagName,
@@ -356,7 +322,6 @@ export async function getFilteredProvisions(
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
-      extraData: provisions.extraData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -444,7 +409,6 @@ export async function getFilteredProvisions(
     effectiveUntil: p.effectiveUntil,
     ideaId: p.ideaId,
     ideaTitle: p.ideaTitle,
-    extraData: p.extraData as Record<string, unknown> | null,
     tags: tagsByProvision[p.id] || []
   }))
 }

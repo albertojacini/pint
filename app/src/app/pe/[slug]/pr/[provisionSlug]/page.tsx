@@ -8,8 +8,6 @@ import { ProvisionClassificationBadge } from '@/components/custom-ui/classificat
 import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
-import ReactMarkdown from 'react-markdown'
-import type { RegulationData } from '@pint/types'
 
 interface PageProps {
   params: Promise<{
@@ -70,7 +68,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
-      extraData: provisions.extraData,
       ideaId: provisions.ideaId,
     })
     .from(provisions)
@@ -186,19 +183,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         </div>
 
         {/* Row 4: Type-Specific Content */}
-        <ProvisionCardRow4 types={provisionTypesList} extraData={provision.extraData} />
-
-        {/* Regulation Summary (Markdown) - Only for regulation type */}
-        {provisionTypesList.some(t => t.code === 'regulation') && provision.extraData && 'summary_md' in provision.extraData && (
-          <div className="mt-6 space-y-6">
-            {(provision.extraData as RegulationData).summary_md && (
-              <div className="prose prose-sm max-w-none">
-                <h3 className="text-lg font-semibold mb-2">Summary</h3>
-                <ReactMarkdown>{(provision.extraData as RegulationData).summary_md}</ReactMarkdown>
-              </div>
-            )}
-          </div>
-        )}
+        <ProvisionCardRow4 types={provisionTypesList} />
 
         {/* Row 5: Stats + Info */}
         <div className="flex items-center justify-between pt-4 border-t border-border">

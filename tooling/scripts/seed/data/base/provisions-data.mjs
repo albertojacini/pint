@@ -13,12 +13,6 @@ export const provisions = [
     types: ['ownership'],
     status: 'active',
     relevance: 8,
-    extraData: {
-      assetCategory: 'equity',
-      assetName: 'ATM - Azienda Trasporti Milanesi S.p.A.',
-      ownershipPercentage: 100,
-      purpose: 'public_service',
-    },
   },
   {
     entity: 'Comune di Milano',
@@ -31,13 +25,6 @@ export const provisions = [
     status: 'active',
     relevance: 10,
     idea: 'Urban congestion charge',
-    extraData: {
-      taxType: 'fee',
-      rateDescription: 'EUR 7.50 daily access fee per non-exempt vehicle',
-      dataYear: '2023',
-      taxRevenue: 85000000,
-      progressivity: 'regressive',
-    },
   },
   {
     entity: 'Comune di Milano',
@@ -81,9 +68,5 @@ The Municipal Police conduct regular inspections. Violations may result in permi
     types: ['regulation'],
     status: 'active',
     relevance: 6,
-    extraData: {
-      regulationType: 'permit_system',
-      domain: 'public_space',
-    },
   },
 ]

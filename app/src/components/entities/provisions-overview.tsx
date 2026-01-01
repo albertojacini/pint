@@ -244,47 +244,9 @@ export function ProvisionsOverview({ entity, aggregates, changes = [] }: Provisi
                 <span className="text-xl font-bold text-gray-800">{byType[type].count}</span>
               </div>
 
-              {/* Type-specific metrics */}
-              <div className="text-xs text-gray-600 space-y-0.5">
-                {type === 'taxation' && (
-                  <>
-                    <div className="font-medium">
-                      {formatCurrency(byType.taxation.totalRevenue)}
-                      {byType.taxation.totalRevenue !== null && ' revenue'}
-                    </div>
-                    {byType.taxation.avgGrowth !== null && (
-                      <div className={byType.taxation.avgGrowth >= 0 ? 'text-green-600' : 'text-red-600'}>
-                        {formatGrowth(byType.taxation.avgGrowth)} YoY
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {type === 'ownership' && (
-                  <>
-                    <div className="font-medium">
-                      {formatCurrency(byType.ownership.totalValuation)}
-                      {byType.ownership.totalValuation !== null && ' value'}
-                    </div>
-                    {byType.ownership.totalCashFlow !== null && (
-                      <div className={byType.ownership.totalCashFlow >= 0 ? 'text-green-600' : 'text-red-600'}>
-                        {formatCashFlow(byType.ownership.totalCashFlow)}
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {type === 'contract' && (
-                  <div>{formatBreakdown(byType.contract.byContractType, contractTypeLabels)}</div>
-                )}
-
-                {type === 'regulation' && (
-                  <div>{formatBreakdown(byType.regulation.byRegulationType, regulationTypeLabels)}</div>
-                )}
-
-                {(type === 'allocation' || type === 'designation') && (
-                  <div className="text-gray-400">—</div>
-                )}
+              {/* Type-specific metrics - removed after extra_data removal */}
+              <div className="text-xs text-gray-400">
+                —
               </div>
             </Link>
           )
