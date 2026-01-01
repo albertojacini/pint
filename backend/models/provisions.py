@@ -4,7 +4,6 @@ These models match the database schema defined in supabase/migrations/2025110414
 They are the source of truth for data structures - other modules should extend these.
 """
 
-from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -65,6 +64,14 @@ class ProvisionDraftOutput(BaseModel):
         description="List of source URLs used for research"
     )
 
+    extra_data: dict[str, str] = Field(
+        default_factory=dict,
+        description="Extra data for the provision",
+        extra={
+            "additionalProperties": True
+        }
+    )
+
     @field_validator('description_short')
     @classmethod
     def validate_description_short_length(cls, v: str) -> str:
@@ -85,17 +92,3 @@ class ProvisionDraftOutput(BaseModel):
             raise ValueError("At least one provision type code is required")
         return v
 
-
-class ResearchPromptOutput(BaseModel):
-    """Output model for research prompt generation.
-
-    Simple wrapper for research prompt generation result.
-    """
-
-    research_prompt: str = Field(
-        description="The generated research prompt"
-    )
-
-    reasoning: str = Field(
-        description="Explanation of how the prompt was generated"
-    )

@@ -265,38 +265,22 @@ Shared TypeScript configurations (base, Next.js, library).
 
 ## 🚢 Deployment
 
-### Vercel (Recommended for Next.js)
+### Vercel + Supabase Cloud (Recommended)
 
-1. **Connect GitHub repository** to Vercel
-2. **Set environment variables**:
-   ```bash
-   DATABASE_URL=<your-production-db-url>
-   NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
-   SUPABASE_SERVICE_ROLE_KEY=<your-service-key>
-   ```
-3. **Deploy**: Vercel auto-deploys on push to main
-
-### Database (Supabase Cloud)
-
-1. Create a Supabase project
-2. Run migrations from local:
-   ```bash
-   npx supabase db push
-   ```
-3. Or apply migrations manually via Supabase Dashboard
+1. Connect repository to [Vercel](https://vercel.com)
+2. Create a [Supabase](https://supabase.com) project and run migrations: `npx supabase db push`
+3. Set environment variables in Vercel:
+   - `DATABASE_URL` - Supabase connection string
+   - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
+   - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
+4. Deploy (auto-deploys on push to main)
 
 ### Self-Hosted
 
-Build and run with Docker:
-
 ```bash
-# Build Next.js app
 pnpm build
-
-# Start with PM2 or similar
-cd app
-pnpm start
+cd app && pnpm start
 ```
 
 ## 🔮 Future Enhancements

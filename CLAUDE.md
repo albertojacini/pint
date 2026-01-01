@@ -15,6 +15,13 @@ IMPORTANT: This is an early stage project:
 - Package installation: `uv add <package>` or `uv pip install <package>`
 - Run Python scripts: Always prepend with activation command
 
+## Documentation Policy
+**CRITICAL**:
+- NEVER create documentation files (*.md, *.txt, or similar) unless explicitly requested by the user
+- NEVER create README files for packages, modules, or features
+- Use inline code comments and docstrings for documentation instead
+- The only documentation files in this project are README.md and CLAUDE.md
+
 ## Project Overview
 
 **Pint** (Public Interface) is a public policies platform with two main objectives:
