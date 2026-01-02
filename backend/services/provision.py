@@ -125,8 +125,12 @@ A provision is a piece of state infrastructure that a political entity maintains
 
 Given research findings, extract and structure the provision information according to the schema.
 
-CRITICAL CONSTRAINTS:
-- description_short MUST be 100 characters or less (hard database constraint - will fail if longer)
+CRITICAL CHARACTER LIMITS (will fail validation if exceeded):
+- description_short: MAXIMUM 100 characters (one short sentence)
+- description: MAXIMUM 1000 characters (2-3 paragraphs explaining the provision)
+- summary_md: MAXIMUM 20000 characters (full markdown with sections)
+
+OTHER CONSTRAINTS:
 - provision_type_codes is an array that can contain multiple types (e.g., ["ownership", "contract"] for a company stake with service agreements)
 - Choose ALL provision types that apply - provisions can have multiple types simultaneously
 - Ensure all text is factual and based on the research provided
