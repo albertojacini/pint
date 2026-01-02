@@ -135,12 +135,21 @@ OTHER CONSTRAINTS:
 - Choose ALL provision types that apply - provisions can have multiple types simultaneously
 - Ensure all text is factual and based on the research provided
 
-DISPLAY DATA:
-- Extract 3-5 key facts from the research for the display_data field
-- Select the most important/interesting information: financial figures, percentages, key dates, important numbers
-- Format values for display: use currency symbols (€, $), units (km, m²), percentages (%), etc.
-- Examples: {"label": "Annual Revenue", "value": "€85M"}, {"label": "Ownership", "value": "100%"}, {"label": "Operational Since", "value": "2012"}
-- Keep labels concise (2-4 words) and values formatted for easy reading"""
+DISPLAY DATA (REQUIRED):
+You MUST populate the display_data field with 3-5 key facts extracted from the research summary.
+- Extract the most important quantifiable information: financial figures, ownership percentages, key dates, important numbers, budget amounts, etc.
+- Format values for easy reading: use currency symbols (€, $), units (km, m², ha), percentages (%)
+- Keep labels concise (2-4 words max)
+
+Examples:
+- {"label": "Municipality Ownership", "value": "100%"}
+- {"label": "Annual Revenue", "value": "€850M"}
+- {"label": "Employees", "value": "3,500"}
+- {"label": "Founded", "value": "1931"}
+- {"label": "Service Area", "value": "125 km²"}
+- {"label": "Daily Users", "value": "1.4M"}
+
+The display_data is shown prominently in the UI, so choose the most striking/important facts that give users immediate insight into the provision's scale and significance."""
 
         user_message = f"""Generate a provision draft from this research:
 
