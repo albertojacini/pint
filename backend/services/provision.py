@@ -26,9 +26,8 @@ from typing import Optional, Dict, Any
 
 from langchain.chat_models import init_chat_model
 
-from models.provisions import ProvisionDraftOutput 
+from models.provisions import ProvisionDraftOutput
 from services.research import create_research_task, get_task_status
-from services.research_config import RESEARCH_AGENT
 
 
 class ProvisionService:
@@ -37,7 +36,7 @@ class ProvisionService:
     def __init__(self):
         # Initialize LangChain chat model for Anthropic
         self.llm = init_chat_model(
-            model=RESEARCH_AGENT,
+            model="claude-sonnet-4-5",
             model_provider="anthropic"
         )
 
