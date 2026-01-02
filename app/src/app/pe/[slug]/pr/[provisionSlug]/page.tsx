@@ -69,6 +69,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: provisions.ideaId,
+      displayData: provisions.displayData,
     })
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
@@ -183,7 +184,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         </div>
 
         {/* Row 4: Type-Specific Content */}
-        <ProvisionCardRow4 types={provisionTypesList} />
+        <ProvisionCardRow4 types={provisionTypesList} displayData={provision.displayData} />
 
         {/* Row 5: Stats + Info */}
         <div className="flex items-center justify-between pt-4 border-t border-border">

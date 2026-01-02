@@ -13,6 +13,13 @@ export const provisions = [
     types: ['ownership'],
     status: 'active',
     relevance: 8,
+    displayData: {
+      items: [
+        { label: 'Ownership', value: '100%' },
+        { label: 'Asset Type', value: 'Public Transport' },
+        { label: 'Service Area', value: '96 Municipalities' },
+      ],
+    },
   },
   {
     entity: 'Comune di Milano',
@@ -25,6 +32,14 @@ export const provisions = [
     status: 'active',
     relevance: 10,
     idea: 'Urban congestion charge',
+    displayData: {
+      items: [
+        { label: 'Daily Fee', value: '€7.50' },
+        { label: 'Annual Revenue', value: '€85M' },
+        { label: 'Operational Since', value: '2012' },
+        { label: 'Traffic Reduction', value: '30%' },
+      ],
+    },
   },
   {
     entity: 'Comune di Milano',
@@ -68,5 +83,12 @@ The Municipal Police conduct regular inspections. Violations may result in permi
     types: ['regulation'],
     status: 'active',
     relevance: 6,
+    displayData: {
+      items: [
+        { label: 'Permit Duration', value: '1-3 Years' },
+        { label: 'Monthly Fee', value: '€15-30/m²' },
+        { label: 'Minimum Clearance', value: '1.5m' },
+      ],
+    },
   },
 ]

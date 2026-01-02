@@ -130,7 +130,14 @@ CRITICAL CONSTRAINTS:
 - description_short MUST be 100 characters or less (hard database constraint - will fail if longer)
 - provision_type_codes is an array that can contain multiple types (e.g., ["ownership", "contract"] for a company stake with service agreements)
 - Choose ALL provision types that apply - provisions can have multiple types simultaneously
-- Ensure all text is factual and based on the research provided"""
+- Ensure all text is factual and based on the research provided
+
+DISPLAY DATA:
+- Extract 3-5 key facts from the research for the display_data field
+- Select the most important/interesting information: financial figures, percentages, key dates, important numbers
+- Format values for display: use currency symbols (€, $), units (km, m²), percentages (%), etc.
+- Examples: {"label": "Annual Revenue", "value": "€85M"}, {"label": "Ownership", "value": "100%"}, {"label": "Operational Since", "value": "2012"}
+- Keep labels concise (2-4 words) and values formatted for easy reading"""
 
         user_message = f"""Generate a provision draft from this research:
 

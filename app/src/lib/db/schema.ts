@@ -288,6 +288,7 @@ export const provisions = pgTable('provisions', {
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
+  displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
@@ -358,6 +359,7 @@ export const provisionDrafts = pgTable('provision_drafts', {
   description: text('description'),
   summary: text('summary_md'),
   provisionTypeCodes: text('provision_type_codes').array(), // Array of provision type codes
+  displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
 
   // Metadata
   confidence: numeric('confidence'),

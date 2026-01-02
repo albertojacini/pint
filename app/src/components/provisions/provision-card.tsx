@@ -23,6 +23,7 @@ interface ProvisionCardProps {
     effectiveUntil: string | null
     ideaId: string | null
     ideaTitle: string | null
+    displayData: { items: Array<{ label: string; value: string }> } | null
     tags: Tag[]
   }
   entity: { id: string; slug: string }
@@ -117,7 +118,7 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
 
       {/* Row 4: Type-Specific Content - stretches to push footer down */}
       <div className="flex-1">
-        <ProvisionCardRow4 types={provision.types} />
+        <ProvisionCardRow4 types={provision.types} displayData={provision.displayData} />
       </div>
 
       {/* Row 5: Interaction Stats + Actions */}

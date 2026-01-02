@@ -37,6 +37,7 @@ export type ProvisionWithTags = {
   effectiveUntil: string | null
   ideaId: string | null
   ideaTitle: string | null
+  displayData: { items: Array<{ label: string; value: string }> } | null
   tags: Tag[]
 }
 
@@ -89,6 +90,7 @@ export async function getProvisionsByEntity(entityId: string) {
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
+      displayData: provisions.displayData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -229,6 +231,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
+      displayData: provisions.displayData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -273,6 +276,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     effectiveUntil: provision.effectiveUntil,
     ideaId: provision.ideaId,
     ideaTitle: provision.ideaTitle,
+    displayData: provision.displayData as { items: Array<{ label: string; value: string }> } | null,
     tags: provisionTags.map(t => ({
       id: t.tagId,
       name: t.tagName,
@@ -322,6 +326,7 @@ export async function getFilteredProvisions(
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
+      displayData: provisions.displayData,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -409,6 +414,7 @@ export async function getFilteredProvisions(
     effectiveUntil: p.effectiveUntil,
     ideaId: p.ideaId,
     ideaTitle: p.ideaTitle,
+    displayData: p.displayData as { items: Array<{ label: string; value: string }> } | null,
     tags: tagsByProvision[p.id] || []
   }))
 }

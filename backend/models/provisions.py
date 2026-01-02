@@ -5,6 +5,21 @@ They are the source of truth for data structures - other modules should extend t
 """
 
 from pydantic import BaseModel, Field, field_validator
+from typing import List
+
+
+class DisplayDataItem(BaseModel):
+    """A single key-value item for display in the UI."""
+    label: str = Field(description="Label for the data item (e.g., 'Yearly Revenue')")
+    value: str = Field(description="Display value (e.g., '€ 200M')")
+
+
+class DisplayData(BaseModel):
+    """Container for display data items."""
+    items: List[DisplayDataItem] = Field(
+        default_factory=list,
+        description="List of key-value pairs to display in the UI"
+    )
 
 
 class ProvisionDraftOutput(BaseModel):
@@ -62,6 +77,15 @@ class ProvisionDraftOutput(BaseModel):
     source_urls: list[str] = Field(
         default_factory=list,
         description="List of source URLs used for research"
+    )
+
+    display_data: DisplayData = Field(
+        default_factory=DisplayData,
+        description=(
+            "Key-value pairs for UI display. Extract 3-5 important facts from the research "
+            "(e.g., financial metrics, key dates, important numbers, ownership percentages). "
+            "Format values for display (use currency symbols, units, percentages)."
+        )
     )
 
     @field_validator('description_short')
