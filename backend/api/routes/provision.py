@@ -70,12 +70,22 @@ class StartResearchResponse(BaseModel):
     task_id: str
 
 
+class DisplayDataItem(BaseModel):
+    label: str
+    value: str
+
+
+class DisplayData(BaseModel):
+    items: List[DisplayDataItem]
+
+
 class GenerateDraftResponse(BaseModel):
     title: str
     description_short: str
     description: str
     summary_md: str
     provision_type_codes: List[str]
+    display_data: DisplayData
     relevance: int
     confidence: float
     source_urls: List[str]
