@@ -25,7 +25,7 @@ export interface ProvisionDraft {
   title: string | null
   descriptionShort: string | null
   description: string | null
-  summary_md: string | null
+  summaryMd: string | null
   provisionTypeCodes: string[] | null
   displayData: { items: Array<{ label: string; value: string }> } | null
   confidence: string | null
@@ -187,7 +187,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
-      summary_md: provisionDrafts.summaryMd,
+      summaryMd: provisionDrafts.summaryMd,
       provisionTypeCodes: provisionDrafts.provisionTypeCodes,
       displayData: provisionDrafts.displayData,
       confidence: provisionDrafts.confidence,
@@ -221,7 +221,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
-      summary_md: provisionDrafts.summaryMd,
+      summaryMd: provisionDrafts.summaryMd,
       provisionTypeCodes: provisionDrafts.provisionTypeCodes,
       displayData: provisionDrafts.displayData,
       confidence: provisionDrafts.confidence,
