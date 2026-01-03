@@ -281,7 +281,7 @@ export const provisions = pgTable('provisions', {
   slug: text('slug').notNull(),
   descriptionShort: text('description_short'),
   description: text('description'),
-  summary: text('summary_md'),
+  summaryMd: text('summary_md'),
   avatarUrl: text('avatar_url'),
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   relevance: integer('relevance'),
@@ -357,7 +357,7 @@ export const provisionDrafts = pgTable('provision_drafts', {
   title: text('title'),
   descriptionShort: text('description_short'),
   description: text('description'),
-  summary: text('summary_md'),
+  summaryMd: text('summary_md'),
   provisionTypeCodes: text('provision_type_codes').array(), // Array of provision type codes
   displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
 

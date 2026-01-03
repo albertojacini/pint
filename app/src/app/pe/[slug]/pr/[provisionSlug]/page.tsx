@@ -67,12 +67,10 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
       relevance: provisions.relevance,
-      confidence: provisions.confidence,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: provisions.ideaId,
       displayData: provisions.displayData,
-      sourceUrls: provisions.sourceUrls,
     })
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
@@ -121,6 +119,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     ...provisionResult,
     tags: provisionTags,
     ideaTitle,
+    displayData: provisionResult.displayData || { items: [] },
   }
 
   const relevanceDots = getScoreDots(provision.relevance)
@@ -203,13 +202,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
             {provision.effectiveFrom && (
               <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
             )}
-
-            {/* Confidence score */}
-            {provision.confidence !== null && provision.confidence !== undefined && (
-              <span title="Confidence in data accuracy">
-                Confidence: {Math.round(provision.confidence * 100)}%
-              </span>
-            )}
           </div>
 
           {/* Right: Info */}
@@ -243,27 +235,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           <div className="prose prose-sm max-w-none text-muted-foreground">
             <pre className="whitespace-pre-wrap font-sans text-sm">{provision.summaryMd}</pre>
           </div>
-        </div>
-      )}
-
-      {/* Sources */}
-      {provision.sourceUrls && provision.sourceUrls.length > 0 && (
-        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
-          <h2 className="text-lg font-semibold mb-3">Sources</h2>
-          <ul className="space-y-2">
-            {provision.sourceUrls.map((url, index) => (
-              <li key={index}>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-primary hover:underline break-all"
-                >
-                  {url}
-                </a>
-              </li>
-            ))}
-          </ul>
         </div>
       )}
     </div>

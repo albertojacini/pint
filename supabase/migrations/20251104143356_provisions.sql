@@ -47,7 +47,7 @@ create table if not exists public.provisions (
   description_short text check (length(description_short) <= 100),
   description text check (length(description) <= 1000),
   relevance integer check (relevance >= 0 and relevance <= 10),
-  display_data jsonb default '{"items":[]}',
+  display_data jsonb not null default '{"items":[]}',
 
   -- Metadata
   created_at timestamptz default now(),
@@ -160,7 +160,7 @@ create table if not exists public.provision_drafts (
   description text check (length(description) <= 1000),
   summary_md text check (length(summary_md) <= 20000),
   provision_type_codes text[], -- Array of provision type codes
-  display_data jsonb default '{"items":[]}',
+  display_data jsonb not null default '{"items":[]}',
 
   -- Metadata
   confidence float,
