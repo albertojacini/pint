@@ -51,9 +51,11 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
   const [editedTitle, setEditedTitle] = useState(draft.title || '')
   const [editedDescriptionShort, setEditedDescriptionShort] = useState(draft.descriptionShort || '')
   const [editedDescription, setEditedDescription] = useState(draft.description || '')
-  const [editedSummary, setEditedSummary] = useState(draft.summary_md || '')
+  const [editedSummary, setEditedSummary] = useState(draft.summaryMd || '')
   const [editedRelevance, setEditedRelevance] = useState<number | null>(draft.relevance || null)
-  const [editedProvisionTypeCodes, setEditedProvisionTypeCodes] = useState<string[]>(draft.provisionTypeCodes || [])
+  const [editedProvisionTypeCodes, setEditedProvisionTypeCodes] = useState<string[]>(
+    draft.provisionTypeCodes || []
+  )
 
   const router = useRouter()
   const { toast } = useToast()
@@ -501,9 +503,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
                     type="button"
                     onClick={() => {
                       setEditedProvisionTypeCodes((prev) =>
-                        prev.includes(type)
-                          ? prev.filter((t) => t !== type)
-                          : [...prev, type]
+                        prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
                       )
                     }}
                     className={`p-3 border rounded-lg text-left transition-colors ${
@@ -603,7 +603,10 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
           </div>
 
           <div className="flex gap-3 pt-4 border-t">
-            <Button onClick={handleSave} disabled={loading || editedProvisionTypeCodes.length === 0}>
+            <Button
+              onClick={handleSave}
+              disabled={loading || editedProvisionTypeCodes.length === 0}
+            >
               {loading ? 'Saving...' : 'Save to Production'}
             </Button>
             <Button variant="outline" onClick={handleDelete} disabled={loading}>
