@@ -241,7 +241,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         title: result.title,
         descriptionShort: result.description_short,
         description: result.description,
-        summary: result.summary_md,
+        summaryMd: result.summary_md,
         provisionTypeCodes: result.provision_type_codes,
         relevance: result.relevance,
         confidence: String(result.confidence),
@@ -312,7 +312,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         title: editedTitle,
         descriptionShort: editedDescriptionShort,
         description: editedDescription,
-        summary: editedSummary,
+        summaryMd: editedSummary,
         provisionTypeCodes: editedProvisionTypeCodes,
         relevance: editedRelevance ?? undefined,
       })

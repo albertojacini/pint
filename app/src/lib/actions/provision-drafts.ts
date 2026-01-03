@@ -77,7 +77,7 @@ export async function updateDraft(
     title: string
     descriptionShort: string
     description: string
-    summary: string
+    summaryMd: string
     provisionTypeCodes: string[]
     displayData: { items: Array<{ label: string; value: string }> }
     confidence: string
@@ -139,7 +139,7 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
       slug,
       descriptionShort: draft.descriptionShort,
       description: draft.description,
-      summary: draft.summary,
+      summaryMd: draft.summaryMd,
       status: 'active',
       relevance: draft.relevance,
       displayData: draft.displayData || { items: [] },
@@ -187,7 +187,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
-      summary_md: provisionDrafts.summary,
+      summary_md: provisionDrafts.summaryMd,
       provisionTypeCodes: provisionDrafts.provisionTypeCodes,
       displayData: provisionDrafts.displayData,
       confidence: provisionDrafts.confidence,
@@ -221,7 +221,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       title: provisionDrafts.title,
       descriptionShort: provisionDrafts.descriptionShort,
       description: provisionDrafts.description,
-      summary_md: provisionDrafts.summary,
+      summary_md: provisionDrafts.summaryMd,
       provisionTypeCodes: provisionDrafts.provisionTypeCodes,
       displayData: provisionDrafts.displayData,
       confidence: provisionDrafts.confidence,
