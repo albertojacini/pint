@@ -21,21 +21,11 @@ app = FastAPI(
 )
 
 # CORS middleware for Next.js frontend
-allowed_origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://pint-seven.vercel.app",  # Production frontend
-]
-
-# Add additional frontend URL if set
-frontend_url = os.getenv("FRONTEND_URL")
-if frontend_url and frontend_url not in allowed_origins:
-    allowed_origins.append(frontend_url)
-
+# Allow all origins for now (early stage project)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,  # Must be False when using allow_origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
