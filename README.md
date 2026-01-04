@@ -4,64 +4,23 @@
 
 > **📖 Policy Framework**: See [docs/POLICY_FRAMEWORK.md](docs/POLICY_FRAMEWORK.md) for details on the data-driven policy analysis system: `idea → effect → measurable → contribution → goal`
 
-## 🏗️ Architecture
+## 🏗️ Tech Stack
 
-This is a modern monorepo built with:
-
-- **Frontend**: Next.js 15 (App Router, React Server Components, Server Actions)
-- **Database**: PostgreSQL with Supabase (managed locally or cloud)
-- **ORM**: Drizzle ORM with type-safe queries
-- **Auth**: Supabase Authentication
-- **UI**: Tailwind CSS + shadcn/ui + Radix UI + Framer Motion
-- **Monorepo**: pnpm workspaces + Turborepo
-- **Future**: FastAPI backend + LangGraph agents (placeholders included)
+- **Frontend**: Next.js 15, Tailwind, shadcn/ui
+- **Backend**: FastAPI + AI Agents (LangGraph, Claude SDK, DeepAgents)
+- **Database**: PostgreSQL/Supabase + Drizzle ORM
+- **Deployment**: Vercel + Render.com
+- **Monorepo**: pnpm + Turborepo
 
 ## 📁 Project Structure
 
 ```
 pint/
-├── app/                          # Next.js 15 application
-│   ├── src/
-│   │   ├── app/                  # App Router pages
-│   │   │   ├── posts/            # Posts CRUD pages
-│   │   │   ├── login/            # Authentication
-│   │   │   └── signup/
-│   │   ├── components/           # React components
-│   │   │   ├── ui/               # shadcn/ui components
-│   │   │   └── posts/            # Post-specific components
-│   │   ├── lib/
-│   │   │   ├── actions/          # Server Actions
-│   │   │   ├── db/               # Drizzle schema & client
-│   │   │   ├── supabase/         # Supabase clients
-│   │   │   └── auth.ts           # Auth helpers
-│   │   └── middleware.ts         # Route protection
-│   └── drizzle.config.ts
-│
-├── packages/                     # Shared packages
-│   ├── ui/                       # Shared UI components
-│   ├── types/                    # Shared TypeScript types & Zod schemas
-│   ├── tsconfig/                 # Shared TypeScript configs
-│   └── eslint-config/            # Shared ESLint configs
-│
-├── infra/                        # Infrastructure
-│   ├── docker/
-│   │   ├── compose.dev.yml       # PostgreSQL + Adminer
-│   │   └── compose.agents.yml    # Future agent services
-│   └── supabase/
-│       ├── migrations/           # SQL migrations
-│       ├── policies/             # RLS policies
-│       └── seed/                 # Seed data
-│
-├── services/
-│   └── api/                      # Future FastAPI backend (placeholder)
-│
-├── workers/
-│   └── agents/                   # Future LangGraph agents (placeholder)
-│
-├── tooling/
-│   └── scripts/                  # Utility scripts
-│
-└── .github/workflows/            # CI/CD pipelines
+├── app/                    # Next.js frontend
+├── backend/                # FastAPI + AI agents
+├── packages/               # Shared code
+├── supabase/migrations/    # Database migrations
+└── tooling/scripts/        # Utility scripts
 ```
 
 ## 🚀 Quick Start
@@ -169,6 +128,17 @@ Update `.env` with the credentials from `supabase status`.
 3. Enter email, password, and full name
 4. Sign in with your credentials
 
+### (Optional) Backend Setup
+
+Backend runs at https://pint-agents.onrender.com in production. For local development:
+
+```bash
+cd backend && source .venv/bin/activate && uv sync
+uv run uvicorn api.main:app --reload
+```
+
+Requires Python 3.12+, uv, and API keys in backend/.env
+
 ## 📝 Features Implemented
 
 ### ✅ Authentication
@@ -199,6 +169,11 @@ Update `.env` with the credentials from `supabase status`.
 - Loading states
 - Form validation with Zod + react-hook-form
 
+### ✅ Backend & AI
+- FastAPI backend with AI research agents (LangGraph, Claude SDK, DeepAgents)
+- Provision ingestion with AI-assisted research
+- Deployed to Render.com
+
 ## 🛠️ Development Commands
 
 ```bash
@@ -223,82 +198,22 @@ pnpm format             # Format code with Prettier
 
 # Clean
 pnpm clean              # Remove node_modules and build artifacts
+
+# Backend
+cd backend && source .venv/bin/activate && uv run uvicorn api.main:app --reload  # Start backend
 ```
-
-## 🧪 Testing (Infrastructure Only)
-
-Testing infrastructure is set up but no tests are written yet:
-
-```bash
-# Run tests (when implemented)
-cd app
-pnpm test
-
-# E2E tests with Playwright (when implemented)
-pnpm test:e2e
-```
-
-## 🔒 Security Features
-
-- **Row Level Security (RLS)**: PostgreSQL RLS policies ensure users can only modify their own data
-- **Server Actions**: All mutations go through type-safe Server Actions
-- **Input validation**: Zod schemas validate all inputs
-- **Authentication**: Supabase Auth with secure session management
-- **HTTPS required in production**
-
-## 📦 Workspace Packages
-
-### `@pint/app`
-Main Next.js application with all pages and features.
-
-### `@pint/ui`
-Shared UI components (currently exports shadcn/ui components).
-
-### `@pint/types`
-Shared TypeScript types and Zod schemas for validation.
-
-### `@pint/eslint-config`
-Shared ESLint configuration for consistent linting.
-
-### `@pint/tsconfig`
-Shared TypeScript configurations (base, Next.js, library).
 
 ## 🚢 Deployment
 
-### Vercel + Supabase Cloud (Recommended)
+**Production**:
+- Frontend: Vercel
+- Backend: Render.com (https://pint-agents.onrender.com)
+- Database: Supabase Cloud
 
-1. Connect repository to [Vercel](https://vercel.com)
-2. Create a [Supabase](https://supabase.com) project and run migrations: `npx supabase db push`
-3. Set environment variables in Vercel:
-   - `DATABASE_URL` - Supabase connection string
-   - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
-   - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
-4. Deploy (auto-deploys on push to main)
-
-### Self-Hosted
-
-```bash
-pnpm build
-cd app && pnpm start
-```
+Setup: Connect repo to Vercel and Render, configure environment variables (see `.env.example` and `render.yaml`), auto-deploys on push to main.
 
 ## 🔮 Future Enhancements
 
-### FastAPI Backend (Placeholder Ready)
-- RESTful API for complex backend logic
-- Background task processing
-- Machine learning model serving
-- Location: `services/api/`
-
-### LangGraph Agents (Placeholder Ready)
-- AI-powered content analysis
-- Automated summarization
-- Policy recommendations
-- Multi-agent workflows
-- Location: `workers/agents/`
-
-### Additional Features (Roadmap)
 - [ ] Rich text editor (Tiptap or Lexical)
 - [ ] Image uploads (Supabase Storage)
 - [ ] Comments on posts
@@ -308,47 +223,23 @@ cd app && pnpm start
 - [ ] Email notifications
 - [ ] Admin dashboard
 - [ ] Analytics
-- [ ] API documentation (when FastAPI is added)
+- [ ] Advanced AI orchestration
+- [ ] Policy recommendation engine
 
 ## 🐛 Troubleshooting
 
-### Database Connection Issues
-
 ```bash
-# Check if PostgreSQL is running
-docker ps
+# Database issues
+docker ps                           # Check if PostgreSQL is running
+pnpm docker:down && pnpm docker:up  # Restart services
 
-# Restart services
-pnpm docker:down && pnpm docker:up
+# Build issues
+pnpm clean && pnpm install && pnpm build
 
-# Check logs
-pnpm docker:logs
+# Backend issues
+cd backend && source .venv/bin/activate  # Always activate environment first
+curl http://localhost:8000/health        # Check backend health
 ```
-
-### Migration Errors
-
-```bash
-# Reset local database (WARNING: destroys data)
-docker compose -f infra/docker/compose.dev.yml down -v
-pnpm docker:up
-pnpm migrate:dev
-```
-
-### Build Errors
-
-```bash
-# Clean and reinstall
-pnpm clean
-pnpm install
-pnpm build
-```
-
-### Supabase Auth Issues
-
-1. Verify `.env` has correct Supabase credentials
-2. Check Supabase project is running (cloud or local)
-3. Verify auth is enabled in Supabase dashboard
-4. Check middleware configuration in `app/src/middleware.ts`
 
 ## 📚 Documentation Links
 
