@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import type { Tag, ProvisionType } from '@/lib/actions/provisions'
-import { ProvisionCardRow4 } from './provision-card-row4'
 import { provisionPath } from '@/lib/utils'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
@@ -116,9 +115,18 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
         </p>
       </div>
 
-      {/* Row 4: Type-Specific Content - stretches to push footer down */}
+      {/* Row 4: Display Data - stretches to push footer down */}
       <div className="flex-1">
-        <ProvisionCardRow4 types={provision.types} displayData={provision.displayData} />
+        {provision.displayData?.items && provision.displayData.items.length > 0 && (
+          <div className="mb-3 space-y-2">
+            {provision.displayData.items.map((item, index) => (
+              <div key={index} className="flex justify-between items-baseline">
+                <span className="text-xs text-muted-foreground">{item.label}</span>
+                <span className="text-sm font-semibold">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Row 5: Interaction Stats + Actions */}

@@ -11,7 +11,6 @@ import {
   provisionTypeAssociations,
 } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { ProvisionCardRow4 } from '@/components/provisions/provision-card-row4'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
@@ -195,8 +194,17 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           </p>
         </div>
 
-        {/* Row 4: Type-Specific Content */}
-        <ProvisionCardRow4 types={provisionTypesList} displayData={provision.displayData} />
+        {/* Row 4: Display Data */}
+        {provision.displayData?.items && provision.displayData.items.length > 0 && (
+          <div className="mb-3 space-y-2">
+            {provision.displayData.items.map((item, index) => (
+              <div key={index} className="flex justify-between items-baseline">
+                <span className="text-xs text-muted-foreground">{item.label}</span>
+                <span className="text-sm font-semibold">{item.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Row 5: Stats + Info */}
         <div className="flex items-center justify-between pt-4 border-t border-border">
