@@ -25,15 +25,17 @@ const PROVISION_TYPES: ProvisionType[] = [
   'taxation',
   'allocation',
   'designation',
+  'infrastructure',
 ]
 
 const typeDescriptions: Record<ProvisionType, string> = {
-  ownership: 'Stakes in companies, property, infrastructure',
+  ownership: 'Stakes in companies, property',
   contract: 'Service agreements, concessions, partnerships',
   regulation: 'Rules, ordinances, codes, standards',
   taxation: 'Taxes, fees, tariffs',
   allocation: 'Programs, subsidies, budgets, funds',
   designation: 'Zones, landmarks, protected areas, institutions',
+  infrastructure: 'Public works, utilities, transportation networks, digital systems',
 }
 
 interface DraftWorkflowProps {

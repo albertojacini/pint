@@ -17,14 +17,15 @@ create table if not exists public.provision_types (
   created_at timestamptz default now()
 );
 
--- Seed the 6 provision types
+-- Seed the 7 provision types
 insert into public.provision_types (code, label, description) values
-  ('ownership', 'Ownership', 'Stakes in companies, property, infrastructure'),
+  ('ownership', 'Ownership', 'Stakes in companies, property'),
   ('contract', 'Contract', 'Service agreements, concessions, partnerships'),
   ('regulation', 'Regulation', 'Rules, ordinances, codes, standards'),
   ('taxation', 'Taxation', 'Taxes, fees, tariffs'),
   ('allocation', 'Allocation', 'Programs, subsidies, budgets, funds'),
-  ('designation', 'Designation', 'Zones, landmarks, protected areas, institutions');
+  ('designation', 'Designation', 'Zones, landmarks, protected areas, institutions'),
+  ('infrastructure', 'Infrastructure', 'Public works, utilities, transportation networks, digital systems');
 
 -- Provisions: institutional/legal/operational infrastructure owned by entities
 create table if not exists public.provisions (

@@ -41,6 +41,7 @@ export default async function ProvisionsPage({ params }: ProvisionsPageProps) {
       taxation: provisions.filter(p => p.types.some(t => t.code === 'taxation')).length,
       allocation: provisions.filter(p => p.types.some(t => t.code === 'allocation')).length,
       designation: provisions.filter(p => p.types.some(t => t.code === 'designation')).length,
+      infrastructure: provisions.filter(p => p.types.some(t => t.code === 'infrastructure')).length,
     }
   }
 

@@ -8,7 +8,7 @@ import { requireUser } from '@/lib/auth'
 import type { ApiResponse } from '@pint/types'
 
 // Provision types
-export type ProvisionType = 'ownership' | 'contract' | 'regulation' | 'taxation' | 'allocation' | 'designation'
+export type ProvisionType = 'ownership' | 'contract' | 'regulation' | 'taxation' | 'allocation' | 'designation' | 'infrastructure'
 export type JobStatus = 'input' | 'prompt_generated' | 'researching' | 'research_complete' | 'generating_draft' | 'review' | 'completed' | 'failed'
 
 export interface ProvisionDraft {

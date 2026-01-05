@@ -75,6 +75,7 @@ const typeConfig = {
   regulation: { icon: '⚖️', label: 'Regulations', color: 'bg-slate-50 border-slate-200', brickColor: 'bg-slate-400' },
   allocation: { icon: '📊', label: 'Allocations', color: 'bg-green-50 border-green-200', brickColor: 'bg-green-400' },
   designation: { icon: '🏷️', label: 'Designations', color: 'bg-rose-50 border-rose-200', brickColor: 'bg-rose-400' },
+  infrastructure: { icon: '🏗️', label: 'Infrastructure', color: 'bg-cyan-50 border-cyan-200', brickColor: 'bg-cyan-400' },
 }
 
 type ProvisionType = keyof typeof typeConfig
@@ -150,7 +151,7 @@ function changesToActivity(changes: ChangeWithContext[]): MonthActivity[] {
 }
 
 // Consistent type order for stacking
-const typeOrder: ProvisionType[] = ['taxation', 'ownership', 'contract', 'regulation', 'allocation', 'designation']
+const typeOrder: ProvisionType[] = ['taxation', 'ownership', 'contract', 'regulation', 'allocation', 'designation', 'infrastructure']
 
 // Sparkline component
 function ActivitySparkline({ activity }: { activity: MonthActivity[] }) {

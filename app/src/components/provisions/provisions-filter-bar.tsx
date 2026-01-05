@@ -12,6 +12,7 @@ const PROVISION_TYPES = [
   { value: 'taxation', label: 'Taxation' },
   { value: 'allocation', label: 'Allocation' },
   { value: 'designation', label: 'Designation' },
+  { value: 'infrastructure', label: 'Infrastructure' },
 ]
 
 const PROVISION_STATUSES = [

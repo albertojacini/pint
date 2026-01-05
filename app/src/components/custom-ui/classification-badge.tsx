@@ -16,12 +16,13 @@ export function ClassificationBadge({ type, color, className = '' }: Classificat
 }
 
 const PROVISION_TYPE_COLORS: Record<string, string> = {
-  ownership: 'rgb(147 51 234)',    // purple
-  contract: 'rgb(37 99 235)',       // blue
-  regulation: 'rgb(234 88 12)',     // orange
-  taxation: 'rgb(22 163 74)',       // green
-  allocation: 'rgb(219 39 119)',    // pink
-  designation: 'rgb(71 85 105)',    // slate (default)
+  ownership: 'rgb(147 51 234)',       // purple
+  contract: 'rgb(37 99 235)',         // blue
+  regulation: 'rgb(234 88 12)',       // orange
+  taxation: 'rgb(22 163 74)',         // green
+  allocation: 'rgb(219 39 119)',      // pink
+  designation: 'rgb(71 85 105)',      // slate (default)
+  infrastructure: 'rgb(6 182 212)',   // cyan
 }
 
 function getProvisionTypeColor(type: string): string {
@@ -29,7 +30,7 @@ function getProvisionTypeColor(type: string): string {
 }
 
 interface ProvisionClassificationBadgeProps {
-  type: 'ownership' | 'contract' | 'regulation' | 'taxation' | 'allocation' | 'designation'
+  type: 'ownership' | 'contract' | 'regulation' | 'taxation' | 'allocation' | 'designation' | 'infrastructure'
   className?: string
 }
 

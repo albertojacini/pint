@@ -118,6 +118,7 @@ export type ProvisionAggregates = {
     regulation: { count: number }
     allocation: { count: number }
     designation: { count: number }
+    infrastructure: { count: number }
   }
   tags: Array<{ id: string; name: string; slug: string; category: string | null; count: number }>
 }
@@ -143,6 +144,7 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
     regulation: { count: 0 },
     allocation: { count: 0 },
     designation: { count: 0 },
+    infrastructure: { count: 0 },
   }
 
   // Process each provision
@@ -174,6 +176,10 @@ export async function getProvisionAggregatesByEntity(entityId: string): Promise<
 
         case 'designation':
           byType.designation.count++
+          break
+
+        case 'infrastructure':
+          byType.infrastructure.count++
           break
       }
     }
