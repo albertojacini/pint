@@ -1,7 +1,15 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { db } from '@/lib/db/client'
-import { politicalEntities, provisions, tags, taggables, ideas, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
+import {
+  politicalEntities,
+  provisions,
+  tags,
+  taggables,
+  ideas,
+  provisionTypes,
+  provisionTypeAssociations,
+} from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { ProvisionCardRow4 } from '@/components/provisions/provision-card-row4'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -113,7 +121,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))
-    .where(and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id)))
+    .where(
+      and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id))
+    )
 
   const provision = {
     ...provisionResult,
@@ -124,7 +134,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
   const relevanceDots = getScoreDots(provision.relevance)
   const relevanceColor = getScoreColor(provision.relevance)
-  const mediaUrl = getStorageUrl('media', provision.avatarUrl)
+  const mediaUrl = getStorageUrl('avatars', provision.avatarUrl)
 
   // Filter tags to only show policy-topic and impact-area categories
   const visibleTags = provision.tags.filter(
