@@ -196,11 +196,11 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
         {/* Row 4: Display Data */}
         {provision.displayData?.items && provision.displayData.items.length > 0 && (
-          <div className="mb-3 space-y-2">
+          <div className="grid grid-cols-2 gap-2 mb-3">
             {provision.displayData.items.map((item, index) => (
-              <div key={index} className="flex justify-between items-baseline">
-                <span className="text-xs text-muted-foreground">{item.label}</span>
-                <span className="text-sm font-semibold">{item.value}</span>
+              <div key={index}>
+                <div className="text-xs text-muted-foreground">{item.label}</div>
+                <div className="text-sm font-semibold">{item.value}</div>
               </div>
             ))}
           </div>
