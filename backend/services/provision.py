@@ -115,13 +115,14 @@ Generate a detailed research prompt that will guide comprehensive research on th
         """
         system_prompt = """You generate structured provision drafts from research summaries.
 
-A provision is a piece of state infrastructure that a political entity maintains. There are 6 types:
+A provision is a piece of state infrastructure that a political entity maintains. There are 7 types:
 - ownership: Stakes in companies, property, infrastructure
 - contract: Service agreements, concessions, partnerships
 - regulation: Rules, ordinances, codes, standards
 - taxation: Taxes, fees, tariffs
 - allocation: Programs, subsidies, budgets, funds
 - designation: Zones, landmarks, protected areas, institutions
+- infrastructure: Public works, utilities, transportation networks, digital systems
 
 Given research findings, extract and structure the provision information according to the schema.
 
@@ -133,6 +134,7 @@ CRITICAL CHARACTER LIMITS (will fail validation if exceeded):
 OTHER CONSTRAINTS:
 - provision_type_codes is an array that can contain multiple types (e.g., ["ownership", "contract"] for a company stake with service agreements)
 - Choose ALL provision types that apply - provisions can have multiple types simultaneously
+- All textual fields (tiles, descriptions, summaries etc.) MUST be in the language of the political entity (which is supposed to be the same as the source research summary)
 - Ensure all text is factual and based on the research provided
 
 DISPLAY DATA (REQUIRED):
