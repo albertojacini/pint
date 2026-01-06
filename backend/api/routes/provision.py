@@ -46,6 +46,7 @@ router = APIRouter(prefix="/provision")
 class GeneratePromptRequest(BaseModel):
     input_description: str
     entity_name: str
+    entity_language: str  # BCP 47 language tag (e.g., 'it-IT', 'en-US')
 
 
 class StartResearchRequest(BaseModel):
@@ -102,6 +103,7 @@ async def generate_research_prompt(request: GeneratePromptRequest) -> GeneratePr
     result = await service.generate_research_prompt(
         input_description=request.input_description,
         entity_name=request.entity_name,
+        entity_language=request.entity_language,
     )
     return GeneratePromptResponse(**result)
 

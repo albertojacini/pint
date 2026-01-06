@@ -15,6 +15,7 @@ export interface ProvisionDraft {
   id: string
   entityId: string
   entityName?: string
+  entityLanguage?: string  // BCP 47 language tag (e.g., 'it-IT', 'en-US')
   createdBy: string | null
   inputDescription: string
   researchPrompt: string | null
@@ -177,6 +178,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       id: provisionDrafts.id,
       entityId: provisionDrafts.entityId,
       entityName: politicalEntities.name,
+      entityLanguage: politicalEntities.language,
       createdBy: provisionDrafts.createdBy,
       inputDescription: provisionDrafts.inputDescription,
       researchPrompt: provisionDrafts.researchPrompt,
@@ -211,6 +213,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       id: provisionDrafts.id,
       entityId: provisionDrafts.entityId,
       entityName: politicalEntities.name,
+      entityLanguage: politicalEntities.language,
       createdBy: provisionDrafts.createdBy,
       inputDescription: provisionDrafts.inputDescription,
       researchPrompt: provisionDrafts.researchPrompt,
@@ -245,6 +248,7 @@ export async function getEntities() {
       id: politicalEntities.id,
       name: politicalEntities.name,
       type: politicalEntities.type,
+      language: politicalEntities.language,
     })
     .from(politicalEntities)
     .orderBy(politicalEntities.name)

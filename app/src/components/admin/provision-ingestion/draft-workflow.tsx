@@ -72,6 +72,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
         body: JSON.stringify({
           input_description: draft.inputDescription,
           entity_name: draft.entityName || '',
+          entity_language: draft.entityLanguage || 'en',
         }),
       })
 

@@ -47,6 +47,7 @@ class ProvisionService:
         self,
         input_description: str,
         entity_name: str,
+        entity_language: str,
     ) -> Dict[str, str]:
         """
         Transform user's quick research topic into a detailed research prompt.
@@ -56,30 +57,35 @@ class ProvisionService:
         Args:
             input_description: User's quick hint (e.g., "Ownership of ATM Spa")
             entity_name: Name of the political entity
+            entity_language: BCP 47 language tag (e.g., 'it-IT', 'en-US')
 
         Returns:
             Dict with 'research_prompt' and 'reasoning'
         """
-        system_prompt = """You transform brief research topics into detailed research prompts for researching public policy provisions.
+        system_prompt = f"""You transform brief research topics into detailed research prompts for researching public policy provisions.
 
 Given a short description of a public policy provision, generate a comprehensive research prompt that will help a research agent find accurate, detailed information.
 
+CRITICAL: The research prompt you generate MUST be written entirely in the language specified by the BCP 47 tag: {entity_language}
+This means the entire output text must be in that language (e.g., 'it-IT' = Italian, 'de-DE' = German, 'fr-FR' = French, 'es-ES' = Spanish, 'en-US' = English).
+
 The research prompt should:
-1. Clearly state the language the whole research (search keywords, results, summaries) must be performed with
+1. Clearly state that the whole research (search keywords, results, summaries) must be performed in {entity_language}
 2. Clearly identify what needs to be researched
 3. Specify the political entity context
 4. Mention key aspects: legal status, history, current state, stakeholders, financial details
 
 A provision is a piece of state infrastructure: laws, regulations, contracts, ownership stakes, allocations, or designations that a political entity maintains.
 
-Keep the prompt focused and under 200 words. Write in a concise, clear, professional tone."""
+Keep the prompt focused and under 200 words. Write in a concise, clear, professional tone - all in the {entity_language} language."""
 
         user_message = f"""Transform this into a research prompt:
 
 Topic: {input_description}
 Political Entity: {entity_name}
+Language: {entity_language}
 
-Generate a detailed research prompt that will guide comprehensive research on this provision."""
+Generate a detailed research prompt in {entity_language} that will guide comprehensive research on this provision."""
 
         # Use LangChain's invoke with system and user messages
         messages = [
