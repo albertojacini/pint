@@ -6,6 +6,7 @@
 export const politicalEntities = [
   {
     name: 'Comune di Milano',
+    language: 'it-IT',
     description: 'The city council of Milan',
     avatar_url: './assets/avatars/entities/comune-di-milano.webp',
     type: 'city',

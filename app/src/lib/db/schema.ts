@@ -28,6 +28,7 @@ export const politicalEntities = pgTable('political_entities', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   nativeName: text('native_name'),
+  language: text('language').notNull(), // BCP 47 language tag
   slug: text('slug').notNull(),
   description: text('description'),
   avatarUrl: text('avatar_url'),

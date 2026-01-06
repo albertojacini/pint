@@ -8,6 +8,7 @@ create table if not exists public.political_entities (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   native_name text,
+  language text not null, -- BCP 47 language tag (e.g., 'it-IT', 'en-US')
   slug text not null,
   description text,
   avatar_url text,

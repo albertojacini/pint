@@ -15,6 +15,7 @@ export const PoliticalEntitySchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, 'Name is required'),
   nativeName: z.string().optional(),
+  language: z.string(), // BCP 47 language tag (e.g., 'it-IT', 'en-US')
   description: z.string().optional(),
   avatarUrl: z.string().url().optional(),
   type: z.enum([

@@ -7,6 +7,7 @@ export const politicalEntities = [
   // Italy - Milan hierarchy
   {
     name: 'Zona 1',
+    language: 'it-IT',
     description: 'The first district of Milan',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'district',
@@ -17,6 +18,7 @@ export const politicalEntities = [
   },
   {
     name: 'Comune di Milano',
+    language: 'it-IT',
     description: 'The city council of Milan',
     avatar_url: './assets/avatars/entities/comune-di-milano.webp',
     type: 'city',
@@ -80,6 +82,7 @@ export const politicalEntities = [
   },
   {
     name: 'Regione Lombardia',
+    language: 'it-IT',
     description: 'The regional government of Lombardy',
     avatar_url: null,
     type: 'region',
@@ -90,6 +93,7 @@ export const politicalEntities = [
   },
   {
     name: 'Repubblica Italiana',
+    language: 'it-IT',
     description: 'The Italian Republic',
     avatar_url: null,
     type: 'country',
@@ -102,6 +106,7 @@ export const politicalEntities = [
   // Supranational
   {
     name: 'European Union',
+    language: 'en',
     description: 'The European Union',
     avatar_url: null,
     type: 'supranational',
@@ -112,6 +117,7 @@ export const politicalEntities = [
   },
   {
     name: 'United Nations',
+    language: 'en',
     description: 'The United Nations',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'supranational',
@@ -123,12 +129,14 @@ export const politicalEntities = [
   // Germany - Berlin hierarchy
   {
     name: 'Bezirk Britz',
+    language: 'de-DE',
     description: 'The 6th district of Berlin',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'neighborhood',
   },
   {
     name: 'Bezirk Neukölln',
+    language: 'de-DE',
     description: 'The 7th district of Berlin',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'district',
@@ -139,6 +147,7 @@ export const politicalEntities = [
   },
   {
     name: 'Stadt Berlin',
+    language: 'de-DE',
     description: 'The city council of Berlin',
     avatar_url: null,
     type: 'city',
@@ -149,6 +158,7 @@ export const politicalEntities = [
   },
   {
     name: 'Bundesrepublik Deutschland',
+    language: 'de-DE',
     description: 'The federal government of Germany',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'country',
@@ -161,12 +171,14 @@ export const politicalEntities = [
   // Spain - Barcelona hierarchy
   {
     name: 'Eixample',
+    language: 'es-ES',
     description: 'The 2nd district of Barcelona',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'neighborhood',
   },
   {
     name: 'Ajuntament de Barcelona',
+    language: 'es-ES',
     description: 'The city council of Barcelona',
     avatar_url: null,
     type: 'city',
@@ -177,6 +189,7 @@ export const politicalEntities = [
   },
   {
     name: 'Reino de España',
+    language: 'es-ES',
     description: 'The federal government of Spain',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'country',
@@ -189,12 +202,14 @@ export const politicalEntities = [
   // France - Paris hierarchy
   {
     name: '1er arrondissement',
+    language: 'fr-FR',
     description: 'The 1st district of Paris',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'neighborhood',
   },
   {
     name: 'Centre de Paris',
+    language: 'fr-FR',
     description: 'The central district of Paris',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'district',
@@ -205,6 +220,7 @@ export const politicalEntities = [
   },
   {
     name: 'Ville de Paris',
+    language: 'fr-FR',
     description: 'The city council of Paris',
     avatar_url: null,
     type: 'city',
@@ -215,6 +231,7 @@ export const politicalEntities = [
   },
   {
     name: 'République française',
+    language: 'fr-FR',
     description: 'The federal government of France',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'country',
@@ -227,12 +244,14 @@ export const politicalEntities = [
   // Austria - Vienna hierarchy
   {
     name: 'Leopoldstadt',
+    language: 'de-AT',
     description: 'The 2nd district of Vienna',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'neighborhood',
   },
   {
     name: 'Stadt Wien',
+    language: 'de-AT',
     description: 'The city council of Vienna',
     avatar_url: null,
     type: 'city',
@@ -243,6 +262,7 @@ export const politicalEntities = [
   },
   {
     name: 'Republik Österreich',
+    language: 'de-AT',
     description: 'The federal government of Austria',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'country',
@@ -255,12 +275,14 @@ export const politicalEntities = [
   // UK - London hierarchy
   {
     name: 'London Borough of Hackney',
+    language: 'en-GB',
     description: 'The local government of Hackney',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'borough',
   },
   {
     name: 'City of London',
+    language: 'en-GB',
     description: 'The city council of London',
     avatar_url: null,
     type: 'city',
@@ -271,6 +293,7 @@ export const politicalEntities = [
   },
   {
     name: 'United Kingdom',
+    language: 'en-GB',
     description: 'The federal government of the United Kingdom',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'country',
@@ -283,12 +306,14 @@ export const politicalEntities = [
   // USA - New York hierarchy
   {
     name: 'Bedford–Stuyvesant',
+    language: 'en-US',
     description: 'The neighborhood of Brooklyn',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'neighborhood',
   },
   {
     name: 'Brooklyn',
+    language: 'en-US',
     description: 'The borough of Brooklyn',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'district',
@@ -299,6 +324,7 @@ export const politicalEntities = [
   },
   {
     name: 'City of New York',
+    language: 'en-US',
     description: 'The city council of New York',
     avatar_url: null,
     type: 'city',
@@ -309,6 +335,7 @@ export const politicalEntities = [
   },
   {
     name: 'State of New York',
+    language: 'en-US',
     description: 'The state government of New York',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'region',
@@ -319,6 +346,7 @@ export const politicalEntities = [
   },
   {
     name: 'United States of America',
+    language: 'en-US',
     description: 'The federal government of the United States',
     avatar_url: 'https://example.com/avatar.jpg',
     type: 'country',
