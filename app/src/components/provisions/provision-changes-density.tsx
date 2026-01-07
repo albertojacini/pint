@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 interface ChangeItem {
   timestamp: string
   label: string
@@ -50,45 +52,71 @@ function groupChangesByMonth(changes: ChangeItem[], maxMonths: number): MonthGro
 export function ProvisionChangesDensity({ changes, maxMonths = 12 }: ProvisionChangesDensityProps) {
   if (changes.length === 0) return null
 
+  const [selectedMonth, setSelectedMonth] = useState<MonthGroup | null>(null)
   const monthGroups = groupChangesByMonth(changes, maxMonths)
-  const maxHeight = 48 // pixels
-  const brickHeight = 8
+  const maxHeight = 15 // Max bar height in pixels (75% reduction from 60)
+
+  // Find max items to calculate relative heights
+  const maxItemCount = Math.max(...monthGroups.map(m => m.items.length), 1)
 
   return (
-    <div className="mb-3">
-      <div className="text-xs text-muted-foreground mb-2">Recent Changes</div>
+    <div className="mb-3 relative">
+      {/* Compact density chart - 120px wide, 12 vertical bars with 1px gaps */}
+      <div className="flex items-end gap-[1px]" style={{ width: '120px', height: maxHeight }}>
+        {monthGroups.map((month, monthIndex) => {
+          // Calculate bar height proportional to item count
+          const barHeight = (month.items.length / maxItemCount) * maxHeight
 
-      {/* Density chart */}
-      <div className="flex items-end gap-1 h-12">
-        {monthGroups.map((month, monthIndex) => (
-          <div
-            key={`${month.month}-${month.year}`}
-            className="flex-1 flex flex-col-reverse gap-0.5 min-w-0"
-            style={{ height: maxHeight }}
-          >
-            {month.items.map((item, itemIndex) => (
+          const isSelected = selectedMonth?.month === month.month && selectedMonth?.year === month.year
+
+          return (
+            <div key={`${month.month}-${month.year}`} className="flex-1 relative">
               <div
-                key={`${monthIndex}-${itemIndex}`}
-                className="w-full rounded-sm bg-primary hover:opacity-80 cursor-pointer transition-opacity"
-                style={{ height: brickHeight }}
-                title={`${item.label} - ${month.month} ${month.year}`}
+                className={`w-full hover:bg-gray-500 transition-colors cursor-pointer ${
+                  isSelected ? 'bg-gray-500' : 'bg-gray-600'
+                }`}
+                style={{ height: barHeight || 2 }} // Minimum 2px if there are items
+                onClick={() => {
+                  if (month.items.length > 0) {
+                    setSelectedMonth(selectedMonth?.month === month.month && selectedMonth?.year === month.year ? null : month)
+                  }
+                }}
               />
-            ))}
-          </div>
-        ))}
+
+              {/* Tooltip-style popover */}
+              {isSelected && month.items.length > 0 && (
+                <div
+                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-64 p-3 bg-popover text-popover-foreground rounded-md shadow-md border border-border"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Arrow */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-border" />
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-popover" />
+
+                  <div className="font-semibold mb-2 text-sm">
+                    {month.month} {month.year} ({month.items.length} changes)
+                  </div>
+                  <ul className="space-y-1.5 max-h-48 overflow-y-auto text-xs">
+                    {month.items.map((item, idx) => (
+                      <li key={idx} className="text-muted-foreground leading-relaxed">
+                        • {item.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
-      {/* Month labels */}
-      <div className="flex gap-1 mt-1">
-        {monthGroups.map((month) => (
-          <div
-            key={`label-${month.month}-${month.year}`}
-            className="flex-1 text-center text-[10px] text-gray-400 min-w-0 truncate"
-          >
-            {month.month}
-          </div>
-        ))}
-      </div>
+      {/* Click outside to close */}
+      {selectedMonth && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setSelectedMonth(null)}
+        />
+      )}
     </div>
   )
 }
