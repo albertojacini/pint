@@ -117,7 +117,6 @@ create table if not exists public.changes (
   event_id uuid references public.events(id) on delete cascade,
   target_type text not null check (target_type in ('provision', 'entity', 'administration')),
   target_id uuid not null,
-  change_type text not null check (change_type in ('create', 'update', 'deactivate', 'activate', 'merge', 'split')),
   description text,
   effective_at timestamptz,
   created_at timestamptz default now()

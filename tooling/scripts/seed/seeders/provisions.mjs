@@ -269,13 +269,12 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'changes',
-        columns: ['id', 'event_id', 'target_type', 'target_id', 'change_type', 'description', 'effective_at'],
+        columns: ['id', 'event_id', 'target_type', 'target_id', 'description', 'effective_at'],
         values: [
           id,
           eventId,
           change.targetType,
           targetId,
-          change.changeType,
           change.description || null,
           change.effectiveAt || null
         ],

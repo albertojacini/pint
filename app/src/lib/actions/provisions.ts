@@ -286,7 +286,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     ideaId: provision.ideaId,
     ideaTitle: provision.ideaTitle,
     displayData: provision.displayData as { items: Array<{ label: string; value: string }> } | null,
-    displayChanges: provision.displayChanges as { items: Array<{ timestamp: string; changeType: string; label: string }> } | null,
+    displayChanges: provision.displayChanges as { items: Array<{ timestamp: string; label: string }> } | null,
     tags: provisionTags.map(t => ({
       id: t.tagId,
       name: t.tagName,
@@ -426,7 +426,7 @@ export async function getFilteredProvisions(
     ideaId: p.ideaId,
     ideaTitle: p.ideaTitle,
     displayData: p.displayData as { items: Array<{ label: string; value: string }> } | null,
-    displayChanges: p.displayChanges as { items: Array<{ timestamp: string; changeType: string; label: string }> } | null,
+    displayChanges: p.displayChanges as { items: Array<{ timestamp: string; label: string }> } | null,
     tags: tagsByProvision[p.id] || []
   }))
 }

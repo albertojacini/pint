@@ -93,18 +93,6 @@ interface MonthActivity {
   items: ActivityItem[]
 }
 
-// Map change type to activity action
-function changeTypeToAction(changeType: string): 'created' | 'updated' | 'repealed' {
-  switch (changeType) {
-    case 'create':
-      return 'created'
-    case 'deactivate':
-      return 'repealed'
-    default:
-      return 'updated'
-  }
-}
-
 // Convert changes data to activity format grouped by month
 function changesToActivity(changes: ChangeWithContext[]): MonthActivity[] {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -140,7 +128,7 @@ function changesToActivity(changes: ChangeWithContext[]): MonthActivity[] {
         monthData.items.push({
           type: provisionType,
           title: change.targetTitle || change.description || 'Unknown',
-          action: changeTypeToAction(change.changeType),
+          action: 'updated',
         })
         break
       }

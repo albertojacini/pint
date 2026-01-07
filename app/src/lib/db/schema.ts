@@ -326,9 +326,6 @@ export const changes = pgTable('changes', {
     enum: ['provision', 'entity', 'administration']
   }).notNull(),
   targetId: uuid('target_id').notNull(),
-  changeType: text('change_type', {
-    enum: ['create', 'update', 'deactivate', 'activate', 'merge', 'split']
-  }).notNull(),
   description: text('description'),
   effectiveAt: timestamp('effective_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

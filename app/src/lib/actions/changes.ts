@@ -6,7 +6,6 @@ import { eq, desc, and, or, inArray, sql } from 'drizzle-orm'
 
 export interface ChangeWithContext {
   id: string
-  changeType: string
   description: string | null
   effectiveAt: Date | null
   targetType: string
@@ -70,7 +69,6 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
   const result = await db
     .select({
       id: changes.id,
-      changeType: changes.changeType,
       description: changes.description,
       effectiveAt: changes.effectiveAt,
       targetType: changes.targetType,
