@@ -290,7 +290,7 @@ export const provisions = pgTable('provisions', {
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
   displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
-  displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; changeType: 'create' | 'update' | 'activate' | 'deactivate' | 'merge' | 'split'; label: string }> }>().default({ items: [] }).notNull(),
+  displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
@@ -362,7 +362,7 @@ export const provisionDrafts = pgTable('provision_drafts', {
   summaryMd: text('summary_md'),
   provisionTypeCodes: text('provision_type_codes').array(), // Array of provision type codes
   displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
-  displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; changeType: 'create' | 'update' | 'activate' | 'deactivate' | 'merge' | 'split'; label: string }> }>().default({ items: [] }).notNull(),
+  displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
 
   // Metadata
   confidence: numeric('confidence'),

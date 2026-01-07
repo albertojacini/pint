@@ -2,23 +2,12 @@
 
 interface ChangeItem {
   timestamp: string
-  changeType: 'create' | 'update' | 'activate' | 'deactivate' | 'merge' | 'split'
   label: string
 }
 
 interface ProvisionChangesDensityProps {
   changes: ChangeItem[]
   maxMonths?: number
-}
-
-// Color mapping for change types
-const changeTypeColors: Record<string, string> = {
-  create: 'bg-green-500',
-  update: 'bg-blue-500',
-  activate: 'bg-emerald-500',
-  deactivate: 'bg-red-500',
-  merge: 'bg-purple-500',
-  split: 'bg-orange-500',
 }
 
 interface MonthGroup {
@@ -80,7 +69,7 @@ export function ProvisionChangesDensity({ changes, maxMonths = 12 }: ProvisionCh
             {month.items.map((item, itemIndex) => (
               <div
                 key={`${monthIndex}-${itemIndex}`}
-                className={`w-full rounded-sm ${changeTypeColors[item.changeType]} hover:opacity-80 cursor-pointer transition-opacity`}
+                className="w-full rounded-sm bg-primary hover:opacity-80 cursor-pointer transition-opacity"
                 style={{ height: brickHeight }}
                 title={`${item.label} - ${month.month} ${month.year}`}
               />

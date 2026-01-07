@@ -2,22 +2,11 @@
 
 interface ChangeItem {
   timestamp: string
-  changeType: 'create' | 'update' | 'activate' | 'deactivate' | 'merge' | 'split'
   label: string
 }
 
 interface ProvisionTimelineProps {
   changes: ChangeItem[]
-}
-
-// Color mapping for change type badges
-const changeTypeBadgeColors: Record<string, string> = {
-  create: 'bg-green-100 text-green-800 border-green-300',
-  update: 'bg-blue-100 text-blue-800 border-blue-300',
-  activate: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-  deactivate: 'bg-red-100 text-red-800 border-red-300',
-  merge: 'bg-purple-100 text-purple-800 border-purple-300',
-  split: 'bg-orange-100 text-orange-800 border-orange-300',
 }
 
 // Format timestamp to readable date
@@ -51,17 +40,10 @@ export function ProvisionTimeline({ changes }: ProvisionTimelineProps) {
 
           {/* Content */}
           <div className="flex-1 pb-6">
-            {/* Date and badge */}
+            {/* Date */}
             <div className="flex items-center gap-2 mb-1">
               <span className="text-sm font-medium text-foreground">
                 {formatDate(change.timestamp)}
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded text-xs font-medium border uppercase ${
-                  changeTypeBadgeColors[change.changeType]
-                }`}
-              >
-                {change.changeType}
               </span>
             </div>
 

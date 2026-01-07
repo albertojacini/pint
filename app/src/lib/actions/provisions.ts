@@ -38,7 +38,7 @@ export type ProvisionWithTags = {
   ideaId: string | null
   ideaTitle: string | null
   displayData: { items: Array<{ label: string; value: string }> } | null
-  displayChanges: { items: Array<{ timestamp: string; changeType: string; label: string }> } | null
+  displayChanges: { items: Array<{ timestamp: string; label: string }> } | null
   tags: Tag[]
 }
 

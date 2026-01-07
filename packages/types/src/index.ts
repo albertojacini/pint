@@ -240,7 +240,6 @@ export type EffectsDiagram = z.infer<typeof EffectsDiagramSchema>
 // Display Changes schema for provisions
 export const DisplayChangeItemSchema = z.object({
   timestamp: z.string().datetime(), // ISO 8601 validation
-  changeType: z.enum(['create', 'update', 'activate', 'deactivate', 'merge', 'split']),
   label: z.string().min(1),
 })
 
