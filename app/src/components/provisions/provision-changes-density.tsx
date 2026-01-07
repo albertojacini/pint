@@ -50,9 +50,9 @@ function groupChangesByMonth(changes: ChangeItem[], maxMonths: number): MonthGro
 }
 
 export function ProvisionChangesDensity({ changes, maxMonths = 12 }: ProvisionChangesDensityProps) {
-  if (changes.length === 0) return null
-
   const [selectedMonth, setSelectedMonth] = useState<MonthGroup | null>(null)
+
+  if (changes.length === 0) return null
   const monthGroups = groupChangesByMonth(changes, maxMonths)
   const maxHeight = 15 // Max bar height in pixels (75% reduction from 60)
 

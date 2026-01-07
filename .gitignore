@@ -13,7 +13,11 @@ coverage/
 out/
 build/
 dist/
+
+# TypeScript
 *.tsbuildinfo
+tsconfig.tsbuildinfo
+**/tsconfig.tsbuildinfo
 
 # Production
 *.log
