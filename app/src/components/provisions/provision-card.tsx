@@ -7,6 +7,7 @@ import { ProvisionClassificationBadge } from '@/components/custom-ui/classificat
 import { Tags } from '@/components/custom-ui/tags'
 import { SubsectionTitle } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
+import { ProvisionChangesDensity } from './provision-changes-density'
 
 interface ProvisionCardProps {
   provision: {
@@ -23,6 +24,7 @@ interface ProvisionCardProps {
     ideaId: string | null
     ideaTitle: string | null
     displayData: { items: Array<{ label: string; value: string }> } | null
+    displayChanges: { items: Array<{ timestamp: string; changeType: string; label: string }> } | null
     tags: Tag[]
   }
   entity: { id: string; slug: string }
@@ -128,6 +130,14 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
           </div>
         )}
       </div>
+
+      {/* Row 4.5: Change Density Diagram */}
+      {provision.displayChanges?.items && provision.displayChanges.items.length > 0 && (
+        <ProvisionChangesDensity
+          changes={provision.displayChanges.items as any}
+          maxMonths={12}
+        />
+      )}
 
       {/* Row 5: Interaction Stats + Actions */}
       <div className="flex items-center justify-between pt-3">

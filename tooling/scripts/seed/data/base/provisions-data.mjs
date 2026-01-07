@@ -20,6 +20,17 @@ export const provisions = [
         { label: 'Service Area', value: '96 Municipalities' },
       ],
     },
+    displayChanges: {
+      items: [
+        { timestamp: '2003-01-15T09:00:00Z', changeType: 'create', label: '100% stake acquired by City of Milan' },
+        { timestamp: '2015-03-20T14:30:00Z', changeType: 'update', label: 'Metro Line 5 expansion approved' },
+        { timestamp: '2020-09-10T11:00:00Z', changeType: 'update', label: 'New electric bus fleet contract signed' },
+        { timestamp: '2023-06-05T16:00:00Z', changeType: 'update', label: 'Metro Line 4 operational expansion' },
+        { timestamp: '2025-03-15T10:00:00Z', changeType: 'update', label: 'New fare structure for seniors implemented' },
+        { timestamp: '2025-08-20T14:00:00Z', changeType: 'update', label: 'Night bus service expansion approved' },
+        { timestamp: '2025-11-10T09:00:00Z', changeType: 'update', label: 'Digital ticketing system upgrade' },
+      ],
+    },
   },
   {
     entity: 'Comune di Milano',
@@ -38,6 +49,18 @@ export const provisions = [
         { label: 'Annual Revenue', value: '€85M' },
         { label: 'Operational Since', value: '2012' },
         { label: 'Traffic Reduction', value: '30%' },
+      ],
+    },
+    displayChanges: {
+      items: [
+        { timestamp: '2012-01-16T00:00:00Z', changeType: 'create', label: 'Area C congestion charge launched' },
+        { timestamp: '2020-03-08T00:00:00Z', changeType: 'deactivate', label: 'Suspended due to COVID-19' },
+        { timestamp: '2021-06-14T00:00:00Z', changeType: 'activate', label: 'Reactivated post-COVID' },
+        { timestamp: '2023-06-15T00:00:00Z', changeType: 'update', label: 'EV exemptions extended to 2030' },
+        { timestamp: '2025-02-10T00:00:00Z', changeType: 'update', label: 'Fee increased to €8.00 for 2025' },
+        { timestamp: '2025-05-22T00:00:00Z', changeType: 'update', label: 'Weekend enforcement hours extended' },
+        { timestamp: '2025-09-05T00:00:00Z', changeType: 'update', label: 'Additional entry gates activated' },
+        { timestamp: '2025-12-01T00:00:00Z', changeType: 'update', label: 'Hybrid vehicle exemption removed' },
       ],
     },
   },
@@ -88,6 +111,16 @@ The Municipal Police conduct regular inspections. Violations may result in permi
         { label: 'Permit Duration', value: '1-3 Years' },
         { label: 'Monthly Fee', value: '€15-30/m²' },
         { label: 'Minimum Clearance', value: '1.5m' },
+      ],
+    },
+    displayChanges: {
+      items: [
+        { timestamp: '2020-04-20T00:00:00Z', changeType: 'update', label: 'Emergency expansion during COVID-19' },
+        { timestamp: '2022-09-01T00:00:00Z', changeType: 'update', label: 'Design standards and clearance rules revised' },
+        { timestamp: '2024-03-15T00:00:00Z', changeType: 'update', label: 'Permit renewal process simplified' },
+        { timestamp: '2025-04-01T00:00:00Z', changeType: 'update', label: 'Seasonal permit fees adjusted for inflation' },
+        { timestamp: '2025-07-15T00:00:00Z', changeType: 'update', label: 'New sustainability requirements for furniture materials' },
+        { timestamp: '2025-10-20T00:00:00Z', changeType: 'update', label: 'Digital permit application system launched' },
       ],
     },
   },

@@ -15,6 +15,7 @@ import { ProvisionClassificationBadge } from '@/components/custom-ui/classificat
 import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
+import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
 
 interface PageProps {
   params: Promise<{
@@ -78,6 +79,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       effectiveUntil: provisions.effectiveUntil,
       ideaId: provisions.ideaId,
       displayData: provisions.displayData,
+      displayChanges: provisions.displayChanges,
     })
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
@@ -253,6 +255,14 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           <div className="prose prose-sm max-w-none text-muted-foreground">
             <pre className="whitespace-pre-wrap font-sans text-sm">{provision.summaryMd}</pre>
           </div>
+        </div>
+      )}
+
+      {/* Change History */}
+      {provision.displayChanges?.items && provision.displayChanges.items.length > 0 && (
+        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
+          <h2 className="text-lg font-semibold mb-4">Change History</h2>
+          <ProvisionTimeline changes={provision.displayChanges.items as any} />
         </div>
       )}
     </div>
