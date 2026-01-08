@@ -370,3 +370,151 @@ export const provisionDrafts = pgTable('provision_drafts', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
+// ============================================================================
+// EVENT INGESTION DOMAIN
+// ============================================================================
+// Pipeline for ingesting real-world events from external sources
+// Flow: Sources → Candidates → Events → Changes → Entity updates
+
+// Type definitions for AI-extracted data
+export type EiExtractedData = {
+  topics?: string[]
+  entitiesMentioned?: string[]
+  datesMentioned?: string[]
+  eventTypeHints?: string[]
+  peopleMentioned?: string[]
+}
+
+// Sources: Raw inputs from external world (news, official docs, etc.)
+export const eiSources = pgTable('ei_sources', {
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  // Source identification
+  url: text('url'),
+  title: text('title'),
+  sourceType: text('source_type', {
+    enum: ['news', 'official_gazette', 'press_release', 'council_minutes', 'social', 'manual']
+  }).notNull(),
+  sourceName: text('source_name'),
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+
+  // Content
+  rawContent: text('raw_content'),
+
+  // Fetch status
+  fetchStatus: text('fetch_status', {
+    enum: ['pending', 'fetching', 'fetched', 'failed']
+  }).notNull().default('pending'),
+  fetchError: text('fetch_error'),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }),
+
+  // Processing status
+  processingStatus: text('processing_status', {
+    enum: ['unprocessed', 'processing', 'processed', 'discarded']
+  }).notNull().default('unprocessed'),
+
+  // AI-generated fields
+  aiSummary: text('ai_summary'),
+  aiExtractedData: jsonb('ai_extracted_data').$type<EiExtractedData>().default({}),
+
+  // Metadata
+  createdBy: uuid('created_by'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Candidates: Aggregated potential events (before human approval)
+export const eiCandidates = pgTable('ei_candidates', {
+  id: uuid('id').primaryKey().defaultRandom(),
+
+  // Draft event data
+  title: text('title'),
+  description: text('description'),
+  eventType: text('event_type'),
+  occurredAt: timestamp('occurred_at', { withTimezone: true }),
+
+  // Classification (AI-detected)
+  detectedEntityId: uuid('detected_entity_id').references(() => politicalEntities.id, { onDelete: 'set null' }),
+  detectedAdministrationId: uuid('detected_administration_id').references(() => administrations.id, { onDelete: 'set null' }),
+
+  // AI metadata
+  confidenceScore: numeric('confidence_score'),
+  aiReasoning: text('ai_reasoning'),
+
+  // Pipeline status
+  status: text('status', {
+    enum: ['pending', 'reviewing', 'approved', 'rejected', 'merged']
+  }).notNull().default('pending'),
+  mergedIntoId: uuid('merged_into_id'),
+
+  // Output (populated on approval)
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'set null' }),
+
+  // Review audit
+  reviewedBy: uuid('reviewed_by'),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+  rejectionReason: text('rejection_reason'),
+
+  // Metadata
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// Candidate-Sources junction (N:M relationship)
+export const eiCandidateSources = pgTable('ei_candidate_sources', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  candidateId: uuid('candidate_id').notNull().references(() => eiCandidates.id, { onDelete: 'cascade' }),
+  sourceId: uuid('source_id').notNull().references(() => eiSources.id, { onDelete: 'cascade' }),
+  relevance: text('relevance', {
+    enum: ['primary', 'supporting', 'related']
+  }).notNull().default('primary'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueCandidateSource: uniqueIndex('ei_candidate_sources_unique').on(table.candidateId, table.sourceId),
+}))
+
+// Type for proposed changes data
+export type EiProposedData = {
+  // For provisions
+  title?: string
+  description?: string
+  descriptionShort?: string
+  summaryMd?: string
+  displayData?: { items: Array<{ label: string; value: string }> }
+  displayChanges?: { items: Array<{ timestamp: string; label: string }> }
+  // For other targets - extensible
+  [key: string]: unknown
+}
+
+// Candidate Changes: Draft changes proposed by AI (before approval)
+export const eiCandidateChanges = pgTable('ei_candidate_changes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  candidateId: uuid('candidate_id').notNull().references(() => eiCandidates.id, { onDelete: 'cascade' }),
+
+  // Target specification
+  targetType: text('target_type', {
+    enum: ['provision', 'entity', 'administration']
+  }).notNull(),
+  targetId: uuid('target_id'),
+
+  // Proposed change
+  action: text('action', {
+    enum: ['create', 'update', 'delete']
+  }).notNull(),
+  proposedData: jsonb('proposed_data').$type<EiProposedData>().default({}).notNull(),
+  description: text('description'),
+  effectiveAt: timestamp('effective_at', { withTimezone: true }),
+
+  // Review status
+  status: text('status', {
+    enum: ['pending', 'approved', 'rejected', 'modified']
+  }).notNull().default('pending'),
+
+  // Output (populated on approval)
+  changeId: uuid('change_id').references(() => changes.id, { onDelete: 'set null' }),
+
+  // Metadata
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
