@@ -16,6 +16,7 @@ import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
+import { getChangesByProvision } from '@/lib/actions/changes'
 
 interface PageProps {
   params: Promise<{
@@ -79,7 +80,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       effectiveUntil: provisions.effectiveUntil,
       ideaId: provisions.ideaId,
       displayData: provisions.displayData,
-      displayChanges: provisions.displayChanges,
     })
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
@@ -125,6 +125,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     .where(
       and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id))
     )
+
+  // Fetch changes for this provision
+  const provisionChanges = await getChangesByProvision(provisionResult.id)
 
   const provision = {
     ...provisionResult,
@@ -259,10 +262,10 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       )}
 
       {/* Change History */}
-      {provision.displayChanges?.items && provision.displayChanges.items.length > 0 && (
+      {provisionChanges.length > 0 && (
         <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
           <h2 className="text-lg font-semibold mb-4">Change History</h2>
-          <ProvisionTimeline changes={provision.displayChanges.items as any} />
+          <ProvisionTimeline changes={provisionChanges} />
         </div>
       )}
     </div>

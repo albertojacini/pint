@@ -115,3 +115,59 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
 
   return enrichedChanges
 }
+
+/**
+ * Get all changes for a specific provision
+ */
+export async function getChangesByProvision(provisionId: string): Promise<ChangeWithContext[]> {
+  const result = await db
+    .select({
+      id: changes.id,
+      description: changes.description,
+      createdAt: changes.createdAt,
+      targetType: changes.targetType,
+      targetId: changes.targetId,
+      eventId: events.id,
+      eventTitle: events.title,
+      eventType: events.type,
+    })
+    .from(changes)
+    .leftJoin(events, eq(changes.eventId, events.id))
+    .where(
+      and(
+        eq(changes.targetType, 'provision'),
+        eq(changes.targetId, provisionId)
+      )
+    )
+    .orderBy(desc(changes.createdAt))
+
+  // Enrich with provision title and types
+  const enrichedChanges: ChangeWithContext[] = await Promise.all(
+    result.map(async (change) => {
+      const [provision] = await db
+        .select({ title: provisions.title })
+        .from(provisions)
+        .where(eq(provisions.id, change.targetId))
+        .limit(1)
+
+      const targetTitle = provision?.title || null
+
+      // Fetch types for this provision
+      const types = await db
+        .select({ code: provisionTypes.code })
+        .from(provisionTypeAssociations)
+        .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
+        .where(eq(provisionTypeAssociations.provisionId, change.targetId))
+
+      const targetProvisionTypes = types.map(t => t.code)
+
+      return {
+        ...change,
+        targetTitle,
+        targetProvisionTypes,
+      }
+    })
+  )
+
+  return enrichedChanges
+}
