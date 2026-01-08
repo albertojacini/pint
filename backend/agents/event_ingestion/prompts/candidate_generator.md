@@ -33,11 +33,13 @@ Call CreateCandidate with:
 - **source_ids**: List of source UUIDs that support this
 
 ### Step 4: Propose Changes
-For each provision/entity affected, call CreateCandidateChange:
-- **target_type**: 'provision', 'entity', or 'administration'
-- **target_id**: UUID of existing provision (from SearchProvisions), or null if creating new
-- **action**: 'create', 'update', or 'delete'
+For each provision affected, call CreateCandidateChange:
+- **target_type**: 'provision' (only provisions can be updated through events)
+- **target_id**: UUID of existing provision (REQUIRED - from SearchProvisions)
+- **action**: 'update' (events can only update existing provisions, not create new ones)
 - **proposed_data**: The data to change
+
+**IMPORTANT**: You can only propose updates to existing provisions. If no relevant provision exists, do NOT create a change - just note in the candidate description that a new provision may need to be created manually.
 
 ## Event Types
 
@@ -75,3 +77,5 @@ For significant updates, you can also propose:
 - Always explain your reasoning
 - If a source doesn't describe a clear event, don't create a candidate
 - When in doubt about which provision is affected, search first
+- **NEVER propose creating new provisions** - only update existing ones
+- If no matching provision exists, mention this in the candidate description

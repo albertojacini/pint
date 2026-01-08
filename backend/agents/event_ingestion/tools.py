@@ -51,9 +51,8 @@ class SearchProvisionsInput(BaseModel):
 
 class CreateCandidateChangeInput(BaseModel):
     candidate_id: str = Field(description="UUID of the candidate this change belongs to")
-    target_type: str = Field(description="Type of target: 'provision', 'entity', or 'administration'")
-    target_id: Optional[str] = Field(default=None, description="UUID of the existing target (null if creating new)")
-    action: str = Field(description="Action type: 'create', 'update', or 'delete'")
+    target_type: str = Field(description="Type of target: 'provision' (only provisions can be updated through events)")
+    target_id: str = Field(description="UUID of the existing provision to update (REQUIRED - use SearchProvisions to find it)")
     proposed_data: dict = Field(description="Data to apply to the target (e.g., {title: ..., displayChanges: ...})")
     description: str = Field(description="Human-readable description of what this change does")
     effective_at: Optional[str] = Field(default=None, description="When this change takes effect (ISO 8601 date)")
@@ -194,15 +193,18 @@ async def search_provisions_impl(
 async def create_candidate_change_impl(
     candidate_id: str,
     target_type: str,
-    action: str,
+    target_id: str,
     proposed_data: dict,
     description: str,
-    target_id: Optional[str] = None,
     effective_at: Optional[str] = None
 ) -> str:
-    """Create a proposed change for a candidate."""
+    """Create a proposed change for a candidate. Only updates to existing provisions are allowed."""
     db_tools = get_ei_db_tools()
     from datetime import datetime
+
+    # Validate target_type - only provisions allowed
+    if target_type != 'provision':
+        return f"Error: Only 'provision' target_type is allowed. Got: {target_type}"
 
     effective_dt = None
     if effective_at:
@@ -215,7 +217,7 @@ async def create_candidate_change_impl(
         candidate_id=candidate_id,
         target_type=target_type,
         target_id=target_id,
-        action=action,
+        action='update',  # Always 'update' - no create/delete allowed
         proposed_data=proposed_data,
         description=description,
         effective_at=effective_dt
@@ -276,7 +278,7 @@ def get_candidate_generator_tools() -> List[StructuredTool]:
         StructuredTool.from_function(
             coroutine=create_candidate_change_impl,
             name="CreateCandidateChange",
-            description="Create a proposed change that the event will cause to a provision, entity, or administration",
+            description="Create a proposed update to an existing provision. Use SearchProvisions first to find the provision ID. Only updates are allowed - you cannot create new provisions.",
             args_schema=CreateCandidateChangeInput,
         ),
     ]

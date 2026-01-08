@@ -13,7 +13,7 @@ export type SourceType = 'news' | 'official_gazette' | 'press_release' | 'counci
 export type FetchStatus = 'pending' | 'fetching' | 'fetched' | 'failed'
 export type ProcessingStatus = 'unprocessed' | 'processing' | 'processed' | 'discarded'
 export type CandidateStatus = 'pending' | 'reviewing' | 'approved' | 'rejected' | 'merged'
-export type ChangeAction = 'create' | 'update' | 'delete'
+export type ChangeAction = 'update'  // Only updates allowed - no create/delete through event ingestion
 export type ChangeStatus = 'pending' | 'approved' | 'rejected' | 'modified'
 
 export interface EiSource {
@@ -359,9 +359,8 @@ export async function getCandidate(id: string): Promise<EiCandidate | null> {
 
 export async function createCandidateChange(input: {
   candidateId: string
-  targetType: 'provision' | 'entity' | 'administration'
-  targetId?: string
-  action: ChangeAction
+  targetType: 'provision'  // Only provisions can be updated through events
+  targetId: string  // Required - must reference existing provision
   proposedData: EiProposedData
   description?: string
   effectiveAt?: Date
@@ -374,7 +373,7 @@ export async function createCandidateChange(input: {
       candidateId: input.candidateId,
       targetType: input.targetType,
       targetId: input.targetId,
-      action: input.action,
+      action: 'update',  // Always 'update' - no create/delete allowed
       proposedData: input.proposedData,
       description: input.description,
       effectiveAt: input.effectiveAt,
@@ -390,7 +389,6 @@ export async function updateCandidateChange(
   id: string,
   data: Partial<{
     targetId: string
-    action: ChangeAction
     proposedData: EiProposedData
     description: string
     effectiveAt: Date
@@ -470,29 +468,26 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
       .set({ changeId: changeRecord.id })
       .where(eq(eiCandidateChanges.id, candidateChange.id))
 
-    // Apply the change to the target
-    if (candidateChange.action === 'update' && candidateChange.targetId) {
-      if (candidateChange.targetType === 'provision') {
-        const updateData: Record<string, unknown> = { ...candidateChange.proposedData }
+    // Apply the change to the provision (only updates to provisions are allowed)
+    if (candidateChange.targetId && candidateChange.targetType === 'provision') {
+      const updateData: Record<string, unknown> = { ...candidateChange.proposedData }
 
-        // Handle display_changes append
-        if (candidateChange.proposedData.displayChanges) {
-          const [currentProvision] = await db
-            .select({ displayChanges: provisions.displayChanges })
-            .from(provisions)
-            .where(eq(provisions.id, candidateChange.targetId))
-
-          const currentItems = currentProvision?.displayChanges?.items || []
-          const newItems = candidateChange.proposedData.displayChanges.items || []
-          updateData.displayChanges = { items: [...currentItems, ...newItems] }
-        }
-
-        await db
-          .update(provisions)
-          .set(updateData)
+      // Handle display_changes append
+      if (candidateChange.proposedData.displayChanges) {
+        const [currentProvision] = await db
+          .select({ displayChanges: provisions.displayChanges })
+          .from(provisions)
           .where(eq(provisions.id, candidateChange.targetId))
+
+        const currentItems = currentProvision?.displayChanges?.items || []
+        const newItems = candidateChange.proposedData.displayChanges.items || []
+        updateData.displayChanges = { items: [...currentItems, ...newItems] }
       }
-      // Add handlers for 'entity' and 'administration' as needed
+
+      await db
+        .update(provisions)
+        .set(updateData)
+        .where(eq(provisions.id, candidateChange.targetId))
     }
   }
 
