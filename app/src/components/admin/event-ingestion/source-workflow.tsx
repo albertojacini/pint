@@ -12,14 +12,32 @@ import {
   type EiSource,
 } from '@/lib/actions/event-ingestion'
 
+const API_BASE = process.env.NEXT_PUBLIC_AGENTS_API_URL || 'http://localhost:8000'
+
 interface SourceWorkflowProps {
   source: EiSource
 }
 
 export function SourceWorkflow({ source }: SourceWorkflowProps) {
   const [loading, setLoading] = useState<string | null>(null)
+  const [polling, setPolling] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
+
+  const pollForCompletion = async (checkFn: () => Promise<boolean>, interval = 2000, maxAttempts = 30) => {
+    setPolling(true)
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise(resolve => setTimeout(resolve, interval))
+      const done = await checkFn()
+      if (done) {
+        setPolling(false)
+        router.refresh()
+        return true
+      }
+    }
+    setPolling(false)
+    return false
+  }
 
   const handleFetch = async () => {
     if (!source.url) {
@@ -33,21 +51,29 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
 
     setLoading('fetch')
     try {
-      // For now, just mark as fetched - actual fetching will be done by backend agent
-      await updateSource(source.id, {
-        fetchStatus: 'fetched',
-        fetchedAt: new Date(),
+      const response = await fetch(`${API_BASE}/event-ingestion/sources/${source.id}/fetch`, {
+        method: 'POST',
       })
-      toast({
-        title: 'Fetch triggered',
-        description: 'Content will be fetched by the backend agent',
-      })
-      router.refresh()
+      const result = await response.json()
+
+      if (result.status === 'success') {
+        toast({
+          title: 'Content fetched',
+          description: `Fetched ${result.content_length} characters`,
+        })
+        router.refresh()
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Fetch failed',
+          description: result.error || 'Unknown error',
+        })
+      }
     } catch {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Failed to trigger fetch',
+        description: 'Failed to fetch content',
       })
     } finally {
       setLoading(null)
@@ -57,15 +83,43 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
   const handleProcess = async () => {
     setLoading('process')
     try {
-      // For now, mark as processing - actual processing will be done by backend agent
-      await updateSource(source.id, {
-        processingStatus: 'processing',
+      const response = await fetch(`${API_BASE}/event-ingestion/sources/${source.id}/process`, {
+        method: 'POST',
       })
-      toast({
-        title: 'Processing triggered',
-        description: 'AI will analyze the content',
-      })
-      router.refresh()
+      const result = await response.json()
+
+      if (result.status === 'processing') {
+        toast({
+          title: 'Processing started',
+          description: 'AI is analyzing the content...',
+        })
+
+        // Poll for completion
+        const completed = await pollForCompletion(async () => {
+          const statusRes = await fetch(`${API_BASE}/event-ingestion/sources/${source.id}/status`)
+          const status = await statusRes.json()
+          return status.processing_status === 'processed' || status.processing_status === 'discarded'
+        })
+
+        if (completed) {
+          toast({
+            title: 'Processing complete',
+            description: 'Source has been analyzed',
+          })
+        } else {
+          toast({
+            variant: 'destructive',
+            title: 'Timeout',
+            description: 'Processing is taking longer than expected. Check back later.',
+          })
+        }
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Error',
+          description: result.error || 'Failed to start processing',
+        })
+      }
     } catch {
       toast({
         variant: 'destructive',
@@ -122,16 +176,28 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
   const handleCreateCandidate = async () => {
     setLoading('candidate')
     try {
-      const result = await createCandidate({
-        title: source.title || undefined,
-        sourceIds: [source.id],
+      const response = await fetch(`${API_BASE}/event-ingestion/candidates/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ source_ids: [source.id] }),
       })
-      if (result.ok && result.data) {
+      const result = await response.json()
+
+      if (result.status === 'generating') {
+        toast({
+          title: 'Generating candidate',
+          description: 'AI is creating an event candidate...',
+        })
+
+        // Poll briefly then redirect to candidates list
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        router.push('/admin/event-ingestion/candidates')
+      } else if (result.candidate_id) {
         toast({
           title: 'Candidate created',
           description: 'Redirecting to candidate...',
         })
-        router.push(`/admin/event-ingestion/candidates/${result.data.id}`)
+        router.push(`/admin/event-ingestion/candidates/${result.candidate_id}`)
       } else {
         toast({
           variant: 'destructive',
@@ -279,10 +345,16 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
           {source.fetchStatus === 'fetched' && source.processingStatus === 'unprocessed' && (
             <Button
               onClick={handleProcess}
-              disabled={loading !== null}
+              disabled={loading !== null || polling}
             >
-              {loading === 'process' ? 'Processing...' : 'Process with AI'}
+              {loading === 'process' ? (polling ? 'Analyzing...' : 'Starting...') : 'Process with AI'}
             </Button>
+          )}
+
+          {source.processingStatus === 'processing' && (
+            <Badge className="bg-yellow-100 text-yellow-800">
+              Processing in progress...
+            </Badge>
           )}
 
           {source.processingStatus === 'processed' && (
