@@ -90,14 +90,32 @@ class CandidateStatusResponse(BaseModel):
 
 async def run_process_source(source_id: str):
     """Background task to process a source."""
-    service = get_event_ingestion_service()
-    await service.process_source(source_id)
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"Starting source processing for: {source_id}")
+    try:
+        service = get_event_ingestion_service()
+        result = await service.process_source(source_id)
+        logger.info(f"Source processing result: {result}")
+    except Exception as e:
+        logger.error(f"Source processing failed: {e}", exc_info=True)
 
 
 async def run_generate_candidate(source_ids: List[str]):
     """Background task to generate a candidate."""
-    service = get_event_ingestion_service()
-    await service.generate_candidate(source_ids)
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"Starting candidate generation for sources: {source_ids}")
+    try:
+        service = get_event_ingestion_service()
+        result = await service.generate_candidate(source_ids)
+        logger.info(f"Candidate generation result: {result}")
+    except Exception as e:
+        logger.error(f"Candidate generation failed: {e}", exc_info=True)
 
 
 # ============================================================================

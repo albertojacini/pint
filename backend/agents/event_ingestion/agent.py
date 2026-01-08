@@ -133,7 +133,14 @@ async def generate_candidate(source_ids: list[str]) -> dict:
     Returns:
         dict with status, candidate_id (if created), and any error message
     """
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    logger.info(f"generate_candidate called with source_ids: {source_ids}")
+
     if not os.environ.get("ANTHROPIC_API_KEY"):
+        logger.error("ANTHROPIC_API_KEY not found")
         raise ValueError("ANTHROPIC_API_KEY not found")
 
     if not source_ids:
@@ -211,10 +218,17 @@ Source IDs to use: {source_ids}"""
                 tool_name = tool_call["name"]
                 tool_args = tool_call["args"]
 
+                logger.info(f"Executing tool: {tool_name} with args: {tool_args}")
+
                 # Find and execute tool
                 tool = next((t for t in tools if t.name == tool_name), None)
                 if tool:
-                    result = await tool.ainvoke(tool_args)
+                    try:
+                        result = await tool.ainvoke(tool_args)
+                        logger.info(f"Tool {tool_name} result: {result[:200] if len(str(result)) > 200 else result}")
+                    except Exception as tool_error:
+                        logger.error(f"Tool {tool_name} failed: {tool_error}", exc_info=True)
+                        result = f"Error: {tool_error}"
 
                     # Capture candidate_id if created
                     if tool_name == "CreateCandidate" and "Created candidate" in str(result):
@@ -222,19 +236,25 @@ Source IDs to use: {source_ids}"""
                         parts = str(result).split()
                         if len(parts) >= 3:
                             candidate_id = parts[2]
+                            logger.info(f"Captured candidate_id: {candidate_id}")
 
                     from langchain_core.messages import ToolMessage
                     messages.append(ToolMessage(
                         content=str(result),
                         tool_call_id=tool_call["id"]
                     ))
+                else:
+                    logger.warning(f"Tool not found: {tool_name}")
 
         if candidate_id:
+            logger.info(f"Successfully created candidate: {candidate_id}")
             return {"status": "success", "candidate_id": candidate_id}
         else:
+            logger.warning("Agent did not create a candidate")
             return {"status": "no_candidate", "message": "Agent did not create a candidate"}
 
     except Exception as e:
+        logger.error(f"generate_candidate failed: {e}", exc_info=True)
         return {"status": "error", "error": str(e)}
 
     finally:
