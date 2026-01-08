@@ -174,6 +174,21 @@ Requires Python 3.12+, uv, and API keys in backend/.env
 - Provision ingestion with AI-assisted research
 - Deployed to Render.com
 
+### ✅ Event Ingestion Pipeline
+Tracks real-world political events and their effects on provisions/entities:
+
+```
+Source → Candidate → Event → Changes → Provisions/Entities
+```
+
+1. **Sources**: News articles, official documents, press releases
+2. **Candidates**: AI-generated draft events for human review
+3. **Events**: Approved political events (legislation, rulings, reforms)
+4. **Changes**: Links events to affected provisions/entities (source of truth)
+5. **Provisions**: Updated based on approved changes
+
+Admin UI at `/admin/event-ingestion`
+
 ## 🛠️ Development Commands
 
 ```bash
