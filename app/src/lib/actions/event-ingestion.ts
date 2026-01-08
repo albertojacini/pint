@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db/client'
 import { eiSources, eiCandidates, eiCandidateSources, eiCandidateChanges, events, changes, provisions, politicalEntities, administrations } from '@/lib/db/schema'
 import type { EiExtractedData, EiProposedData } from '@/lib/db/schema'
+export type { EiProposedData }
 import { eq, desc, inArray } from 'drizzle-orm'
 import { requireUser } from '@/lib/auth'
 import type { ApiResponse } from '@pint/types'

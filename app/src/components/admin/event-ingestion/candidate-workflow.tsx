@@ -13,8 +13,11 @@ import {
   deleteCandidate,
   approveCandidate,
   updateCandidateChange,
+  createCandidateChange,
+  deleteCandidateChange,
   type EiCandidate,
   type EiCandidateChange,
+  type EiProposedData,
 } from '@/lib/actions/event-ingestion'
 
 interface Entity {
@@ -203,8 +206,41 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
     }
   }
 
+  const handleTargetChange = async (changeId: string, newTargetId: string) => {
+    try {
+      await updateCandidateChange(changeId, { targetId: newTargetId, status: 'modified' })
+      toast({ title: 'Target updated' })
+      router.refresh()
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to update target',
+      })
+    }
+  }
+
+  const handleDeleteChange = async (changeId: string) => {
+    try {
+      await deleteCandidateChange(changeId)
+      toast({ title: 'Change deleted' })
+      router.refresh()
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to delete change',
+      })
+    }
+  }
+
   const isApproved = candidate.status === 'approved'
   const isRejected = candidate.status === 'rejected'
+
+  // Filter provisions by selected entity for better UX
+  const entityProvisions = formData.detectedEntityId
+    ? provisions.filter((p) => p.entityId === formData.detectedEntityId)
+    : provisions
 
   return (
     <div className="space-y-6">
@@ -319,24 +355,39 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
       )}
 
       {/* Proposed Changes */}
-      {candidate.changes && candidate.changes.length > 0 && (
-        <div>
-          <h3 className="font-medium text-sm text-gray-700 mb-2">
-            Proposed Changes ({candidate.changes.length})
-          </h3>
+      <div>
+        <h3 className="font-medium text-sm text-gray-700 mb-2">
+          Proposed Changes ({candidate.changes?.length || 0})
+        </h3>
+        {candidate.changes && candidate.changes.length > 0 ? (
           <div className="space-y-2">
             {candidate.changes.map((change) => (
               <ChangeCard
                 key={change.id}
                 change={change}
-                provisions={provisions}
+                provisions={entityProvisions}
+                allProvisions={provisions}
                 onStatusChange={handleChangeStatus}
+                onTargetChange={handleTargetChange}
+                onDelete={handleDeleteChange}
                 disabled={isApproved || isRejected}
               />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-sm text-gray-500 italic">No changes proposed by AI</p>
+        )}
+
+        {/* Add Manual Change */}
+        {!isApproved && !isRejected && (
+          <AddManualChange
+            candidateId={candidate.id}
+            provisions={entityProvisions}
+            allProvisions={provisions}
+            onAdded={() => router.refresh()}
+          />
+        )}
+      </div>
 
       {/* Actions */}
       {!isApproved && (
@@ -437,15 +488,26 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
 function ChangeCard({
   change,
   provisions,
+  allProvisions,
   onStatusChange,
+  onTargetChange,
+  onDelete,
   disabled,
 }: {
   change: EiCandidateChange
-  provisions: Provision[]
+  provisions: Provision[]  // Filtered by entity
+  allProvisions: Provision[]  // All provisions for fallback
   onStatusChange: (id: string, status: 'approved' | 'rejected') => void
+  onTargetChange: (id: string, newTargetId: string) => void
+  onDelete: (id: string) => void
   disabled: boolean
 }) {
-  const provision = provisions.find((p) => p.id === change.targetId)
+  const [editingTarget, setEditingTarget] = useState(false)
+  const [selectedTarget, setSelectedTarget] = useState(change.targetId || '')
+  const [showAllProvisions, setShowAllProvisions] = useState(false)
+
+  const provision = allProvisions.find((p) => p.id === change.targetId)
+  const displayProvisions = showAllProvisions ? allProvisions : provisions
 
   const statusColors: Record<string, string> = {
     pending: 'bg-gray-100 text-gray-800',
@@ -454,19 +516,94 @@ function ChangeCard({
     modified: 'bg-yellow-100 text-yellow-800',
   }
 
+  const handleSaveTarget = () => {
+    if (selectedTarget && selectedTarget !== change.targetId) {
+      onTargetChange(change.id, selectedTarget)
+    }
+    setEditingTarget(false)
+  }
+
   return (
     <div className="bg-gray-50 p-4 rounded-lg">
       <div className="flex justify-between items-start mb-2">
-        <div>
-          <Badge className="mr-2">{change.action}</Badge>
+        <div className="flex-1">
+          <Badge className="mr-2">update</Badge>
           <span className="text-sm font-medium">{change.targetType}</span>
-          {provision && (
-            <span className="text-sm text-gray-500 ml-2">
-              → {provision.title}
-            </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge className={statusColors[change.status]}>{change.status}</Badge>
+          {!disabled && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+              onClick={() => {
+                if (confirm('Delete this change?')) onDelete(change.id)
+              }}
+            >
+              ×
+            </Button>
           )}
         </div>
-        <Badge className={statusColors[change.status]}>{change.status}</Badge>
+      </div>
+
+      {/* Target Provision */}
+      <div className="mb-2">
+        {editingTarget ? (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedTarget}
+                onChange={(e) => setSelectedTarget(e.target.value)}
+                className="flex-1 h-8 text-sm rounded-md border border-input bg-background px-2"
+              >
+                <option value="">Select provision...</option>
+                {displayProvisions.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+              </select>
+              <Button size="sm" onClick={handleSaveTarget}>
+                Save
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setEditingTarget(false)}>
+                Cancel
+              </Button>
+            </div>
+            <label className="flex items-center gap-2 text-xs text-gray-500">
+              <input
+                type="checkbox"
+                checked={showAllProvisions}
+                onChange={(e) => setShowAllProvisions(e.target.checked)}
+              />
+              Show all provisions (not just from selected entity)
+            </label>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">
+              Target:{' '}
+              {provision ? (
+                <span className="font-medium">{provision.title}</span>
+              ) : change.targetId ? (
+                <span className="text-orange-600 italic">Unknown provision</span>
+              ) : (
+                <span className="text-red-600 italic">No target selected</span>
+              )}
+            </span>
+            {!disabled && (
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-6 text-xs"
+                onClick={() => setEditingTarget(true)}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {change.description && (
@@ -481,13 +618,14 @@ function ChangeCard({
         </div>
       )}
 
-      {change.status === 'pending' && !disabled && (
+      {(change.status === 'pending' || change.status === 'modified') && !disabled && (
         <div className="flex gap-2 mt-3">
           <Button
             size="sm"
             variant="outline"
             className="text-green-600"
             onClick={() => onStatusChange(change.id, 'approved')}
+            disabled={!change.targetId}
           >
             Approve
           </Button>
@@ -501,6 +639,151 @@ function ChangeCard({
           </Button>
         </div>
       )}
+    </div>
+  )
+}
+
+function AddManualChange({
+  candidateId,
+  provisions,
+  allProvisions,
+  onAdded,
+}: {
+  candidateId: string
+  provisions: Provision[]
+  allProvisions: Provision[]
+  onAdded: () => void
+}) {
+  const [isAdding, setIsAdding] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [showAllProvisions, setShowAllProvisions] = useState(false)
+  const [formData, setFormData] = useState({
+    targetId: '',
+    description: '',
+    proposedData: '{\n  "displayChanges": {\n    "items": [\n      {"timestamp": "", "label": ""}\n    ]\n  }\n}',
+  })
+  const { toast } = useToast()
+
+  const displayProvisions = showAllProvisions ? allProvisions : provisions
+
+  const handleSubmit = async () => {
+    if (!formData.targetId) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Please select a provision',
+      })
+      return
+    }
+
+    let proposedData: EiProposedData
+    try {
+      proposedData = JSON.parse(formData.proposedData)
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Invalid JSON in proposed data',
+      })
+      return
+    }
+
+    setLoading(true)
+    try {
+      await createCandidateChange({
+        candidateId,
+        targetType: 'provision',
+        targetId: formData.targetId,
+        proposedData,
+        description: formData.description || undefined,
+      })
+      toast({ title: 'Change added' })
+      setIsAdding(false)
+      setFormData({
+        targetId: '',
+        description: '',
+        proposedData: '{\n  "displayChanges": {\n    "items": [\n      {"timestamp": "", "label": ""}\n    ]\n  }\n}',
+      })
+      onAdded()
+    } catch {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to add change',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!isAdding) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="mt-3"
+        onClick={() => setIsAdding(true)}
+      >
+        + Add Manual Change
+      </Button>
+    )
+  }
+
+  return (
+    <div className="mt-3 p-4 border-2 border-dashed border-gray-300 rounded-lg space-y-3">
+      <h4 className="font-medium text-sm">Add Manual Change</h4>
+
+      <div className="space-y-2">
+        <Label>Target Provision *</Label>
+        <select
+          value={formData.targetId}
+          onChange={(e) => setFormData({ ...formData, targetId: e.target.value })}
+          className="w-full h-9 text-sm rounded-md border border-input bg-background px-3"
+        >
+          <option value="">Select provision...</option>
+          {displayProvisions.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.title}
+            </option>
+          ))}
+        </select>
+        <label className="flex items-center gap-2 text-xs text-gray-500">
+          <input
+            type="checkbox"
+            checked={showAllProvisions}
+            onChange={(e) => setShowAllProvisions(e.target.checked)}
+          />
+          Show all provisions (not just from selected entity)
+        </label>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Description</Label>
+        <Input
+          value={formData.description}
+          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          placeholder="What this change does..."
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Proposed Data (JSON)</Label>
+        <Textarea
+          value={formData.proposedData}
+          onChange={(e) => setFormData({ ...formData, proposedData: e.target.value })}
+          rows={6}
+          className="font-mono text-xs"
+        />
+      </div>
+
+      <div className="flex gap-2">
+        <Button onClick={handleSubmit} disabled={loading}>
+          {loading ? 'Adding...' : 'Add Change'}
+        </Button>
+        <Button variant="ghost" onClick={() => setIsAdding(false)} disabled={loading}>
+          Cancel
+        </Button>
+      </div>
     </div>
   )
 }

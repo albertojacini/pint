@@ -7,6 +7,11 @@ const adminPages = [
     description: 'Create and manage provision drafts',
     href: '/admin/provision-ingestion',
   },
+  {
+    title: 'Event Ingestion',
+    description: 'Import events from external sources and update provisions',
+    href: '/admin/event-ingestion',
+  },
 ]
 
 export default function AdminPage() {
