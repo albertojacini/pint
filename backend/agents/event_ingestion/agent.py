@@ -20,9 +20,9 @@ from agents.utils.ei_db_tools import get_ei_db_tools
 # Paths
 PROMPTS_DIR = Path(__file__).parent / "prompts"
 
-# Load environment variables
-agents_dir = Path(__file__).parent.parent
-load_dotenv(agents_dir / ".env")
+# Load environment variables from backend root
+backend_dir = Path(__file__).parent.parent.parent
+load_dotenv(backend_dir / ".env")
 
 
 def load_prompt(filename: str) -> str:

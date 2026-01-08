@@ -149,6 +149,11 @@ class EiDatabaseTools:
 
         async with self.pool.acquire() as conn:
             # Create candidate
+            # Convert confidence_score to float for database
+            conf_score = None
+            if confidence_score is not None:
+                conf_score = float(confidence_score) if isinstance(confidence_score, (int, float, str)) else None
+
             candidate_id = await conn.fetchval(
                 """
                 INSERT INTO ei_candidates (
@@ -156,7 +161,7 @@ class EiDatabaseTools:
                     detected_entity_id, detected_administration_id,
                     confidence_score, ai_reasoning, status
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending')
+                VALUES ($1, $2, $3, $4, $5, $6, $7::numeric, $8, 'pending')
                 RETURNING id
                 """,
                 sanitize_text(title),
@@ -165,7 +170,7 @@ class EiDatabaseTools:
                 occurred_at,
                 detected_entity_id,
                 detected_administration_id,
-                str(confidence_score) if confidence_score is not None else None,
+                conf_score,
                 sanitize_text(ai_reasoning)
             )
 
