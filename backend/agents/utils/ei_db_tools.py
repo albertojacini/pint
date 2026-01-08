@@ -2,6 +2,7 @@
 
 import os
 import json
+import asyncio
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 import asyncpg
@@ -23,11 +24,22 @@ class EiDatabaseTools:
         if not self.db_url:
             raise ValueError("DATABASE_URL environment variable is required")
         self.pool: Optional[asyncpg.Pool] = None
+        self._lock = asyncio.Lock()
 
     async def connect(self):
-        """Create connection pool."""
-        if not self.pool:
-            self.pool = await asyncpg.create_pool(self.db_url)
+        """Create connection pool (thread-safe)."""
+        if self.pool:
+            return
+        async with self._lock:
+            # Double-check after acquiring lock
+            if not self.pool:
+                # Limit pool size to avoid exhausting Supabase connection limits
+                # Supabase session mode has strict limits (~15-20 connections)
+                self.pool = await asyncpg.create_pool(
+                    self.db_url,
+                    min_size=1,
+                    max_size=5,
+                )
 
     async def close(self):
         """Close connection pool."""

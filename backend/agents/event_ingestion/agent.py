@@ -119,9 +119,6 @@ Use GetSource to read the full content, then analyze and update with your findin
         await db_tools.update_source(source_id, processing_status='unprocessed')
         return {"status": "error", "error": str(e)}
 
-    finally:
-        await db_tools.close()
-
 
 async def generate_candidate(source_ids: list[str]) -> dict:
     """
@@ -256,9 +253,6 @@ Source IDs to use: {source_ids}"""
     except Exception as e:
         logger.error(f"generate_candidate failed: {e}", exc_info=True)
         return {"status": "error", "error": str(e)}
-
-    finally:
-        await db_tools.close()
 
 
 # CLI entry point for testing

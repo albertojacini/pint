@@ -74,9 +74,6 @@ class EventIngestionService:
             )
             return {"status": "error", "error": str(e)}
 
-        finally:
-            await self.db_tools.close()
-
     async def process_source(self, source_id: str) -> dict:
         """
         Process a source with AI to extract structured data.
@@ -106,18 +103,12 @@ class EventIngestionService:
     async def get_source(self, source_id: str) -> Optional[dict]:
         """Get a source by ID."""
         await self.db_tools.connect()
-        try:
-            return await self.db_tools.get_source(source_id)
-        finally:
-            await self.db_tools.close()
+        return await self.db_tools.get_source(source_id)
 
     async def get_candidate(self, candidate_id: str) -> Optional[dict]:
         """Get a candidate by ID."""
         await self.db_tools.connect()
-        try:
-            return await self.db_tools.get_candidate(candidate_id)
-        finally:
-            await self.db_tools.close()
+        return await self.db_tools.get_candidate(candidate_id)
 
 
 # Global instance
