@@ -200,7 +200,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
                   </div>
                   <SubsectionTitle>{event.title}</SubsectionTitle>
                   <div className="text-sm text-muted-foreground">
-                    {format(new Date(event.occurredAt), 'PPP')}
+                    {format(new Date(event.createdAt), 'PPP')}
                   </div>
                 </CardHeader>
                 {event.description && (

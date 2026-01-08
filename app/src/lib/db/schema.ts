@@ -313,7 +313,6 @@ export const events = pgTable('events', {
   descriptionShort: text('description_short'),
   description: text('description'),
   type: text('type').notNull(), // 'judicial_decree', 'legislative_vote', 'protest', 'executive_order', etc.
-  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
@@ -327,7 +326,6 @@ export const changes = pgTable('changes', {
   }).notNull(),
   targetId: uuid('target_id').notNull(),
   description: text('description'),
-  effectiveAt: timestamp('effective_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
@@ -431,7 +429,6 @@ export const eiCandidates = pgTable('ei_candidates', {
   title: text('title'),
   description: text('description'),
   eventType: text('event_type'),
-  occurredAt: timestamp('occurred_at', { withTimezone: true }),
 
   // Classification (AI-detected)
   detectedEntityId: uuid('detected_entity_id').references(() => politicalEntities.id, { onDelete: 'set null' }),
@@ -503,7 +500,6 @@ export const eiCandidateChanges = pgTable('ei_candidate_changes', {
   }).notNull(),
   proposedData: jsonb('proposed_data').$type<EiProposedData>().default({}).notNull(),
   description: text('description'),
-  effectiveAt: timestamp('effective_at', { withTimezone: true }),
 
   // Review status
   status: text('status', {

@@ -7,7 +7,7 @@ import { eq, desc, and, or, inArray, sql } from 'drizzle-orm'
 export interface ChangeWithContext {
   id: string
   description: string | null
-  effectiveAt: Date | null
+  createdAt: Date
   targetType: string
   targetId: string
   targetTitle: string | null
@@ -15,7 +15,6 @@ export interface ChangeWithContext {
   eventId: string | null
   eventTitle: string | null
   eventType: string | null
-  occurredAt: Date | null
 }
 
 /**
@@ -70,18 +69,17 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
     .select({
       id: changes.id,
       description: changes.description,
-      effectiveAt: changes.effectiveAt,
+      createdAt: changes.createdAt,
       targetType: changes.targetType,
       targetId: changes.targetId,
       eventId: events.id,
       eventTitle: events.title,
       eventType: events.type,
-      occurredAt: events.occurredAt,
     })
     .from(changes)
     .leftJoin(events, eq(changes.eventId, events.id))
     .where(or(...conditions))
-    .orderBy(desc(changes.effectiveAt))
+    .orderBy(desc(changes.createdAt))
 
   // Enrich with target titles and provision types
   const enrichedChanges: ChangeWithContext[] = await Promise.all(

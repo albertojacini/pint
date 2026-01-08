@@ -73,9 +73,6 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
     title: candidate.title || '',
     description: candidate.description || '',
     eventType: candidate.eventType || '',
-    occurredAt: candidate.occurredAt
-      ? new Date(candidate.occurredAt).toISOString().split('T')[0]
-      : '',
     detectedEntityId: candidate.detectedEntityId || '',
   })
   const router = useRouter()
@@ -88,7 +85,6 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
         title: formData.title,
         description: formData.description,
         eventType: formData.eventType,
-        occurredAt: formData.occurredAt ? new Date(formData.occurredAt) : undefined,
         detectedEntityId: formData.detectedEntityId || undefined,
         status: 'reviewing',
       })
@@ -107,11 +103,11 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
   }
 
   const handleApprove = async () => {
-    if (!formData.title || !formData.eventType || !formData.occurredAt) {
+    if (!formData.title || !formData.eventType) {
       toast({
         variant: 'destructive',
         title: 'Missing fields',
-        description: 'Title, event type, and date are required',
+        description: 'Title and event type are required',
       })
       return
     }
@@ -123,7 +119,6 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
         title: formData.title,
         description: formData.description,
         eventType: formData.eventType,
-        occurredAt: new Date(formData.occurredAt),
         detectedEntityId: formData.detectedEntityId || undefined,
       })
 
@@ -301,16 +296,6 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
             </select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="occurredAt">Date *</Label>
-            <Input
-              id="occurredAt"
-              type="date"
-              value={formData.occurredAt}
-              onChange={(e) => setFormData({ ...formData, occurredAt: e.target.value })}
-              disabled={!editMode || isApproved}
-            />
-          </div>
         </div>
 
         <div className="space-y-2">

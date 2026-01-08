@@ -33,7 +33,6 @@ class CreateCandidateInput(BaseModel):
     event_type: str = Field(
         description="Event type: legislative_session, bill_proposal, referendum, executive_order, regulation_update, court_ruling, budget_approval, service_change, project_launch, etc."
     )
-    occurred_at: str = Field(description="When the event occurred (ISO 8601 date string, e.g., '2024-01-15')")
     detected_entity_id: Optional[str] = Field(default=None, description="UUID of the detected political entity")
     confidence_score: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Confidence in this event (0.0-1.0)")
     ai_reasoning: Optional[str] = Field(default=None, description="Reasoning for why this is a valid event")
@@ -55,7 +54,6 @@ class CreateCandidateChangeInput(BaseModel):
     target_id: str = Field(description="UUID of the existing provision to update (REQUIRED - use SearchProvisions to find it)")
     proposed_data: dict = Field(description="Data to apply to the target (e.g., {title: ..., displayChanges: ...})")
     description: str = Field(description="Human-readable description of what this change does")
-    effective_at: Optional[str] = Field(default=None, description="When this change takes effect (ISO 8601 date)")
 
 
 # ============================================================================
@@ -121,7 +119,6 @@ async def update_source_impl(
 async def create_candidate_impl(
     title: str,
     event_type: str,
-    occurred_at: str,
     source_ids: List[str],
     description: Optional[str] = None,
     detected_entity_id: Optional[str] = None,
@@ -130,20 +127,11 @@ async def create_candidate_impl(
 ) -> str:
     """Create a new event candidate from sources."""
     db_tools = get_ei_db_tools()
-    from datetime import datetime
-
-    # Parse date
-    try:
-        occurred_dt = datetime.fromisoformat(occurred_at.replace('Z', '+00:00'))
-    except ValueError:
-        # Try just date
-        occurred_dt = datetime.strptime(occurred_at, '%Y-%m-%d')
 
     candidate_id = await db_tools.create_candidate(
         title=title,
         description=description,
         event_type=event_type,
-        occurred_at=occurred_dt,
         detected_entity_id=detected_entity_id,
         confidence_score=confidence_score,
         ai_reasoning=ai_reasoning,
@@ -195,23 +183,14 @@ async def create_candidate_change_impl(
     target_type: str,
     target_id: str,
     proposed_data: dict,
-    description: str,
-    effective_at: Optional[str] = None
+    description: str
 ) -> str:
     """Create a proposed change for a candidate. Only updates to existing provisions are allowed."""
     db_tools = get_ei_db_tools()
-    from datetime import datetime
 
     # Validate target_type - only provisions allowed
     if target_type != 'provision':
         return f"Error: Only 'provision' target_type is allowed. Got: {target_type}"
-
-    effective_dt = None
-    if effective_at:
-        try:
-            effective_dt = datetime.fromisoformat(effective_at.replace('Z', '+00:00'))
-        except ValueError:
-            effective_dt = datetime.strptime(effective_at, '%Y-%m-%d')
 
     change_id = await db_tools.create_candidate_change(
         candidate_id=candidate_id,
@@ -219,8 +198,7 @@ async def create_candidate_change_impl(
         target_id=target_id,
         action='update',  # Always 'update' - no create/delete allowed
         proposed_data=proposed_data,
-        description=description,
-        effective_at=effective_dt
+        description=description
     )
 
     return f"Created change {change_id} for candidate {candidate_id}"

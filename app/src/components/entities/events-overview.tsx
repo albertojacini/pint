@@ -8,7 +8,7 @@ interface Event {
   title: string
   description: string | null
   type: string
-  occurredAt: Date
+  createdAt: Date
   administrationId: string | null
   administrationName: string | null
 }
@@ -43,7 +43,7 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
                 </Badge>
               </div>
               <span className="text-xs text-gray-500 whitespace-nowrap">
-                {format(new Date(event.occurredAt), 'PPP')}
+                {format(new Date(event.createdAt), 'PPP')}
               </span>
             </div>
 

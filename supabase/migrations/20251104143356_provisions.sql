@@ -97,14 +97,12 @@ create table if not exists public.events (
                       -- Operations: 'service_change', 'contract_award', 'partnership_agreement'
                       -- Emergency: 'emergency_declaration', 'crisis_response'
                       -- Review: 'policy_review'
-  occurred_at timestamptz not null,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
 create index if not exists idx_events_administration_id on public.events(administration_id);
 create index if not exists idx_events_type on public.events(type);
-create index if not exists idx_events_occurred_at on public.events(occurred_at);
 
 create trigger set_updated_at_events
   before update on public.events
@@ -118,13 +116,11 @@ create table if not exists public.changes (
   target_type text not null check (target_type in ('provision', 'entity', 'administration')),
   target_id uuid not null,
   description text,
-  effective_at timestamptz,
   created_at timestamptz default now()
 );
 
 create index if not exists idx_changes_event_id on public.changes(event_id);
 create index if not exists idx_changes_target on public.changes(target_type, target_id);
-create index if not exists idx_changes_effective_at on public.changes(effective_at);
 
 -- Provision drafts: work-in-progress provisions from AI ingestion pipeline
 create table if not exists public.provision_drafts (

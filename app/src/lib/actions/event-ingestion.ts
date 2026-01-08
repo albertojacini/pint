@@ -41,7 +41,6 @@ export interface EiCandidate {
   title: string | null
   description: string | null
   eventType: string | null
-  occurredAt: Date | null
   detectedEntityId: string | null
   detectedEntityName?: string | null
   detectedAdministrationId: string | null
@@ -68,7 +67,6 @@ export interface EiCandidateChange {
   action: ChangeAction
   proposedData: EiProposedData
   description: string | null
-  effectiveAt: Date | null
   status: ChangeStatus
   changeId: string | null
   createdAt: Date
@@ -179,7 +177,6 @@ export async function createCandidate(input: {
   title?: string
   description?: string
   eventType?: string
-  occurredAt?: Date
   detectedEntityId?: string
   detectedAdministrationId?: string
   confidenceScore?: number
@@ -194,7 +191,6 @@ export async function createCandidate(input: {
       title: input.title,
       description: input.description,
       eventType: input.eventType,
-      occurredAt: input.occurredAt,
       detectedEntityId: input.detectedEntityId,
       detectedAdministrationId: input.detectedAdministrationId,
       confidenceScore: input.confidenceScore?.toString(),
@@ -223,7 +219,6 @@ export async function updateCandidate(
     title: string
     description: string
     eventType: string
-    occurredAt: Date
     detectedEntityId: string
     detectedAdministrationId: string
     confidenceScore: string
@@ -274,7 +269,6 @@ export async function getCandidates(): Promise<EiCandidate[]> {
       title: eiCandidates.title,
       description: eiCandidates.description,
       eventType: eiCandidates.eventType,
-      occurredAt: eiCandidates.occurredAt,
       detectedEntityId: eiCandidates.detectedEntityId,
       detectedEntityName: politicalEntities.name,
       detectedAdministrationId: eiCandidates.detectedAdministrationId,
@@ -305,7 +299,6 @@ export async function getCandidate(id: string): Promise<EiCandidate | null> {
       title: eiCandidates.title,
       description: eiCandidates.description,
       eventType: eiCandidates.eventType,
-      occurredAt: eiCandidates.occurredAt,
       detectedEntityId: eiCandidates.detectedEntityId,
       detectedEntityName: politicalEntities.name,
       detectedAdministrationId: eiCandidates.detectedAdministrationId,
@@ -364,7 +357,6 @@ export async function createCandidateChange(input: {
   targetId: string  // Required - must reference existing provision
   proposedData: EiProposedData
   description?: string
-  effectiveAt?: Date
 }): Promise<ApiResponse<{ id: string }>> {
   await requireUser()
 
@@ -377,7 +369,6 @@ export async function createCandidateChange(input: {
       action: 'update',  // Always 'update' - no create/delete allowed
       proposedData: input.proposedData,
       description: input.description,
-      effectiveAt: input.effectiveAt,
       status: 'pending',
     })
     .returning({ id: eiCandidateChanges.id })
@@ -392,7 +383,6 @@ export async function updateCandidateChange(
     targetId: string
     proposedData: EiProposedData
     description: string
-    effectiveAt: Date
     status: ChangeStatus
   }>
 ): Promise<ApiResponse> {
@@ -431,8 +421,8 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
     return { ok: false, error: 'Candidate not found' }
   }
 
-  if (!candidate.title || !candidate.eventType || !candidate.occurredAt) {
-    return { ok: false, error: 'Candidate is missing required fields (title, eventType, occurredAt)' }
+  if (!candidate.title || !candidate.eventType) {
+    return { ok: false, error: 'Candidate is missing required fields (title, eventType)' }
   }
 
   // 1. Create the event
@@ -443,7 +433,6 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
       title: candidate.title,
       description: candidate.description,
       type: candidate.eventType,
-      occurredAt: candidate.occurredAt,
     })
     .returning({ id: events.id })
 
@@ -459,7 +448,6 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
         targetType: candidateChange.targetType,
         targetId: candidateChange.targetId!,
         description: candidateChange.description,
-        effectiveAt: candidateChange.effectiveAt,
       })
       .returning({ id: changes.id })
 

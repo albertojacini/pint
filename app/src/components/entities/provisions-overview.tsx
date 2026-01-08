@@ -112,15 +112,15 @@ function changesToActivity(changes: ChangeWithContext[]): MonthActivity[] {
 
   // Group changes by month
   for (const change of changes) {
-    const effectiveDate = change.effectiveAt ? new Date(change.effectiveAt) : null
-    if (!effectiveDate) continue
+    const createdDate = change.createdAt ? new Date(change.createdAt) : null
+    if (!createdDate) continue
 
     // Find matching month bucket
     for (const monthData of result) {
       const monthStart = new Date(monthData.year, months.indexOf(monthData.month), 1)
       const monthEnd = new Date(monthData.year, months.indexOf(monthData.month) + 1, 0)
 
-      if (effectiveDate >= monthStart && effectiveDate <= monthEnd) {
+      if (createdDate >= monthStart && createdDate <= monthEnd) {
         // Get provision type from the change data or default to regulation
         // Use first type if multiple types exist
         const provisionType = (change.targetProvisionTypes?.[0] as ProvisionType) || 'regulation'

@@ -12,36 +12,31 @@ export const changes = [
     event: "Area C Congestion Charge Approved",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "Legislative approval creating the Area C congestion charge zone",
-    effectiveAt: "2012-01-16T00:00:00Z"
+    description: "Legislative approval creating the Area C congestion charge zone"
   },
   {
     event: "Area C Goes Live",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "Area C begins operation with €5 daily fee",
-    effectiveAt: "2012-01-16T00:00:00Z"
+    description: "Area C begins operation with €5 daily fee"
   },
   {
     event: "Area C Diesel Restrictions Tightened",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "Euro 3 diesel vehicles banned, Euro 4 diesel fees increased",
-    effectiveAt: "2017-10-01T00:00:00Z"
+    description: "Euro 3 diesel vehicles banned, Euro 4 diesel fees increased"
   },
   {
     event: "Area C Fee Increase",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "Daily fee increased from €5 to €7.50",
-    effectiveAt: "2019-04-01T00:00:00Z"
+    description: "Daily fee increased from €5 to €7.50"
   },
   {
     event: "Area C Electric Vehicle Policy Update",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "EV exemptions extended through 2030, plug-in hybrids lose exemption",
-    effectiveAt: "2023-06-15T00:00:00Z"
+    description: "EV exemptions extended through 2030, plug-in hybrids lose exemption"
   },
 
   // ========================================
@@ -52,15 +47,13 @@ export const changes = [
     event: "ATM Fare Structure Update",
     targetType: "provision",
     targetName: "ATM Ownership Stake",
-    description: "New integrated fare system with increased ticket prices",
-    effectiveAt: "2019-07-15T00:00:00Z"
+    description: "New integrated fare system with increased ticket prices"
   },
   {
     event: "ATM Fare Update 2024",
     targetType: "provision",
     targetName: "ATM Ownership Stake",
-    description: "Single urban ticket increased to €2.20",
-    effectiveAt: "2024-01-01T00:00:00Z"
+    description: "Single urban ticket increased to €2.20"
   },
 
   // ========================================
@@ -71,15 +64,13 @@ export const changes = [
     event: "Dehors Temporary COVID Rules Extended",
     targetType: "provision",
     targetName: "Public Space Occupation Permits (Dehors)",
-    description: "Temporary expanded outdoor seating rules extended through 2024",
-    effectiveAt: "2022-03-01T00:00:00Z"
+    description: "Temporary expanded outdoor seating rules extended through 2024"
   },
   {
     event: "New Permanent Dehors Regulation",
     targetType: "provision",
     targetName: "Public Space Occupation Permits (Dehors)",
-    description: "New permanent design standards and fee structure adopted",
-    effectiveAt: "2024-06-20T00:00:00Z"
+    description: "New permanent design standards and fee structure adopted"
   },
 
   // ========================================
@@ -90,21 +81,18 @@ export const changes = [
     event: "Area C Enforcement Hours Extended",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "Saturday morning enforcement added (7:30-14:00)",
-    effectiveAt: "2024-11-15T00:00:00Z"
+    description: "Saturday morning enforcement added (7:30-14:00)"
   },
   {
     event: "ATM Night Service Expansion",
     targetType: "provision",
     targetName: "ATM Ownership Stake",
-    description: "Night bus service routes expanded",
-    effectiveAt: "2024-12-01T00:00:00Z"
+    description: "Night bus service routes expanded"
   },
   {
     event: "Area C 2025 Rate Adjustment",
     targetType: "provision",
     targetName: "Area C Congestion Charge",
-    description: "2025 rates confirmed, new hybrid vehicle category added",
-    effectiveAt: "2025-01-15T00:00:00Z"
+    description: "2025 rates confirmed, new hybrid vehicle category added"
   }
 ]

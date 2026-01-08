@@ -36,7 +36,7 @@ export default async function EventsPage() {
                 </div>
                 <SubsectionTitle>{event.title}</SubsectionTitle>
                 <CardDescription className="text-sm">
-                  {format(new Date(event.occurredAt), 'PPP')}
+                  {format(new Date(event.createdAt), 'PPP')}
                 </CardDescription>
               </CardHeader>
               <CardContent>

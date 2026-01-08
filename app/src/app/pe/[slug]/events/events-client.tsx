@@ -12,7 +12,7 @@ interface Event {
   title: string
   description: string | null
   type: string
-  occurredAt: Date
+  createdAt: Date
   administrationId: string | null
   administrationName: string | null
 }
@@ -42,7 +42,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
 
   // Get unique years
   const years = useMemo(() => {
-    const yearSet = new Set(events.map(e => new Date(e.occurredAt).getFullYear()))
+    const yearSet = new Set(events.map(e => new Date(e.createdAt).getFullYear()))
     return Array.from(yearSet).sort((a, b) => b - a) // Descending order
   }, [events])
 
@@ -64,7 +64,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
 
       // Year filter
       if (selectedYear !== 'all') {
-        const eventYear = new Date(event.occurredAt).getFullYear()
+        const eventYear = new Date(event.createdAt).getFullYear()
         if (eventYear !== parseInt(selectedYear)) return false
       }
 
@@ -198,7 +198,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
                     </Badge>
                   </div>
                   <CardDescription className="text-sm whitespace-nowrap">
-                    {format(new Date(event.occurredAt), 'PPP')}
+                    {format(new Date(event.createdAt), 'PPP')}
                   </CardDescription>
                 </div>
                 <CardTitle className="text-2xl">{event.title}</CardTitle>

@@ -26,7 +26,6 @@ Given one or more processed sources, you must:
 Call CreateCandidate with:
 - **title**: Clear, descriptive event title (e.g., "Milan approves new bike lane network")
 - **event_type**: One of the standard types (see below)
-- **occurred_at**: The date of the event (ISO format: YYYY-MM-DD)
 - **detected_entity_id**: The UUID from SearchEntities
 - **confidence_score**: How confident you are (0.0-1.0)
 - **ai_reasoning**: Why you believe this is a valid event

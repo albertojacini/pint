@@ -65,7 +65,6 @@ create table if not exists public.ei_candidates (
   title text,
   description text,
   event_type text,                             -- Same types as events table
-  occurred_at timestamptz,
 
   -- Classification (AI-detected)
   detected_entity_id uuid references public.political_entities(id) on delete set null,
@@ -129,7 +128,6 @@ create table if not exists public.ei_candidate_changes (
   )),
   proposed_data jsonb not null default '{}',   -- Fields to set/update
   description text,                            -- Human-readable change description
-  effective_at timestamptz,
 
   -- Review status
   status text not null default 'pending' check (status in (

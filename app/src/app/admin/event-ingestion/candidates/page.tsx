@@ -85,9 +85,7 @@ export default async function CandidatesPage() {
                 </div>
                 <div className="flex justify-between items-center mt-3 text-xs text-gray-400">
                   <span>
-                    {candidate.occurredAt
-                      ? `Occurred ${new Date(candidate.occurredAt).toLocaleDateString()}`
-                      : `Created ${new Date(candidate.createdAt).toLocaleDateString()}`}
+                    Created {new Date(candidate.createdAt).toLocaleDateString()}
                   </span>
                   {candidate.confidenceScore && (
                     <span>

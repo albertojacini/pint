@@ -11,7 +11,7 @@ export async function getEvents() {
       title: events.title,
       description: events.description,
       type: events.type,
-      occurredAt: events.occurredAt,
+      createdAt: events.createdAt,
       administrationId: administrations.id,
       administrationName: administrations.name,
       entityId: politicalEntities.id,
@@ -21,7 +21,7 @@ export async function getEvents() {
     .from(events)
     .leftJoin(administrations, eq(events.administrationId, administrations.id))
     .leftJoin(politicalEntities, eq(administrations.entityId, politicalEntities.id))
-    .orderBy(desc(events.occurredAt))
+    .orderBy(desc(events.createdAt))
 
   return allEvents
 }
@@ -33,11 +33,11 @@ export async function getEventsByAdministration(administrationId: string) {
       title: events.title,
       description: events.description,
       type: events.type,
-      occurredAt: events.occurredAt,
+      createdAt: events.createdAt,
     })
     .from(events)
     .where(eq(events.administrationId, administrationId))
-    .orderBy(desc(events.occurredAt))
+    .orderBy(desc(events.createdAt))
 
   return administrationEvents
 }
@@ -49,14 +49,14 @@ export async function getEventsByEntity(entityId: string) {
       title: events.title,
       description: events.description,
       type: events.type,
-      occurredAt: events.occurredAt,
+      createdAt: events.createdAt,
       administrationId: administrations.id,
       administrationName: administrations.name,
     })
     .from(events)
     .leftJoin(administrations, eq(events.administrationId, administrations.id))
     .where(eq(administrations.entityId, entityId))
-    .orderBy(desc(events.occurredAt))
+    .orderBy(desc(events.createdAt))
 
   return entityEvents
 }

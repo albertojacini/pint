@@ -136,7 +136,6 @@ class EiDatabaseTools:
         title: Optional[str] = None,
         description: Optional[str] = None,
         event_type: Optional[str] = None,
-        occurred_at: Optional[datetime] = None,
         detected_entity_id: Optional[str] = None,
         detected_administration_id: Optional[str] = None,
         confidence_score: Optional[float] = None,
@@ -157,17 +156,16 @@ class EiDatabaseTools:
             candidate_id = await conn.fetchval(
                 """
                 INSERT INTO ei_candidates (
-                    title, description, event_type, occurred_at,
+                    title, description, event_type,
                     detected_entity_id, detected_administration_id,
                     confidence_score, ai_reasoning, status
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7::numeric, $8, 'pending')
+                VALUES ($1, $2, $3, $4, $5, $6::numeric, $7, 'pending')
                 RETURNING id
                 """,
                 sanitize_text(title),
                 sanitize_text(description),
                 event_type,
-                occurred_at,
                 detected_entity_id,
                 detected_administration_id,
                 conf_score,
@@ -279,8 +277,7 @@ class EiDatabaseTools:
         action: str,
         proposed_data: Dict[str, Any],
         target_id: Optional[str] = None,
-        description: Optional[str] = None,
-        effective_at: Optional[datetime] = None
+        description: Optional[str] = None
     ) -> str:
         """Create a proposed change for a candidate."""
         if not self.pool:
@@ -291,9 +288,9 @@ class EiDatabaseTools:
                 """
                 INSERT INTO ei_candidate_changes (
                     candidate_id, target_type, target_id, action,
-                    proposed_data, description, effective_at, status
+                    proposed_data, description, status
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
+                VALUES ($1, $2, $3, $4, $5, $6, 'pending')
                 RETURNING id
                 """,
                 candidate_id,
@@ -301,8 +298,7 @@ class EiDatabaseTools:
                 target_id,
                 action,
                 json.dumps(proposed_data),
-                sanitize_text(description),
-                effective_at
+                sanitize_text(description)
             )
             return str(change_id)
 
