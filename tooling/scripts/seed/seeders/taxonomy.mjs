@@ -73,7 +73,7 @@ export async function seedTaxonomy(client, supabase, idMaps) {
   // ===== CATEGORIES =====
   logger.startSection('categories')
 
-  if (await hasData(client, 'categories')) {
+  if (await hasData(client, 'tax_categories')) {
     logger.skipSection('Categories')
   } else {
     // Flatten the tree structure
@@ -82,7 +82,7 @@ export async function seedTaxonomy(client, supabase, idMaps) {
     // Insert each category
     for (const category of categories) {
       await insertQuery(client, {
-        table: 'categories',
+        table: 'tax_categories',
         columns: [
           'id',
           'parent_id',
@@ -111,7 +111,7 @@ export async function seedTaxonomy(client, supabase, idMaps) {
   // ===== TAGS =====
   logger.startSection('tags')
 
-  if (await hasData(client, 'tags')) {
+  if (await hasData(client, 'tax_tags')) {
     logger.skipSection('Tags')
   } else {
     // Insert each tag
@@ -119,7 +119,7 @@ export async function seedTaxonomy(client, supabase, idMaps) {
       const tagId = generateUUID()
 
       await insertQuery(client, {
-        table: 'tags',
+        table: 'tax_tags',
         columns: ['id', 'name', 'slug', 'description', 'category'],
         values: [
           tagId,

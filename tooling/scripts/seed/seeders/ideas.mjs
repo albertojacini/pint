@@ -28,7 +28,7 @@ export async function seedIdeas(client, supabase, idMaps) {
   // ===== GOALS =====
   logger.startSection('goals')
 
-  if (await hasData(client, 'goals')) {
+  if (await hasData(client, 'pol_goals')) {
     logger.skipSection('Goals')
   } else {
     // Insert each goal
@@ -36,7 +36,7 @@ export async function seedIdeas(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'goals',
+        table: 'pol_goals',
         columns: ['id', 'title'],
         values: [id, goalTitle]
       })
@@ -51,7 +51,7 @@ export async function seedIdeas(client, supabase, idMaps) {
   // ===== STAKEHOLDER GROUPS =====
   logger.startSection('stakeholder_groups')
 
-  if (await hasData(client, 'stakeholder_groups')) {
+  if (await hasData(client, 'pol_stakeholders')) {
     logger.skipSection('Stakeholder Groups')
   } else {
     // Insert each stakeholder group
@@ -59,7 +59,7 @@ export async function seedIdeas(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'stakeholder_groups',
+        table: 'pol_stakeholders',
         columns: ['id', 'name', 'title', 'category', 'icon'],
         values: [id, group.name, group.title, group.category, group.icon]
       })
@@ -74,7 +74,7 @@ export async function seedIdeas(client, supabase, idMaps) {
   // ===== MEASURABLES =====
   logger.startSection('measurables')
 
-  if (await hasData(client, 'measurables')) {
+  if (await hasData(client, 'pol_measurables')) {
     logger.skipSection('Measurables')
   } else {
     // Insert each measurable
@@ -82,7 +82,7 @@ export async function seedIdeas(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'measurables',
+        table: 'pol_measurables',
         columns: [
           'id',
           'title',
@@ -112,7 +112,7 @@ export async function seedIdeas(client, supabase, idMaps) {
   let successCount = 0
   let skipCount = 0
 
-  if (await hasData(client, 'ideas')) {
+  if (await hasData(client, 'pol_ideas')) {
     logger.skipSection('Ideas')
   } else {
     // Insert each idea
@@ -149,7 +149,7 @@ export async function seedIdeas(client, supabase, idMaps) {
       }
 
       await insertQuery(client, {
-        table: 'ideas',
+        table: 'pol_ideas',
         columns: [
           'id',
           'category_id',
@@ -184,7 +184,7 @@ export async function seedIdeas(client, supabase, idMaps) {
   successCount = 0
   skipCount = 0
 
-  if (await hasData(client, 'effects')) {
+  if (await hasData(client, 'pol_effects')) {
     logger.skipSection('Effects')
   } else {
     // Insert each effect
@@ -204,7 +204,7 @@ export async function seedIdeas(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'effects',
+        table: 'pol_effects',
         columns: [
           'id',
           'idea_id',
@@ -242,7 +242,7 @@ export async function seedIdeas(client, supabase, idMaps) {
   successCount = 0
   skipCount = 0
 
-  if (await hasData(client, 'contributions')) {
+  if (await hasData(client, 'pol_contributions')) {
     logger.skipSection('Contributions')
   } else {
     // Insert each contribution
@@ -262,7 +262,7 @@ export async function seedIdeas(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'contributions',
+        table: 'pol_contributions',
         columns: [
           'id',
           'measurable_id',

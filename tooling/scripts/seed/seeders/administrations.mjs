@@ -23,7 +23,7 @@ export async function seedAdministrations(client, supabase, idMaps) {
   // ===== PEOPLE =====
   logger.startSection('people')
 
-  if (await hasData(client, 'people')) {
+  if (await hasData(client, 'gov_people')) {
     logger.skipSection('People')
   } else {
     // Insert each person
@@ -31,7 +31,7 @@ export async function seedAdministrations(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'people',
+        table: 'gov_people',
         columns: ['id', 'full_name', 'avatar_url'],
         values: [id, person.full_name, person.avatar_url]
       })
@@ -50,7 +50,7 @@ export async function seedAdministrations(client, supabase, idMaps) {
   let memberCount = 0
   let skipCount = 0
 
-  if (await hasData(client, 'administrations')) {
+  if (await hasData(client, 'gov_administrations')) {
     logger.skipSection('Administrations')
   } else {
     // Insert each administration
@@ -67,7 +67,7 @@ export async function seedAdministrations(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'administrations',
+        table: 'gov_administrations',
         columns: [
           'id',
           'entity_id',
@@ -104,7 +104,7 @@ export async function seedAdministrations(client, supabase, idMaps) {
   // ===== ADMINISTRATION MEMBERS =====
   logger.startSection('administration members')
 
-  if (await hasData(client, 'administration_members')) {
+  if (await hasData(client, 'gov_members')) {
     logger.skipSection('Administration members')
   } else {
     for (const member of administrationMembers) {
@@ -123,7 +123,7 @@ export async function seedAdministrations(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'administration_members',
+        table: 'gov_members',
         columns: [
           'id',
           'administration_id',

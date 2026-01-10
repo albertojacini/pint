@@ -43,7 +43,7 @@ export async function seedProvisions(client, supabase, idMaps) {
   let successCount = 0
   let skipCount = 0
 
-  if (await hasData(client, 'provisions')) {
+  if (await hasData(client, 'gov_provisions')) {
     logger.skipSection('Provisions')
   } else {
     for (const provision of provisions) {
@@ -53,7 +53,7 @@ export async function seedProvisions(client, supabase, idMaps) {
       if (!entityId) {
         // Query database for entity ID
         const result = await client.query(
-          'SELECT id FROM political_entities WHERE name = $1',
+          'SELECT id FROM gov_entities WHERE name = $1',
           [provision.entity]
         )
         if (result.rows.length > 0) {
@@ -88,7 +88,7 @@ export async function seedProvisions(client, supabase, idMaps) {
       const slug = generateSlug(provision.title)
 
       await insertQuery(client, {
-        table: 'provisions',
+        table: 'gov_provisions',
         columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'summary_md', 'display_data', 'display_changes'],
         values: [
           id,
@@ -112,9 +112,9 @@ export async function seedProvisions(client, supabase, idMaps) {
       // Create type associations
       if (provision.types && provision.types.length > 0) {
         for (const typeCode of provision.types) {
-          // Look up type ID from provision_types table
+          // Look up type ID from gov_provision_types table
           const typeResult = await client.query(
-            'SELECT id FROM provision_types WHERE code = $1',
+            'SELECT id FROM gov_provision_types WHERE code = $1',
             [typeCode]
           )
 
@@ -123,7 +123,7 @@ export async function seedProvisions(client, supabase, idMaps) {
             const associationId = generateUUID()
 
             await insertQuery(client, {
-              table: 'provision_type_associations',
+              table: 'gov_provision_type_assocs',
               columns: ['id', 'provision_id', 'type_id'],
               values: [associationId, id, typeId]
             })
@@ -170,7 +170,7 @@ export async function seedProvisions(client, supabase, idMaps) {
     const id = generateUUID()
 
     await insertQuery(client, {
-      table: 'taggables',
+      table: 'tax_taggables',
       columns: ['id', 'tag_id', 'taggable_type', 'taggable_id'],
       values: [id, tagId, 'provision', provisionId]
     })
@@ -190,7 +190,7 @@ export async function seedProvisions(client, supabase, idMaps) {
   let eventsCount = 0
   let eventsSkipped = 0
 
-  if (await hasData(client, 'events')) {
+  if (await hasData(client, 'ing_events')) {
     logger.skipSection('Events')
   } else {
     for (const event of events) {
@@ -206,7 +206,7 @@ export async function seedProvisions(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'events',
+        table: 'ing_events',
         columns: ['id', 'administration_id', 'title', 'description', 'description_short', 'type'],
         values: [
           id,
@@ -235,7 +235,7 @@ export async function seedProvisions(client, supabase, idMaps) {
   let changesCount = 0
   let changesSkipped = 0
 
-  if (await hasData(client, 'changes')) {
+  if (await hasData(client, 'gov_changes')) {
     logger.skipSection('Changes')
   } else {
     for (const change of changes) {
@@ -267,7 +267,7 @@ export async function seedProvisions(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'changes',
+        table: 'gov_changes',
         columns: ['id', 'event_id', 'target_type', 'target_id', 'description'],
         values: [
           id,

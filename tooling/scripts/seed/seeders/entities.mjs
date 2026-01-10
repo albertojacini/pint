@@ -39,7 +39,7 @@ export async function seedEntities(client, supabase, idMaps) {
   // ===== POLITICAL ENTITIES =====
   logger.startSection('political entities')
 
-  if (await hasData(client, 'political_entities')) {
+  if (await hasData(client, 'gov_entities')) {
     logger.skipSection('Political entities')
   } else {
     // Insert each political entity
@@ -58,7 +58,7 @@ export async function seedEntities(client, supabase, idMaps) {
       const slug = generateSlug(entity.name)
 
       await insertQuery(client, {
-        table: 'political_entities',
+        table: 'gov_entities',
         columns: [
           'id',
           'name',
@@ -105,7 +105,7 @@ export async function seedEntities(client, supabase, idMaps) {
   // ===== ENTITY RELATIONSHIPS =====
   logger.startSection('entity relationships')
 
-  if (await hasData(client, 'entity_relationships')) {
+  if (await hasData(client, 'gov_entity_relations')) {
     logger.skipSection('Entity relationships')
   } else {
     // Insert each relationship
@@ -129,7 +129,7 @@ export async function seedEntities(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'entity_relationships',
+        table: 'gov_entity_relations',
         columns: [
           'id',
           'entity_id',
@@ -157,7 +157,7 @@ export async function seedEntities(client, supabase, idMaps) {
   // ===== ENTITY TAGGABLES =====
   logger.startSection('entity taggables')
 
-  if (await hasData(client, 'taggables')) {
+  if (await hasData(client, 'tax_taggables')) {
     logger.skipSection('Taggables')
   } else {
     let taggablesCount = 0
@@ -183,7 +183,7 @@ export async function seedEntities(client, supabase, idMaps) {
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'taggables',
+        table: 'tax_taggables',
         columns: ['id', 'tag_id', 'taggable_type', 'taggable_id'],
         values: [id, tagId, 'entity', entityId]
       })
