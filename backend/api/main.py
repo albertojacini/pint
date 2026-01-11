@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from api.routes.provision import router as provision_router
+from apps.provisions.routes import router as provision_router
 from api.routes.event_ingestion import router as event_ingestion_router
 from agents.utils.ei_db_tools import get_ei_db_tools
 

@@ -1,7 +1,6 @@
-"""Database models for provisions domain.
+"""Pydantic models for the provisions app.
 
-These models match the database schema defined in supabase/migrations/20251104143356_provisions.sql
-They are the source of truth for data structures - other modules should extend these.
+These models define the data structures for provision drafts and their outputs.
 """
 
 from pydantic import BaseModel, Field, field_validator
@@ -107,4 +106,3 @@ class ProvisionDraftOutput(BaseModel):
         if not v:
             raise ValueError("At least one provision type code is required")
         return v
-

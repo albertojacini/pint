@@ -58,7 +58,7 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             research_id = await conn.fetchval(
                 """
-                INSERT INTO ra_researches (input, status, created_at, updated_at)
+                INSERT INTO resag_researches (input, status, created_at, updated_at)
                 VALUES ($1, $2, NOW(), NOW())
                 RETURNING id
                 """,
@@ -116,7 +116,7 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             source_id = await conn.fetchval(
                 """
-                INSERT INTO ra_sources (
+                INSERT INTO resag_sources (
                     research_id, url, title, researcher_id, raw_content,
                     source_summary, source_type, content_quality,
                     fetch_status, fetched_at, relevance_score, reliability_score, evaluation_notes
@@ -160,7 +160,7 @@ class DatabaseTools:
                 SELECT id, url, title, researcher_id, raw_content, source_summary,
                        source_type, content_quality, relevance_score, reliability_score,
                        evaluation_notes, fetched_at
-                FROM ra_sources
+                FROM resag_sources
                 WHERE research_id = $1
                   AND fetch_status = 'completed'
                   AND (content_quality IS NULL OR content_quality != 'failed')
@@ -189,7 +189,7 @@ class DatabaseTools:
 
         async with self.pool.acquire() as conn:
             result = await conn.fetchval(
-                "SELECT input FROM ra_researches WHERE id = $1",
+                "SELECT input FROM resag_researches WHERE id = $1",
                 research_id
             )
             return result
@@ -226,7 +226,7 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             await conn.execute(
                 """
-                UPDATE ra_researches
+                UPDATE resag_researches
                 SET summary = $1, updated_at = NOW()
                 WHERE id = $2
                 """,
@@ -249,7 +249,7 @@ class DatabaseTools:
         async with self.pool.acquire() as conn:
             await conn.execute(
                 """
-                UPDATE ra_researches
+                UPDATE resag_researches
                 SET status = $1, updated_at = NOW()
                 WHERE id = $2
                 """,
@@ -274,7 +274,7 @@ class DatabaseTools:
             row = await conn.fetchrow(
                 """
                 SELECT id, input, summary, status, created_at, updated_at
-                FROM ra_researches
+                FROM resag_researches
                 WHERE id = $1
                 """,
                 research_id
@@ -301,7 +301,7 @@ class DatabaseTools:
             research = await conn.fetchrow(
                 """
                 SELECT id, input, summary, status, created_at, updated_at
-                FROM ra_researches
+                FROM resag_researches
                 WHERE id = $1
                 """,
                 research_id
@@ -311,7 +311,7 @@ class DatabaseTools:
 
             # Get sources count
             sources_count = await conn.fetchval(
-                "SELECT COUNT(*) FROM ra_sources WHERE research_id = $1 AND fetch_status = 'completed'",
+                "SELECT COUNT(*) FROM resag_sources WHERE research_id = $1 AND fetch_status = 'completed'",
                 research_id
             )
 

@@ -63,3 +63,19 @@ CREATE TRIGGER set_updated_at_propl_provision_drafts
   BEFORE UPDATE ON public.propl_provision_drafts
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_updated_at();
+
+-- ============================================================================
+-- DRAFT DOCUMENTS: Links provision drafts to source documents
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS public.propl_draft_documents (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  draft_id uuid NOT NULL REFERENCES public.propl_provision_drafts(id) ON DELETE CASCADE,
+  document_id uuid NOT NULL REFERENCES public.sou_documents(id) ON DELETE CASCADE,
+  relevance text NOT NULL CHECK (relevance IN ('primary', 'supporting', 'reference')),
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(draft_id, document_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_propl_draft_documents_draft ON public.propl_draft_documents(draft_id);
+CREATE INDEX IF NOT EXISTS idx_propl_draft_documents_document ON public.propl_draft_documents(document_id);

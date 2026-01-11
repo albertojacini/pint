@@ -43,6 +43,10 @@ CREATE TABLE IF NOT EXISTS public.resag_sources (
   relevance_score float CHECK (relevance_score >= 0.0 AND relevance_score <= 1.0),
   reliability_score float CHECK (reliability_score >= 0.0 AND reliability_score <= 1.0),
   evaluation_notes text,
+
+  -- Promotion to sou_documents (when source is high quality)
+  promoted_document_id uuid REFERENCES public.sou_documents(id) ON DELETE SET NULL,
+
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );

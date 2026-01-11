@@ -28,18 +28,16 @@ Step 4: Generate provision draft
 Step 5: User review and save (handled in frontend)
   - User edits draft fields as needed
   - Saves to production via server action
-
-See /backend/WORKFLOW.md for full architecture documentation.
 """
 
 from typing import Optional, List
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 
-from services.provision import get_provision_service
+from apps.provisions.services import get_provision_service
 from services.research import run_research_job
 
-router = APIRouter(prefix="/provision")
+router = APIRouter(prefix="/provision", tags=["provisions"])
 
 
 # Request models

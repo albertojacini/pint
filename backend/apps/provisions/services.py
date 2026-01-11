@@ -6,27 +6,23 @@ This service is responsible for:
 - Generating research prompts from user input (inline LLM)
 - Orchestrating research agents for information gathering
 - Generating provision drafts from research summaries (inline LLM)
+- Promoting research sources to sou_documents
+- Linking provision drafts to source documents
 - Making ALL provision-specific decisions:
   * provision_type (ownership, contract, regulation, etc.)
   * relevance scores (0-10)
   * confidence scores (0.0-1.0)
   * structuring data for provision schema
   * enforcing business constraints (e.g., character limits)
-
-This service acts as the orchestration layer between:
-- User input (via API routes)
-- Research agents (domain-agnostic information gathering)
-- Database (persistence)
-
-The research agents provide raw information; this service transforms it into
-structured provisions with all necessary metadata and business logic applied.
 """
 
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
+from uuid import UUID
 
 from langchain.chat_models import init_chat_model
 
-from models.provisions import ProvisionDraftOutput
+from apps.provisions.models import ProvisionDraftOutput
+from apps.sources.services import SourcesService
 from services.research import create_research_task, get_task_status
 
 
@@ -42,6 +38,9 @@ class ProvisionService:
 
         # Create structured output model for provision drafts
         self.structured_llm = self.llm.with_structured_output(ProvisionDraftOutput)
+
+        # Sources service for document management
+        self.sources_service = SourcesService()
 
     async def generate_research_prompt(
         self,
@@ -219,6 +218,46 @@ Generate the structured provision draft."""
             Research results including summary
         """
         return await get_task_status(task_id)
+
+    async def promote_research_sources(
+        self,
+        research_id: UUID,
+        threshold: float = 0.6
+    ) -> List[UUID]:
+        """
+        Promote high-quality research sources to sou_documents.
+
+        Args:
+            research_id: UUID of the research task
+            threshold: Minimum relevance_score to promote (default 0.6)
+
+        Returns:
+            List of promoted sou_document IDs
+        """
+        return await self.sources_service.promote_research_sources(
+            research_id=research_id,
+            threshold=threshold
+        )
+
+    async def link_draft_to_documents(
+        self,
+        draft_id: UUID,
+        document_ids: List[UUID],
+        relevance: str = "primary"
+    ) -> None:
+        """
+        Create propl_draft_documents entries linking a draft to source documents.
+
+        Args:
+            draft_id: UUID of the provision draft
+            document_ids: List of sou_document UUIDs
+            relevance: Relevance level ('primary', 'supporting', 'reference')
+        """
+        await self.sources_service.link_draft_to_documents(
+            draft_id=draft_id,
+            document_ids=document_ids,
+            relevance=relevance
+        )
 
 
 # Global instance
