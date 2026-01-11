@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db/client'
-import { eiSources, eiCandidates, eiCandidateSources, eiCandidateChanges, events, changes, provisions, politicalEntities, administrations } from '@/lib/db/schema'
+import { eiSources, eiCandidates, eiCandidateDocuments, eiCandidateChanges, souDocuments, events, changes, provisions, politicalEntities, administrations } from '@/lib/db/schema'
 import type { EiExtractedData, EiProposedData } from '@/lib/db/schema'
 export type { EiProposedData }
 import { eq, desc, inArray } from 'drizzle-orm'
@@ -36,6 +36,13 @@ export interface EiSource {
   updatedAt: Date
 }
 
+export interface EiDocument {
+  id: string
+  url: string | null
+  title: string | null
+  documentType: string
+}
+
 export interface EiCandidate {
   id: string
   title: string | null
@@ -54,7 +61,7 @@ export interface EiCandidate {
   rejectionReason: string | null
   createdAt: Date
   updatedAt: Date
-  sources?: EiSource[]
+  documents?: EiDocument[]
   changes?: EiCandidateChange[]
 }
 
@@ -199,14 +206,10 @@ export async function createCandidate(input: {
     })
     .returning({ id: eiCandidates.id })
 
-  // Link sources to candidate
-  for (const sourceId of input.sourceIds) {
-    await db.insert(eiCandidateSources).values({
-      candidateId: candidate.id,
-      sourceId,
-      relevance: 'primary',
-    })
-  }
+  // Note: Sources are now linked via documents (sou_documents)
+  // The backend promotes ing_sources → sou_documents before candidate creation
+  // Document IDs would be passed separately via the API
+  // This function is for manual candidate creation without source linking
 
   revalidatePath('/admin/event-ingestion/candidates')
   revalidatePath('/admin/event-ingestion/sources')
@@ -319,19 +322,27 @@ export async function getCandidate(id: string): Promise<EiCandidate | null> {
 
   if (!candidate) return null
 
-  // Get linked sources
-  const sourceLinks = await db
-    .select({ sourceId: eiCandidateSources.sourceId })
-    .from(eiCandidateSources)
-    .where(eq(eiCandidateSources.candidateId, id))
+  // Get linked documents (via ingpl_candidate_documents)
+  const documentLinks = await db
+    .select({
+      documentId: eiCandidateDocuments.documentId,
+      relevance: eiCandidateDocuments.relevance,
+    })
+    .from(eiCandidateDocuments)
+    .where(eq(eiCandidateDocuments.candidateId, id))
 
-  const sourceIds = sourceLinks.map(s => s.sourceId)
-  let sources: EiSource[] = []
-  if (sourceIds.length > 0) {
-    sources = await db
-      .select()
-      .from(eiSources)
-      .where(inArray(eiSources.id, sourceIds)) as EiSource[]
+  const documentIds = documentLinks.map(d => d.documentId)
+  let documents: Array<{ id: string; url: string | null; title: string | null; documentType: string }> = []
+  if (documentIds.length > 0) {
+    documents = await db
+      .select({
+        id: souDocuments.id,
+        url: souDocuments.url,
+        title: souDocuments.title,
+        documentType: souDocuments.documentType,
+      })
+      .from(souDocuments)
+      .where(inArray(souDocuments.id, documentIds))
   }
 
   // Get candidate changes
@@ -342,7 +353,7 @@ export async function getCandidate(id: string): Promise<EiCandidate | null> {
 
   return {
     ...candidate,
-    sources,
+    documents,
     changes: candidateChanges as EiCandidateChange[],
   } as EiCandidate
 }
@@ -540,16 +551,16 @@ export async function getProvisions() {
     .orderBy(provisions.title)
 }
 
-export async function linkSourceToCandidate(
+export async function linkDocumentToCandidate(
   candidateId: string,
-  sourceId: string,
+  documentId: string,
   relevance: 'primary' | 'supporting' | 'related' = 'supporting'
 ): Promise<ApiResponse> {
   await requireUser()
 
-  await db.insert(eiCandidateSources).values({
+  await db.insert(eiCandidateDocuments).values({
     candidateId,
-    sourceId,
+    documentId,
     relevance,
   })
 
@@ -557,16 +568,16 @@ export async function linkSourceToCandidate(
   return { ok: true }
 }
 
-export async function unlinkSourceFromCandidate(
+export async function unlinkDocumentFromCandidate(
   candidateId: string,
-  sourceId: string
+  documentId: string
 ): Promise<ApiResponse> {
   await requireUser()
 
   await db
-    .delete(eiCandidateSources)
+    .delete(eiCandidateDocuments)
     .where(
-      eq(eiCandidateSources.candidateId, candidateId)
+      eq(eiCandidateDocuments.candidateId, candidateId)
     )
 
   revalidatePath(`/admin/event-ingestion/candidates/${candidateId}`)

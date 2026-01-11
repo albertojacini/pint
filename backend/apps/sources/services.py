@@ -1,12 +1,21 @@
 """Business logic for the sources app."""
 
 import hashlib
-from typing import Optional, List
+import json
+from typing import Optional, List, Any
 from urllib.parse import urlparse
 from uuid import UUID
 
 from core.db import db
 from apps.sources.models import Document, DocumentCreate, Publisher, PublisherCreate
+
+
+def parse_json_fields(row_dict: dict, fields: List[str]) -> dict:
+    """Parse JSON string fields into dicts."""
+    for field in fields:
+        if field in row_dict and isinstance(row_dict[field], str):
+            row_dict[field] = json.loads(row_dict[field])
+    return row_dict
 
 
 class SourcesService:
@@ -27,7 +36,8 @@ class SourcesService:
                 url
             )
             if row:
-                return Publisher(**dict(row))
+                data = parse_json_fields(dict(row), ['coverage', 'metadata'])
+                return Publisher(**data)
             return None
 
     async def find_or_create_publisher_from_url(self, url: str) -> Optional[Publisher]:
@@ -70,10 +80,11 @@ class SourcesService:
                 publisher.update_frequency,
                 publisher.access_method,
                 publisher.is_active,
-                publisher.coverage or {},
-                publisher.metadata or {}
+                json.dumps(publisher.coverage or {}),
+                json.dumps(publisher.metadata or {})
             )
-            return Publisher(**dict(row))
+            data = parse_json_fields(dict(row), ['coverage', 'metadata'])
+            return Publisher(**data)
 
     # =========================================================================
     # Document operations
@@ -87,7 +98,8 @@ class SourcesService:
                 url
             )
             if row:
-                return Document(**dict(row))
+                data = parse_json_fields(dict(row), ['extracted_data', 'metadata'])
+                return Document(**data)
             return None
 
     async def find_document_by_hash(self, content_hash: str) -> Optional[Document]:
@@ -98,7 +110,8 @@ class SourcesService:
                 content_hash
             )
             if row:
-                return Document(**dict(row))
+                data = parse_json_fields(dict(row), ['extracted_data', 'metadata'])
+                return Document(**data)
             return None
 
     async def create_document(self, document: DocumentCreate) -> Document:
@@ -125,10 +138,11 @@ class SourcesService:
                 document.raw_content,
                 content_hash or document.content_hash,
                 document.summary,
-                document.extracted_data or {},
-                document.metadata or {}
+                json.dumps(document.extracted_data or {}),
+                json.dumps(document.metadata or {})
             )
-            return Document(**dict(row))
+            data = parse_json_fields(dict(row), ['extracted_data', 'metadata'])
+            return Document(**data)
 
     # =========================================================================
     # Research source promotion

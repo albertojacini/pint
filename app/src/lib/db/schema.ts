@@ -310,6 +310,56 @@ export const stakeholderGroups = pgTable('pol_stakeholders', {
 })
 
 // ============================================================================
+// SOURCES SUBSYSTEM (sou_)
+// ============================================================================
+
+export const souPublishers = pgTable('sou_publishers', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
+  description: text('description'),
+  url: text('url'),
+  feedUrl: text('feed_url'),
+  publisherType: text('publisher_type', {
+    enum: ['official', 'news', 'academic', 'social', 'open_data', 'gazette']
+  }).notNull(),
+  language: text('language'),
+  reliabilityScore: numeric('reliability_score'),
+  updateFrequency: text('update_frequency'),
+  accessMethod: text('access_method'),
+  isActive: text('is_active').notNull().default('true'),
+  coverage: jsonb('coverage').$type<Record<string, unknown>>().default({}),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+export const souDocuments = pgTable('sou_documents', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  publisherId: uuid('publisher_id').references(() => souPublishers.id, { onDelete: 'set null' }),
+  url: text('url'),
+  title: text('title'),
+  documentType: text('document_type', {
+    enum: ['article', 'pdf', 'post', 'gazette_issue', 'press_release', 'minutes', 'other']
+  }).notNull(),
+  language: text('language'),
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+  rawContent: text('raw_content'),
+  contentHash: text('content_hash'),
+  summary: text('summary'),
+  extractedData: jsonb('extracted_data').$type<Record<string, unknown>>().default({}),
+  metadata: jsonb('metadata').$type<Record<string, unknown>>().default({}),
+  fetchStatus: text('fetch_status', {
+    enum: ['pending', 'fetching', 'fetched', 'failed']
+  }).notNull().default('pending'),
+  processingStatus: text('processing_status', {
+    enum: ['unprocessed', 'processing', 'processed', 'failed']
+  }).notNull().default('unprocessed'),
+  fetchedAt: timestamp('fetched_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+})
+
+// ============================================================================
 // INGESTION SUBSYSTEM (ing_)
 // ============================================================================
 
@@ -351,6 +401,9 @@ export const eiSources = pgTable('ing_sources', {
   // AI-generated fields
   aiSummary: text('ai_summary'),
   aiExtractedData: jsonb('ai_extracted_data').$type<EiExtractedData>().default({}),
+
+  // Promotion to sou_documents
+  promotedDocumentId: uuid('promoted_document_id').references(() => souDocuments.id, { onDelete: 'set null' }),
 
   // Metadata
   createdBy: uuid('created_by'),
@@ -408,16 +461,16 @@ export const eiCandidates = pgTable('ingpl_event_candidates', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-export const eiCandidateSources = pgTable('ingpl_candidate_sources', {
+export const eiCandidateDocuments = pgTable('ingpl_candidate_documents', {
   id: uuid('id').primaryKey().defaultRandom(),
   candidateId: uuid('candidate_id').notNull().references(() => eiCandidates.id, { onDelete: 'cascade' }),
-  sourceId: uuid('source_id').notNull().references(() => eiSources.id, { onDelete: 'cascade' }),
+  documentId: uuid('document_id').notNull().references(() => souDocuments.id, { onDelete: 'cascade' }),
   relevance: text('relevance', {
     enum: ['primary', 'supporting', 'related']
   }).notNull().default('primary'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
-  uniqueCandidateSource: uniqueIndex('ingpl_candidate_sources_unique').on(table.candidateId, table.sourceId),
+  uniqueCandidateDocument: uniqueIndex('ingpl_candidate_documents_unique').on(table.candidateId, table.documentId),
 }))
 
 export type EiProposedData = {

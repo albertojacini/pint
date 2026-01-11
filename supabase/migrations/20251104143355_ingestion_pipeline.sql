@@ -2,8 +2,16 @@
 -- INGESTION PIPELINE SUBSYSTEM (ingpl_)
 -- ============================================================================
 -- Staging area for event candidates before approval
--- Flow: ing_sources -> ingpl_event_candidates -> ing_events -> gov_changes
--- Dependencies: ing_, gov_
+-- Flow: ing_sources -> sou_documents -> ingpl_event_candidates -> ing_events -> gov_changes
+-- Dependencies: ing_, gov_, sou_
+
+-- ============================================================================
+-- ADD promoted_document_id TO ing_sources
+-- ============================================================================
+-- Track promotion from ing_sources to sou_documents
+
+ALTER TABLE public.ing_sources
+  ADD COLUMN IF NOT EXISTS promoted_document_id uuid REFERENCES public.sou_documents(id) ON DELETE SET NULL;
 
 -- ============================================================================
 -- EVENT CANDIDATES: Aggregated potential events (before human approval)
@@ -59,24 +67,48 @@ CREATE TRIGGER set_updated_at_ingpl_event_candidates
   EXECUTE FUNCTION public.handle_updated_at();
 
 -- ============================================================================
--- CANDIDATE SOURCES: Junction table (N:M relationship)
+-- CANDIDATE DOCUMENTS: Junction table linking candidates to sou_documents
 -- ============================================================================
+-- After ing_sources are processed, they are promoted to sou_documents.
+-- Candidates link to the promoted documents, not raw sources.
 
-CREATE TABLE IF NOT EXISTS public.ingpl_candidate_sources (
+CREATE TABLE IF NOT EXISTS public.ingpl_candidate_documents (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   candidate_id uuid NOT NULL REFERENCES public.ingpl_event_candidates(id) ON DELETE CASCADE,
-  source_id uuid NOT NULL REFERENCES public.ing_sources(id) ON DELETE CASCADE,
+  document_id uuid NOT NULL REFERENCES public.sou_documents(id) ON DELETE CASCADE,
   relevance text NOT NULL DEFAULT 'primary' CHECK (relevance IN (
     'primary',     -- Main source for this event
     'supporting',  -- Additional confirmation
     'related'      -- Tangentially related
   )),
   created_at timestamptz DEFAULT now(),
-  UNIQUE(candidate_id, source_id)
+  UNIQUE(candidate_id, document_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_ingpl_candidate_sources_candidate_id ON public.ingpl_candidate_sources(candidate_id);
-CREATE INDEX IF NOT EXISTS idx_ingpl_candidate_sources_source_id ON public.ingpl_candidate_sources(source_id);
+CREATE INDEX IF NOT EXISTS idx_ingpl_candidate_documents_candidate_id ON public.ingpl_candidate_documents(candidate_id);
+CREATE INDEX IF NOT EXISTS idx_ingpl_candidate_documents_document_id ON public.ingpl_candidate_documents(document_id);
+
+-- ============================================================================
+-- EVENT DOCUMENTS: Provenance for approved events
+-- ============================================================================
+-- When a candidate is approved and promoted to ing_events, the document
+-- links are copied here to preserve provenance.
+
+CREATE TABLE IF NOT EXISTS public.ing_event_documents (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id uuid NOT NULL REFERENCES public.ing_events(id) ON DELETE CASCADE,
+  document_id uuid NOT NULL REFERENCES public.sou_documents(id) ON DELETE CASCADE,
+  relevance text NOT NULL DEFAULT 'primary' CHECK (relevance IN (
+    'primary',     -- Main source for this event
+    'supporting',  -- Additional confirmation
+    'related'      -- Tangentially related
+  )),
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(event_id, document_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_ing_event_documents_event_id ON public.ing_event_documents(event_id);
+CREATE INDEX IF NOT EXISTS idx_ing_event_documents_document_id ON public.ing_event_documents(document_id);
 
 -- ============================================================================
 -- CHANGE CANDIDATES: Draft changes proposed by AI (before approval)

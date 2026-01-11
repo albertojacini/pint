@@ -120,12 +120,13 @@ Use GetSource to read the full content, then analyze and update with your findin
         return {"status": "error", "error": str(e)}
 
 
-async def generate_candidate(source_ids: list[str]) -> dict:
+async def generate_candidate(source_ids: list[str], document_ids: list[str] = None) -> dict:
     """
     Generate an event candidate from one or more processed sources.
 
     Args:
-        source_ids: List of source UUIDs to create candidate from
+        source_ids: List of source UUIDs (for reference/logging)
+        document_ids: List of document UUIDs (sou_documents) to link to the candidate
 
     Returns:
         dict with status, candidate_id (if created), and any error message
@@ -134,7 +135,7 @@ async def generate_candidate(source_ids: list[str]) -> dict:
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
-    logger.info(f"generate_candidate called with source_ids: {source_ids}")
+    logger.info(f"generate_candidate called with source_ids: {source_ids}, document_ids: {document_ids}")
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
         logger.error("ANTHROPIC_API_KEY not found")
@@ -180,6 +181,9 @@ async def generate_candidate(source_ids: list[str]) -> dict:
             for s in sources_info
         ])
 
+        # Use document_ids if provided, otherwise fall back to source_ids
+        candidate_doc_ids = document_ids if document_ids else source_ids
+
         user_message = f"""Create an event candidate from these sources:
 
 {sources_text}
@@ -188,10 +192,10 @@ Steps:
 1. Use GetSource to read full details if needed
 2. Use SearchEntities to find the political entity
 3. Use SearchProvisions to find affected provisions
-4. Use CreateCandidate to create the event
+4. Use CreateCandidate to create the event (with document_ids: {candidate_doc_ids})
 5. Use CreateCandidateChange to propose changes to affected provisions
 
-Source IDs to use: {source_ids}"""
+Document IDs to use in CreateCandidate: {candidate_doc_ids}"""
 
         messages = [
             SystemMessage(content=system_prompt),

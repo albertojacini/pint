@@ -317,22 +317,20 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
         </div>
       </div>
 
-      {/* Sources */}
-      {candidate.sources && candidate.sources.length > 0 && (
+      {/* Documents */}
+      {candidate.documents && candidate.documents.length > 0 && (
         <div>
           <h3 className="font-medium text-sm text-gray-700 mb-2">
-            Sources ({candidate.sources.length})
+            Documents ({candidate.documents.length})
           </h3>
           <div className="space-y-2">
-            {candidate.sources.map((source) => (
+            {candidate.documents.map((doc) => (
               <div
-                key={source.id}
+                key={doc.id}
                 className="bg-gray-50 p-3 rounded-lg text-sm"
               >
-                <p className="font-medium">{source.title || source.url || 'Untitled'}</p>
-                {source.sourceName && (
-                  <p className="text-gray-500 text-xs">{source.sourceName}</p>
-                )}
+                <p className="font-medium">{doc.title || doc.url || 'Untitled'}</p>
+                <p className="text-gray-500 text-xs">{doc.documentType}</p>
               </div>
             ))}
           </div>

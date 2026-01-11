@@ -14,16 +14,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from apps.provisions.routes import router as provision_router
-from api.routes.event_ingestion import router as event_ingestion_router
+from apps.event_ingestion.routes import router as event_ingestion_router
 from agents.utils.ei_db_tools import get_ei_db_tools
+from core.db import db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager - startup and shutdown events."""
-    # Startup: nothing to do (pool created on first use)
+    # Startup: connect core database pool
+    await db.connect()
     yield
-    # Shutdown: close database connection pool
+    # Shutdown: close database connection pools
+    await db.close()
     db_tools = get_ei_db_tools()
     await db_tools.close()
 

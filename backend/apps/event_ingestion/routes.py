@@ -3,7 +3,7 @@
 WORKFLOW: Multi-step event ingestion pipeline
 ----------------------------------------------------------------------
 Step 1: Add source (handled by frontend via server action)
-  - Source created in ei_sources table
+  - Source created in ing_sources table
 
 Step 2: Fetch source content
   POST /event-ingestion/sources/{source_id}/fetch
@@ -13,12 +13,14 @@ Step 2: Fetch source content
 Step 3: Process source with AI
   POST /event-ingestion/sources/{source_id}/process
   - AI analyzes content, generates summary and extractions
+  - Promotes source to sou_documents
   - Updates processing_status to 'processed'
   - Runs in background, poll for completion
 
 Step 4: Generate candidate from sources
   POST /event-ingestion/candidates/generate
   - AI creates event candidate from one or more sources
+  - Links candidate to sou_documents (not raw sources)
   - AI proposes changes to affected provisions
   - Runs in background, poll for completion
 
@@ -27,61 +29,20 @@ Step 5: Review and approve (handled by frontend)
   - Approves to create actual event + changes
 """
 
-from typing import List, Optional
+from typing import List
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel
 
-from services.event_ingestion import get_event_ingestion_service
+from apps.event_ingestion.models import (
+    FetchSourceResponse,
+    ProcessSourceResponse,
+    GenerateCandidateRequest,
+    GenerateCandidateResponse,
+    SourceStatusResponse,
+    CandidateStatusResponse,
+)
+from apps.event_ingestion.services import get_event_ingestion_service
 
 router = APIRouter(prefix="/event-ingestion")
-
-
-# ============================================================================
-# Request/Response Models
-# ============================================================================
-
-class FetchSourceResponse(BaseModel):
-    status: str
-    source_id: Optional[str] = None
-    content_length: Optional[int] = None
-    error: Optional[str] = None
-
-
-class ProcessSourceResponse(BaseModel):
-    status: str
-    source_id: Optional[str] = None
-    error: Optional[str] = None
-
-
-class GenerateCandidateRequest(BaseModel):
-    source_ids: List[str]
-
-
-class GenerateCandidateResponse(BaseModel):
-    status: str
-    candidate_id: Optional[str] = None
-    message: Optional[str] = None
-    error: Optional[str] = None
-
-
-class SourceStatusResponse(BaseModel):
-    id: str
-    title: Optional[str]
-    url: Optional[str]
-    fetch_status: str
-    processing_status: str
-    ai_summary: Optional[str] = None
-    ai_extracted_data: Optional[dict] = None
-
-
-class CandidateStatusResponse(BaseModel):
-    id: str
-    title: Optional[str]
-    status: str
-    event_type: Optional[str]
-    detected_entity_name: Optional[str]
-    sources: Optional[List[dict]] = None
-    changes: Optional[List[dict]] = None
 
 
 # ============================================================================
@@ -146,6 +107,8 @@ async def process_source(
     - AI summary
     - Topics, entities, dates, event type hints, people mentioned
 
+    After processing, promotes the source to sou_documents.
+
     Runs in background. Poll GET /sources/{source_id}/status for completion.
     """
     service = get_event_ingestion_service()
@@ -187,7 +150,8 @@ async def get_source_status(source_id: str) -> SourceStatusResponse:
         fetch_status=source.get('fetch_status', 'pending'),
         processing_status=source.get('processing_status', 'unprocessed'),
         ai_summary=source.get('ai_summary'),
-        ai_extracted_data=source.get('ai_extracted_data')
+        ai_extracted_data=source.get('ai_extracted_data'),
+        promoted_document_id=source.get('promoted_document_id')
     )
 
 
@@ -203,7 +167,7 @@ async def generate_candidate(
     1. Analyze the sources to understand the event
     2. Find the relevant political entity
     3. Search for affected provisions
-    4. Create the candidate with proposed changes
+    4. Create the candidate linked to sou_documents
 
     Runs in background. The candidate will appear in the candidates list.
     """
@@ -249,6 +213,6 @@ async def get_candidate_status(candidate_id: str) -> CandidateStatusResponse:
         status=candidate.get('status', 'pending'),
         event_type=candidate.get('event_type'),
         detected_entity_name=candidate.get('detected_entity_name'),
-        sources=candidate.get('sources'),
+        documents=candidate.get('documents'),
         changes=candidate.get('changes')
     )

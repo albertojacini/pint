@@ -36,7 +36,7 @@ class CreateCandidateInput(BaseModel):
     detected_entity_id: Optional[str] = Field(default=None, description="UUID of the detected political entity")
     confidence_score: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Confidence in this event (0.0-1.0)")
     ai_reasoning: Optional[str] = Field(default=None, description="Reasoning for why this is a valid event")
-    source_ids: List[str] = Field(description="List of source UUIDs that support this event")
+    document_ids: List[str] = Field(description="List of document UUIDs (sou_documents) that support this event")
 
 
 class SearchEntitiesInput(BaseModel):
@@ -119,13 +119,13 @@ async def update_source_impl(
 async def create_candidate_impl(
     title: str,
     event_type: str,
-    source_ids: List[str],
+    document_ids: List[str],
     description: Optional[str] = None,
     detected_entity_id: Optional[str] = None,
     confidence_score: Optional[float] = None,
     ai_reasoning: Optional[str] = None
 ) -> str:
-    """Create a new event candidate from sources."""
+    """Create a new event candidate from documents."""
     db_tools = get_ei_db_tools()
 
     candidate_id = await db_tools.create_candidate(
@@ -135,10 +135,10 @@ async def create_candidate_impl(
         detected_entity_id=detected_entity_id,
         confidence_score=confidence_score,
         ai_reasoning=ai_reasoning,
-        source_ids=source_ids
+        document_ids=document_ids
     )
 
-    return f"Created candidate {candidate_id} with {len(source_ids)} source(s)"
+    return f"Created candidate {candidate_id} with {len(document_ids)} document(s)"
 
 
 async def search_entities_impl(search_term: Optional[str] = None) -> str:
@@ -250,7 +250,7 @@ def get_candidate_generator_tools() -> List[StructuredTool]:
         StructuredTool.from_function(
             coroutine=create_candidate_impl,
             name="CreateCandidate",
-            description="Create a new event candidate from one or more sources",
+            description="Create a new event candidate from one or more documents (sou_documents)",
             args_schema=CreateCandidateInput,
         ),
         StructuredTool.from_function(

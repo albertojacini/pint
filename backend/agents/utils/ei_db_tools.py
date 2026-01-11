@@ -1,4 +1,4 @@
-"""Database tools for event ingestion agent to interact with ei_* tables."""
+"""Database tools for event ingestion agent to interact with ing_* and ingpl_* tables."""
 
 import os
 import json
@@ -62,8 +62,8 @@ class EiDatabaseTools:
                 SELECT id, url, title, source_type, source_name, published_at,
                        raw_content, fetch_status, fetch_error, fetched_at,
                        processing_status, ai_summary, ai_extracted_data,
-                       created_by, created_at, updated_at
-                FROM ei_sources
+                       promoted_document_id, created_by, created_at, updated_at
+                FROM ing_sources
                 WHERE id = $1
                 """,
                 source_id
@@ -73,6 +73,9 @@ class EiDatabaseTools:
                 # Parse JSON fields
                 if result.get('ai_extracted_data'):
                     result['ai_extracted_data'] = json.loads(result['ai_extracted_data'])
+                # Convert UUID to string
+                if result.get('promoted_document_id'):
+                    result['promoted_document_id'] = str(result['promoted_document_id'])
                 return result
             return None
 
@@ -111,7 +114,7 @@ class EiDatabaseTools:
         values.append(source_id)
 
         query = f"""
-            UPDATE ei_sources
+            UPDATE ing_sources
             SET {', '.join(set_clauses)}
             WHERE id = ${param_idx}
         """
@@ -129,7 +132,7 @@ class EiDatabaseTools:
                 """
                 SELECT id, url, title, source_type, source_name, published_at,
                        raw_content, fetch_status, processing_status
-                FROM ei_sources
+                FROM ing_sources
                 WHERE processing_status = 'unprocessed'
                   AND fetch_status = 'fetched'
                 ORDER BY created_at ASC
@@ -152,9 +155,9 @@ class EiDatabaseTools:
         detected_administration_id: Optional[str] = None,
         confidence_score: Optional[float] = None,
         ai_reasoning: Optional[str] = None,
-        source_ids: Optional[List[str]] = None
+        document_ids: Optional[List[str]] = None
     ) -> str:
-        """Create a new event candidate and link sources to it."""
+        """Create a new event candidate and link documents to it."""
         if not self.pool:
             await self.connect()
 
@@ -167,7 +170,7 @@ class EiDatabaseTools:
 
             candidate_id = await conn.fetchval(
                 """
-                INSERT INTO ei_candidates (
+                INSERT INTO ingpl_event_candidates (
                     title, description, event_type,
                     detected_entity_id, detected_administration_id,
                     confidence_score, ai_reasoning, status
@@ -184,23 +187,46 @@ class EiDatabaseTools:
                 sanitize_text(ai_reasoning)
             )
 
-            # Link sources
-            if source_ids:
-                for source_id in source_ids:
+            # Link documents (sou_documents, not raw sources)
+            if document_ids:
+                for document_id in document_ids:
                     await conn.execute(
                         """
-                        INSERT INTO ei_candidate_sources (candidate_id, source_id, relevance)
+                        INSERT INTO ingpl_candidate_documents (candidate_id, document_id, relevance)
                         VALUES ($1, $2, 'primary')
-                        ON CONFLICT (candidate_id, source_id) DO NOTHING
+                        ON CONFLICT (candidate_id, document_id) DO NOTHING
                         """,
                         candidate_id,
-                        source_id
+                        document_id
                     )
 
             return str(candidate_id)
 
+    async def link_candidate_documents(
+        self,
+        candidate_id: str,
+        document_ids: List[str],
+        relevance: str = 'primary'
+    ) -> None:
+        """Link a candidate to sou_documents via ingpl_candidate_documents."""
+        if not self.pool:
+            await self.connect()
+
+        async with self.pool.acquire() as conn:
+            for document_id in document_ids:
+                await conn.execute(
+                    """
+                    INSERT INTO ingpl_candidate_documents (candidate_id, document_id, relevance)
+                    VALUES ($1, $2, $3)
+                    ON CONFLICT (candidate_id, document_id) DO NOTHING
+                    """,
+                    candidate_id,
+                    document_id,
+                    relevance
+                )
+
     async def get_candidate(self, candidate_id: str) -> Optional[Dict[str, Any]]:
-        """Get a candidate by ID with its sources."""
+        """Get a candidate by ID with its documents."""
         if not self.pool:
             await self.connect()
 
@@ -208,8 +234,8 @@ class EiDatabaseTools:
             row = await conn.fetchrow(
                 """
                 SELECT c.*, pe.name as detected_entity_name
-                FROM ei_candidates c
-                LEFT JOIN political_entities pe ON c.detected_entity_id = pe.id
+                FROM ingpl_event_candidates c
+                LEFT JOIN gov_entities pe ON c.detected_entity_id = pe.id
                 WHERE c.id = $1
                 """,
                 candidate_id
@@ -219,23 +245,23 @@ class EiDatabaseTools:
 
             result = dict(row)
 
-            # Get linked sources
-            sources = await conn.fetch(
+            # Get linked documents (from sou_documents via ingpl_candidate_documents)
+            documents = await conn.fetch(
                 """
-                SELECT s.id, s.url, s.title, s.source_type, s.source_name,
-                       s.ai_summary, cs.relevance
-                FROM ei_sources s
-                JOIN ei_candidate_sources cs ON s.id = cs.source_id
-                WHERE cs.candidate_id = $1
+                SELECT d.id, d.url, d.title, d.document_type, d.summary,
+                       cd.relevance
+                FROM sou_documents d
+                JOIN ingpl_candidate_documents cd ON d.id = cd.document_id
+                WHERE cd.candidate_id = $1
                 """,
                 candidate_id
             )
-            result['sources'] = [dict(s) for s in sources]
+            result['documents'] = [dict(d) for d in documents]
 
             # Get candidate changes
             changes = await conn.fetch(
                 """
-                SELECT * FROM ei_candidate_changes
+                SELECT * FROM ingpl_change_candidates
                 WHERE candidate_id = $1
                 """,
                 candidate_id
@@ -270,7 +296,7 @@ class EiDatabaseTools:
         values.append(candidate_id)
 
         query = f"""
-            UPDATE ei_candidates
+            UPDATE ingpl_event_candidates
             SET {', '.join(set_clauses)}
             WHERE id = ${param_idx}
         """
@@ -298,7 +324,7 @@ class EiDatabaseTools:
         async with self.pool.acquire() as conn:
             change_id = await conn.fetchval(
                 """
-                INSERT INTO ei_candidate_changes (
+                INSERT INTO ingpl_change_candidates (
                     candidate_id, target_type, target_id, action,
                     proposed_data, description, status
                 )
@@ -333,7 +359,7 @@ class EiDatabaseTools:
                 rows = await conn.fetch(
                     """
                     SELECT id, title, description_short, entity_id
-                    FROM provisions
+                    FROM gov_provisions
                     WHERE entity_id = $1
                       AND (title ILIKE $2 OR description ILIKE $2)
                     LIMIT $3
@@ -346,7 +372,7 @@ class EiDatabaseTools:
                 rows = await conn.fetch(
                     """
                     SELECT id, title, description_short, entity_id
-                    FROM provisions
+                    FROM gov_provisions
                     WHERE entity_id = $1
                     LIMIT $2
                     """,
@@ -357,7 +383,7 @@ class EiDatabaseTools:
                 rows = await conn.fetch(
                     """
                     SELECT id, title, description_short, entity_id
-                    FROM provisions
+                    FROM gov_provisions
                     WHERE title ILIKE $1 OR description ILIKE $1
                     LIMIT $2
                     """,
@@ -366,7 +392,7 @@ class EiDatabaseTools:
                 )
             else:
                 rows = await conn.fetch(
-                    "SELECT id, title, description_short, entity_id FROM provisions LIMIT $1",
+                    "SELECT id, title, description_short, entity_id FROM gov_provisions LIMIT $1",
                     limit
                 )
 
@@ -386,7 +412,7 @@ class EiDatabaseTools:
                 rows = await conn.fetch(
                     """
                     SELECT id, name, type, slug
-                    FROM political_entities
+                    FROM gov_entities
                     WHERE name ILIKE $1 OR native_name ILIKE $1
                     LIMIT $2
                     """,
@@ -395,7 +421,7 @@ class EiDatabaseTools:
                 )
             else:
                 rows = await conn.fetch(
-                    "SELECT id, name, type, slug FROM political_entities LIMIT $1",
+                    "SELECT id, name, type, slug FROM gov_entities LIMIT $1",
                     limit
                 )
 
@@ -410,7 +436,7 @@ class EiDatabaseTools:
             rows = await conn.fetch(
                 """
                 SELECT id, title, description_short, slug
-                FROM provisions
+                FROM gov_provisions
                 WHERE entity_id = $1
                 ORDER BY title
                 """,
