@@ -1,5 +1,4 @@
 ### Guidelines
-Start every response with a 🌵, so I know this file is being read.
 IMPORTANT: This is an early stage project:
 - don't handle errors in general. Better to fail
 - feel free to break things, don't care about backward compatibility
