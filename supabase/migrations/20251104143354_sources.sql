@@ -5,6 +5,9 @@
 -- A Publisher is where content comes from (e.g., "Comune di Milano website")
 -- A Document is a single piece of content (e.g., a specific article, PDF, post)
 
+-- Enable pgvector extension for semantic search
+CREATE EXTENSION IF NOT EXISTS vector;
+
 -- ============================================================================
 -- PUBLISHERS: Origins/sources of content
 -- ============================================================================
@@ -115,6 +118,16 @@ CREATE TABLE IF NOT EXISTS public.sou_documents (
     'discarded'      -- Marked as not relevant
   )),
 
+  -- Embedding status (for document processing pipeline)
+  embedding_status text NOT NULL DEFAULT 'pending' CHECK (embedding_status IN (
+    'pending',       -- Not yet processed for embeddings
+    'processing',    -- Currently generating embeddings
+    'completed',     -- Embeddings generated successfully
+    'failed'         -- Embedding generation failed
+  )),
+  chunk_count integer DEFAULT 0,
+  file_path text,                                -- Storage path for uploaded files
+
   -- AI-generated fields
   summary text,                                  -- AI-generated summary
   extracted_data jsonb DEFAULT '{}',             -- AI-extracted: entities, dates, topics, people
@@ -139,3 +152,43 @@ CREATE TRIGGER set_updated_at_sou_documents
   BEFORE UPDATE ON public.sou_documents
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_updated_at();
+
+-- ============================================================================
+-- DOCUMENT CHUNKS: Chunked content with embeddings for semantic search
+-- ============================================================================
+
+CREATE TABLE IF NOT EXISTS public.sou_document_chunks (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Relationship to parent document
+  document_id uuid NOT NULL REFERENCES public.sou_documents(id) ON DELETE CASCADE,
+
+  -- Chunk positioning
+  chunk_index integer NOT NULL,              -- 0-based position in document
+
+  -- Content
+  content text NOT NULL,                     -- The chunk text
+  content_tokens integer,                    -- Approximate token count
+
+  -- Embedding (1536 dimensions for text-embedding-3-small)
+  embedding vector(1536),                    -- OpenAI embedding vector
+
+  -- Metadata for retrieval context
+  metadata jsonb DEFAULT '{}',               -- { page_number, section_title, etc. }
+
+  -- Timestamps
+  created_at timestamptz DEFAULT now(),
+
+  -- Ensure unique chunk per document
+  UNIQUE (document_id, chunk_index)
+);
+
+-- Index for efficient document lookups
+CREATE INDEX IF NOT EXISTS idx_sou_document_chunks_document
+  ON public.sou_document_chunks(document_id);
+
+-- HNSW index for fast approximate nearest neighbor search (cosine distance)
+CREATE INDEX IF NOT EXISTS idx_sou_document_chunks_embedding
+  ON public.sou_document_chunks
+  USING hnsw (embedding vector_cosine_ops)
+  WITH (m = 16, ef_construction = 64);

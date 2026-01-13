@@ -2,15 +2,20 @@
 
 import hashlib
 import json
-from typing import Optional, List, Any
+from typing import Optional
 from urllib.parse import urlparse
 from uuid import UUID
 
 from core.db import db
 from apps.sources.models import Document, DocumentCreate, Publisher, PublisherCreate
+from apps.sources.document_processor import (
+    get_pdf_parser,
+    TextChunker,
+    EmbeddingGenerator,
+)
 
 
-def parse_json_fields(row_dict: dict, fields: List[str]) -> dict:
+def parse_json_fields(row_dict: dict, fields: list[str]) -> dict:
     """Parse JSON string fields into dicts."""
     for field in fields:
         if field in row_dict and isinstance(row_dict[field], str):
@@ -151,8 +156,8 @@ class SourcesService:
     async def promote_research_sources(
         self,
         research_id: UUID,
-        threshold: float = 0.6
-    ) -> List[UUID]:
+        threshold: float = 0.6,
+    ) -> list[UUID]:
         """
         Promote high-quality research sources to sou_documents.
 
@@ -247,8 +252,8 @@ class SourcesService:
     async def link_draft_to_documents(
         self,
         draft_id: UUID,
-        document_ids: List[UUID],
-        relevance: str = "primary"
+        document_ids: list[UUID],
+        relevance: str = "primary",
     ) -> None:
         """
         Create propl_draft_documents entries linking a draft to source documents.
@@ -268,5 +273,195 @@ class SourcesService:
                     """,
                     draft_id,
                     doc_id,
-                    relevance
+                    relevance,
                 )
+
+    # =========================================================================
+    # Document Processing Pipeline
+    # =========================================================================
+
+    async def find_document_by_id(self, document_id: UUID) -> Optional[Document]:
+        """Find a document by its ID."""
+        async with db.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT * FROM sou_documents WHERE id = $1",
+                document_id,
+            )
+            if row:
+                data = parse_json_fields(dict(row), ["extracted_data", "metadata"])
+                return Document(**data)
+            return None
+
+    async def process_pdf_upload(
+        self,
+        file_bytes: bytes,
+        filename: str,
+        title: Optional[str] = None,
+        publisher_id: Optional[UUID] = None,
+    ) -> Document:
+        """
+        Full pipeline: upload PDF -> parse -> chunk -> embed -> store.
+
+        Synchronous processing for small scale (<1000 docs).
+        """
+        pdf_parser = get_pdf_parser()
+        chunker = TextChunker(chunk_size=512, chunk_overlap=50)
+        embedder = EmbeddingGenerator()
+
+        # 1. Parse PDF (uses configured parser: pdfplumber or textract)
+        parsed = await pdf_parser.parse_pdf(file_bytes)
+
+        # 2. Create document record
+        doc = await self.create_document(
+            DocumentCreate(
+                publisher_id=publisher_id,
+                title=title or filename,
+                document_type="pdf",
+                raw_content=parsed["text"],
+                metadata={
+                    "filename": filename,
+                    "page_count": parsed.get("page_count", 0),
+                    "source": "upload",
+                },
+            )
+        )
+
+        # 3. Update status to processing
+        await self._update_document_embedding_status(doc.id, "processing")
+
+        # 4. Chunk the text
+        chunks = chunker.chunk_text(parsed["text"], metadata={"document_id": str(doc.id)})
+
+        # 5. Generate embeddings
+        texts = [c["content"] for c in chunks]
+        embeddings = await embedder.generate_embeddings(texts)
+
+        # 6. Store chunks with embeddings
+        await self._store_chunks(doc.id, chunks, embeddings)
+
+        # 7. Update document status
+        await self._update_document_embedding_status(doc.id, "completed", len(chunks))
+
+        # Refresh document to get updated fields
+        return await self.find_document_by_id(doc.id)
+
+    async def _store_chunks(
+        self,
+        document_id: UUID,
+        chunks: list[dict],
+        embeddings: list[list[float]],
+    ) -> None:
+        """Store document chunks with embeddings."""
+        async with db.pool.acquire() as conn:
+            for chunk, embedding in zip(chunks, embeddings):
+                # Convert embedding list to pgvector string format
+                embedding_str = "[" + ",".join(str(x) for x in embedding) + "]"
+                await conn.execute(
+                    """
+                    INSERT INTO sou_document_chunks
+                    (document_id, chunk_index, content, content_tokens, embedding, metadata)
+                    VALUES ($1, $2, $3, $4, $5::vector, $6)
+                    """,
+                    document_id,
+                    chunk["index"],
+                    chunk["content"],
+                    chunk["tokens"],
+                    embedding_str,
+                    json.dumps(chunk.get("metadata", {})),
+                )
+
+    async def _update_document_embedding_status(
+        self,
+        document_id: UUID,
+        status: str,
+        chunk_count: int = 0,
+    ) -> None:
+        """Update document embedding status."""
+        async with db.pool.acquire() as conn:
+            await conn.execute(
+                """
+                UPDATE sou_documents
+                SET embedding_status = $2, chunk_count = $3, updated_at = now()
+                WHERE id = $1
+                """,
+                document_id,
+                status,
+                chunk_count,
+            )
+
+    # =========================================================================
+    # Semantic Search
+    # =========================================================================
+
+    async def semantic_search(
+        self,
+        query: str,
+        limit: int = 10,
+        threshold: float = 0.5,
+    ) -> list[dict]:
+        """
+        Search for semantically similar document chunks.
+
+        Args:
+            query: Search query text
+            limit: Max number of results
+            threshold: Minimum similarity score (0-1)
+
+        Returns:
+            List of chunks with similarity scores and document info
+        """
+        embedder = EmbeddingGenerator()
+        query_embedding = await embedder.generate_single(query)
+        # Convert to pgvector string format
+        query_embedding_str = "[" + ",".join(str(x) for x in query_embedding) + "]"
+
+        async with db.pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT
+                    c.id,
+                    c.document_id,
+                    c.chunk_index,
+                    c.content,
+                    c.metadata,
+                    d.title as document_title,
+                    d.url as document_url,
+                    1 - (c.embedding <=> $1::vector) as similarity
+                FROM sou_document_chunks c
+                JOIN sou_documents d ON d.id = c.document_id
+                WHERE 1 - (c.embedding <=> $1::vector) >= $2
+                ORDER BY c.embedding <=> $1::vector
+                LIMIT $3
+                """,
+                query_embedding_str,
+                threshold,
+                limit,
+            )
+
+            return [
+                {
+                    "chunk_id": str(row["id"]),
+                    "document_id": str(row["document_id"]),
+                    "document_title": row["document_title"],
+                    "document_url": row["document_url"],
+                    "chunk_index": row["chunk_index"],
+                    "content": row["content"],
+                    "similarity": float(row["similarity"]),
+                    "metadata": json.loads(row["metadata"]) if row["metadata"] else {},
+                }
+                for row in rows
+            ]
+
+    async def get_document_chunks(self, document_id: UUID) -> list[dict]:
+        """Get all chunks for a document."""
+        async with db.pool.acquire() as conn:
+            rows = await conn.fetch(
+                """
+                SELECT id, chunk_index, content, content_tokens, metadata
+                FROM sou_document_chunks
+                WHERE document_id = $1
+                ORDER BY chunk_index
+                """,
+                document_id,
+            )
+            return [dict(row) for row in rows]
