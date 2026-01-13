@@ -21,19 +21,23 @@ CREATE TABLE IF NOT EXISTS public.sou_publishers (
   url text,                                      -- Base URL of the publisher
   feed_url text,                                 -- RSS/API endpoint if available
 
-  -- Classification
+  -- Classification (per SPEC.md taxonomy)
   publisher_type text NOT NULL CHECK (publisher_type IN (
-    'official',      -- Government websites, official portals
-    'news',          -- News outlets, media organizations
-    'academic',      -- Research institutions, universities
-    'social',        -- Social media accounts
-    'open_data',     -- Open data portals, APIs
-    'gazette'        -- Official gazettes (Gazzetta Ufficiale, etc.)
+    'administration',  -- Public administration (any level): Comune, Regione, MEF, EU
+    'news',            -- News and media: Il Sole 24 Ore, ANSA
+    'academia',        -- Universities, research centers: Politecnico, CNR
+    'organization',    -- Institutes, foundations, NGOs: Fondazione Cariplo, ISPI
+    'other'            -- Generic websites, unclassified
   )),
   language text,                                 -- BCP 47 tag (e.g., 'it-IT', 'en-US')
 
-  -- Quality & Trust
-  reliability_score numeric(3,1) CHECK (reliability_score >= 0 AND reliability_score <= 10),
+  -- Reliability (per SPEC.md)
+  reliability_tier text NOT NULL DEFAULT 'unverified' CHECK (reliability_tier IN (
+    'official',      -- Official government source (0.9-1.0)
+    'verified',      -- Verified reliable source (0.6-0.9)
+    'unverified'     -- Not verified (0.0-0.6)
+  )),
+  reliability_score numeric(3,2) DEFAULT 0.5 CHECK (reliability_score >= 0.0 AND reliability_score <= 1.0),
 
   -- Operational
   update_frequency text CHECK (update_frequency IN (
@@ -82,17 +86,36 @@ CREATE TABLE IF NOT EXISTS public.sou_documents (
   -- Identity
   url text,                                      -- Original URL (nullable for manual entries)
   title text,
-  document_type text NOT NULL CHECK (document_type IN (
-    'article',           -- News article, blog post
-    'pdf',               -- PDF document
-    'post',              -- Social media post
-    'gazette_issue',     -- Official gazette issue
-    'press_release',     -- Press release
-    'minutes',           -- Meeting minutes
-    'report',            -- Official report
-    'legislation',       -- Law, regulation, ordinance text
+  document_type text NOT NULL DEFAULT 'pdf' CHECK (document_type IN (
+    'pdf',               -- PDF document (primary type for this subsystem)
+    'html',              -- HTML/web page
     'other'              -- Other document types
   )),
+
+  -- Classification (per SPEC.md, LLM-assisted on upload)
+  document_category text CHECK (document_category IN (
+    'budget',            -- Budget documents, financial reports
+    'regulation',        -- Laws, regulations, ordinances
+    'contract',          -- Contracts, agreements, tenders
+    'report',            -- Reports, studies, analyses
+    'minutes',           -- Meeting minutes, deliberations
+    'announcement',      -- Public announcements, notices
+    'other'              -- Other / unclassified
+  )),
+  administrative_level text CHECK (administrative_level IN (
+    'municipal',         -- City/town level
+    'regional',          -- Region/state level
+    'national',          -- Country level
+    'eu',                -- European Union
+    'other'              -- Other
+  )),
+  fiscal_year integer,
+  classification_method text CHECK (classification_method IN (
+    'manual',            -- Manually classified
+    'auto',              -- Rule-based classification
+    'llm'                -- LLM-assisted classification
+  )),
+
   language text,                                 -- BCP 47 tag
   published_at timestamptz,                      -- Original publication date
 
@@ -192,3 +215,22 @@ CREATE INDEX IF NOT EXISTS idx_sou_document_chunks_embedding
   ON public.sou_document_chunks
   USING hnsw (embedding vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
+
+-- ============================================================================
+-- SEED DATA: Unknown Publisher (fallback for documents without publisher)
+-- ============================================================================
+INSERT INTO public.sou_publishers (
+  id,
+  name,
+  publisher_type,
+  reliability_tier,
+  reliability_score,
+  is_active
+) VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'Unknown Publisher',
+  'other',
+  'unverified',
+  0.30,
+  true
+) ON CONFLICT (id) DO NOTHING;

@@ -6,9 +6,14 @@ from uuid import UUID
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from langchain.chat_models import init_chat_model
 
+from core.config import settings
 from apps.sources.models import (
     ChatRequest,
     ChatResponse,
+    DocumentResponse,
+    Publisher,
+    PublisherCreate,
+    PublisherResponse,
     SearchRequest,
     SearchResponse,
     SearchResult,
@@ -29,6 +34,26 @@ def get_service() -> SourcesService:
 
 
 # ============================================================================
+# Publishers
+# ============================================================================
+
+
+@router.get("/publishers", response_model=list[PublisherResponse])
+async def list_publishers() -> list[PublisherResponse]:
+    """List all publishers with document counts."""
+    service = get_service()
+    publishers = await service.list_publishers()
+    return [PublisherResponse(**p) for p in publishers]
+
+
+@router.post("/publishers", response_model=Publisher)
+async def create_publisher(publisher: PublisherCreate) -> Publisher:
+    """Create a new publisher."""
+    service = get_service()
+    return await service.create_publisher(publisher)
+
+
+# ============================================================================
 # Document Upload & Processing
 # ============================================================================
 
@@ -38,24 +63,28 @@ async def upload_document(
     file: UploadFile = File(...),
     title: Optional[str] = Form(None),
     publisher_id: Optional[str] = Form(None),
+    document_category: Optional[str] = Form(None),
+    administrative_level: Optional[str] = Form(None),
+    fiscal_year: Optional[int] = Form(None),
 ) -> UploadDocumentResponse:
     """
     Upload a PDF document for processing.
 
     The document will be:
-    1. Parsed using pdfplumber
-    2. Split into chunks
-    3. Embedded using OpenAI
-    4. Stored for semantic search
+    1. Parsed using pdfplumber (or Textract if configured)
+    2. Classified using LLM (category, admin level, fiscal year)
+    3. Split into chunks
+    4. Embedded using OpenAI
+    5. Stored for semantic search
 
-    This is a synchronous endpoint - waits for processing to complete.
+    If publisher_id is not provided, the document will be assigned to
+    the "Unknown Publisher".
     """
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
 
     file_bytes = await file.read()
 
-    # Limit file size to 50MB for reasonable processing time
     if len(file_bytes) > 50 * 1024 * 1024:
         raise HTTPException(
             status_code=400,
@@ -69,14 +98,33 @@ async def upload_document(
         filename=file.filename,
         title=title,
         publisher_id=UUID(publisher_id) if publisher_id else None,
+        document_category=document_category,
+        administrative_level=administrative_level,
+        fiscal_year=fiscal_year,
     )
 
     return UploadDocumentResponse(
         document_id=str(doc.id),
         title=doc.title or file.filename,
+        publisher_id=str(doc.publisher_id) if doc.publisher_id else None,
+        document_category=doc.document_category,
+        administrative_level=doc.administrative_level,
+        fiscal_year=doc.fiscal_year,
         chunk_count=doc.chunk_count,
         status="completed",
     )
+
+
+@router.get("/documents/{document_id}", response_model=DocumentResponse)
+async def get_document(document_id: str) -> DocumentResponse:
+    """Get document details with publisher info."""
+    service = get_service()
+    doc = await service.get_document_with_publisher(UUID(document_id))
+
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    return DocumentResponse(**doc)
 
 
 @router.get("/documents/{document_id}/status")
@@ -108,13 +156,24 @@ async def semantic_search(request: SearchRequest) -> SearchResponse:
     Perform semantic search across all documents.
 
     Returns document chunks ranked by similarity to the query.
+
+    Optional filters:
+    - publisher_id: Filter by publisher
+    - document_category: budget, regulation, contract, report, minutes, announcement, other
+    - administrative_level: municipal, regional, national, eu, other
+    - min_reliability: Minimum publisher reliability score (0.0-1.0)
     """
     service = get_service()
+
+    filters = None
+    if request.filters:
+        filters = request.filters.model_dump(exclude_none=True)
 
     results = await service.semantic_search(
         query=request.query,
         limit=request.limit,
         threshold=request.threshold,
+        filters=filters,
     )
 
     return SearchResponse(
@@ -135,17 +194,24 @@ async def chat_with_documents(request: ChatRequest) -> ChatResponse:
     Chat with documents using RAG (Retrieval-Augmented Generation).
 
     The system will:
-    1. Search for relevant document chunks
+    1. Search for relevant document chunks (with optional filters)
     2. Include them as context
     3. Generate a response using Claude
     """
     service = get_service()
 
-    # 1. Retrieve relevant chunks
+    # 1. Build filters from request
+    filters = None
+    if request.filters:
+        filters = request.filters.model_dump(exclude_none=True)
+
+    # 2. Retrieve relevant chunks
+    context_chunks = settings.sources_app__chat_context_chunks
     search_results = await service.semantic_search(
         query=request.query,
-        limit=5,
+        limit=context_chunks,
         threshold=0.5,
+        filters=filters,
     )
 
     if not search_results:
@@ -154,14 +220,18 @@ async def chat_with_documents(request: ChatRequest) -> ChatResponse:
             sources=[],
         )
 
-    # 2. Build context from chunks
+    # 3. Build context from chunks
     context_parts = []
     for i, result in enumerate(search_results, 1):
-        context_parts.append(f"[Source {i}: {result['document_title'] or 'Document'}]\n{result['content']}")
+        source_info = result['document_title'] or 'Document'
+        if result.get('publisher_name'):
+            source_info = f"{source_info} ({result['publisher_name']})"
+        context_parts.append(f"[Source {i}: {source_info}]\n{result['content']}")
     context = "\n\n---\n\n".join(context_parts)
 
-    # 3. Generate response with Claude
-    llm = init_chat_model(model="claude-sonnet-4-5", model_provider="anthropic")
+    # 4. Generate response with Claude
+    model = settings.sources_app__chat_model
+    llm = init_chat_model(model=model, model_provider="anthropic")
 
     system_prompt = """You are a helpful assistant that answers questions based on the provided document context.
 
