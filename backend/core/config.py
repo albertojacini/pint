@@ -32,6 +32,10 @@ class Settings:
         self.sources_app__search_reliability_weight: float = float(os.getenv("SOURCES_APP__SEARCH_RELIABILITY_WEIGHT", "0.0"))
         self.sources_app__chat_model: str = os.getenv("SOURCES_APP__CHAT_MODEL", "claude-sonnet-4-5-20250929")
         self.sources_app__chat_context_chunks: int = int(os.getenv("SOURCES_APP__CHAT_CONTEXT_CHUNKS", "5"))
+        self.sources_app__url_extractor: str = os.getenv("SOURCES_APP__URL_EXTRACTOR", "jina")
+
+        # Jina Reader API (for URL extraction)
+        self.jina_api_key: Optional[str] = os.getenv("JINA_API_KEY")
 
         # Legacy alias (deprecated, use SOURCES_APP__PDF_PARSER)
         self.pdf_parser: str = self.sources_app__pdf_parser

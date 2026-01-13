@@ -13,6 +13,7 @@ from core.db import db
 from apps.sources.models import Document, DocumentCreate, Publisher, PublisherCreate
 from apps.sources.document_processor import (
     get_pdf_parser,
+    get_url_extractor,
     TextChunker,
     EmbeddingGenerator,
 )
@@ -297,6 +298,72 @@ Example response:
     # Document Processing Pipeline
     # =========================================================================
 
+    async def _process_text_content(
+        self,
+        text: str,
+        title: str,
+        document_type: str,
+        publisher_id: UUID,
+        url: Optional[str] = None,
+        document_category: Optional[str] = None,
+        administrative_level: Optional[str] = None,
+        fiscal_year: Optional[int] = None,
+        metadata: Optional[dict] = None,
+    ) -> Document:
+        """
+        Shared processing: classify → create doc → chunk → embed → store.
+        Called by both PDF upload and URL ingest.
+        """
+        chunker = TextChunker(chunk_size=512, chunk_overlap=50)
+        embedder = EmbeddingGenerator()
+
+        # 1. Classify document if enabled and no overrides provided
+        classification = {}
+        if settings.sources_app__classify_on_upload:
+            if document_category is None or administrative_level is None:
+                classification = await self.classify_document(text, title)
+
+        # Use overrides or classification results
+        final_category = document_category or classification.get("document_category")
+        final_level = administrative_level or classification.get("administrative_level")
+        final_year = fiscal_year or classification.get("fiscal_year")
+        classification_method = "llm" if classification else ("manual" if document_category else None)
+
+        # 2. Create document record
+        doc = await self.create_document(
+            DocumentCreate(
+                publisher_id=publisher_id,
+                url=url,
+                title=title,
+                document_type=document_type,
+                document_category=final_category,
+                administrative_level=final_level,
+                fiscal_year=final_year,
+                classification_method=classification_method,
+                raw_content=text,
+                metadata=metadata or {},
+            )
+        )
+
+        # 3. Update status to processing
+        await self._update_document_embedding_status(doc.id, "processing")
+
+        # 4. Chunk the text
+        chunks = chunker.chunk_text(text, metadata={"document_id": str(doc.id)})
+
+        # 5. Generate embeddings
+        texts = [c["content"] for c in chunks]
+        embeddings = await embedder.generate_embeddings(texts)
+
+        # 6. Store chunks with embeddings
+        await self._store_chunks(doc.id, chunks, embeddings)
+
+        # 7. Update document status
+        await self._update_document_embedding_status(doc.id, "completed", len(chunks))
+
+        # Refresh document to get updated fields
+        return await self.find_document_by_id(doc.id)
+
     async def process_pdf_upload(
         self,
         file_bytes: bytes,
@@ -307,70 +374,52 @@ Example response:
         administrative_level: Optional[str] = None,
         fiscal_year: Optional[int] = None,
     ) -> Document:
-        """
-        Full pipeline: upload PDF -> parse -> classify -> chunk -> embed -> store.
-        """
+        """Upload PDF -> parse -> process through shared pipeline."""
         pdf_parser = get_pdf_parser()
-        chunker = TextChunker(chunk_size=512, chunk_overlap=50)
-        embedder = EmbeddingGenerator()
-
-        # 1. Use unknown publisher if none provided
-        if publisher_id is None:
-            publisher_id = await self.get_unknown_publisher_id()
-
-        # 2. Parse PDF
         parsed = await pdf_parser.parse_pdf(file_bytes)
-        doc_title = title or filename
 
-        # 3. Classify document if enabled and no overrides provided
-        classification = {}
-        if settings.sources_app__classify_on_upload:
-            if document_category is None or administrative_level is None:
-                classification = await self.classify_document(parsed["text"], doc_title)
-
-        # Use overrides or classification results
-        final_category = document_category or classification.get("document_category")
-        final_level = administrative_level or classification.get("administrative_level")
-        final_year = fiscal_year or classification.get("fiscal_year")
-        classification_method = "llm" if classification else ("manual" if document_category else None)
-
-        # 4. Create document record
-        doc = await self.create_document(
-            DocumentCreate(
-                publisher_id=publisher_id,
-                title=doc_title,
-                document_type="pdf",
-                document_category=final_category,
-                administrative_level=final_level,
-                fiscal_year=final_year,
-                classification_method=classification_method,
-                raw_content=parsed["text"],
-                metadata={
-                    "filename": filename,
-                    "page_count": parsed.get("page_count", 0),
-                    "source": "upload",
-                },
-            )
+        return await self._process_text_content(
+            text=parsed["text"],
+            title=title or filename,
+            document_type="pdf",
+            publisher_id=publisher_id or await self.get_unknown_publisher_id(),
+            document_category=document_category,
+            administrative_level=administrative_level,
+            fiscal_year=fiscal_year,
+            metadata={
+                "filename": filename,
+                "page_count": parsed.get("page_count", 0),
+                "source": "upload",
+            },
         )
 
-        # 5. Update status to processing
-        await self._update_document_embedding_status(doc.id, "processing")
+    async def process_url_ingest(
+        self,
+        url: str,
+        publisher_id: Optional[UUID] = None,
+        title: Optional[str] = None,
+        document_category: Optional[str] = None,
+        administrative_level: Optional[str] = None,
+        fiscal_year: Optional[int] = None,
+    ) -> Document:
+        """Fetch URL content -> process through shared pipeline."""
+        extractor = get_url_extractor()
+        extracted = await extractor.extract(url)
 
-        # 6. Chunk the text
-        chunks = chunker.chunk_text(parsed["text"], metadata={"document_id": str(doc.id)})
-
-        # 7. Generate embeddings
-        texts = [c["content"] for c in chunks]
-        embeddings = await embedder.generate_embeddings(texts)
-
-        # 8. Store chunks with embeddings
-        await self._store_chunks(doc.id, chunks, embeddings)
-
-        # 9. Update document status
-        await self._update_document_embedding_status(doc.id, "completed", len(chunks))
-
-        # Refresh document to get updated fields
-        return await self.find_document_by_id(doc.id)
+        return await self._process_text_content(
+            text=extracted["text"],
+            title=title or extracted.get("title") or url,
+            document_type="html",
+            publisher_id=publisher_id or await self.get_unknown_publisher_id(),
+            url=url,
+            document_category=document_category,
+            administrative_level=administrative_level,
+            fiscal_year=fiscal_year,
+            metadata={
+                "source": "url_ingest",
+                "original_url": url,
+            },
+        )
 
     async def _store_chunks(
         self,

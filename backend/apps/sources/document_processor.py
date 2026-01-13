@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 import boto3
+import httpx
 import pdfplumber
 import tiktoken
 from openai import AsyncOpenAI
@@ -121,6 +122,83 @@ def get_pdf_parser() -> BasePDFParser:
         return TextractParser()
     else:
         return PdfPlumberParser()
+
+
+# ============================================================================
+# URL Content Extractor Interface & Implementations
+# ============================================================================
+
+
+class BaseURLExtractor(ABC):
+    """Abstract base class for URL content extractors."""
+
+    @abstractmethod
+    async def extract(self, url: str) -> dict:
+        """
+        Extract content from URL.
+
+        Returns:
+            dict with 'text', 'title', 'url' (final URL after redirects)
+        """
+        pass
+
+
+class JinaExtractor(BaseURLExtractor):
+    """
+    Extract webpage content using Jina Reader API.
+
+    API: GET https://r.jina.ai/{url}
+    Returns clean markdown content suitable for chunking and embedding.
+    """
+
+    def __init__(self):
+        self.base_url = "https://r.jina.ai"
+        self.api_key = settings.jina_api_key
+
+    async def extract(self, url: str) -> dict:
+        headers = {
+            "Accept": "text/plain",
+        }
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            response = await client.get(
+                f"{self.base_url}/{url}",
+                headers=headers,
+                follow_redirects=True,
+            )
+            response.raise_for_status()
+            content = response.text
+
+        # Jina returns markdown with title as first H1
+        title = None
+        lines = content.split("\n")
+        for line in lines:
+            if line.startswith("# "):
+                title = line[2:].strip()
+                break
+
+        return {
+            "text": content,
+            "title": title,
+            "url": url,
+        }
+
+
+def get_url_extractor() -> BaseURLExtractor:
+    """
+    Factory function to get the configured URL extractor.
+
+    Set SOURCES_APP__URL_EXTRACTOR env var to switch:
+    - "jina" (default): Jina Reader API
+    """
+    extractor_type = settings.sources_app__url_extractor
+
+    if extractor_type == "jina":
+        return JinaExtractor()
+    else:
+        raise ValueError(f"Unknown URL extractor: {extractor_type}")
 
 
 # ============================================================================

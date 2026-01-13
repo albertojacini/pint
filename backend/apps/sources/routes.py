@@ -11,6 +11,7 @@ from apps.sources.models import (
     ChatRequest,
     ChatResponse,
     DocumentResponse,
+    IngestURLRequest,
     Publisher,
     PublisherCreate,
     PublisherResponse,
@@ -106,6 +107,37 @@ async def upload_document(
     return UploadDocumentResponse(
         document_id=str(doc.id),
         title=doc.title or file.filename,
+        publisher_id=str(doc.publisher_id) if doc.publisher_id else None,
+        document_category=doc.document_category,
+        administrative_level=doc.administrative_level,
+        fiscal_year=doc.fiscal_year,
+        chunk_count=doc.chunk_count,
+        status="completed",
+    )
+
+
+@router.post("/documents/ingest-url", response_model=UploadDocumentResponse)
+async def ingest_url(request: IngestURLRequest) -> UploadDocumentResponse:
+    """
+    Ingest a webpage by URL.
+
+    Content is extracted using an external service (Jina Reader).
+    Processing follows same pipeline as PDF: classify → chunk → embed → store.
+    """
+    service = get_service()
+
+    doc = await service.process_url_ingest(
+        url=str(request.url),
+        publisher_id=UUID(request.publisher_id) if request.publisher_id else None,
+        title=request.title,
+        document_category=request.document_category,
+        administrative_level=request.administrative_level,
+        fiscal_year=request.fiscal_year,
+    )
+
+    return UploadDocumentResponse(
+        document_id=str(doc.id),
+        title=doc.title or str(request.url),
         publisher_id=str(doc.publisher_id) if doc.publisher_id else None,
         document_category=doc.document_category,
         administrative_level=doc.administrative_level,

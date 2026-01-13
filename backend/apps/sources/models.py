@@ -181,8 +181,18 @@ class ChatResponse(BaseModel):
 
 
 # ============================================================================
-# Upload Models
+# Upload / Ingest Models
 # ============================================================================
+
+
+class IngestURLRequest(BaseModel):
+    """Request to ingest a webpage by URL."""
+    url: HttpUrl
+    publisher_id: Optional[str] = None
+    title: Optional[str] = None
+    document_category: Optional[str] = None
+    administrative_level: Optional[str] = None
+    fiscal_year: Optional[int] = None
 
 
 class UploadDocumentResponse(BaseModel):

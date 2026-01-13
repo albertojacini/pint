@@ -8,12 +8,12 @@ Enable semantic search and AI-powered Q&A over public policy documents (budgets,
 
 ## Scope
 
-- PDF ingestion → text extraction → chunking → embedding → vector search → RAG chat
+- PDF upload and URL ingestion → text extraction → chunking → embedding → vector search → RAG chat
 - Publisher-based reliability scoring inherited by documents
 
 ## Out of Scope
 
-Non-PDF formats, versioning, real-time sync, fact-checking, multi-tenant isolation.
+Document versioning, real-time sync, fact-checking, multi-tenant isolation.
 
 ## Boundaries
 
@@ -72,7 +72,8 @@ Retrieval:  Search API ◄── Vector Similarity ◄── Query Embedding
 ## Functional Requirements and Capabilities
 
 - **Publisher management:** Create publishers with reliability tier/score
-- **Document upload:** Accept PDF, parse text, store with publisher link
+- **PDF upload:** Accept PDF, parse text, store with publisher link
+- **URL ingestion:** Extract webpage content via Jina Reader, process same as PDF
 - **Auto-classification:** LLM-classify category, admin level, fiscal year on upload
 - **Manual override:** Allow caller to override classification fields
 - **Deduplication:** Detect duplicate documents via content hash
@@ -92,7 +93,6 @@ Retrieval:  Search API ◄── Vector Similarity ◄── Query Embedding
 ## Future Enhancements
 
 - Store/serve original PDFs
-- URL-based ingestion (HTML, webpages)
 - Hybrid search (keyword + semantic)
 - Conversation memory
 - Streaming responses
