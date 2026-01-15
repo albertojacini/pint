@@ -211,3 +211,144 @@ Public Transport,65000,0.4,Buses trams official transit vehicles`,
     provisions: ['Area C Congestion Charge'],
   },
 ]
+
+/**
+ * Document chunks for semantic search testing
+ * Each chunk has content and a seed for generating deterministic fake embeddings
+ */
+export const documentChunks = [
+  // ATM Annual Report 2023 - 3 chunks
+  {
+    document: 'ATM Annual Report 2023',
+    chunks: [
+      {
+        content: `ATM SpA Annual Report 2023 - Executive Summary
+
+ATM, Milan's public transport company, delivered strong operational and financial performance in 2023. Total ridership reached 1.17 billion passengers, representing a full recovery to pre-pandemic levels. Revenue increased 8.3% year-over-year to €427 million, driven by higher ridership and fare adjustments.
+
+Key achievements include the completion of Metro Line 4 extension to Linate Airport, adding 15 new stations to the network. The electric bus fleet expanded to 180 vehicles, with plans to reach 1,200 by 2030. Customer satisfaction scores improved to 7.8/10, the highest level in a decade.`,
+        tokens: 112,
+        seed: 1001,
+      },
+      {
+        content: `Fleet and Infrastructure Investment
+
+Capital expenditure totaled €892 million in 2023, focused on fleet renewal and infrastructure modernization. Major investments included:
+
+- 45 new metro trains for Lines 1 and 2 (€320M)
+- 180 electric buses replacing diesel vehicles (€95M)
+- Station accessibility improvements at 28 locations (€45M)
+- Digital ticketing system upgrade (€32M)
+- Depot modernization and charging infrastructure (€78M)
+
+The company secured €1.2 billion in EU Next Generation funding for the 2024-2026 investment program, supporting Milan's carbon neutrality goals.`,
+        tokens: 98,
+        seed: 1002,
+      },
+      {
+        content: `Sustainability and Environmental Impact
+
+ATM's sustainability initiatives achieved measurable results in 2023:
+
+CO2 emissions reduced by 12% compared to 2022, reaching 145,000 tonnes. The transition to electric buses prevented 8,500 tonnes of emissions. Energy efficiency improvements in metro operations saved 15 GWh of electricity.
+
+Solar panel installations on depot rooftops now generate 4.2 MW of renewable energy. Green bond issuance of €500M funded zero-emission vehicle procurement. ATM received ISO 14001 environmental certification renewal with zero non-conformities.`,
+        tokens: 94,
+        seed: 1003,
+      },
+    ],
+  },
+  // ATM Service Statistics Q4 2023 - 2 chunks
+  {
+    document: 'ATM Service Statistics Q4 2023',
+    chunks: [
+      {
+        content: `Q4 2023 Ridership Statistics by Mode
+
+Metro services carried 440 million passengers in Q4 2023, up 3.2% from Q4 2022. Line 1 (red) remained the busiest with 165 million trips. The new M4 line exceeded projections with 28 million passengers in its first full quarter of operation.
+
+Surface network (tram and bus) transported 730 million passengers. Tram ridership showed particular strength at 220 million, benefiting from dedicated lane expansions. Night bus services saw 15% growth as entertainment district activity recovered.`,
+        tokens: 91,
+        seed: 2001,
+      },
+      {
+        content: `Service Quality Metrics Q4 2023
+
+Punctuality rates improved across all modes:
+- Metro: 97.2% on-time performance (target: 95%)
+- Tram: 89.4% on-time (target: 85%)
+- Bus: 84.7% on-time (target: 82%)
+
+Average vehicle occupancy during peak hours: Metro 78%, Tram 65%, Bus 58%. Customer complaints decreased 18% year-over-year. Mobile app ticket purchases grew to 42% of total transactions, up from 31% in 2022.`,
+        tokens: 82,
+        seed: 2002,
+      },
+    ],
+  },
+  // Area C Regulation Amendment 2024 - 2 chunks
+  {
+    document: 'Area C Regulation Amendment 2024',
+    chunks: [
+      {
+        content: `Decreto del Comune di Milano - Modifica Regolamento Area C
+
+Articolo 1 - Adeguamento Tariffa
+A decorrere dal 1° marzo 2024, la tariffa di accesso ad Area C è fissata in €7,50 per veicolo/giorno, in aumento rispetto ai precedenti €5,00. L'adeguamento riflette l'inflazione cumulata dal 2019 e mira a mantenere l'efficacia deterrente della misura.
+
+Articolo 2 - Esenzioni Veicoli Elettrici
+Le esenzioni per veicoli a zero emissioni sono prorogate fino al 31 dicembre 2025. Dal 1° gennaio 2026, i veicoli elettrici corrisponderanno una tariffa ridotta di €3,00.`,
+        tokens: 118,
+        seed: 3001,
+      },
+      {
+        content: `Articolo 3 - Orari di Applicazione
+Gli orari di applicazione della tariffa restano invariati: dalle ore 7:30 alle ore 19:30, dal lunedì al venerdì, esclusi i giorni festivi. È introdotta una fascia serale sperimentale (19:30-22:00) con tariffa ridotta di €2,00 per i mesi di giugno-settembre 2024.
+
+Articolo 4 - Destinazione Proventi
+I proventi derivanti dall'adeguamento tariffario sono vincolati al finanziamento di:
+a) Potenziamento trasporto pubblico locale (60%)
+b) Infrastrutture ciclabili (25%)
+c) Manutenzione stradale (15%)`,
+        tokens: 108,
+        seed: 3002,
+      },
+    ],
+  },
+  // Area C Annual Report 2023 - 3 chunks
+  {
+    document: 'Area C Annual Report 2023',
+    chunks: [
+      {
+        content: `Area C Performance Report 2023 - Traffic and Revenue
+
+The congestion charge zone processed 14.8 million vehicle entries in 2023, generating gross revenue of €85 million. Net revenue after operational costs reached €74.8 million, representing an operating margin of 88%.
+
+Daily average entries stabilized at 40,500 vehicles, compared to 125,000 before Area C implementation in 2012. Peak hour traffic (8:00-9:00 and 17:30-18:30) decreased 35% versus pre-implementation levels. The automated enforcement system maintained 99.7% accuracy in license plate recognition.`,
+        tokens: 96,
+        seed: 4001,
+      },
+      {
+        content: `Environmental Impact Assessment 2023
+
+Air quality monitoring within Area C showed continued improvement:
+
+PM10 annual average: 28 μg/m³ (limit: 40 μg/m³)
+PM2.5 annual average: 18 μg/m³ (limit: 25 μg/m³)
+NO2 annual average: 36 μg/m³ (limit: 40 μg/m³)
+
+Compared to 2011 baseline, PM10 levels decreased 32% and NO2 decreased 28%. The zone recorded zero air quality exceedance days in 2023, down from 87 days in 2011. Health impact assessment estimates 120 fewer premature deaths annually attributable to improved air quality.`,
+        tokens: 105,
+        seed: 4002,
+      },
+      {
+        content: `Modal Shift and Sustainable Mobility
+
+Public transport mode share within Area C reached 58% in 2023, up from 42% in 2011. Cycling increased from 6% to 14% of trips. Private car usage decreased from 48% to 24%.
+
+Bicycle infrastructure investments funded by Area C revenues added 45 km of protected bike lanes in 2023. The BikeMi sharing system recorded 8.2 million trips, a 22% increase. Electric vehicle registrations in Milan reached 45,000, with Area C exemptions cited as a key incentive by 67% of EV buyers surveyed.`,
+        tokens: 98,
+        seed: 4003,
+      },
+    ],
+  },
+]
