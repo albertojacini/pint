@@ -15,6 +15,7 @@ load_dotenv()
 
 from apps.provisions.routes import router as provision_router
 from apps.event_ingestion.routes import router as event_ingestion_router
+from apps.knowledge.routes import router as knowledge_router
 from agents.utils.ei_db_tools import get_ei_db_tools
 from core.db import db
 
@@ -51,6 +52,7 @@ app.add_middleware(
 # Include routers
 app.include_router(provision_router, tags=["Provision"])
 app.include_router(event_ingestion_router, tags=["Event Ingestion"])
+app.include_router(knowledge_router, tags=["Knowledge"])
 
 
 @app.get("/health")

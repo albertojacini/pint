@@ -36,18 +36,11 @@ IMPORTANT: This is an early stage project:
 
 ## Database Seeding
 
-Two seed datasets are available:
-- **Base** (`tooling/scripts/seed/data/base/`) - Minimal data for understanding schema
-- **Extended** (`tooling/scripts/seed/data/extended/`) - Full realistic data
-
-**AI Instructions:**
-- ALWAYS check the base dataset first when understanding the data model
-- ONLY inspect extended dataset when explicitly requested by user
-- When modifying seed data, edit the base dataset unless told otherwise
+Seed data is located in `tooling/scripts/seed/data/base/` - contains minimal data for understanding the schema.
 
 Commands:
-- `pnpm db:reset` - Reset with base dataset (default)
-- `pnpm db:reset:extended` - Reset with extended dataset
+- `pnpm db:seed` - Seed the database
+- `pnpm db:reset` - Reset and seed the database
 
 
 
