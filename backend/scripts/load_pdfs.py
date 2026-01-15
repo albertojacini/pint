@@ -110,7 +110,7 @@ async def main():
         except Exception as e:
             print(f"  Error processing {pdf_path.name}: {e}")
 
-    await db.disconnect()
+    await db.close()
     print("\nDone!")
 
 

@@ -48,7 +48,7 @@ async def main():
 
     if not provisions:
         print("No provisions found for this entity")
-        await db.disconnect()
+        await db.close()
         return
 
     generator = ArtifactGenerator()
@@ -68,7 +68,7 @@ async def main():
     print("=" * 60)
     print(f"Done! Generated {total_artifacts} total artifacts")
 
-    await db.disconnect()
+    await db.close()
 
 
 if __name__ == "__main__":
