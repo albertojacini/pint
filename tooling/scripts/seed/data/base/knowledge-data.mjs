@@ -5,6 +5,15 @@
 
 export const sourcePublishers = [
   {
+    // Special fallback publisher for documents without a known publisher
+    id: '00000000-0000-0000-0000-000000000000',
+    name: 'Unknown Publisher',
+    description: 'Fallback publisher for documents without a known source',
+    publisher_type: 'other',
+    reliability_score: 0.3,
+    is_active: true,
+  },
+  {
     name: 'Comune di Milano',
     description: 'Official website of the Municipality of Milan',
     url: 'https://www.comune.milano.it',

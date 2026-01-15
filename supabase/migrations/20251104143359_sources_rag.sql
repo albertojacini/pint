@@ -137,21 +137,3 @@ CREATE INDEX IF NOT EXISTS idx_sou_document_chunks_embedding
   USING hnsw (embedding vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
 
--- ============================================================================
--- SEED DATA: Unknown Publisher (fallback for documents without publisher)
--- ============================================================================
-INSERT INTO public.sou_publishers (
-  id,
-  name,
-  publisher_type,
-  reliability_tier,
-  reliability_score,
-  is_active
-) VALUES (
-  '00000000-0000-0000-0000-000000000000',
-  'Unknown Publisher',
-  'other',
-  'unverified',
-  0.30,
-  true
-) ON CONFLICT (id) DO NOTHING;

@@ -28,7 +28,8 @@ export async function seedKnowledge(client, _supabase, idMaps) {
     logger.skipSection('Source Publishers')
   } else {
     for (const publisher of sourcePublishers) {
-      const id = generateUUID()
+      // Use predefined ID if provided (e.g., Unknown Publisher), otherwise generate
+      const id = publisher.id || generateUUID()
 
       await insertQuery(client, {
         table: 'sou_publishers',
