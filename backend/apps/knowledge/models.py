@@ -14,6 +14,7 @@ class ArtifactType(str, Enum):
     PARAMETERS = "parameters"
     NARRATIVE = "narrative"
     DATASET = "dataset"
+    METRIC = "metric"
 
 
 class ArtifactBase(BaseModel):
