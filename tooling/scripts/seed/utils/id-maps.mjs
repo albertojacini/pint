@@ -22,7 +22,10 @@ export function createIdMaps() {
     contributions: new Map(),
     provisions: new Map(),
     events: new Map(),
-    changes: new Map()
+    changes: new Map(),
+    publishers: new Map(),
+    documents: new Map(),
+    artifacts: new Map()
   }
 
   /**

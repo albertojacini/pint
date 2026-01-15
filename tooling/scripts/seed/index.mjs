@@ -18,6 +18,7 @@ import { seedTaxonomy } from './seeders/taxonomy.mjs'
 import { seedAdministrations } from './seeders/administrations.mjs'
 import { seedIdeas } from './seeders/ideas.mjs'
 import { seedProvisions } from './seeders/provisions.mjs'
+import { seedKnowledge } from './seeders/knowledge.mjs'
 
 /**
  * Main seeding function
@@ -54,6 +55,7 @@ async function runSeed() {
       { name: 'administrations', fn: seedAdministrations }, // needs: entities
       { name: 'ideas', fn: seedIdeas }, // needs: taxonomy
       { name: 'provisions', fn: seedProvisions }, // needs: ideas, entities, administrations
+      { name: 'knowledge', fn: seedKnowledge }, // needs: provisions
     ]
 
     // Execute seeders in order

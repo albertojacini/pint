@@ -34,7 +34,7 @@ from typing import Optional, List
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 
-from apps.provisions.services import get_provision_service
+from apps.government.services import get_provision_service
 from services.research import run_research_job
 
 router = APIRouter(prefix="/provision", tags=["provisions"])

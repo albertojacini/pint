@@ -21,7 +21,7 @@ from uuid import UUID
 
 from langchain.chat_models import init_chat_model
 
-from apps.provisions.models import ProvisionDraftOutput
+from apps.government.models import ProvisionDraftOutput
 from apps.sources.services import SourcesService
 from services.research import create_research_task, get_task_status
 
