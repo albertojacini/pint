@@ -19,6 +19,10 @@ class Settings:
         self.aws_access_key_id: Optional[str] = os.getenv("AWS_ACCESS_KEY_ID")
         self.aws_secret_access_key: Optional[str] = os.getenv("AWS_SECRET_ACCESS_KEY")
         self.aws_region: str = os.getenv("AWS_REGION", "us-east-1")
+        self.aws_s3_bucket: Optional[str] = os.getenv("PINT_AWS_S3_BUCKET")
+
+        # Experiments Configuration (EXPERIMENTS__ prefix)
+        self.experiments__s3_bucket: Optional[str] = os.getenv("PINT_EXPERIMENTS__S3_BUCKET")
 
         # OpenAI for embeddings
         self.openai_api_key: Optional[str] = os.getenv("OPENAI_API_KEY")
