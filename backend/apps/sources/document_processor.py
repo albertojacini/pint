@@ -3,6 +3,7 @@
 import asyncio
 import io
 import re
+import uuid
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -108,17 +109,192 @@ class TextractParser(BasePDFParser):
         }
 
 
+class TextractAsyncParser(BasePDFParser):
+    """
+    PDF text extraction using AWS Textract with S3 async mode and TABLES feature.
+
+    Supports multi-page PDFs by:
+    1. Uploading PDF to S3
+    2. Starting async Textract job with TABLES analysis
+    3. Polling for completion
+    4. Retrieving and combining all pages with table structure
+    5. Cleaning up S3 object
+
+    Requires:
+    - AWS credentials (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+    - S3 bucket (PINT_AWS_S3_BUCKET)
+    """
+
+    def __init__(self):
+        self.s3_bucket = settings.aws_s3_bucket
+        if not self.s3_bucket:
+            raise ValueError("PINT_AWS_S3_BUCKET is required for TextractAsyncParser")
+
+        self.s3_client = boto3.client(
+            "s3",
+            aws_access_key_id=settings.aws_access_key_id,
+            aws_secret_access_key=settings.aws_secret_access_key,
+            region_name=settings.aws_region,
+        )
+        self.textract_client = boto3.client(
+            "textract",
+            aws_access_key_id=settings.aws_access_key_id,
+            aws_secret_access_key=settings.aws_secret_access_key,
+            region_name=settings.aws_region,
+        )
+
+    async def parse_pdf(self, file_bytes: bytes) -> dict:
+        loop = asyncio.get_event_loop()
+
+        s3_key = f"textract-temp/{uuid.uuid4()}.pdf"
+
+        def _upload_to_s3():
+            self.s3_client.put_object(
+                Bucket=self.s3_bucket,
+                Key=s3_key,
+                Body=file_bytes,
+            )
+
+        def _start_textract_job():
+            response = self.textract_client.start_document_analysis(
+                DocumentLocation={
+                    "S3Object": {
+                        "Bucket": self.s3_bucket,
+                        "Name": s3_key,
+                    }
+                },
+                FeatureTypes=["TABLES"],
+            )
+            return response["JobId"]
+
+        def _get_job_status(job_id: str):
+            return self.textract_client.get_document_analysis(JobId=job_id)
+
+        def _cleanup_s3():
+            self.s3_client.delete_object(Bucket=self.s3_bucket, Key=s3_key)
+
+        # Upload to S3
+        await loop.run_in_executor(None, _upload_to_s3)
+
+        # Start async job with TABLES analysis
+        job_id = await loop.run_in_executor(None, _start_textract_job)
+
+        # Poll for completion
+        while True:
+            response = await loop.run_in_executor(None, _get_job_status, job_id)
+            status = response["JobStatus"]
+
+            if status == "SUCCEEDED":
+                break
+            elif status == "FAILED":
+                await loop.run_in_executor(None, _cleanup_s3)
+                raise Exception(f"Textract job failed: {response.get('StatusMessage', 'Unknown error')}")
+            elif status == "IN_PROGRESS":
+                await asyncio.sleep(2)
+            else:
+                await asyncio.sleep(1)
+
+        # Collect all blocks (handle pagination)
+        all_blocks = response.get("Blocks", [])
+        next_token = response.get("NextToken")
+
+        while next_token:
+            response = await loop.run_in_executor(
+                None,
+                lambda token=next_token: self.textract_client.get_document_analysis(
+                    JobId=job_id, NextToken=token
+                ),
+            )
+            all_blocks.extend(response.get("Blocks", []))
+            next_token = response.get("NextToken")
+
+        # Cleanup S3
+        await loop.run_in_executor(None, _cleanup_s3)
+
+        # Build block map for relationship lookup
+        block_map = {b["Id"]: b for b in all_blocks}
+
+        # Extract text organized by page
+        pages_dict: dict[int, list[str]] = {}
+
+        for block in all_blocks:
+            page_num = block.get("Page", 1)
+            if page_num not in pages_dict:
+                pages_dict[page_num] = []
+
+            if block["BlockType"] == "LINE":
+                pages_dict[page_num].append(block.get("Text", ""))
+
+            elif block["BlockType"] == "TABLE":
+                # Extract table as pipe-delimited format (LLM-friendly)
+                table_text = self._extract_table_text(block, block_map)
+                if table_text:
+                    pages_dict[page_num].append(table_text)
+
+        # Convert to list format
+        page_count = max(pages_dict.keys()) if pages_dict else 0
+        pages = []
+        for i in range(1, page_count + 1):
+            pages.append("\n".join(pages_dict.get(i, [])))
+
+        return {
+            "text": "\n\n".join(pages),
+            "pages": pages,
+            "page_count": page_count,
+        }
+
+    def _extract_table_text(self, table_block: dict, block_map: dict) -> str:
+        """Extract table content as pipe-delimited text."""
+        rows: dict[int, dict[int, str]] = {}
+
+        for rel in table_block.get("Relationships", []):
+            if rel["Type"] == "CHILD":
+                for cell_id in rel["Ids"]:
+                    cell = block_map.get(cell_id)
+                    if cell and cell["BlockType"] == "CELL":
+                        row_idx = cell.get("RowIndex", 0)
+                        col_idx = cell.get("ColumnIndex", 0)
+
+                        # Get cell text from child words
+                        cell_text = ""
+                        for cell_rel in cell.get("Relationships", []):
+                            if cell_rel["Type"] == "CHILD":
+                                for word_id in cell_rel["Ids"]:
+                                    word = block_map.get(word_id)
+                                    if word and word["BlockType"] == "WORD":
+                                        cell_text += word.get("Text", "") + " "
+
+                        if row_idx not in rows:
+                            rows[row_idx] = {}
+                        rows[row_idx][col_idx] = cell_text.strip()
+
+        if not rows:
+            return ""
+
+        # Build pipe-delimited output
+        lines = []
+        for row_idx in sorted(rows.keys()):
+            row = rows[row_idx]
+            cols = [row.get(c, "") for c in sorted(row.keys())]
+            lines.append(" | ".join(cols))
+
+        return "\n".join(lines)
+
+
 def get_pdf_parser() -> BasePDFParser:
     """
     Factory function to get the configured PDF parser.
 
-    Set PDF_PARSER env var to switch:
+    Set SOURCES_APP__PDF_PARSER env var to switch:
     - "pdfplumber" (default): Local parsing, handles multi-page PDFs
-    - "textract": AWS Textract (requires AWS credentials, single-page only for sync)
+    - "textract": AWS Textract sync (single-page only)
+    - "textract_async": AWS Textract with S3 async + TABLES (multi-page, better table extraction)
     """
     parser_type = getattr(settings, "pdf_parser", "pdfplumber")
 
-    if parser_type == "textract":
+    if parser_type == "textract_async":
+        return TextractAsyncParser()
+    elif parser_type == "textract":
         return TextractParser()
     else:
         return PdfPlumberParser()
