@@ -181,11 +181,12 @@ IMPORTANT:
 - Prefer specific metrics over vague narratives
 - If financial data is available, extract it as metrics or time_series
 - If there are categorical breakdowns (by type, by year, etc.), use breakdown type
+- LANGUAGE: The title and description MUST be in the same language as the source documents (detect it from the excerpts)
 
-Return a JSON array of artifact plans. Example:
+Return a JSON array of artifact plans. Example (if documents are in Italian):
 [
-  {{"title": "Annual Budget 2023", "type": "metric", "description": "Total budget allocation for 2023", "relevant_chunk_indices": [0, 2]}},
-  {{"title": "Revenue Sources", "type": "breakdown", "description": "Distribution of revenue by category", "relevant_chunk_indices": [1, 3, 4]}}
+  {{"title": "Budget Annuale 2023", "type": "metric", "description": "Stanziamento totale del bilancio per il 2023", "relevant_chunk_indices": [0, 2]}},
+  {{"title": "Fonti di Entrata", "type": "breakdown", "description": "Distribuzione delle entrate per categoria", "relevant_chunk_indices": [1, 3, 4]}}
 ]
 
 Return ONLY the JSON array, no other text."""
@@ -253,6 +254,8 @@ Source content:
 Format requirements:
 {format_instructions}
 
+IMPORTANT - LANGUAGE: All text content (labels, categories, narratives, etc.) MUST be in the same language as the source documents. Only use technical terms (like column headers: date, value, category, percentage) in their standard form.
+
 Return ONLY the artifact content in the specified format, no other text or explanation."""
 
         response = await self.model.ainvoke(prompt)
@@ -278,12 +281,12 @@ Return ONLY the artifact content in the specified format, no other text or expla
     def _get_format_instructions(self, artifact_type: ArtifactType) -> str:
         """Return format instructions for each artifact type."""
         formats = {
-            ArtifactType.METRIC: 'JSON object with keys: label (string), value (number), unit (string), year (optional integer), context (optional string). Example: {"label": "Annual Revenue", "value": 142000000, "unit": "EUR", "year": 2023}',
+            ArtifactType.METRIC: 'JSON object with keys: label (string, in source language), value (number), unit (string), year (optional integer), context (optional string, in source language). Example: {"label": "Entrate Annuali", "value": 142000000, "unit": "EUR", "year": 2023}',
             ArtifactType.TIME_SERIES: "CSV with header row. First column must be 'date' in ISO format (YYYY-MM-DD or YYYY). Additional columns for metric values. Example:\ndate,value\n2020,1000000\n2021,1200000\n2022,1500000",
-            ArtifactType.BREAKDOWN: "CSV with header row. Columns: category, value, percentage (optional). Example:\ncategory,value,percentage\nTransport,500000,45.5\nEducation,300000,27.3\nHealth,300000,27.2",
-            ArtifactType.PARAMETERS: "YAML format with key-value pairs, can be nested. Example:\nservice_hours:\n  weekday: '08:00-18:00'\n  weekend: '10:00-14:00'\nfleet_size: 150",
-            ArtifactType.NARRATIVE: "Markdown prose, 2-4 paragraphs. Be factual and cite specific numbers from the source content. No headers needed.",
-            ArtifactType.DATASET: "CSV with header row and any relevant columns extracted from the source.",
+            ArtifactType.BREAKDOWN: "CSV with header row. Columns: category (in source language), value, percentage (optional). Example:\ncategory,value,percentage\nTrasporti,500000,45.5\nIstruzione,300000,27.3\nSanità,300000,27.2",
+            ArtifactType.PARAMETERS: "YAML format with key-value pairs, can be nested. Keys and values in source language where applicable. Example:\norari_servizio:\n  feriale: '08:00-18:00'\n  festivo: '10:00-14:00'\nflotta: 150",
+            ArtifactType.NARRATIVE: "Markdown prose in source language, 2-4 paragraphs. Be factual and cite specific numbers from the source content. No headers needed.",
+            ArtifactType.DATASET: "CSV with header row. Column headers in source language where meaningful, data values as they appear in sources.",
         }
         return formats.get(artifact_type, "Plain text")
 
