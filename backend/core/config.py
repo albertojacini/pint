@@ -37,6 +37,13 @@ class Settings:
         # Jina Reader API (for URL extraction)
         self.jina_api_key: Optional[str] = os.getenv("JINA_API_KEY")
 
+        # Artifact Generation App Configuration (ARTIFACT_GENERATION_APP__ prefix)
+        self.artifact_generation_app__model: str = os.getenv("ARTIFACT_GENERATION_APP__MODEL", "claude-sonnet-4-5")
+        self.artifact_generation_app__temperature: float = float(os.getenv("ARTIFACT_GENERATION_APP__TEMPERATURE", "0"))
+        self.artifact_generation_app__max_tokens: int = int(os.getenv("ARTIFACT_GENERATION_APP__MAX_TOKENS", "4096"))
+        self.artifact_generation_app__chunk_limit: int = int(os.getenv("ARTIFACT_GENERATION_APP__CHUNK_LIMIT", "20"))
+        self.artifact_generation_app__similarity_threshold: float = float(os.getenv("ARTIFACT_GENERATION_APP__SIMILARITY_THRESHOLD", "0.3"))
+
         # Legacy alias (deprecated, use SOURCES_APP__PDF_PARSER)
         self.pdf_parser: str = self.sources_app__pdf_parser
 

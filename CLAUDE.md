@@ -31,6 +31,22 @@ IMPORTANT: This is an early stage project:
 - For structured output, use `model.with_structured_output(PydanticModel)`
 - For tool calling, use `model.bind_tools(tools)`
 
+## App Configuration
+**CRITICAL**:
+- All configurable parameters for apps in `/backend/apps/` MUST be defined in `backend/core/config.py`
+- Use environment variable prefix convention: `{APP_NAME}_APP__` (e.g., `SOURCES_APP__`, `ARTIFACT_GENERATION_APP__`)
+- Example:
+  ```python
+  # In core/config.py
+  self.my_app__model: str = os.getenv("MY_APP__MODEL", "claude-sonnet-4-5")
+  self.my_app__chunk_limit: int = int(os.getenv("MY_APP__CHUNK_LIMIT", "20"))
+
+  # In apps/my_app/services.py
+  from core.config import settings
+  chunk_limit = settings.my_app__chunk_limit
+  ```
+- NEVER hardcode configurable values (models, thresholds, limits) directly in app code
+
 ## Documentation Policy
 **CRITICAL**:
 - NEVER create documentation files (*.md, *.txt, or similar) unless explicitly requested by the user

@@ -7,6 +7,7 @@ from uuid import UUID
 
 from langchain_anthropic import ChatAnthropic
 
+from core.config import settings
 from core.db import db
 from apps.knowledge.models import ArtifactCreate, Artifact, ArtifactType
 from apps.knowledge.services import get_knowledge_service
@@ -24,14 +25,14 @@ class ArtifactGenerator:
 
     def __init__(self):
         self.model = ChatAnthropic(
-            model="claude-sonnet-4-5",
-            temperature=0,
-            max_tokens=4096,
+            model=settings.artifact_generation_app__model,
+            temperature=settings.artifact_generation_app__temperature,
+            max_tokens=settings.artifact_generation_app__max_tokens,
         )
         self.sources_service = SourcesService()
         self.knowledge_service = get_knowledge_service()
-        self.chunk_limit = 20
-        self.similarity_threshold = 0.3
+        self.chunk_limit = settings.artifact_generation_app__chunk_limit
+        self.similarity_threshold = settings.artifact_generation_app__similarity_threshold
 
     async def generate_for_provision(self, provision_id: UUID) -> list[Artifact]:
         """
