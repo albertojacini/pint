@@ -16,6 +16,21 @@ IMPORTANT: This is an early stage project:
 - Package installation: `uv add <package>` or `uv pip install <package>`
 - Run Python scripts: Always prepend with activation command
 
+## LLM Calls
+**CRITICAL**:
+- ALWAYS use LangChain wrappers for LLM calls (NEVER use direct API clients like `Anthropic` or `AsyncAnthropic`)
+- Use `ChatAnthropic` from `langchain_anthropic` for Claude models
+- Example pattern:
+  ```python
+  from langchain_anthropic import ChatAnthropic
+
+  model = ChatAnthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=2048)
+  response = await model.ainvoke(prompt)
+  content = response.content
+  ```
+- For structured output, use `model.with_structured_output(PydanticModel)`
+- For tool calling, use `model.bind_tools(tools)`
+
 ## Documentation Policy
 **CRITICAL**:
 - NEVER create documentation files (*.md, *.txt, or similar) unless explicitly requested by the user

@@ -5,9 +5,8 @@ import re
 from typing import Optional
 from uuid import UUID
 
-from anthropic import AsyncAnthropic
+from langchain_anthropic import ChatAnthropic
 
-from core.config import settings
 from core.db import db
 from apps.knowledge.models import ArtifactCreate, Artifact, ArtifactType
 from apps.knowledge.services import get_knowledge_service
@@ -24,7 +23,11 @@ class ArtifactGenerator:
     """Generates artifacts for a provision using RAG search and LLM extraction."""
 
     def __init__(self):
-        self.claude = AsyncAnthropic(api_key=settings.anthropic_api_key)
+        self.model = ChatAnthropic(
+            model="claude-sonnet-4-5",
+            temperature=0,
+            max_tokens=4096,
+        )
         self.sources_service = SourcesService()
         self.knowledge_service = get_knowledge_service()
         self.chunk_limit = 20
@@ -187,13 +190,8 @@ Return a JSON array of artifact plans. Example:
 
 Return ONLY the JSON array, no other text."""
 
-        response = await self.claude.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=2048,
-            messages=[{"role": "user", "content": prompt}],
-        )
-
-        response_text = response.content[0].text.strip()
+        response = await self.model.ainvoke(prompt)
+        response_text = response.content.strip()
         return self._parse_artifact_plans(response_text)
 
     def _parse_artifact_plans(self, response_text: str) -> list[ArtifactPlan]:
@@ -257,13 +255,8 @@ Format requirements:
 
 Return ONLY the artifact content in the specified format, no other text or explanation."""
 
-        response = await self.claude.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=4096,
-            messages=[{"role": "user", "content": prompt}],
-        )
-
-        content = response.content[0].text.strip()
+        response = await self.model.ainvoke(prompt)
+        content = response.content.strip()
 
         # Clean up content if wrapped in code blocks
         if "```" in content:

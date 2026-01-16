@@ -6,7 +6,7 @@ import re
 from typing import Optional, List
 from uuid import UUID
 
-from anthropic import AsyncAnthropic
+from langchain_anthropic import ChatAnthropic
 
 from core.config import settings
 from core.db import db
@@ -264,15 +264,15 @@ Example response:
 {{"document_category": "budget", "administrative_level": "municipal", "fiscal_year": 2024}}
 """
 
-        client = AsyncAnthropic(api_key=settings.anthropic_api_key)
-        response = await client.messages.create(
+        model = ChatAnthropic(
             model="claude-3-5-haiku-latest",
+            temperature=0,
             max_tokens=256,
-            messages=[{"role": "user", "content": prompt}],
         )
+        response = await model.ainvoke(prompt)
 
         # Parse the JSON response
-        response_text = response.content[0].text.strip()
+        response_text = response.content.strip()
         # Extract JSON from potential markdown code blocks
         if "```" in response_text:
             match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", response_text, re.DOTALL)
