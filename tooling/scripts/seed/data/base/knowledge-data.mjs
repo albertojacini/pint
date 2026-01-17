@@ -177,7 +177,7 @@ Public Acceptance: Initial controversy has given way to broad public support. Su
 
 Replicability: Area C has become an international case study in urban congestion pricing. Cities including Madrid, Brussels, and Barcelona have studied Milan's implementation when designing their own schemes. The technical infrastructure, particularly the automated enforcement system, has proven reliable and cost-effective, with operational costs representing only 12% of gross revenue.`,
     sourceDocuments: ['Area C Annual Report 2023'],
-    provisions: ['Area C Congestion Charge'],
+    provisions: ['Pedaggi urbani'],
   },
   {
     title: 'Area C Revenue Time Series',
@@ -199,7 +199,7 @@ Replicability: Area C has become an international case study in urban congestion
 2022,78000000,68600000,14200000,38900
 2023,85000000,74800000,14800000,40500`,
     sourceDocuments: ['Area C Annual Report 2023', 'Area C Regulation Amendment 2024'],
-    provisions: ['Area C Congestion Charge'],
+    provisions: ['Pedaggi urbani'],
   },
   {
     title: 'Area C Exemption Categories',
@@ -215,7 +215,7 @@ Motorcycles,280000,1.9,Motorcycles and scooters (exempt)
 Emergency Vehicles,85000,0.6,Police ambulances fire brigade
 Public Transport,65000,0.4,Buses trams official transit vehicles`,
     sourceDocuments: ['Area C Annual Report 2023'],
-    provisions: ['Area C Congestion Charge'],
+    provisions: ['Pedaggi urbani'],
   },
 ]
 

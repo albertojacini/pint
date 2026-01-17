@@ -77,75 +77,240 @@ export const provisions = [
   },
   {
     entity: 'Comune di Milano',
-    title: 'Area C Congestion Charge',
-    descriptionShort: 'Congestion charge in Milan historic center',
-    description: 'Daily access fee for entering Area C (historic center) during enforcement hours Monday-Friday 7:30-19:30. Exemptions apply to residents, electric vehicles, and specific categories.',
-    summary_md: 'Area C is a congestion charging zone covering Milan\'s historic center, operational since January 2012. The system requires drivers to pay a €7.50 daily fee to access the zone during enforcement hours (Monday-Friday 7:30-19:30, excluding public holidays). The charge aims to reduce traffic congestion, improve air quality, and encourage use of public transportation. Exemptions include residents within Area C, motorcycles and scooters, fully electric and hydrogen vehicles, vehicles for disabled persons, emergency vehicles, and public transport. The system uses automatic license plate recognition cameras at 43 entry gates. Revenues fund sustainable mobility initiatives, public transport improvements, and road maintenance. In 2023, Area C generated approximately €85 million in revenue while contributing to a 30% reduction in vehicle traffic within the zone and measurable improvements in air quality indicators.',
-    avatarUrl: './assets/avatars/provisions/area-c-congestion-charge.webp',
+    title: 'Pedaggi urbani',
+    descriptionShort: 'Zone a traffico limitato per ridurre inquinamento e congestione con pedaggi e restrizioni.',
+    description: 'Il Comune di Milano gestisce un sistema articolato di zone a traffico limitato (ZTL) composto da Area C (zona centrale a pagamento con ticket da 5€) e Area B (zona estesa di 128 km² con restrizioni ambientali gratuite). Area C opera tramite 43 varchi elettronici nella Cerchia dei Bastioni, mentre Area B copre il 72% del territorio comunale escludendo i veicoli più inquinanti. Il sistema, evoluzione di Ecopass (2008), mira a ridurre l\'inquinamento atmosferico e finanziare il trasporto pubblico, con restrizioni progressive fino al 2030. I risultati documentati mostrano riduzioni significative di PM10 (-50% in 4 anni) e NOx (-11% annuo dal 2023).',
+    summary_md: `# Sistema dei Pedaggi Urbani di Milano
+
+## Panoramica Generale
+
+Milano ha implementato un sistema articolato di zone a traffico limitato (ZTL) per ridurre l'inquinamento atmosferico, diminuire la congestione del traffico e finanziare il trasporto pubblico. Il sistema attuale si compone di due zone principali: **Area C** (zona centrale a pagamento) e **Area B** (zona estesa con restrizioni ambientali gratuite). Questi sistemi rappresentano l'evoluzione di **Ecopass**, il primo schema di pedaggio urbano introdotto nel 2008.
+
+## Area C - Zona a Traffico Limitato del Centro Storico
+
+### Caratteristiche Operative
+
+Area C è una zona a traffico limitato situata nella **Cerchia dei Bastioni** nel centro storico di Milano. Il sistema opera attraverso **43 varchi elettronici** dotati di telecamere che rilevano automaticamente le targhe dei veicoli in transito.
+
+**Orari di operatività:**
+- Attualmente: **lunedì-venerdì, dalle 7:30 alle 19:30** (esclusi i festivi)
+- **Novità importante**: dal **1° gennaio 2026** il sistema sarà esteso a **7 giorni su 7**, includendo sabato e domenica
+
+### Sistema Tariffario
+
+Area C richiede l'acquisto di un **ticket giornaliero** per l'accesso:
+- Tariffa standard: **5€** per tutti i veicoli ammessi
+- Tariffa agevolata per residenti: **2€** dopo i primi 40 accessi annuali
+- Sanzioni per mancato pagamento: fino a **332€**
+
+Il ticket può essere acquistato e attivato tramite il portale **MyAreaC** (areac.atm-mi.it), che richiede registrazione per gestire ticket, deroghe e agevolazioni. Esistono registrazioni differenziate per residenti, equiparati e aziende con veicoli di servizio.
+
+### Veicoli Esenti dal Pagamento
+
+Sono esentati dal pagamento del ticket:
+- Veicoli elettrici
+- Veicoli ibridi con emissioni CO2 inferiori a 100 g/km
+- Veicoli con contrassegno per disabili
+- Mezzi di soccorso e forze dell'ordine
+- Motocicli e ciclomotori
+
+### Nuove Restrizioni Ambientali (Ottobre 2025)
+
+Dal **1° ottobre 2025** sono entrati in vigore nuovi divieti di accesso per:
+- **Autoveicoli benzina Euro 3** (residenti, trasporto merci, taxi/NCC)
+- **Autobus benzina Euro III**
+
+Il divieto per motoveicoli e ciclomotori Euro 2-3 è stato **posticipato al 1° ottobre 2026**.
+
+### Agevolazioni e Deroghe
+
+Il sistema prevede numerose categorie di esenzioni e agevolazioni per:
+- Motivi di salute
+- Operatori socio-sanitari
+- Residenti ed equiparati
+- Imprese con veicoli di servizio
+- Veicoli storici
+- Trasporto farmaci urgenti
+- Trasporto merci nella fascia oraria 8:00-10:00
+
+## Area B - Zona a Basse Emissioni
+
+### Caratteristiche Operative
+
+**Area B** è la più grande zona a traffico limitato d'Italia, con un'estensione di **128 km²** che copre il **72% del territorio comunale** di Milano. A differenza di Area C, **non richiede alcun pagamento** per i veicoli ammessi, ma si basa su un sistema di **esclusione totale** per i veicoli più inquinanti.
+
+**Orari di operatività:**
+- **Lunedì-venerdì, dalle 7:30 alle 19:30** (esclusi i festivi)
+
+### Obiettivi Ambientali
+
+Area B nasce in risposta alla **procedura di infrazione europea** per il superamento dei limiti di PM10 e biossido d'azoto (NO2). Il sistema mira a intervenire sul **65% delle emissioni** da traffico veicolare.
+
+### Risultati Ambientali Documentati
+
+**Riduzione PM10:**
+- 2019: -14%
+- 2020: -24%
+- 2021: -21%
+- Primi 4 anni (2019-2022): -50% (15 tonnellate)
+- Riduzione complessiva 2019-2026: **25 tonnellate di PM10**
+
+**Riduzione NOx (ossidi di azoto):**
+- 2019-2022: -4%/-5% annuo
+- 2023-2026: -11% annuo
+- Riduzione complessiva: **900-1.500 tonnellate di ossidi di azoto**
+
+### Veicoli Soggetti a Divieto
+
+Sono vietati:
+- Veicoli più inquinanti secondo calendario progressivo
+- Veicoli per trasporto merci con lunghezza superiore a 12 metri
+- Veicoli che trasportano merci pericolose
+- Veicoli privi di sistemi di segnalazione dell'angolo cieco
+
+### Calendario dei Divieti Progressivi
+
+Il sistema prevede **scaglionamenti temporali progressivi** con restrizioni crescenti:
+
+**Divieti già in vigore:**
+- Autoveicoli diesel Euro 0-3
+- Autoveicoli benzina Euro 0-1
+
+**Dal 1° ottobre 2024:**
+- Veicoli Euro 2 benzina
+- Euro 5 diesel (categorie specifiche)
+
+**Dal 1° ottobre 2025:**
+- **Autoveicoli benzina Euro 3** (trasporto persone e merci)
+- **Autobus benzina Euro III**
+
+**Dal 1° ottobre 2026:**
+- Motoveicoli e ciclomotori Euro 2-3 (due tempi e diesel)
+- Euro 0-1-2 benzina (quattro tempi)
+
+**Dal 1° ottobre 2028:**
+- Euro 4 benzina
+- Euro 6 diesel A-B-C
+
+**Dal 1° ottobre 2030:**
+- Euro 6 diesel D
+- Euro VI per veicoli pesanti
+
+### Deroghe e Permessi
+
+**Deroghe base** disponibili per:
+- Residenti
+- Non residenti
+- Imprese
+
+**Agevolazioni speciali:**
+- **50 giornate di accesso gratuito** nel primo anno di entrata in vigore del divieto per ogni categoria di veicolo
+- Sistema **MoVe-In** regionale come alternativa, con soglie chilometriche aggiornate
+
+### Criteri Tecnici di Valutazione
+
+I divieti considerano:
+- Classe ambientale Euro (0-6 per veicoli leggeri, 0-VI per veicoli pesanti)
+- Presenza/assenza di **FAP (Filtro Anti Particolato)** di serie o after-market
+- Valori di emissione particolato (campo V.5 carta di circolazione)
+- Data di installazione FAP (soglia: 31/12/2018 o 30/04/2019)
+- Alimentazione (benzina, diesel, doppia alimentazione gasolio-GPL/metano)
+
+### Categorie Veicoli Regolamentate
+
+Il calendario distingue quattro categorie principali:
+1. **Autobus** (M2, M3)
+2. **Autoveicoli per trasporto cose** (N1, N2, N3 - leggeri e pesanti)
+3. **Autoveicoli per trasporto persone**
+4. **Autoveicoli per trasporto specifico e uso speciale**
+
+## Storia ed Evoluzione del Sistema
+
+### Ecopass (2008-2012)
+
+Il primo sistema di pedaggio urbano, **Ecopass**, entrò in vigore il **2 gennaio 2008** nella ZTL-Cerchia dei Bastioni (8,2 km²). Fu introdotto dalla giunta **Letizia Moratti** (centro-destra) dopo le elezioni del 2006, ispirandosi ai modelli di Londra e Stoccolma.
+
+**Caratteristiche Ecopass:**
+- Tariffe differenziate basate sulla classe di inquinamento: 2€, 5€, 10€
+- Esenzioni per veicoli Euro III-IV benzina, elettrici, ibridi, GPL/metano, moto
+- Risultati iniziali (febbraio 2008): riduzione traffico -22% e PM10 -30%
+
+**Controversie politiche:**
+Il provvedimento generò contestazioni interne alla maggioranza, con l'uscita dell'assessore alla salute e opposizioni di AN e Lega Nord. L'assessore al traffico **Edoardo Croci**, ideatore del progetto, fu rimosso nel 2009.
+
+### Transizione ad Area C (2012)
+
+Nel 2011, dopo la vittoria elettorale di **Giuliano Pisapia** (centro-sinistra), fu elaborato il nuovo sistema Area C, attivo dal **16 gennaio 2012** per 18 mesi di sperimentazione.
+
+**Innovazioni di Area C rispetto a Ecopass:**
+- Pedaggio uniforme di 5€ (invece di tariffe differenziate)
+- Divieto totale per veicoli più inquinanti (invece di tariffe maggiorate)
+- Entrate triplicate: **30 milioni €/anno** rispetto a Ecopass
+
+**Contenziosi legali:**
+Il Consiglio di Stato sospese temporaneamente Area C, che fu riattivata il **17 settembre 2012**. Numerosi ricorsi al Giudice di Pace (1.500 accolti su 2.000 nel 2010) per errori di rilevamento e irregolarità procedurali.
+
+## Altre Zone a Traffico Limitato
+
+### Quadrilatero della Moda
+
+Dal maggio 2025 è attiva una ZTL aggiuntiva nel **Quadrilatero della Moda** con restrizioni specifiche per questa zona di pregio.
+
+## Sistema di Controllo e Gestione
+
+### Infrastruttura Tecnologica
+
+- **Area C**: 43 varchi elettronici (36 per utenza privata, 7 riservati)
+- **Costo gestione annuale**: 6 milioni €
+- Rilevamento automatico targhe tramite telecamere
+
+### Strumenti di Verifica Online
+
+Il Comune di Milano fornisce portali dedicati per verificare l'ammissibilità dei veicoli:
+- **Area C**: portale areac.atm-mi.it (verifica immediata tramite targa)
+- **Area B**: portale areab.atm.it (accesso con SPID/CIE)
+
+### Soluzioni Tecnologiche per gli Utenti
+
+**UnipolMove** e altre app integrate permettono:
+- Acquisto ticket Area C
+- Pagamento strisce blu e parcheggi
+- Attivazione automatica in prossimità delle zone regolamentate
+
+## Impatto Economico e Finanziario
+
+- **Entrate annuali Area C**: circa 30 milioni € (triplo rispetto a Ecopass)
+- **Costi di gestione**: 6 milioni €/anno
+- **Destinazione fondi**: finanziamento del trasporto pubblico locale
+
+## Riferimenti Normativi
+
+Il sistema è regolato da:
+- Delibere di Giunta Comunale
+- Determine dirigenziali
+- Ordinanze comunali
+- Calendario dei divieti programmato fino al 2030
+
+## Conclusioni
+
+Il sistema dei pedaggi urbani di Milano rappresenta uno degli interventi più significativi in Italia per la gestione della mobilità urbana e la riduzione dell'inquinamento atmosferico. Con l'estensione di Area C a 7 giorni su 7 dal 2026 e il progressivo inasprimento delle restrizioni in Area B fino al 2030, Milano si conferma all'avanguardia nelle politiche di sostenibilità ambientale urbana. I risultati documentati mostrano riduzioni significative di PM10 (-50% in 4 anni) e NOx, confermando l'efficacia del sistema nel migliorare la qualità dell'aria.`,
+    avatarUrl: './assets/avatars/provisions/comune-di-milano-areac.png',
     types: ['taxation'],
     status: 'active',
-    relevance: 10,
+    relevance: 9,
     idea: 'Urban congestion charge',
     displayData: {
       items: [
-        { label: 'Daily Fee', value: '€7.50' },
-        { label: 'Annual Revenue', value: '€85M' },
-        { label: 'Operational Since', value: '2012' },
-        { label: 'Traffic Reduction', value: '30%' },
+        { label: 'Estensione Area B', value: '128 km²' },
+        { label: 'Tariffa Area C', value: '€5' },
+        { label: 'Entrate Annuali', value: '€30M' },
+        { label: 'Riduzione PM10 (4 anni)', value: '-50%' },
+        { label: 'Varchi Elettronici', value: '43' },
       ],
     },
     displayChanges: {
       items: [
-        { label: 'Annual enforcement statistics published', timestamp: '2025-01-09T08:00:00Z' },
-        { label: 'Camera maintenance at Porta Venezia gate', timestamp: '2025-01-16T10:00:00Z' },
-        { label: 'Visitor information campaign launched', timestamp: '2025-01-23T14:30:00Z' },
-        { label: 'Monthly revenue report: €7.2M', timestamp: '2025-01-30T09:00:00Z' },
-        { label: 'Exemption policy clarification published', timestamp: '2025-02-06T11:00:00Z' },
-        { label: 'Fee increased to €8.00 for 2025', timestamp: '2025-02-13T15:00:00Z' },
-        { label: 'Payment portal system upgrade', timestamp: '2025-02-20T10:30:00Z' },
-        { label: 'New signage installed at all entry points', timestamp: '2025-02-27T13:00:00Z' },
-        { label: 'Resident permit renewal period begins', timestamp: '2025-03-06T09:30:00Z' },
-        { label: 'Enforcement hours extended to 20:00', timestamp: '2025-03-13T14:00:00Z' },
-        { label: 'Mobile app payment feature enhanced', timestamp: '2025-03-20T11:00:00Z' },
-        { label: 'Traffic reduction metrics: 32% decrease', timestamp: '2025-03-27T16:00:00Z' },
-        { label: 'Air quality report shows improvement', timestamp: '2025-04-03T10:00:00Z' },
-        { label: 'Camera upgrade at Porta Romana', timestamp: '2025-04-10T13:30:00Z' },
-        { label: 'Exemption for car-sharing vehicles reviewed', timestamp: '2025-04-17T09:00:00Z' },
-        { label: 'Public consultation on zone expansion begins', timestamp: '2025-04-24T15:00:00Z' },
-        { label: 'Monthly revenue report: €7.8M', timestamp: '2025-05-01T11:30:00Z' },
-        { label: 'New payment deadline grace period introduced', timestamp: '2025-05-08T14:00:00Z' },
-        { label: 'Integration with parking payment system', timestamp: '2025-05-15T10:00:00Z' },
-        { label: 'Weekend enforcement hours extended', timestamp: '2025-05-22T16:30:00Z' },
-        { label: 'Penalty reduction for early payment launched', timestamp: '2025-05-29T09:00:00Z' },
-        { label: 'Camera network expansion announced', timestamp: '2025-06-05T13:00:00Z' },
-        { label: 'Exemption database system updated', timestamp: '2025-06-12T11:00:00Z' },
-        { label: 'Summer traffic monitoring begins', timestamp: '2025-06-19T14:30:00Z' },
-        { label: 'Revenue allocation report published', timestamp: '2025-06-26T10:00:00Z' },
-        { label: 'Tourist information materials updated', timestamp: '2025-07-03T15:00:00Z' },
-        { label: 'Camera maintenance schedule adjusted', timestamp: '2025-07-10T09:30:00Z' },
-        { label: 'Compliance rate reaches 94%', timestamp: '2025-07-17T13:00:00Z' },
-        { label: 'New entry gate activated at Porta Ticinese', timestamp: '2025-07-24T11:00:00Z' },
-        { label: 'Monthly revenue report: €8.1M', timestamp: '2025-07-31T14:00:00Z' },
-        { label: 'Enforcement staff training program', timestamp: '2025-08-07T10:00:00Z' },
-        { label: 'Electric vehicle registrations increase 15%', timestamp: '2025-08-14T16:00:00Z' },
-        { label: 'Payment reminder system upgraded', timestamp: '2025-08-21T09:00:00Z' },
-        { label: 'Zone boundary review initiated', timestamp: '2025-08-28T13:30:00Z' },
-        { label: 'Back-to-school traffic monitoring', timestamp: '2025-09-04T11:00:00Z' },
-        { label: 'Additional entry gates activated', timestamp: '2025-09-11T14:00:00Z' },
-        { label: 'Annual environmental impact assessment', timestamp: '2025-09-18T10:30:00Z' },
-        { label: 'Resident feedback survey launched', timestamp: '2025-09-25T15:00:00Z' },
-        { label: 'Fall enforcement adjustments', timestamp: '2025-10-02T09:00:00Z' },
-        { label: 'Camera system AI enhancement deployed', timestamp: '2025-10-09T13:00:00Z' },
-        { label: 'Multi-day pass option introduced', timestamp: '2025-10-16T11:30:00Z' },
-        { label: 'Revenue reinvestment plan announced', timestamp: '2025-10-23T14:00:00Z' },
-        { label: 'Monthly revenue report: €8.5M', timestamp: '2025-10-30T10:00:00Z' },
-        { label: 'Winter enforcement preparations', timestamp: '2025-11-06T16:00:00Z' },
-        { label: 'Exemption appeal process streamlined', timestamp: '2025-11-13T09:30:00Z' },
-        { label: 'Public transport integration incentives', timestamp: '2025-11-20T13:00:00Z' },
-        { label: 'Holiday enforcement schedule published', timestamp: '2025-11-27T11:00:00Z' },
-        { label: 'Hybrid vehicle exemption removed', timestamp: '2025-12-04T14:30:00Z' },
-        { label: 'Year-end compliance report: 95% rate', timestamp: '2025-12-11T10:00:00Z' },
-        { label: 'Annual revenue reaches €95M', timestamp: '2025-12-18T15:00:00Z' },
+        { label: 'Area C extended to weekends - now active 7 days/week (7:30-19:30)', timestamp: '2026' },
       ],
     },
   },
