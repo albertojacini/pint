@@ -15,7 +15,31 @@ TEMP_DIR = Path(__file__).parent.parent.parent / "TEMP"
 
 # Map filenames to metadata for better classification
 PDF_METADATA = {
-    "bilancio-consolidato-2024.pdf": {
+    "02 Relazione sulla Gestione  2022.pdf": {
+        "title": "Relazione sulla Gestione 2022 - Comune di Milano",
+        "fiscal_year": 2022,
+        "document_category": "budget",
+        "administrative_level": "municipal",
+    },
+    "02 Relazione sulla gestione 2023.pdf": {
+        "title": "Relazione sulla Gestione 2023 - Comune di Milano",
+        "fiscal_year": 2023,
+        "document_category": "budget",
+        "administrative_level": "municipal",
+    },
+    "02_Relazione_sulla_gestione_2024_-_Modificato.pdf": {
+        "title": "Relazione sulla Gestione 2024 - Comune di Milano",
+        "fiscal_year": 2024,
+        "document_category": "budget",
+        "administrative_level": "municipal",
+    },
+    "Bilancio Consolidato 2023 Comune di Milano.pdf": {
+        "title": "Bilancio Consolidato 2023 - Comune di Milano",
+        "fiscal_year": 2023,
+        "document_category": "budget",
+        "administrative_level": "municipal",
+    },
+    "Bilancio Consolidato 2024 Comune di Milano.pdf": {
         "title": "Bilancio Consolidato 2024 - Comune di Milano",
         "fiscal_year": 2024,
         "document_category": "budget",
@@ -23,30 +47,6 @@ PDF_METADATA = {
     },
     "Bilancio consolidato Comune di Milano per esercizio 2022.pdf": {
         "title": "Bilancio Consolidato 2022 - Comune di Milano",
-        "fiscal_year": 2022,
-        "document_category": "budget",
-        "administrative_level": "municipal",
-    },
-    "Bilancio Consolidato 2024 Comune di Milano.pdf": {
-        "title": "Bilancio Consolidato 2024 - Comune di Milano (Dettaglio)",
-        "fiscal_year": 2024,
-        "document_category": "budget",
-        "administrative_level": "municipal",
-    },
-    "01 Rendiconto 2024.pdf": {
-        "title": "Rendiconto 2024 - Comune di Milano",
-        "fiscal_year": 2024,
-        "document_category": "budget",
-        "administrative_level": "municipal",
-    },
-    "01 Rendiconto 2023.pdf": {
-        "title": "Rendiconto 2023 - Comune di Milano",
-        "fiscal_year": 2023,
-        "document_category": "budget",
-        "administrative_level": "municipal",
-    },
-    "Rendiconto 2022.pdf": {
-        "title": "Rendiconto 2022 - Comune di Milano",
         "fiscal_year": 2022,
         "document_category": "budget",
         "administrative_level": "municipal",

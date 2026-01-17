@@ -28,22 +28,38 @@ async def get_provisions_for_entity(entity_slug: str) -> list[dict]:
         return [dict(row) for row in rows]
 
 
+async def get_provision_by_slug(slug: str) -> dict | None:
+    """Get a provision by slug."""
+    async with db.pool.acquire() as conn:
+        row = await conn.fetchrow(
+            """
+            SELECT p.id, p.title, p.slug
+            FROM gov_provisions p
+            WHERE p.slug = $1
+            """,
+            slug,
+        )
+        return dict(row) if row else None
+
+
 async def main():
     """Generate artifacts for all provisions of an entity."""
-    # Default to Milan
-    entity_slug = "comune-di-milano"
+    # Hardcoded to ATM provision only for testing
+    ATM_PROVISION_SLUG = "atm-ownership-stake"
 
-    # Allow override from command line
-    if len(sys.argv) > 1:
-        entity_slug = sys.argv[1]
-
-    print(f"Generating artifacts for entity: {entity_slug}")
+    print("Generating artifacts for ATM Ownership Stake provision")
     print("=" * 60)
 
     await db.connect()
 
-    # Get all provisions for entity
-    provisions = await get_provisions_for_entity(entity_slug)
+    # Get ATM provision by slug
+    provision = await get_provision_by_slug(ATM_PROVISION_SLUG)
+    if not provision:
+        print(f"Provision '{ATM_PROVISION_SLUG}' not found")
+        await db.close()
+        return
+
+    provisions = [provision]
     print(f"Found {len(provisions)} provisions\n")
 
     if not provisions:
