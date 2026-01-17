@@ -9,12 +9,22 @@ from pydantic import BaseModel
 
 
 class ArtifactType(str, Enum):
-    TIME_SERIES = "time_series"
-    BREAKDOWN = "breakdown"
-    PARAMETERS = "parameters"
-    NARRATIVE = "narrative"
-    DATASET = "dataset"
-    METRIC = "metric"
+    """Artifact types - each should pass the "printability test":
+    Would this data make a meaningful table or diagram in a report?
+    """
+    EVOLUTION = "evolution"        # Time series → line/area chart
+    DISTRIBUTION = "distribution"  # Categorical breakdown → bar/pie chart
+    TABLE = "table"                # Multi-dimensional data → data table
+    PARAMETERS = "parameters"      # Config/rules/thresholds → structured table
+    NARRATIVE = "narrative"        # Qualitative summary → text block
+
+
+class ArtifactState(str, Enum):
+    """Tracks completeness of artifact data."""
+    DRAFT = "draft"        # Extracted but needs validation
+    PARTIAL = "partial"    # Has meaningful content but known gaps
+    COMPLETE = "complete"  # Fully populated with available data
+    STALE = "stale"        # May be outdated, needs refresh
 
 
 class ArtifactBase(BaseModel):
@@ -22,6 +32,8 @@ class ArtifactBase(BaseModel):
     description: Optional[str] = None
     artifact_type: ArtifactType
     content: Optional[str] = None
+    state: ArtifactState = ArtifactState.DRAFT
+    state_notes: Optional[str] = None
 
 
 class ArtifactCreate(ArtifactBase):

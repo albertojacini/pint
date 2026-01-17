@@ -9,7 +9,7 @@ from langchain_anthropic import ChatAnthropic
 
 from core.config import settings
 from core.db import db
-from apps.knowledge.models import ArtifactCreate, Artifact, ArtifactType
+from apps.knowledge.models import ArtifactCreate, Artifact, ArtifactType, ArtifactState
 from apps.knowledge.services import get_knowledge_service
 from apps.sources.services import SourcesService
 from apps.artifact_generation.models import (
@@ -163,31 +163,52 @@ Entity: {provision.entity_name}
 Document excerpts:
 {chunks_text}
 
-Based on available information, plan which artifacts should be extracted.
-Artifact types available:
-- metric: Single quantifiable fact (JSON format: {{"label": "...", "value": ..., "unit": "...", "year": ...}})
-- time_series: Historical data over time (CSV format with date column)
-- breakdown: Distribution by category (CSV format with category, value, percentage columns)
-- parameters: Configuration/specifications (YAML format)
-- narrative: Qualitative analysis (Markdown prose, 2-4 paragraphs)
+Your task is to identify STRUCTURED FACTS that can be extracted as artifacts.
+
+== WHAT IS AN ARTIFACT? ==
+An artifact is a structured fact that would make a meaningful TABLE or DIAGRAM in a printed report.
+- It describes REALITY (actual data, facts), not policy intent
+- It must have enough structure to visualize (not just a single number)
+- Examples: pricing schemas, time series of entries, budget breakdowns by category
+
+== ARTIFACT TYPES ==
+- evolution: How something changed over time (CSV with date column) → renders as line/area chart
+- distribution: How something is divided across categories (CSV) → renders as bar/pie chart
+- table: Multi-dimensional structured data (CSV with multiple columns) → renders as data table
+- parameters: Configuration/rules/thresholds (YAML) → renders as structured table
+- narrative: Qualitative summary of facts (Markdown prose) → renders as text block
+
+== PRINTABILITY TEST ==
+Before planning an artifact, ask: "Would this make a good table or chart in a report?"
+✓ GOOD: "Tariffe Area C per Categoria Veicolo" (table with vehicle types × fees × restrictions)
+✓ GOOD: "Ingressi per Anno" (time series suitable for line chart)
+✓ GOOD: "Composizione Spesa per Categoria" (breakdown suitable for pie chart)
+✗ BAD: "Budget totale: €142M" (just a number, not structured enough)
+✗ BAD: "Overview of the policy" (too vague, not factual data)
+
+== QUANTITY GUIDELINES ==
+- Plan 2-3 artifacts for typical provisions (the essential facts)
+- Maximum 10 artifacts even for complex provisions
+- Quality over quantity - only plan if it passes the printability test
+
+== STATE TRACKING ==
+For each artifact, assess data completeness:
+- complete: All data available in the sources
+- partial: Data available but with gaps (missing years, incomplete categories)
+- draft: Data found but may need validation or has conflicting sources
 
 For each artifact, specify:
-- title: descriptive name
-- type: one of metric, time_series, breakdown, parameters, narrative
-- description: what this artifact captures
-- relevant_chunk_indices: list of chunk indices (0-based) to use for extraction
+- title: descriptive name (in source language)
+- type: one of evolution, distribution, table, parameters, narrative
+- description: what factual data this captures (in source language)
+- relevant_chunk_indices: list of chunk indices (0-based) to use
+- expected_state: complete, partial, or draft
+- state_notes: if partial/draft, explain what's missing or uncertain (in source language)
 
-IMPORTANT:
-- Only plan artifacts for which there is sufficient source data in the excerpts
-- Prefer specific metrics over vague narratives
-- If financial data is available, extract it as metrics or time_series
-- If there are categorical breakdowns (by type, by year, etc.), use breakdown type
-- LANGUAGE: The title and description MUST be in the same language as the source documents (detect it from the excerpts)
-
-Return a JSON array of artifact plans. Example (if documents are in Italian):
+Return a JSON array. Example (if documents are in Italian):
 [
-  {{"title": "Budget Annuale 2023", "type": "metric", "description": "Stanziamento totale del bilancio per il 2023", "relevant_chunk_indices": [0, 2]}},
-  {{"title": "Fonti di Entrata", "type": "breakdown", "description": "Distribuzione delle entrate per categoria", "relevant_chunk_indices": [1, 3, 4]}}
+  {{"title": "Tariffe per Categoria Veicolo", "type": "table", "description": "Schema tariffario con categoria veicolo, tariffa e restrizioni", "relevant_chunk_indices": [0, 2], "expected_state": "complete", "state_notes": null}},
+  {{"title": "Ingressi Annuali", "type": "evolution", "description": "Serie storica degli ingressi in Area C", "relevant_chunk_indices": [1, 3], "expected_state": "partial", "state_notes": "Dati 2020-2021 anomali per COVID"}}
 ]
 
 Return ONLY the JSON array, no other text."""
@@ -214,12 +235,21 @@ Return ONLY the JSON array, no other text."""
         for plan_data in plans_data:
             try:
                 artifact_type = ArtifactType(plan_data["type"])
+                # Parse state, defaulting to draft
+                expected_state = ArtifactState.DRAFT
+                if "expected_state" in plan_data:
+                    try:
+                        expected_state = ArtifactState(plan_data["expected_state"])
+                    except ValueError:
+                        pass
                 plans.append(
                     ArtifactPlan(
                         title=plan_data["title"],
                         artifact_type=artifact_type,
                         description=plan_data["description"],
                         relevant_chunk_indices=plan_data["relevant_chunk_indices"],
+                        expected_state=expected_state,
+                        state_notes=plan_data.get("state_notes"),
                     )
                 )
             except (KeyError, ValueError) as e:
@@ -277,17 +307,62 @@ Return ONLY the artifact content in the specified format, no other text or expla
             artifact_type=plan.artifact_type,
             content=content,
             source_document_ids=source_doc_ids,
+            state=plan.expected_state,
+            state_notes=plan.state_notes,
         )
 
     def _get_format_instructions(self, artifact_type: ArtifactType) -> str:
         """Return format instructions for each artifact type."""
         formats = {
-            ArtifactType.METRIC: 'JSON object with keys: label (string, in source language), value (number), unit (string), year (optional integer), context (optional string, in source language). Example: {"label": "Entrate Annuali", "value": 142000000, "unit": "EUR", "year": 2023}',
-            ArtifactType.TIME_SERIES: "CSV with header row. First column must be 'date' in ISO format (YYYY-MM-DD or YYYY). Additional columns for metric values. Example:\ndate,value\n2020,1000000\n2021,1200000\n2022,1500000",
-            ArtifactType.BREAKDOWN: "CSV with header row. Columns: category (in source language), value, percentage (optional). Example:\ncategory,value,percentage\nTrasporti,500000,45.5\nIstruzione,300000,27.3\nSanità,300000,27.2",
-            ArtifactType.PARAMETERS: "YAML format with key-value pairs, can be nested. Keys and values in source language where applicable. Example:\norari_servizio:\n  feriale: '08:00-18:00'\n  festivo: '10:00-14:00'\nflotta: 150",
-            ArtifactType.NARRATIVE: "Markdown prose in source language, 2-4 paragraphs. Be factual and cite specific numbers from the source content. No headers needed.",
-            ArtifactType.DATASET: "CSV with header row. Column headers in source language where meaningful, data values as they appear in sources.",
+            ArtifactType.EVOLUTION: """CSV with header row. First column must be 'date' (YYYY or YYYY-MM-DD format).
+Additional columns for the metric(s) being tracked over time.
+If data is missing for certain periods, include the row with empty values to show the gap.
+Example:
+date,ingressi,ricavi_eur
+2018,45000000,28000000
+2019,42000000,26000000
+2020,,
+2021,,
+2022,38000000,24000000
+2023,40000000,25000000""",
+
+            ArtifactType.DISTRIBUTION: """CSV with header row. Columns: category (in source language), value, percentage (optional).
+Categories should be mutually exclusive and cover the full breakdown.
+Example:
+categoria,valore,percentuale
+Trasporto pubblico,500000000,45.5
+Manutenzione strade,300000000,27.3
+Verde urbano,150000000,13.6
+Altro,150000000,13.6""",
+
+            ArtifactType.TABLE: """CSV with header row. Multiple columns representing different dimensions.
+Use for structured data with 2+ dimensions (e.g., category × attributes, or time × category).
+Example (pricing schema):
+categoria_veicolo,tariffa_eur,orario,esenzioni
+Euro 6 benzina,5.00,07:30-19:30,residenti -40%
+Euro 5 diesel,7.50,07:30-19:30,nessuna
+Elettrico,0.00,sempre,esente
+Ibrido plug-in,2.50,07:30-19:30,residenti -40%""",
+
+            ArtifactType.PARAMETERS: """YAML format with key-value pairs, can be nested.
+Use for configuration, rules, thresholds, eligibility criteria.
+Keys and values in source language where applicable.
+Example:
+orari:
+  feriale: '07:30-19:30'
+  festivo: chiuso
+tariffe:
+  base: 5.00
+  ridotta: 2.50
+requisiti_esenzione:
+  residenti: true
+  disabili: true
+  veicoli_servizio: true""",
+
+            ArtifactType.NARRATIVE: """Markdown prose in source language, 2-4 paragraphs.
+Summarize factual findings from the sources. Be specific and cite numbers.
+Do not describe policy intent - describe what the data shows.
+No headers needed, just flowing paragraphs.""",
         }
         return formats.get(artifact_type, "Plain text")
 
@@ -315,6 +390,8 @@ Return ONLY the artifact content in the specified format, no other text or expla
                     description=artifact.description,
                     artifact_type=artifact.artifact_type,
                     content=artifact.content,
+                    state=artifact.state,
+                    state_notes=artifact.state_notes,
                 )
             )
 

@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from apps.knowledge.models import ArtifactType
+from apps.knowledge.models import ArtifactType, ArtifactState
 
 
 class ProvisionContext(BaseModel):
@@ -44,6 +44,8 @@ class ArtifactPlan(BaseModel):
     artifact_type: ArtifactType
     description: str
     relevant_chunk_indices: list[int]
+    expected_state: ArtifactState = ArtifactState.DRAFT
+    state_notes: Optional[str] = None
 
 
 class ExtractedArtifact(BaseModel):
@@ -54,3 +56,5 @@ class ExtractedArtifact(BaseModel):
     artifact_type: ArtifactType
     content: str
     source_document_ids: list[str]
+    state: ArtifactState = ArtifactState.DRAFT
+    state_notes: Optional[str] = None

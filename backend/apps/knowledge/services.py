@@ -27,14 +27,16 @@ class KnowledgeService:
         async with db.pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
-                INSERT INTO kno_artifacts (title, description, artifact_type, content)
-                VALUES ($1, $2, $3, $4)
+                INSERT INTO kno_artifacts (title, description, artifact_type, content, state, state_notes)
+                VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING *
                 """,
                 artifact.title,
                 artifact.description,
                 artifact.artifact_type.value,
                 artifact.content,
+                artifact.state.value,
+                artifact.state_notes,
             )
             return Artifact(**dict(row))
 
