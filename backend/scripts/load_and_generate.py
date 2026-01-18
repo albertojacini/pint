@@ -13,6 +13,12 @@ from pathlib import Path
 # Add backend to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+
+def log(msg: str):
+    """Print with immediate flush."""
+    print(msg, flush=True)
+
+
 from core.db import db
 from apps.sources.services import SourcesService
 from apps.artifact_generation.services import ArtifactGenerator
@@ -61,55 +67,55 @@ PDF_METADATA = {
 }
 
 # Hardcoded provision for testing
-TARGET_PROVISION_SLUG = "atm-ownership-stake"
+TARGET_PROVISION_SLUG = "pedaggi-urbani"
 
 
 async def cleanup_seed_data():
     """Remove all existing artifacts and documents (seed data)."""
-    print("\n" + "=" * 60)
-    print("STEP 1: Cleaning up seed data")
-    print("=" * 60)
+    log("\n" + "=" * 60)
+    log("STEP 1: Cleaning up seed data")
+    log("=" * 60)
 
     async with db.pool.acquire() as conn:
         # Delete artifact sources (links artifacts to documents)
         r1 = await conn.execute("DELETE FROM kno_artifact_sources")
-        print(f"  Deleted artifact sources: {r1.split()[-1]} rows")
+        log(f"  Deleted artifact sources: {r1.split()[-1]} rows")
 
         # Delete provision-artifact links
         r2 = await conn.execute("DELETE FROM gov_provision_artifacts")
-        print(f"  Deleted provision-artifact links: {r2.split()[-1]} rows")
+        log(f"  Deleted provision-artifact links: {r2.split()[-1]} rows")
 
         # Delete artifacts
         r3 = await conn.execute("DELETE FROM kno_artifacts")
-        print(f"  Deleted artifacts: {r3.split()[-1]} rows")
+        log(f"  Deleted artifacts: {r3.split()[-1]} rows")
 
         # Delete document chunks
         r4 = await conn.execute("DELETE FROM sou_document_chunks")
-        print(f"  Deleted document chunks: {r4.split()[-1]} rows")
+        log(f"  Deleted document chunks: {r4.split()[-1]} rows")
 
         # Delete documents
         r5 = await conn.execute("DELETE FROM sou_documents")
-        print(f"  Deleted documents: {r5.split()[-1]} rows")
+        log(f"  Deleted documents: {r5.split()[-1]} rows")
 
-    print("  Done!")
+    log("  Done!")
 
 
 async def load_pdfs():
     """Load all PDFs from TEMP directory."""
-    print("\n" + "=" * 60)
-    print("STEP 2: Loading PDFs from TEMP")
-    print("=" * 60)
+    log("\n" + "=" * 60)
+    log("STEP 2: Loading PDFs from TEMP")
+    log("=" * 60)
 
     if not TEMP_DIR.exists():
-        print(f"  Error: TEMP directory not found at {TEMP_DIR}")
+        log(f"  Error: TEMP directory not found at {TEMP_DIR}")
         return
 
     pdf_files = list(TEMP_DIR.glob("*.pdf"))
     if not pdf_files:
-        print("  No PDF files found")
+        log("  No PDF files found")
         return
 
-    print(f"  Found {len(pdf_files)} PDF files")
+    log(f"  Found {len(pdf_files)} PDF files")
 
     service = SourcesService()
 
@@ -117,36 +123,41 @@ async def load_pdfs():
     publisher = await service.find_publisher_by_url("https://www.comune.milano.it")
     if publisher:
         publisher_id = publisher.id
-        print(f"  Using publisher: {publisher.name}")
+        log(f"  Using publisher: {publisher.name}")
     else:
         publisher_id = await service.get_unknown_publisher_id()
-        print(f"  Using Unknown Publisher")
+        log(f"  Using Unknown Publisher")
 
-    for pdf_path in pdf_files:
-        print(f"\n  Processing: {pdf_path.name}")
+    for i, pdf_path in enumerate(pdf_files, 1):
+        log(f"\n  [{i}/{len(pdf_files)}] Processing: {pdf_path.name}")
 
         metadata = PDF_METADATA.get(pdf_path.name, {})
         title = metadata.get("title", pdf_path.stem)
 
+        log(f"    Reading file...")
         with open(pdf_path, "rb") as f:
             file_bytes = f.read()
 
-        print(f"    Size: {len(file_bytes):,} bytes")
+        log(f"    Size: {len(file_bytes):,} bytes")
+        log(f"    Starting PDF processing (parse, chunk, embed)...")
 
-        doc = await service.process_pdf_upload(
-            file_bytes=file_bytes,
-            filename=pdf_path.name,
-            title=title,
-            publisher_id=publisher_id,
-            document_category=metadata.get("document_category"),
-            administrative_level=metadata.get("administrative_level"),
-            fiscal_year=metadata.get("fiscal_year"),
-        )
-        print(f"    Created: {doc.id}")
-        print(f"    Chunks: {doc.chunk_count}")
-        print(f"    Status: {doc.embedding_status}")
+        try:
+            doc = await service.process_pdf_upload(
+                file_bytes=file_bytes,
+                filename=pdf_path.name,
+                title=title,
+                publisher_id=publisher_id,
+                document_category=metadata.get("document_category"),
+                administrative_level=metadata.get("administrative_level"),
+                fiscal_year=metadata.get("fiscal_year"),
+            )
+            log(f"    Created: {doc.id}")
+            log(f"    Chunks: {doc.chunk_count}")
+            log(f"    Status: {doc.embedding_status}")
+        except Exception as e:
+            log(f"    ERROR: {e}")
 
-    print("\n  PDF loading complete!")
+    log("\n  PDF loading complete!")
 
 
 async def get_provision_by_slug(slug: str) -> dict | None:
@@ -161,31 +172,39 @@ async def get_provision_by_slug(slug: str) -> dict | None:
 
 async def generate_artifacts():
     """Generate artifacts for the target provision."""
-    print("\n" + "=" * 60)
-    print("STEP 3: Generating artifacts")
-    print("=" * 60)
+    log("\n" + "=" * 60)
+    log("STEP 3: Generating artifacts")
+    log("=" * 60)
 
     provision = await get_provision_by_slug(TARGET_PROVISION_SLUG)
     if not provision:
-        print(f"  Error: Provision '{TARGET_PROVISION_SLUG}' not found")
+        log(f"  Error: Provision '{TARGET_PROVISION_SLUG}' not found")
         return
 
-    print(f"  Provision: {provision['title']}")
+    log(f"  Provision: {provision['title']}")
 
+    log(f"  Initializing artifact generator...")
     generator = ArtifactGenerator()
-    artifacts = await generator.generate_for_provision(provision["id"])
 
-    print(f"\n  Generated {len(artifacts)} artifacts:")
-    for a in artifacts:
-        print(f"    - {a.title} ({a.artifact_type})")
+    log(f"  Starting artifact generation...")
+    try:
+        artifacts = await generator.generate_for_provision(provision["id"])
+        log(f"\n  Generated {len(artifacts)} artifacts:")
+        for a in artifacts:
+            log(f"    - {a.title} ({a.artifact_type})")
+    except Exception as e:
+        log(f"  ERROR during generation: {e}")
+        import traceback
+        traceback.print_exc()
+        artifacts = []
 
-    print("\n  Artifact generation complete!")
+    log("\n  Artifact generation complete!")
 
 
 async def main():
-    print("=" * 60)
-    print("LOAD AND GENERATE ARTIFACTS")
-    print("=" * 60)
+    log("=" * 60)
+    log("LOAD AND GENERATE ARTIFACTS")
+    log("=" * 60)
 
     await db.connect()
 
@@ -195,9 +214,9 @@ async def main():
 
     await db.close()
 
-    print("\n" + "=" * 60)
-    print("ALL DONE!")
-    print("=" * 60)
+    log("\n" + "=" * 60)
+    log("ALL DONE!")
+    log("=" * 60)
 
 
 if __name__ == "__main__":
