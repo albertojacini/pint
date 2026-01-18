@@ -55,10 +55,12 @@ function getScoreColor(score: number | null): string {
 function getArtifactTypeIcon(type: string): string {
   const icons: Record<string, string> = {
     time_series: '📈',
+    evolution: '📈',
     breakdown: '📊',
     parameters: '⚙️',
     narrative: '📝',
     dataset: '📋',
+    table: '📋',
   }
   return icons[type] || '📄'
 }
@@ -67,10 +69,12 @@ function getArtifactTypeIcon(type: string): string {
 function getArtifactTypeLabel(type: string): string {
   const labels: Record<string, string> = {
     time_series: 'Time Series',
+    evolution: 'Evolution',
     breakdown: 'Breakdown',
     parameters: 'Parameters',
     narrative: 'Narrative',
     dataset: 'Dataset',
+    table: 'Table',
   }
   return labels[type] || type
 }
@@ -83,82 +87,294 @@ type Artifact = {
   content: string | null
 }
 
-function ArtifactCard({ artifact }: { artifact: Artifact }) {
-  const isExpandable = artifact.artifactType === 'narrative' || artifact.artifactType === 'parameters'
-  const isTabular = ['time_series', 'breakdown', 'dataset'].includes(artifact.artifactType)
+// Parse a single CSV line handling quoted fields
+function parseCsvLine(line: string): string[] {
+  const result: string[] = []
+  let current = ''
+  let inQuotes = false
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]
+    const nextChar = line[i + 1]
+
+    if (inQuotes) {
+      if (char === '"' && nextChar === '"') {
+        // Escaped quote
+        current += '"'
+        i++
+      } else if (char === '"') {
+        // End of quoted field
+        inQuotes = false
+      } else {
+        current += char
+      }
+    } else {
+      if (char === '"') {
+        // Start of quoted field
+        inQuotes = true
+      } else if (char === ',') {
+        // Field separator
+        result.push(current.trim())
+        current = ''
+      } else {
+        current += char
+      }
+    }
+  }
+
+  // Push the last field
+  result.push(current.trim())
+  return result
+}
+
+// Parse CSV content into rows
+function parseCsv(csv: string): { headers: string[]; rows: string[][] } {
+  const lines = csv.trim().split('\n')
+  if (lines.length === 0) return { headers: [], rows: [] }
+  const headers = parseCsvLine(lines[0])
+  const rows = lines.slice(1).map((line) => parseCsvLine(line))
+  return { headers, rows }
+}
+
+// Parse YAML-like parameters content
+function parseParameters(content: string): { key: string; value: string }[] {
+  const lines = content.trim().split('\n')
+  return lines
+    .map((line) => {
+      const colonIndex = line.indexOf(':')
+      if (colonIndex === -1) return null
+      const key = line.slice(0, colonIndex).trim()
+      const value = line.slice(colonIndex + 1).trim()
+      return { key, value }
+    })
+    .filter((item): item is { key: string; value: string } => item !== null)
+}
+
+// Time Series Widget - horizontal bar chart
+function TimeSeriesWidget({ content }: { content: string }) {
+  const { headers, rows } = parseCsv(content)
+  if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows (only header: {headers.join(', ')})</p>
+
+  // Assume first column is label (e.g., year), second is value
+  const labelIndex = 0
+  const valueIndex = headers.length > 1 ? 1 : 0
+  const valueHeader = headers[valueIndex] || 'Value'
+
+  const data = rows.map((row) => ({
+    label: row[labelIndex] || '',
+    value: parseFloat(row[valueIndex] || '0') || 0,
+  }))
+
+  const maxValue = Math.max(...data.map((d) => d.value), 1)
 
   return (
-    <div className="border border-border/30 rounded-md p-4 bg-background/50">
-      <div className="flex items-start gap-3">
-        <span className="text-xl" title={getArtifactTypeLabel(artifact.artifactType)}>
-          {getArtifactTypeIcon(artifact.artifactType)}
-        </span>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-medium text-sm">{artifact.title}</h3>
-            <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-              {getArtifactTypeLabel(artifact.artifactType)}
-            </span>
+    <div className="space-y-2">
+      <div className="text-xs text-muted-foreground mb-3">{valueHeader}</div>
+      {data.map((item, i) => (
+        <div key={i} className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground w-16 text-right flex-shrink-0">
+            {item.label}
+          </span>
+          <div className="flex-1 h-5 bg-muted rounded-sm overflow-hidden">
+            <div
+              className="h-full bg-primary/70 rounded-sm transition-all"
+              style={{ width: `${(item.value / maxValue) * 100}%` }}
+            />
           </div>
-          {artifact.description && (
-            <p className="text-sm text-muted-foreground mt-1">{artifact.description}</p>
-          )}
-          {artifact.content && isExpandable && (
-            <details className="mt-2">
-              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
-                View content
-              </summary>
-              <pre className="mt-2 text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">
-                {artifact.content}
-              </pre>
-            </details>
-          )}
-          {artifact.content && isTabular && (
-            <details className="mt-2">
-              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
-                View data
-              </summary>
-              <div className="mt-2 overflow-x-auto">
-                <CsvTable csv={artifact.content} />
-              </div>
-            </details>
-          )}
+          <span className="text-xs font-medium w-16 flex-shrink-0">
+            {item.value.toLocaleString()}
+          </span>
         </div>
+      ))}
+    </div>
+  )
+}
+
+// Breakdown Widget - horizontal stacked bar or individual bars with percentages
+function BreakdownWidget({ content }: { content: string }) {
+  const { headers, rows } = parseCsv(content)
+  if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
+
+  // Assume first column is category, second is value
+  const data = rows.map((row) => ({
+    label: row[0] || '',
+    value: parseFloat(row[1] || '0') || 0,
+  }))
+
+  const total = data.reduce((sum, d) => sum + d.value, 0)
+  const colors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-red-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-indigo-500',
+    'bg-orange-500',
+  ]
+
+  return (
+    <div className="space-y-3">
+      {/* Stacked bar */}
+      <div className="h-6 bg-muted rounded-md overflow-hidden flex">
+        {data.map((item, i) => {
+          const percentage = total > 0 ? (item.value / total) * 100 : 0
+          if (percentage < 1) return null
+          return (
+            <div
+              key={i}
+              className={`${colors[i % colors.length]} h-full transition-all`}
+              style={{ width: `${percentage}%` }}
+              title={`${item.label}: ${percentage.toFixed(1)}%`}
+            />
+          )
+        })}
+      </div>
+      {/* Legend */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        {data.map((item, i) => {
+          const percentage = total > 0 ? (item.value / total) * 100 : 0
+          return (
+            <div key={i} className="flex items-center gap-1.5 text-xs">
+              <div className={`w-2.5 h-2.5 rounded-sm ${colors[i % colors.length]}`} />
+              <span className="text-muted-foreground">{item.label}</span>
+              <span className="font-medium">{percentage.toFixed(1)}%</span>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
 }
 
-function CsvTable({ csv }: { csv: string }) {
-  const lines = csv.trim().split('\n')
-  if (lines.length === 0) return null
-
-  const headers = lines[0].split(',').map((h) => h.trim())
-  const rows = lines.slice(1).map((line) => line.split(',').map((cell) => cell.trim()))
+// Parameters Widget - key-value grid
+function ParametersWidget({ content }: { content: string }) {
+  const params = parseParameters(content)
+  if (params.length === 0) return <p className="text-sm text-yellow-600">No parameters found (content: {content.slice(0, 100)}...)</p>
 
   return (
-    <table className="text-xs border-collapse w-full">
-      <thead>
-        <tr className="bg-muted">
-          {headers.map((header, i) => (
-            <th key={i} className="border border-border/30 px-2 py-1 text-left font-medium">
-              {header}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row, i) => (
-          <tr key={i} className="hover:bg-muted/50">
-            {row.map((cell, j) => (
-              <td key={j} className="border border-border/30 px-2 py-1">
-                {cell}
-              </td>
+    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+      {params.map((param, i) => (
+        <div key={i} className="flex flex-col">
+          <span className="text-xs text-muted-foreground">{param.key}</span>
+          <span className="text-sm font-medium">{param.value}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Narrative Widget - formatted prose
+function NarrativeWidget({ content }: { content: string }) {
+  return (
+    <div className="prose prose-sm max-w-none text-muted-foreground">
+      <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+    </div>
+  )
+}
+
+// Dataset Widget - enhanced table
+function DatasetWidget({ content }: { content: string }) {
+  const { headers, rows } = parseCsv(content)
+  if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows (only header: {headers.join(', ')})</p>
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="text-xs border-collapse w-full">
+        <thead>
+          <tr>
+            {headers.map((header, i) => (
+              <th
+                key={i}
+                className="bg-muted px-3 py-2 text-left font-medium border-b border-border/50"
+              >
+                {header}
+              </th>
             ))}
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i} className="hover:bg-muted/30 transition-colors">
+              {row.map((cell, j) => (
+                <td key={j} className="px-3 py-1.5 border-b border-border/30">
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+// Artifact Widget Router
+function ArtifactWidget({ artifact }: { artifact: Artifact }) {
+  if (artifact.content === null || artifact.content === undefined) {
+    return <p className="text-sm text-red-500">Error: content is null</p>
+  }
+
+  if (artifact.content === '') {
+    return <p className="text-sm text-red-500">Error: content is empty string</p>
+  }
+
+  try {
+    switch (artifact.artifactType) {
+      case 'time_series':
+      case 'evolution':
+        return <TimeSeriesWidget content={artifact.content} />
+      case 'breakdown':
+        return <BreakdownWidget content={artifact.content} />
+      case 'parameters':
+        return <ParametersWidget content={artifact.content} />
+      case 'narrative':
+        return <NarrativeWidget content={artifact.content} />
+      case 'dataset':
+      case 'table':
+        return <DatasetWidget content={artifact.content} />
+      default:
+        return (
+          <div>
+            <p className="text-sm text-yellow-600 mb-2">Unknown type: {artifact.artifactType}</p>
+            <pre className="text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">
+              {artifact.content}
+            </pre>
+          </div>
+        )
+    }
+  } catch (error) {
+    return (
+      <div className="text-sm text-red-500">
+        <p>Error rendering widget: {error instanceof Error ? error.message : 'Unknown error'}</p>
+        <pre className="text-xs bg-muted p-2 rounded mt-2 overflow-x-auto whitespace-pre-wrap font-mono">
+          {artifact.content.slice(0, 200)}...
+        </pre>
+      </div>
+    )
+  }
+}
+
+function ArtifactCard({ artifact }: { artifact: Artifact }) {
+  return (
+    <div className="border border-border/30 rounded-md p-4 bg-background/50">
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-lg" title={getArtifactTypeLabel(artifact.artifactType)}>
+          {getArtifactTypeIcon(artifact.artifactType)}
+        </span>
+        <h3 className="font-medium text-sm flex-1">{artifact.title}</h3>
+        <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+          {getArtifactTypeLabel(artifact.artifactType)}
+        </span>
+      </div>
+      {artifact.description && (
+        <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>
+      )}
+      <ArtifactWidget artifact={artifact} />
+    </div>
   )
 }
 
