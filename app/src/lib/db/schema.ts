@@ -606,9 +606,16 @@ export const knoArtifacts = pgTable('kno_artifacts', {
   title: text('title').notNull(),
   description: text('description'),
   artifactType: text('artifact_type', {
-    enum: ['time_series', 'evolution', 'breakdown', 'parameters', 'narrative', 'dataset', 'table']
+    enum: ['evolution', 'distribution', 'table', 'parameters', 'narrative']
   }).notNull(),
   content: text('content'),
+  state: text('state', {
+    enum: ['draft', 'partial', 'complete', 'stale']
+  }).notNull().default('draft'),
+  stateNotes: text('state_notes'),
+  dataQuality: text('data_quality', {
+    enum: ['verified', 'estimated', 'placeholder']
+  }).notNull().default('verified'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

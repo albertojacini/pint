@@ -54,13 +54,11 @@ function getScoreColor(score: number | null): string {
 // Get icon for artifact type
 function getArtifactTypeIcon(type: string): string {
   const icons: Record<string, string> = {
-    time_series: '📈',
     evolution: '📈',
-    breakdown: '📊',
+    distribution: '📊',
+    table: '📋',
     parameters: '⚙️',
     narrative: '📝',
-    dataset: '📋',
-    table: '📋',
   }
   return icons[type] || '📄'
 }
@@ -68,15 +66,23 @@ function getArtifactTypeIcon(type: string): string {
 // Get label for artifact type
 function getArtifactTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    time_series: 'Time Series',
     evolution: 'Evolution',
-    breakdown: 'Breakdown',
+    distribution: 'Distribution',
+    table: 'Table',
     parameters: 'Parameters',
     narrative: 'Narrative',
-    dataset: 'Dataset',
-    table: 'Table',
   }
   return labels[type] || type
+}
+
+// Get data quality indicator
+function getDataQualityIndicator(quality: string): { label: string; color: string; icon: string } {
+  const indicators: Record<string, { label: string; color: string; icon: string }> = {
+    verified: { label: 'Verified', color: 'text-green-600 bg-green-50', icon: '✓' },
+    estimated: { label: 'Estimated', color: 'text-yellow-600 bg-yellow-50', icon: '~' },
+    placeholder: { label: 'Placeholder', color: 'text-red-600 bg-red-50', icon: '?' },
+  }
+  return indicators[quality] || { label: quality, color: 'text-gray-600 bg-gray-50', icon: '•' }
 }
 
 type Artifact = {
@@ -85,6 +91,7 @@ type Artifact = {
   description: string | null
   artifactType: string
   content: string | null
+  dataQuality: string
 }
 
 // Parse a single CSV line handling quoted fields
@@ -324,16 +331,14 @@ function ArtifactWidget({ artifact }: { artifact: Artifact }) {
 
   try {
     switch (artifact.artifactType) {
-      case 'time_series':
       case 'evolution':
         return <TimeSeriesWidget content={artifact.content} />
-      case 'breakdown':
+      case 'distribution':
         return <BreakdownWidget content={artifact.content} />
       case 'parameters':
         return <ParametersWidget content={artifact.content} />
       case 'narrative':
         return <NarrativeWidget content={artifact.content} />
-      case 'dataset':
       case 'table':
         return <DatasetWidget content={artifact.content} />
       default:
@@ -359,6 +364,8 @@ function ArtifactWidget({ artifact }: { artifact: Artifact }) {
 }
 
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
+  const quality = getDataQualityIndicator(artifact.dataQuality)
+
   return (
     <div className="border border-border/30 rounded-md p-4 bg-background/50">
       <div className="flex items-center gap-2 mb-3">
@@ -369,6 +376,11 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
           {getArtifactTypeLabel(artifact.artifactType)}
         </span>
+        {artifact.dataQuality !== 'verified' && (
+          <span className={`text-xs px-1.5 py-0.5 rounded ${quality.color}`} title={quality.label}>
+            {quality.icon} {quality.label}
+          </span>
+        )}
       </div>
       {artifact.description && (
         <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>
@@ -466,6 +478,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       description: knoArtifacts.description,
       artifactType: knoArtifacts.artifactType,
       content: knoArtifacts.content,
+      dataQuality: knoArtifacts.dataQuality,
     })
     .from(govProvisionArtifacts)
     .innerJoin(knoArtifacts, eq(govProvisionArtifacts.artifactId, knoArtifacts.id))
