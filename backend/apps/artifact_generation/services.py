@@ -38,44 +38,43 @@ class ArtifactGenerator:
         """
         Main entry point - generates all artifacts for a provision.
 
-        Steps:
-        1. Load provision with context
-        2. RAG search for relevant chunks
-        3. Plan artifacts based on available content
-        4. Extract each artifact
-        5. Persist and link
+        Two-phase approach:
+        - Phase 1: Plan IDEAL artifacts based on the phenomenon itself (source-agnostic)
+        - Phase 2: Populate artifacts with data from available sources
+
+        This ensures ambitious, insightful artifact definitions that aren't
+        limited by incomplete source material.
         """
-        # 1. Load provision with context
+        # Load provision with context
         provision = await self._load_provision(provision_id)
         if not provision:
             raise ValueError(f"Provision not found: {provision_id}")
 
         print(f"  Loaded provision: {provision.title}")
 
-        # 2. RAG search for relevant chunks
+        # PHASE 1: Plan ideal artifacts (source-agnostic)
+        # Ask LLM what the most important facts/metrics are for this phenomenon
+        print("  Phase 1: Planning ideal artifacts...")
+        artifact_plans = await self._plan_ideal_artifacts(provision)
+        print(f"  Planned {len(artifact_plans)} ideal artifacts")
+
+        if not artifact_plans:
+            print("  No artifacts planned")
+            return []
+
+        # PHASE 2: Populate artifacts with available data
+        # Search for relevant chunks and extract what we can find
+        print("  Phase 2: Populating with available data...")
         chunks = await self._search_relevant_chunks(provision)
         print(f"  Found {len(chunks)} relevant chunks")
 
-        if not chunks:
-            print("  No relevant chunks found, skipping artifact generation")
-            return []
-
-        # 3. Plan artifacts based on available content
-        artifact_plans = await self._plan_artifacts(provision, chunks)
-        print(f"  Planned {len(artifact_plans)} artifacts")
-
-        if not artifact_plans:
-            print("  No artifacts planned, skipping extraction")
-            return []
-
-        # 4. Extract each artifact
         extracted = []
         for plan in artifact_plans:
-            print(f"    Extracting: {plan.title} ({plan.artifact_type.value})")
-            artifact = await self._extract_artifact(plan, chunks)
+            print(f"    Populating: {plan.title} ({plan.artifact_type.value})")
+            artifact = await self._populate_artifact(plan, chunks, provision)
             extracted.append(artifact)
 
-        # 5. Persist and link
+        # Persist and link
         persisted = await self._persist_artifacts(extracted, provision_id)
         print(f"  Persisted {len(persisted)} artifacts")
 
@@ -149,76 +148,92 @@ class ArtifactGenerator:
         parts.append(f"Entity: {provision.entity_name}")
         return " ".join(parts)
 
-    async def _plan_artifacts(
-        self, provision: ProvisionContext, chunks: list[ChunkResult]
+    async def _plan_ideal_artifacts(
+        self, provision: ProvisionContext
     ) -> list[ArtifactPlan]:
-        """Use LLM to analyze chunks and plan which artifacts to extract."""
-        chunks_text = self._format_chunks(chunks)
+        """
+        Phase 1: Plan ideal artifacts based on the phenomenon itself.
 
-        prompt = f"""Analyze the following document excerpts related to the provision "{provision.title}".
+        This is SOURCE-AGNOSTIC - we don't look at available documents.
+        Instead, we ask: "What are the most important facts to know about this phenomenon?"
+        """
+        prompt = f"""You are planning what IDEAL data artifacts should exist for a public policy provision.
 
-Provision type(s): {', '.join(provision.provision_types) if provision.provision_types else 'unknown'}
+== PROVISION ==
+Title: {provision.title}
+Description: {provision.description or 'N/A'}
+Short description: {provision.description_short or 'N/A'}
+Type(s): {', '.join(provision.provision_types) if provision.provision_types else 'unknown'}
 Entity: {provision.entity_name}
 
-Document excerpts:
-{chunks_text}
+== YOUR TASK ==
+Think about this policy phenomenon and identify the MOST IMPORTANT FACTS that would help
+citizens, researchers, and policymakers understand it. Focus on what data SHOULD exist,
+not what we might have available.
 
-Your task is to identify STRUCTURED FACTS that can be extracted as artifacts.
+== ARTIFACT SPECIFICATION ==
 
-== WHAT IS AN ARTIFACT? ==
-An artifact is a structured fact that would make a meaningful TABLE or DIAGRAM in a printed report.
-- It describes REALITY (actual data, facts), not policy intent
-- It must have enough structure to visualize (not just a single number)
-- Examples: pricing schemas, time series of entries, budget breakdowns by category
+An artifact is a structured data expression of ONE DIMENSION of a phenomenon.
+It describes FACTS/REALITY, not policy intent or goals.
+
+CRITICAL CONSTRAINTS:
+1. ONE DIMENSION ONLY: Each artifact captures a single aspect of the phenomenon
+   ✓ "Traffic entries by year" (one dimension: time)
+   ✓ "Revenue by vehicle category" (one dimension: vehicle category)
+   ✗ "Comparison with London congestion charge" (cross-phenomenon comparison - NOT ALLOWED)
+   ✗ "Cost-benefit analysis" (complex multi-dimensional analysis - NOT ALLOWED)
+
+2. NO CROSS-PHENOMENON COMPARISONS: Artifacts describe THIS phenomenon only
+   ✗ Comparisons with other cities
+   ✗ Benchmarking against similar policies elsewhere
+   ✗ International standards comparisons
+
+3. NO COMPLEX ANALYSIS: Artifacts are raw structured facts, not derived insights
+   ✗ Correlation analyses
+   ✗ Impact assessments (cause-effect)
+   ✗ Predictive models
 
 == ARTIFACT TYPES ==
-- evolution: How something changed over time (CSV with date column) → renders as line/area chart
-- distribution: How something is divided across categories (CSV) → renders as bar/pie chart
-- table: Multi-dimensional structured data (CSV with multiple columns) → renders as data table
-- parameters: Configuration/rules/thresholds (YAML) → renders as structured table
-- narrative: Qualitative summary of facts (Markdown prose) → renders as text block
+- evolution: How something changed over time → line/area chart
+- distribution: How something is divided across categories → bar/pie chart
+- table: Multi-dimensional structured data → data table
+- parameters: Configuration/rules/thresholds → structured table
+- narrative: Qualitative factual summary → text block
 
 == PRINTABILITY TEST ==
-Before planning an artifact, ask: "Would this make a good table or chart in a report?"
-✓ GOOD: "Tariffe Area C per Categoria Veicolo" (table with vehicle types × fees × restrictions)
-✓ GOOD: "Ingressi per Anno" (time series suitable for line chart)
-✓ GOOD: "Composizione Spesa per Categoria" (breakdown suitable for pie chart)
-✗ BAD: "Budget totale: €142M" (just a number, not structured enough)
-✗ BAD: "Overview of the policy" (too vague, not factual data)
+Ask: "Would this make a good table or chart in a printed report?"
+✓ GOOD: "Tariffe per Categoria Veicolo" (table with structure)
+✓ GOOD: "Ingressi Annuali" (time series for line chart)
+✓ GOOD: "Ripartizione Entrate per Destinazione" (breakdown for pie chart)
+✗ BAD: "Budget totale: €142M" (single number, not structured)
+✗ BAD: "Policy overview" (too vague)
 
-== QUANTITY GUIDELINES ==
-- Plan 2-3 artifacts for typical provisions (the essential facts)
-- Maximum 10 artifacts even for complex provisions
-- Quality over quantity - only plan if it passes the printability test
+== QUANTITY ==
+- 3-5 artifacts for typical provisions (the essential defining facts)
+- Maximum 10 for complex provisions
+- Quality over quantity
 
-== STATE TRACKING ==
-For each artifact, assess data completeness:
-- complete: All data available in the sources
-- partial: Data available but with gaps (missing years, incomplete categories)
-- draft: Data found but may need validation or has conflicting sources
+== OUTPUT FORMAT ==
+For each artifact:
+- title: descriptive name (in the language appropriate for the entity's country)
+- type: evolution | distribution | table | parameters | narrative
+- description: what factual data this should capture
+- search_query: what to search for in documents to find this data
 
-For each artifact, specify:
-- title: descriptive name (in source language)
-- type: one of evolution, distribution, table, parameters, narrative
-- description: what factual data this captures (in source language)
-- relevant_chunk_indices: list of chunk indices (0-based) to use
-- expected_state: complete, partial, or draft
-- state_notes: if partial/draft, explain what's missing or uncertain (in source language)
-
-Return a JSON array. Example (if documents are in Italian):
+Return JSON array:
 [
-  {{"title": "Tariffe per Categoria Veicolo", "type": "table", "description": "Schema tariffario con categoria veicolo, tariffa e restrizioni", "relevant_chunk_indices": [0, 2], "expected_state": "complete", "state_notes": null}},
-  {{"title": "Ingressi Annuali", "type": "evolution", "description": "Serie storica degli ingressi in Area C", "relevant_chunk_indices": [1, 3], "expected_state": "partial", "state_notes": "Dati 2020-2021 anomali per COVID"}}
+  {{"title": "Ingressi Annuali in Area C", "type": "evolution", "description": "Serie storica del numero di veicoli che entrano in Area C per anno", "search_query": "ingressi veicoli area c anno statistiche"}},
+  {{"title": "Tariffe per Categoria Veicolo", "type": "table", "description": "Schema tariffario con importi per ogni classe di veicolo", "search_query": "tariffa costo euro veicolo categoria classe"}}
 ]
 
-Return ONLY the JSON array, no other text."""
+Return ONLY the JSON array."""
 
         response = await self.model.ainvoke(prompt)
         response_text = response.content.strip()
-        return self._parse_artifact_plans(response_text)
+        return self._parse_ideal_plans(response_text)
 
-    def _parse_artifact_plans(self, response_text: str) -> list[ArtifactPlan]:
-        """Parse LLM response into ArtifactPlan objects."""
+    def _parse_ideal_plans(self, response_text: str) -> list[ArtifactPlan]:
+        """Parse Phase 1 LLM response into ArtifactPlan objects."""
         # Extract JSON from potential markdown code blocks
         if "```" in response_text:
             match = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", response_text, re.DOTALL)
@@ -235,21 +250,12 @@ Return ONLY the JSON array, no other text."""
         for plan_data in plans_data:
             try:
                 artifact_type = ArtifactType(plan_data["type"])
-                # Parse state, defaulting to draft
-                expected_state = ArtifactState.DRAFT
-                if "expected_state" in plan_data:
-                    try:
-                        expected_state = ArtifactState(plan_data["expected_state"])
-                    except ValueError:
-                        pass
                 plans.append(
                     ArtifactPlan(
                         title=plan_data["title"],
                         artifact_type=artifact_type,
                         description=plan_data["description"],
-                        relevant_chunk_indices=plan_data["relevant_chunk_indices"],
-                        expected_state=expected_state,
-                        state_notes=plan_data.get("state_notes"),
+                        search_query=plan_data.get("search_query", plan_data["title"]),
                     )
                 )
             except (KeyError, ValueError) as e:
@@ -258,45 +264,79 @@ Return ONLY the JSON array, no other text."""
 
         return plans
 
-    async def _extract_artifact(
-        self, plan: ArtifactPlan, chunks: list[ChunkResult]
+    async def _populate_artifact(
+        self, plan: ArtifactPlan, all_chunks: list[ChunkResult], provision: ProvisionContext
     ) -> ExtractedArtifact:
-        """Extract artifact content from chunks using LLM."""
-        # Get relevant chunks
-        relevant_chunks = []
-        for idx in plan.relevant_chunk_indices:
-            if 0 <= idx < len(chunks):
-                relevant_chunks.append(chunks[idx])
+        """
+        Phase 2: Populate an artifact plan with data from available sources.
 
+        Searches for relevant data using the plan's search_query and extracts what's available.
+        Sets state based on data availability.
+        """
+        # Search for chunks relevant to this specific artifact
+        relevant_chunks = await self._search_artifact_chunks(plan, provision)
+
+        # If no specific chunks found, fall back to general provision chunks
         if not relevant_chunks:
-            # Fallback to all chunks if indices are invalid
-            relevant_chunks = chunks[:5]
+            # Use top chunks from the general search, filtered by some relevance
+            relevant_chunks = all_chunks[:5] if all_chunks else []
 
+        # Determine state based on data availability
+        if not relevant_chunks:
+            # No data found - create draft artifact with placeholder
+            return ExtractedArtifact(
+                title=plan.title,
+                description=plan.description,
+                artifact_type=plan.artifact_type,
+                content="[Dati non ancora disponibili]",
+                source_document_ids=[],
+                state=ArtifactState.DRAFT,
+                state_notes="Nessun dato trovato nelle fonti disponibili",
+            )
+
+        # Extract content from available chunks
         chunks_text = self._format_chunks(relevant_chunks)
         format_instructions = self._get_format_instructions(plan.artifact_type)
 
         prompt = f"""Extract a {plan.artifact_type.value} artifact titled "{plan.title}".
 
-Description: {plan.description}
+Expected data: {plan.description}
 
-Source content:
+Available source content:
 {chunks_text}
 
 Format requirements:
 {format_instructions}
 
-IMPORTANT - LANGUAGE: All text content (labels, categories, narratives, etc.) MUST be in the same language as the source documents. Only use technical terms (like column headers: date, value, category, percentage) in their standard form.
+== INSTRUCTIONS ==
+1. Extract ONLY factual data that exists in the sources above
+2. If the sources contain partial data, extract what's available
+3. Do NOT invent or estimate missing values
+4. Use the same language as the source documents for all labels and text
 
-Return ONLY the artifact content in the specified format, no other text or explanation."""
+== STATE ASSESSMENT ==
+After extracting, assess the data completeness:
+- If you found comprehensive data covering the full scope: state is "complete"
+- If you found data but with gaps (missing periods, categories): state is "partial"
+- If data is sparse or uncertain: state is "draft"
+
+Return a JSON object with:
+- content: the extracted data in the specified format
+- state: "complete", "partial", or "draft"
+- state_notes: if not complete, brief explanation of what's missing (in source language, max 100 chars)
+
+Example:
+{{"content": "date,value\\n2020,100\\n2021,150", "state": "partial", "state_notes": "Dati mancanti per 2022-2023"}}
+
+Return ONLY the JSON object."""
 
         response = await self.model.ainvoke(prompt)
-        content = response.content.strip()
+        response_text = response.content.strip()
 
-        # Clean up content if wrapped in code blocks
-        if "```" in content:
-            match = re.search(r"```(?:\w+)?\s*([\s\S]*?)\s*```", content)
-            if match:
-                content = match.group(1).strip()
+        # Parse response
+        content, state, state_notes = self._parse_population_response(
+            response_text, plan.artifact_type
+        )
 
         # Collect unique document IDs from relevant chunks
         source_doc_ids = list(set(c.document_id for c in relevant_chunks))
@@ -307,9 +347,51 @@ Return ONLY the artifact content in the specified format, no other text or expla
             artifact_type=plan.artifact_type,
             content=content,
             source_document_ids=source_doc_ids,
-            state=plan.expected_state,
-            state_notes=plan.state_notes,
+            state=state,
+            state_notes=state_notes,
         )
+
+    async def _search_artifact_chunks(
+        self, plan: ArtifactPlan, provision: ProvisionContext
+    ) -> list[ChunkResult]:
+        """Search for chunks relevant to a specific artifact using its search query."""
+        # Combine artifact search query with provision context
+        query = f"{provision.title} {plan.search_query}"
+
+        results = await self.sources_service.semantic_search(
+            query=query,
+            limit=10,  # Fewer chunks per artifact
+            threshold=self.similarity_threshold,
+        )
+
+        return [ChunkResult(**r) for r in results]
+
+    def _parse_population_response(
+        self, response_text: str, artifact_type: ArtifactType
+    ) -> tuple[str, ArtifactState, Optional[str]]:
+        """Parse the population response into content, state, and state_notes."""
+        # Extract JSON from potential markdown code blocks
+        if "```" in response_text:
+            match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", response_text, re.DOTALL)
+            if match:
+                response_text = match.group(1)
+
+        try:
+            data = json.loads(response_text)
+            content = data.get("content", response_text)
+            state_str = data.get("state", "draft")
+            state_notes = data.get("state_notes")
+
+            try:
+                state = ArtifactState(state_str)
+            except ValueError:
+                state = ArtifactState.DRAFT
+
+            return content, state, state_notes
+
+        except json.JSONDecodeError:
+            # Fallback: treat entire response as content
+            return response_text, ArtifactState.DRAFT, None
 
     def _get_format_instructions(self, artifact_type: ArtifactType) -> str:
         """Return format instructions for each artifact type."""

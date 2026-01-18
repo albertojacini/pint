@@ -3,9 +3,11 @@ Combined script: Clean seed data, load PDFs, and generate artifacts.
 
 Usage:
     cd /backend && source .venv/bin/activate
-    python scripts/load_and_generate.py
+    python scripts/load_and_generate.py              # Full run (clean, load PDFs, generate)
+    python scripts/load_and_generate.py --artifacts-only  # Just regenerate artifacts
 """
 
+import argparse
 import asyncio
 import sys
 from pathlib import Path
@@ -70,30 +72,44 @@ PDF_METADATA = {
 TARGET_PROVISION_SLUG = "pedaggi-urbani"
 
 
-async def cleanup_seed_data():
-    """Remove all existing artifacts and documents (seed data)."""
+async def cleanup_artifacts_only():
+    """Remove only artifacts (keep documents and chunks)."""
     log("\n" + "=" * 60)
-    log("STEP 1: Cleaning up seed data")
+    log("Cleaning up artifacts only")
     log("=" * 60)
 
     async with db.pool.acquire() as conn:
-        # Delete artifact sources (links artifacts to documents)
         r1 = await conn.execute("DELETE FROM kno_artifact_sources")
         log(f"  Deleted artifact sources: {r1.split()[-1]} rows")
 
-        # Delete provision-artifact links
         r2 = await conn.execute("DELETE FROM gov_provision_artifacts")
         log(f"  Deleted provision-artifact links: {r2.split()[-1]} rows")
 
-        # Delete artifacts
         r3 = await conn.execute("DELETE FROM kno_artifacts")
         log(f"  Deleted artifacts: {r3.split()[-1]} rows")
 
-        # Delete document chunks
+    log("  Done!")
+
+
+async def cleanup_all():
+    """Remove all existing artifacts and documents (seed data)."""
+    log("\n" + "=" * 60)
+    log("STEP 1: Cleaning up all data")
+    log("=" * 60)
+
+    async with db.pool.acquire() as conn:
+        r1 = await conn.execute("DELETE FROM kno_artifact_sources")
+        log(f"  Deleted artifact sources: {r1.split()[-1]} rows")
+
+        r2 = await conn.execute("DELETE FROM gov_provision_artifacts")
+        log(f"  Deleted provision-artifact links: {r2.split()[-1]} rows")
+
+        r3 = await conn.execute("DELETE FROM kno_artifacts")
+        log(f"  Deleted artifacts: {r3.split()[-1]} rows")
+
         r4 = await conn.execute("DELETE FROM sou_document_chunks")
         log(f"  Deleted document chunks: {r4.split()[-1]} rows")
 
-        # Delete documents
         r5 = await conn.execute("DELETE FROM sou_documents")
         log(f"  Deleted documents: {r5.split()[-1]} rows")
 
@@ -201,16 +217,23 @@ async def generate_artifacts():
     log("\n  Artifact generation complete!")
 
 
-async def main():
+async def main(artifacts_only: bool = False):
     log("=" * 60)
-    log("LOAD AND GENERATE ARTIFACTS")
+    if artifacts_only:
+        log("REGENERATE ARTIFACTS ONLY")
+    else:
+        log("LOAD AND GENERATE ARTIFACTS")
     log("=" * 60)
 
     await db.connect()
 
-    await cleanup_seed_data()
-    await load_pdfs()
-    await generate_artifacts()
+    if artifacts_only:
+        await cleanup_artifacts_only()
+        await generate_artifacts()
+    else:
+        await cleanup_all()
+        await load_pdfs()
+        await generate_artifacts()
 
     await db.close()
 
@@ -220,4 +243,12 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Load PDFs and generate artifacts")
+    parser.add_argument(
+        "--artifacts-only",
+        action="store_true",
+        help="Only regenerate artifacts (skip PDF loading, keep existing documents)",
+    )
+    args = parser.parse_args()
+
+    asyncio.run(main(artifacts_only=args.artifacts_only))

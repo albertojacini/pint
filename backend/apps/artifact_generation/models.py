@@ -38,14 +38,12 @@ class ChunkResult(BaseModel):
 
 
 class ArtifactPlan(BaseModel):
-    """Plan for extracting a single artifact."""
+    """Plan for an ideal artifact (Phase 1 - source-agnostic)."""
 
     title: str
     artifact_type: ArtifactType
     description: str
-    relevant_chunk_indices: list[int]
-    expected_state: ArtifactState = ArtifactState.DRAFT
-    state_notes: Optional[str] = None
+    search_query: str  # Query to search for relevant data in Phase 2
 
 
 class ExtractedArtifact(BaseModel):
