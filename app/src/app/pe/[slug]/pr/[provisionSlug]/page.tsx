@@ -9,6 +9,8 @@ import {
   ideas,
   provisionTypes,
   provisionTypeAssociations,
+  knoArtifacts,
+  govProvisionArtifacts,
 } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -47,6 +49,117 @@ function getScoreColor(score: number | null): string {
   if (score >= 7) return 'rgb(34 197 94)'
   if (score >= 4) return 'rgb(234 179 8)'
   return 'rgb(239 68 68)'
+}
+
+// Get icon for artifact type
+function getArtifactTypeIcon(type: string): string {
+  const icons: Record<string, string> = {
+    time_series: '📈',
+    breakdown: '📊',
+    parameters: '⚙️',
+    narrative: '📝',
+    dataset: '📋',
+  }
+  return icons[type] || '📄'
+}
+
+// Get label for artifact type
+function getArtifactTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    time_series: 'Time Series',
+    breakdown: 'Breakdown',
+    parameters: 'Parameters',
+    narrative: 'Narrative',
+    dataset: 'Dataset',
+  }
+  return labels[type] || type
+}
+
+type Artifact = {
+  id: string
+  title: string
+  description: string | null
+  artifactType: string
+  content: string | null
+}
+
+function ArtifactCard({ artifact }: { artifact: Artifact }) {
+  const isExpandable = artifact.artifactType === 'narrative' || artifact.artifactType === 'parameters'
+  const isTabular = ['time_series', 'breakdown', 'dataset'].includes(artifact.artifactType)
+
+  return (
+    <div className="border border-border/30 rounded-md p-4 bg-background/50">
+      <div className="flex items-start gap-3">
+        <span className="text-xl" title={getArtifactTypeLabel(artifact.artifactType)}>
+          {getArtifactTypeIcon(artifact.artifactType)}
+        </span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium text-sm">{artifact.title}</h3>
+            <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+              {getArtifactTypeLabel(artifact.artifactType)}
+            </span>
+          </div>
+          {artifact.description && (
+            <p className="text-sm text-muted-foreground mt-1">{artifact.description}</p>
+          )}
+          {artifact.content && isExpandable && (
+            <details className="mt-2">
+              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                View content
+              </summary>
+              <pre className="mt-2 text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">
+                {artifact.content}
+              </pre>
+            </details>
+          )}
+          {artifact.content && isTabular && (
+            <details className="mt-2">
+              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                View data
+              </summary>
+              <div className="mt-2 overflow-x-auto">
+                <CsvTable csv={artifact.content} />
+              </div>
+            </details>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CsvTable({ csv }: { csv: string }) {
+  const lines = csv.trim().split('\n')
+  if (lines.length === 0) return null
+
+  const headers = lines[0].split(',').map((h) => h.trim())
+  const rows = lines.slice(1).map((line) => line.split(',').map((cell) => cell.trim()))
+
+  return (
+    <table className="text-xs border-collapse w-full">
+      <thead>
+        <tr className="bg-muted">
+          {headers.map((header, i) => (
+            <th key={i} className="border border-border/30 px-2 py-1 text-left font-medium">
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row, i) => (
+          <tr key={i} className="hover:bg-muted/50">
+            {row.map((cell, j) => (
+              <td key={j} className="border border-border/30 px-2 py-1">
+                {cell}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
 }
 
 export default async function ProvisionDetailPage({ params }: PageProps) {
@@ -128,6 +241,19 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
   // Fetch changes for this provision
   const provisionChanges = await getChangesByProvision(provisionResult.id)
+
+  // Fetch artifacts linked to this provision
+  const provisionArtifacts = await db
+    .select({
+      id: knoArtifacts.id,
+      title: knoArtifacts.title,
+      description: knoArtifacts.description,
+      artifactType: knoArtifacts.artifactType,
+      content: knoArtifacts.content,
+    })
+    .from(govProvisionArtifacts)
+    .innerJoin(knoArtifacts, eq(govProvisionArtifacts.artifactId, knoArtifacts.id))
+    .where(eq(govProvisionArtifacts.provisionId, provisionResult.id))
 
   const provision = {
     ...provisionResult,
@@ -266,6 +392,18 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
           <h2 className="text-lg font-semibold mb-4">Change History</h2>
           <ProvisionTimeline changes={provisionChanges} />
+        </div>
+      )}
+
+      {/* Artifacts */}
+      {provisionArtifacts.length > 0 && (
+        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
+          <h2 className="text-lg font-semibold mb-4">Data & Artifacts</h2>
+          <div className="space-y-4">
+            {provisionArtifacts.map((artifact) => (
+              <ArtifactCard key={artifact.id} artifact={artifact} />
+            ))}
+          </div>
         </div>
       )}
     </div>
