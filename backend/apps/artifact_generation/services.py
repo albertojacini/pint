@@ -177,11 +177,13 @@ An artifact is a structured data expression of ONE DIMENSION of a phenomenon.
 It describes FACTS/REALITY, not policy intent or goals.
 
 CRITICAL CONSTRAINTS:
-1. ONE DIMENSION ONLY: Each artifact captures a single aspect of the phenomenon
-   ✓ "Traffic entries by year" (one dimension: time)
-   ✓ "Revenue by vehicle category" (one dimension: vehicle category)
-   ✗ "Comparison with London congestion charge" (cross-phenomenon comparison - NOT ALLOWED)
-   ✗ "Cost-benefit analysis" (complex multi-dimensional analysis - NOT ALLOWED)
+1. ONE DIMENSION per data artifact (evolution, distribution, table):
+   ✓ "Traffic entries by year" (dimension: time)
+   ✓ "Revenue by vehicle category" (dimension: category)
+   ✗ "Traffic vs revenue correlation" (multiple dimensions mixed)
+
+   Exception: "parameters" artifacts can group related configuration settings
+   (tariffs, schedules, exemptions) as they describe system configuration holistically.
 
 2. NO CROSS-PHENOMENON COMPARISONS: Artifacts describe THIS phenomenon only
    ✗ Comparisons with other cities
