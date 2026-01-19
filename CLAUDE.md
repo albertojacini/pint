@@ -1,12 +1,23 @@
-### Guidelines
-IMPORTANT: This is an early stage project:
-- don't handle errors in general. Better to fail
-- feel free to break things, don't care about backward compatibility
+## Project Overview
 
-## Database Migrations
-- Create new migrations for schema changes (don't edit existing migrations)
+**Pint** (Public Interface) is a public policies platform with two main objectives:
+1. **Reference Platform**: Provide up-to-date, UX-rich information about public administrations (cities, countries) and their policies
+2. **Collaboration Platform**: Enable collaboration on political projects and policy development
+
+## Project Structure
+
+- **Database**: Migrations at `/supabase/migrations`
+- **ORM**: Schema at `app/src/lib/db/schema.ts`
+- **Database Seeding**: Scripts at `/tooling/scripts/seed/`, data at `tooling/scripts/seed/data/base/`
+
+## Development Philosophy
+
+IMPORTANT: This is an early stage project:
+- Don't handle errors in general. Better to fail
+- Feel free to break things, don't care about backward compatibility
 
 ## Python Development
+
 **CRITICAL**:
 - ALWAYS use `uv` for package management (NEVER use `pip`)
 - ALWAYS activate the virtual environment before running Python commands:
@@ -17,6 +28,7 @@ IMPORTANT: This is an early stage project:
 - Run Python scripts: Always prepend with activation command
 
 ## LLM Calls
+
 **CRITICAL**:
 - ALWAYS use LangChain wrappers for LLM calls (NEVER use direct API clients like `Anthropic` or `AsyncAnthropic`)
 - Use `ChatAnthropic` from `langchain_anthropic` for Claude models
@@ -32,6 +44,7 @@ IMPORTANT: This is an early stage project:
 - For tool calling, use `model.bind_tools(tools)`
 
 ## App Configuration
+
 **CRITICAL**:
 - All configurable parameters for apps in `/backend/apps/` MUST be defined in `backend/core/config.py`
 - Use environment variable prefix convention: `{APP_NAME}_APP__` (e.g., `SOURCES_APP__`, `ARTIFACT_GENERATION_APP__`)
@@ -47,31 +60,18 @@ IMPORTANT: This is an early stage project:
   ```
 - NEVER hardcode configurable values (models, thresholds, limits) directly in app code
 
+## Database
+
+- Create new migrations for schema changes (don't edit existing migrations)
+- Schema documentation: Add inline comments in `app/src/lib/db/schema.ts` (not separate docs)
+- Seed commands:
+  - `pnpm db:seed` - Seed the database
+  - `pnpm db:reset` - Reset and seed the database
+
 ## Documentation Policy
+
 **CRITICAL**:
 - NEVER create documentation files (*.md, *.txt, or similar) unless explicitly requested by the user
 - NEVER create README files for packages, modules, or features
 - Use inline code comments and docstrings for documentation instead
 - The only documentation files in this project are README.md and CLAUDE.md
-
-## Project Overview
-
-**Pint** (Public Interface) is a public policies platform with two main objectives:
-1. **Reference Platform**: Provide up-to-date, UX-rich information about public administrations (cities, countries) and their policies
-2. **Collaboration Platform**: Enable collaboration on political projects and policy development
-
-## Project Structure
-**Database**: Migrations at `/supabase/migrations`
-**ORM**: Schema at `app/src/lib/db/schema.ts`
-**Database Seeding**: Seeding scripts are located in `/tooling/scripts/seed/`
-
-## Database Seeding
-
-Seed data is located in `tooling/scripts/seed/data/base/` - contains minimal data for understanding the schema.
-
-Commands:
-- `pnpm db:seed` - Seed the database
-- `pnpm db:reset` - Reset and seed the database
-
-
-
