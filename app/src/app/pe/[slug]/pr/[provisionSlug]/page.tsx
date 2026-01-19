@@ -2,15 +2,15 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { db } from '@/lib/db/client'
 import {
-  politicalEntities,
+  entities,
   provisions,
   tags,
   taggables,
   ideas,
   provisionTypes,
-  provisionTypeAssociations,
-  knoArtifacts,
-  govProvisionArtifacts,
+  provisionTypeAssocs,
+  artifacts,
+  provisionArtifacts,
 } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -425,8 +425,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   // Fetch the entity
   const [entity] = await db
     .select()
-    .from(politicalEntities)
-    .where(idStartsWith(politicalEntities.id, entityIdPrefix))
+    .from(entities)
+    .where(idStartsWith(entities.id, entityIdPrefix))
 
   if (!entity) {
     notFound()
@@ -466,9 +466,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       icon: provisionTypes.icon,
       color: provisionTypes.color,
     })
-    .from(provisionTypeAssociations)
-    .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
-    .where(eq(provisionTypeAssociations.provisionId, provisionResult.id))
+    .from(provisionTypeAssocs)
+    .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
+    .where(eq(provisionTypeAssocs.provisionId, provisionResult.id))
 
   // Fetch idea if linked
   let ideaTitle: string | null = null
@@ -498,18 +498,18 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const provisionChanges = await getChangesByProvision(provisionResult.id)
 
   // Fetch artifacts linked to this provision
-  const provisionArtifacts = await db
+  const linkedArtifacts = await db
     .select({
-      id: knoArtifacts.id,
-      title: knoArtifacts.title,
-      description: knoArtifacts.description,
-      artifactType: knoArtifacts.artifactType,
-      content: knoArtifacts.content,
-      dataQuality: knoArtifacts.dataQuality,
+      id: artifacts.id,
+      title: artifacts.title,
+      description: artifacts.description,
+      artifactType: artifacts.artifactType,
+      content: artifacts.content,
+      dataQuality: artifacts.dataQuality,
     })
-    .from(govProvisionArtifacts)
-    .innerJoin(knoArtifacts, eq(govProvisionArtifacts.artifactId, knoArtifacts.id))
-    .where(eq(govProvisionArtifacts.provisionId, provisionResult.id))
+    .from(provisionArtifacts)
+    .innerJoin(artifacts, eq(provisionArtifacts.artifactId, artifacts.id))
+    .where(eq(provisionArtifacts.provisionId, provisionResult.id))
 
   const provision = {
     ...provisionResult,
@@ -652,11 +652,11 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       )}
 
       {/* Artifacts */}
-      {provisionArtifacts.length > 0 && (
+      {linkedArtifacts.length > 0 && (
         <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
           <h2 className="text-lg font-semibold mb-4">Data & Artifacts</h2>
           <div className="space-y-4">
-            {provisionArtifacts.map((artifact) => (
+            {linkedArtifacts.map((artifact) => (
               <ArtifactCard key={artifact.id} artifact={artifact} />
             ))}
           </div>

@@ -1,8 +1,8 @@
 import { db } from '@/lib/db/client'
 import {
-  politicalEntities,
+  entities,
   administrations,
-  administrationMembers,
+  members,
   people,
   taggables,
   tags,
@@ -46,8 +46,8 @@ export default async function EntityPage({ params }: EntityPageProps) {
   // Fetch the entity by ID prefix
   const [entity] = await db
     .select()
-    .from(politicalEntities)
-    .where(idStartsWith(politicalEntities.id, idPrefix))
+    .from(entities)
+    .where(idStartsWith(entities.id, idPrefix))
 
   if (!entity) {
     notFound()
@@ -85,17 +85,17 @@ export default async function EntityPage({ params }: EntityPageProps) {
     executiveMembers = await db
       .select({
         name: people.fullName,
-        role: administrationMembers.roleType,
-        roleTitle: administrationMembers.roleTitle,
-        icon: administrationMembers.icon,
-        party: administrationMembers.party,
+        role: members.roleType,
+        roleTitle: members.roleTitle,
+        icon: members.icon,
+        party: members.party,
       })
-      .from(administrationMembers)
-      .innerJoin(people, eq(administrationMembers.personId, people.id))
+      .from(members)
+      .innerJoin(people, eq(members.personId, people.id))
       .where(
         and(
-          eq(administrationMembers.administrationId, activeAdmin.id),
-          eq(administrationMembers.status, 'active')
+          eq(members.administrationId, activeAdmin.id),
+          eq(members.status, 'active')
         )
       )
   }
@@ -109,12 +109,12 @@ export default async function EntityPage({ params }: EntityPageProps) {
             fullName: people.fullName,
           },
         })
-        .from(administrationMembers)
-        .innerJoin(people, eq(administrationMembers.personId, people.id))
+        .from(members)
+        .innerJoin(people, eq(members.personId, people.id))
         .where(
           and(
-            eq(administrationMembers.administrationId, admin.id),
-            eq(administrationMembers.roleType, 'mayor')
+            eq(members.administrationId, admin.id),
+            eq(members.roleType, 'mayor')
           )
         )
         .limit(1)

@@ -1,5 +1,5 @@
 import { db } from '@/lib/db/client'
-import { administrations, administrationMembers, people, politicalEntities } from '@/lib/db/schema'
+import { administrations, members, people, entities } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -31,13 +31,13 @@ export default async function AdministrationPage({ params }: AdministrationPageP
       createdAt: administrations.createdAt,
       updatedAt: administrations.updatedAt,
       entity: {
-        id: politicalEntities.id,
-        name: politicalEntities.name,
-        type: politicalEntities.type,
+        id: entities.id,
+        name: entities.name,
+        type: entities.type,
       },
     })
     .from(administrations)
-    .innerJoin(politicalEntities, eq(administrations.entityId, politicalEntities.id))
+    .innerJoin(entities, eq(administrations.entityId, entities.id))
     .where(eq(administrations.id, id))
 
   if (!administration) {
@@ -45,23 +45,23 @@ export default async function AdministrationPage({ params }: AdministrationPageP
   }
 
   // Fetch all members with their person details
-  const members = await db
+  const adminMembers = await db
     .select({
-      id: administrationMembers.id,
-      roleType: administrationMembers.roleType,
-      roleTitle: administrationMembers.roleTitle,
-      appointedAt: administrationMembers.appointedAt,
-      leftAt: administrationMembers.leftAt,
-      status: administrationMembers.status,
+      id: members.id,
+      roleType: members.roleType,
+      roleTitle: members.roleTitle,
+      appointedAt: members.appointedAt,
+      leftAt: members.leftAt,
+      status: members.status,
       person: {
         id: people.id,
         fullName: people.fullName,
         avatarUrl: people.avatarUrl,
       },
     })
-    .from(administrationMembers)
-    .innerJoin(people, eq(administrationMembers.personId, people.id))
-    .where(eq(administrationMembers.administrationId, id))
+    .from(members)
+    .innerJoin(people, eq(members.personId, people.id))
+    .where(eq(members.administrationId, id))
 
   // Fetch events for this administration
   const events = await getEventsByAdministration(id)
@@ -79,8 +79,8 @@ export default async function AdministrationPage({ params }: AdministrationPageP
   const statusColor = statusColors[administration.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'
 
   // Group members by role type
-  const mayor = members.find(m => m.roleType === 'mayor')
-  const otherMembers = members.filter(m => m.roleType !== 'mayor')
+  const mayor = adminMembers.find(m => m.roleType === 'mayor')
+  const otherMembers = adminMembers.filter(m => m.roleType !== 'mayor')
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -118,7 +118,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
       </div>
 
       {/* Members */}
-      {members.length > 0 && (
+      {adminMembers.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
           <SectionTitle className="mb-6">Administration Members</SectionTitle>
 

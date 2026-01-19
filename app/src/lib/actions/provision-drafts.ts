@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db/client'
-import { provisionDrafts, provisions, politicalEntities, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
+import { provisionDrafts, provisions, entities, provisionTypes, provisionTypeAssocs } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { requireUser } from '@/lib/auth'
 import type { ApiResponse } from '@pint/types'
@@ -155,7 +155,7 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
       .where(eq(provisionTypes.code, typeCode))
 
     if (typeResult) {
-      await db.insert(provisionTypeAssociations).values({
+      await db.insert(provisionTypeAssocs).values({
         provisionId: provision.id,
         typeId: typeResult.id,
       })
@@ -177,8 +177,8 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
     .select({
       id: provisionDrafts.id,
       entityId: provisionDrafts.entityId,
-      entityName: politicalEntities.name,
-      entityLanguage: politicalEntities.language,
+      entityName: entities.name,
+      entityLanguage: entities.language,
       createdBy: provisionDrafts.createdBy,
       inputDescription: provisionDrafts.inputDescription,
       researchPrompt: provisionDrafts.researchPrompt,
@@ -199,7 +199,7 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       updatedAt: provisionDrafts.updatedAt,
     })
     .from(provisionDrafts)
-    .leftJoin(politicalEntities, eq(provisionDrafts.entityId, politicalEntities.id))
+    .leftJoin(entities, eq(provisionDrafts.entityId, entities.id))
     .orderBy(desc(provisionDrafts.createdAt))
 
   return drafts as ProvisionDraft[]
@@ -212,8 +212,8 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
     .select({
       id: provisionDrafts.id,
       entityId: provisionDrafts.entityId,
-      entityName: politicalEntities.name,
-      entityLanguage: politicalEntities.language,
+      entityName: entities.name,
+      entityLanguage: entities.language,
       createdBy: provisionDrafts.createdBy,
       inputDescription: provisionDrafts.inputDescription,
       researchPrompt: provisionDrafts.researchPrompt,
@@ -234,7 +234,7 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       updatedAt: provisionDrafts.updatedAt,
     })
     .from(provisionDrafts)
-    .leftJoin(politicalEntities, eq(provisionDrafts.entityId, politicalEntities.id))
+    .leftJoin(entities, eq(provisionDrafts.entityId, entities.id))
     .where(eq(provisionDrafts.id, id))
 
   return draft as ProvisionDraft | null
@@ -245,11 +245,11 @@ export async function getEntities() {
 
   return db
     .select({
-      id: politicalEntities.id,
-      name: politicalEntities.name,
-      type: politicalEntities.type,
-      language: politicalEntities.language,
+      id: entities.id,
+      name: entities.name,
+      type: entities.type,
+      language: entities.language,
     })
-    .from(politicalEntities)
-    .orderBy(politicalEntities.name)
+    .from(entities)
+    .orderBy(entities.name)
 }

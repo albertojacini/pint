@@ -16,7 +16,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
     notFound()
   }
 
-  const { idea, effects, goalContributions, provisions, stakeholderGroups } = data
+  const { idea, effects, goalContributions, provisions, stakeholders } = data
 
   // Group goals by measurable for better visualization
   const goalsByMeasurable = goalContributions.reduce((acc, gc) => {
@@ -52,7 +52,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       {/* Effects Diagram Section */}
       <section className="mb-12">
         <SectionTitle className="mb-6">Stakeholder Effects</SectionTitle>
-        <EffectsDiagram effectsDiagram={idea.effectsDiagram} stakeholderGroups={stakeholderGroups} />
+        <EffectsDiagram effectsDiagram={idea.effectsDiagram} stakeholderGroups={stakeholders} />
       </section>
 
       {/* Effects Chain Section */}

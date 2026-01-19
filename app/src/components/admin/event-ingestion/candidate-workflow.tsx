@@ -17,7 +17,7 @@ import {
   deleteCandidateChange,
   type EiCandidate,
   type EiCandidateChange,
-  type EiProposedData,
+  type CandidateProposedData,
 } from '@/lib/actions/event-ingestion'
 
 interface Entity {
@@ -659,7 +659,7 @@ function AddManualChange({
       return
     }
 
-    let proposedData: EiProposedData
+    let proposedData: CandidateProposedData
     try {
       proposedData = JSON.parse(formData.proposedData)
     } catch {

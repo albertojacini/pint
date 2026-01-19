@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { db } from '@/lib/db/client'
-import { politicalEntities } from '@/lib/db/schema'
+import { entities } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -12,8 +12,8 @@ export default async function Home() {
   // Fetch Comune di Milano
   const [milanoEntity] = await db
     .select()
-    .from(politicalEntities)
-    .where(eq(politicalEntities.name, 'Comune di Milano'))
+    .from(entities)
+    .where(eq(entities.name, 'Comune di Milano'))
 
   const milanoAvatarUrl = milanoEntity ? getStorageUrl('avatars', milanoEntity.avatarUrl) : null
 

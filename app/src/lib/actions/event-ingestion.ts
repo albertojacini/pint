@@ -2,9 +2,9 @@
 
 import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db/client'
-import { eiSources, eiCandidates, eiCandidateDocuments, eiCandidateChanges, souDocuments, events, changes, provisions, politicalEntities, administrations } from '@/lib/db/schema'
-import type { EiExtractedData, EiProposedData } from '@/lib/db/schema'
-export type { EiProposedData }
+import { ingSources, eventCandidates, candidateDocuments, changeCandidates, documents, events, changes, provisions, entities, administrations } from '@/lib/db/schema'
+import type { SourceExtractedData, CandidateProposedData } from '@/lib/db/schema'
+export type { CandidateProposedData }
 import { eq, desc, inArray } from 'drizzle-orm'
 import { requireUser } from '@/lib/auth'
 import type { ApiResponse } from '@pint/types'
@@ -30,7 +30,7 @@ export interface EiSource {
   fetchedAt: Date | null
   processingStatus: ProcessingStatus
   aiSummary: string | null
-  aiExtractedData: EiExtractedData | null
+  aiExtractedData: SourceExtractedData | null
   createdBy: string | null
   createdAt: Date
   updatedAt: Date
@@ -72,7 +72,7 @@ export interface EiCandidateChange {
   targetId: string | null
   targetTitle?: string | null
   action: ChangeAction
-  proposedData: EiProposedData
+  proposedData: CandidateProposedData
   description: string | null
   status: ChangeStatus
   changeId: string | null
@@ -95,7 +95,7 @@ export async function createSource(input: {
   const user = await requireUser()
 
   const [source] = await db
-    .insert(eiSources)
+    .insert(ingSources)
     .values({
       url: input.url,
       title: input.title,
@@ -107,7 +107,7 @@ export async function createSource(input: {
       fetchedAt: input.rawContent ? new Date() : null,
       createdBy: user.id,
     })
-    .returning({ id: eiSources.id })
+    .returning({ id: ingSources.id })
 
   revalidatePath('/admin/event-ingestion/sources')
   return { ok: true, data: { id: source.id } }
@@ -127,18 +127,18 @@ export async function updateSource(
     fetchedAt: Date
     processingStatus: ProcessingStatus
     aiSummary: string
-    aiExtractedData: EiExtractedData
+    aiExtractedData: SourceExtractedData
   }>
 ): Promise<ApiResponse> {
   await requireUser()
 
   await db
-    .update(eiSources)
+    .update(ingSources)
     .set({
       ...data,
       updatedAt: new Date(),
     })
-    .where(eq(eiSources.id, id))
+    .where(eq(ingSources.id, id))
 
   revalidatePath('/admin/event-ingestion/sources')
   revalidatePath(`/admin/event-ingestion/sources/${id}`)
@@ -148,7 +148,7 @@ export async function updateSource(
 export async function deleteSource(id: string): Promise<ApiResponse> {
   await requireUser()
 
-  await db.delete(eiSources).where(eq(eiSources.id, id))
+  await db.delete(ingSources).where(eq(ingSources.id, id))
 
   revalidatePath('/admin/event-ingestion/sources')
   return { ok: true }
@@ -159,8 +159,8 @@ export async function getSources(): Promise<EiSource[]> {
 
   const sources = await db
     .select()
-    .from(eiSources)
-    .orderBy(desc(eiSources.createdAt))
+    .from(ingSources)
+    .orderBy(desc(ingSources.createdAt))
 
   return sources as EiSource[]
 }
@@ -170,8 +170,8 @@ export async function getSource(id: string): Promise<EiSource | null> {
 
   const [source] = await db
     .select()
-    .from(eiSources)
-    .where(eq(eiSources.id, id))
+    .from(ingSources)
+    .where(eq(ingSources.id, id))
 
   return source as EiSource | null
 }
@@ -193,7 +193,7 @@ export async function createCandidate(input: {
   await requireUser()
 
   const [candidate] = await db
-    .insert(eiCandidates)
+    .insert(eventCandidates)
     .values({
       title: input.title,
       description: input.description,
@@ -204,7 +204,7 @@ export async function createCandidate(input: {
       aiReasoning: input.aiReasoning,
       status: 'pending',
     })
-    .returning({ id: eiCandidates.id })
+    .returning({ id: eventCandidates.id })
 
   // Note: Sources are now linked via documents (sou_documents)
   // The backend promotes ing_sources → sou_documents before candidate creation
@@ -245,9 +245,9 @@ export async function updateCandidate(
   }
 
   await db
-    .update(eiCandidates)
+    .update(eventCandidates)
     .set(updateData)
-    .where(eq(eiCandidates.id, id))
+    .where(eq(eventCandidates.id, id))
 
   revalidatePath('/admin/event-ingestion/candidates')
   revalidatePath(`/admin/event-ingestion/candidates/${id}`)
@@ -257,7 +257,7 @@ export async function updateCandidate(
 export async function deleteCandidate(id: string): Promise<ApiResponse> {
   await requireUser()
 
-  await db.delete(eiCandidates).where(eq(eiCandidates.id, id))
+  await db.delete(eventCandidates).where(eq(eventCandidates.id, id))
 
   revalidatePath('/admin/event-ingestion/candidates')
   return { ok: true }
@@ -268,27 +268,27 @@ export async function getCandidates(): Promise<EiCandidate[]> {
 
   const candidates = await db
     .select({
-      id: eiCandidates.id,
-      title: eiCandidates.title,
-      description: eiCandidates.description,
-      eventType: eiCandidates.eventType,
-      detectedEntityId: eiCandidates.detectedEntityId,
-      detectedEntityName: politicalEntities.name,
-      detectedAdministrationId: eiCandidates.detectedAdministrationId,
-      confidenceScore: eiCandidates.confidenceScore,
-      aiReasoning: eiCandidates.aiReasoning,
-      status: eiCandidates.status,
-      mergedIntoId: eiCandidates.mergedIntoId,
-      eventId: eiCandidates.eventId,
-      reviewedBy: eiCandidates.reviewedBy,
-      reviewedAt: eiCandidates.reviewedAt,
-      rejectionReason: eiCandidates.rejectionReason,
-      createdAt: eiCandidates.createdAt,
-      updatedAt: eiCandidates.updatedAt,
+      id: eventCandidates.id,
+      title: eventCandidates.title,
+      description: eventCandidates.description,
+      eventType: eventCandidates.eventType,
+      detectedEntityId: eventCandidates.detectedEntityId,
+      detectedEntityName: entities.name,
+      detectedAdministrationId: eventCandidates.detectedAdministrationId,
+      confidenceScore: eventCandidates.confidenceScore,
+      aiReasoning: eventCandidates.aiReasoning,
+      status: eventCandidates.status,
+      mergedIntoId: eventCandidates.mergedIntoId,
+      eventId: eventCandidates.eventId,
+      reviewedBy: eventCandidates.reviewedBy,
+      reviewedAt: eventCandidates.reviewedAt,
+      rejectionReason: eventCandidates.rejectionReason,
+      createdAt: eventCandidates.createdAt,
+      updatedAt: eventCandidates.updatedAt,
     })
-    .from(eiCandidates)
-    .leftJoin(politicalEntities, eq(eiCandidates.detectedEntityId, politicalEntities.id))
-    .orderBy(desc(eiCandidates.createdAt))
+    .from(eventCandidates)
+    .leftJoin(entities, eq(eventCandidates.detectedEntityId, entities.id))
+    .orderBy(desc(eventCandidates.createdAt))
 
   return candidates as EiCandidate[]
 }
@@ -298,62 +298,62 @@ export async function getCandidate(id: string): Promise<EiCandidate | null> {
 
   const [candidate] = await db
     .select({
-      id: eiCandidates.id,
-      title: eiCandidates.title,
-      description: eiCandidates.description,
-      eventType: eiCandidates.eventType,
-      detectedEntityId: eiCandidates.detectedEntityId,
-      detectedEntityName: politicalEntities.name,
-      detectedAdministrationId: eiCandidates.detectedAdministrationId,
-      confidenceScore: eiCandidates.confidenceScore,
-      aiReasoning: eiCandidates.aiReasoning,
-      status: eiCandidates.status,
-      mergedIntoId: eiCandidates.mergedIntoId,
-      eventId: eiCandidates.eventId,
-      reviewedBy: eiCandidates.reviewedBy,
-      reviewedAt: eiCandidates.reviewedAt,
-      rejectionReason: eiCandidates.rejectionReason,
-      createdAt: eiCandidates.createdAt,
-      updatedAt: eiCandidates.updatedAt,
+      id: eventCandidates.id,
+      title: eventCandidates.title,
+      description: eventCandidates.description,
+      eventType: eventCandidates.eventType,
+      detectedEntityId: eventCandidates.detectedEntityId,
+      detectedEntityName: entities.name,
+      detectedAdministrationId: eventCandidates.detectedAdministrationId,
+      confidenceScore: eventCandidates.confidenceScore,
+      aiReasoning: eventCandidates.aiReasoning,
+      status: eventCandidates.status,
+      mergedIntoId: eventCandidates.mergedIntoId,
+      eventId: eventCandidates.eventId,
+      reviewedBy: eventCandidates.reviewedBy,
+      reviewedAt: eventCandidates.reviewedAt,
+      rejectionReason: eventCandidates.rejectionReason,
+      createdAt: eventCandidates.createdAt,
+      updatedAt: eventCandidates.updatedAt,
     })
-    .from(eiCandidates)
-    .leftJoin(politicalEntities, eq(eiCandidates.detectedEntityId, politicalEntities.id))
-    .where(eq(eiCandidates.id, id))
+    .from(eventCandidates)
+    .leftJoin(entities, eq(eventCandidates.detectedEntityId, entities.id))
+    .where(eq(eventCandidates.id, id))
 
   if (!candidate) return null
 
   // Get linked documents (via ingpl_candidate_documents)
   const documentLinks = await db
     .select({
-      documentId: eiCandidateDocuments.documentId,
-      relevance: eiCandidateDocuments.relevance,
+      documentId: candidateDocuments.documentId,
+      relevance: candidateDocuments.relevance,
     })
-    .from(eiCandidateDocuments)
-    .where(eq(eiCandidateDocuments.candidateId, id))
+    .from(candidateDocuments)
+    .where(eq(candidateDocuments.candidateId, id))
 
   const documentIds = documentLinks.map(d => d.documentId)
-  let documents: Array<{ id: string; url: string | null; title: string | null; documentType: string }> = []
+  let candidateDocs: Array<{ id: string; url: string | null; title: string | null; documentType: string }> = []
   if (documentIds.length > 0) {
-    documents = await db
+    candidateDocs = await db
       .select({
-        id: souDocuments.id,
-        url: souDocuments.url,
-        title: souDocuments.title,
-        documentType: souDocuments.documentType,
+        id: documents.id,
+        url: documents.url,
+        title: documents.title,
+        documentType: documents.documentType,
       })
-      .from(souDocuments)
-      .where(inArray(souDocuments.id, documentIds))
+      .from(documents)
+      .where(inArray(documents.id, documentIds))
   }
 
   // Get candidate changes
   const candidateChanges = await db
     .select()
-    .from(eiCandidateChanges)
-    .where(eq(eiCandidateChanges.candidateId, id))
+    .from(changeCandidates)
+    .where(eq(changeCandidates.candidateId, id))
 
   return {
     ...candidate,
-    documents,
+    documents: candidateDocs,
     changes: candidateChanges as EiCandidateChange[],
   } as EiCandidate
 }
@@ -366,13 +366,13 @@ export async function createCandidateChange(input: {
   candidateId: string
   targetType: 'provision'  // Only provisions can be updated through events
   targetId: string  // Required - must reference existing provision
-  proposedData: EiProposedData
+  proposedData: CandidateProposedData
   description?: string
 }): Promise<ApiResponse<{ id: string }>> {
   await requireUser()
 
   const [change] = await db
-    .insert(eiCandidateChanges)
+    .insert(changeCandidates)
     .values({
       candidateId: input.candidateId,
       targetType: input.targetType,
@@ -382,7 +382,7 @@ export async function createCandidateChange(input: {
       description: input.description,
       status: 'pending',
     })
-    .returning({ id: eiCandidateChanges.id })
+    .returning({ id: changeCandidates.id })
 
   revalidatePath(`/admin/event-ingestion/candidates/${input.candidateId}`)
   return { ok: true, data: { id: change.id } }
@@ -392,7 +392,7 @@ export async function updateCandidateChange(
   id: string,
   data: Partial<{
     targetId: string
-    proposedData: EiProposedData
+    proposedData: CandidateProposedData
     description: string
     status: ChangeStatus
   }>
@@ -400,12 +400,12 @@ export async function updateCandidateChange(
   await requireUser()
 
   await db
-    .update(eiCandidateChanges)
+    .update(changeCandidates)
     .set({
       ...data,
       updatedAt: new Date(),
     })
-    .where(eq(eiCandidateChanges.id, id))
+    .where(eq(changeCandidates.id, id))
 
   revalidatePath('/admin/event-ingestion/candidates')
   return { ok: true }
@@ -414,7 +414,7 @@ export async function updateCandidateChange(
 export async function deleteCandidateChange(id: string): Promise<ApiResponse> {
   await requireUser()
 
-  await db.delete(eiCandidateChanges).where(eq(eiCandidateChanges.id, id))
+  await db.delete(changeCandidates).where(eq(changeCandidates.id, id))
 
   revalidatePath('/admin/event-ingestion/candidates')
   return { ok: true }
@@ -464,9 +464,9 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
 
     // Update the ei_candidate_changes with the new change_id
     await db
-      .update(eiCandidateChanges)
+      .update(changeCandidates)
       .set({ changeId: changeRecord.id })
-      .where(eq(eiCandidateChanges.id, candidateChange.id))
+      .where(eq(changeCandidates.id, candidateChange.id))
 
     // Apply the change to the provision (only updates to provisions are allowed)
     if (candidateChange.targetId && candidateChange.targetType === 'provision') {
@@ -493,14 +493,14 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
 
   // 3. Update candidate status
   await db
-    .update(eiCandidates)
+    .update(eventCandidates)
     .set({
       status: 'approved',
       eventId: event.id,
       reviewedAt: new Date(),
       updatedAt: new Date(),
     })
-    .where(eq(eiCandidates.id, candidateId))
+    .where(eq(eventCandidates.id, candidateId))
 
   revalidatePath('/admin/event-ingestion/candidates')
   revalidatePath(`/admin/event-ingestion/candidates/${candidateId}`)
@@ -517,12 +517,12 @@ export async function getEntities() {
 
   return db
     .select({
-      id: politicalEntities.id,
-      name: politicalEntities.name,
-      type: politicalEntities.type,
+      id: entities.id,
+      name: entities.name,
+      type: entities.type,
     })
-    .from(politicalEntities)
-    .orderBy(politicalEntities.name)
+    .from(entities)
+    .orderBy(entities.name)
 }
 
 export async function getAdministrations() {
@@ -558,7 +558,7 @@ export async function linkDocumentToCandidate(
 ): Promise<ApiResponse> {
   await requireUser()
 
-  await db.insert(eiCandidateDocuments).values({
+  await db.insert(candidateDocuments).values({
     candidateId,
     documentId,
     relevance,
@@ -575,9 +575,9 @@ export async function unlinkDocumentFromCandidate(
   await requireUser()
 
   await db
-    .delete(eiCandidateDocuments)
+    .delete(candidateDocuments)
     .where(
-      eq(eiCandidateDocuments.candidateId, candidateId)
+      eq(candidateDocuments.candidateId, candidateId)
     )
 
   revalidatePath(`/admin/event-ingestion/candidates/${candidateId}`)

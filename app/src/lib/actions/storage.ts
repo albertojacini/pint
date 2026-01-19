@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { politicalEntities, people, userProfiles } from '@/lib/db/schema'
+import { entities, people, profiles } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { generateFilePath } from '@/lib/storage'
 import { uploadFileServer, deleteFileServer } from '@/lib/storage-server'
@@ -30,8 +30,8 @@ export async function updateEntityAvatar(entityId: string, formData: FormData) {
   // Get current entity to delete old avatar if exists
   const [entity] = await db
     .select()
-    .from(politicalEntities)
-    .where(eq(politicalEntities.id, entityId))
+    .from(entities)
+    .where(eq(entities.id, entityId))
 
   // Upload new avatar
   const path = generateFilePath('avatars', 'entities', entityId, file)
@@ -39,9 +39,9 @@ export async function updateEntityAvatar(entityId: string, formData: FormData) {
 
   // Update database with storage path (not full URL)
   await db
-    .update(politicalEntities)
+    .update(entities)
     .set({ avatarUrl: storagePath })
-    .where(eq(politicalEntities.id, entityId))
+    .where(eq(entities.id, entityId))
 
   // Delete old avatar if exists
   if (entity?.avatarUrl) {
@@ -128,8 +128,8 @@ export async function updateUserAvatar(userId: string, formData: FormData) {
   // Get current user to delete old avatar if exists
   const [user] = await db
     .select()
-    .from(userProfiles)
-    .where(eq(userProfiles.id, userId))
+    .from(profiles)
+    .where(eq(profiles.id, userId))
 
   // Upload new avatar
   const path = generateFilePath('avatars', 'users', userId, file)
@@ -137,9 +137,9 @@ export async function updateUserAvatar(userId: string, formData: FormData) {
 
   // Update database with storage path (not full URL)
   await db
-    .update(userProfiles)
+    .update(profiles)
     .set({ avatarUrl: storagePath })
-    .where(eq(userProfiles.id, userId))
+    .where(eq(profiles.id, userId))
 
   // Delete old avatar if exists
   if (user?.avatarUrl) {

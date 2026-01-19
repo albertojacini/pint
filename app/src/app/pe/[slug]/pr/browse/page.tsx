@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getFilteredProvisions } from '@/lib/actions/provisions'
 import { db } from '@/lib/db/client'
-import { politicalEntities } from '@/lib/db/schema'
+import { entities } from '@/lib/db/schema'
 import { ProvisionCard } from '@/components/provisions/provision-card'
 import { ProvisionsFilterBar } from '@/components/provisions/provisions-filter-bar'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
@@ -28,8 +28,8 @@ export default async function BrowseProvisionsPage({
   // Fetch the entity to verify it exists
   const [entity] = await db
     .select()
-    .from(politicalEntities)
-    .where(idStartsWith(politicalEntities.id, idPrefix))
+    .from(entities)
+    .where(idStartsWith(entities.id, idPrefix))
 
   if (!entity) {
     notFound()

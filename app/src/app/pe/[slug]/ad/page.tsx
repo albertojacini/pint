@@ -1,5 +1,5 @@
 import { db } from '@/lib/db/client'
-import { politicalEntities, administrations, administrationMembers, people } from '@/lib/db/schema'
+import { entities, administrations, members, people } from '@/lib/db/schema'
 import { eq, desc, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
@@ -18,8 +18,8 @@ export default async function AdministrationsPage({ params }: AdministrationsPag
   // Fetch the entity by ID prefix
   const [entity] = await db
     .select()
-    .from(politicalEntities)
-    .where(idStartsWith(politicalEntities.id, idPrefix))
+    .from(entities)
+    .where(idStartsWith(entities.id, idPrefix))
 
   if (!entity) {
     notFound()
@@ -48,12 +48,12 @@ export default async function AdministrationsPage({ params }: AdministrationsPag
             fullName: people.fullName,
           },
         })
-        .from(administrationMembers)
-        .innerJoin(people, eq(administrationMembers.personId, people.id))
+        .from(members)
+        .innerJoin(people, eq(members.personId, people.id))
         .where(
           and(
-            eq(administrationMembers.administrationId, admin.id),
-            eq(administrationMembers.roleType, 'mayor')
+            eq(members.administrationId, admin.id),
+            eq(members.roleType, 'mayor')
           )
         )
         .limit(1)

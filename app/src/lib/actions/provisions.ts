@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { provisions, politicalEntities, ideas, tags, taggables, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
+import { provisions, ideas, tags, taggables, provisionTypes, provisionTypeAssocs } from '@/lib/db/schema'
 import { eq, desc, asc, or, ilike, and, SQL, inArray } from 'drizzle-orm'
 
 // Tag type definition
@@ -50,7 +50,7 @@ async function getProvisionTypes(provisionIds: string[]): Promise<Record<string,
 
   const typeResults = await db
     .select({
-      provisionId: provisionTypeAssociations.provisionId,
+      provisionId: provisionTypeAssocs.provisionId,
       typeId: provisionTypes.id,
       code: provisionTypes.code,
       label: provisionTypes.label,
@@ -58,9 +58,9 @@ async function getProvisionTypes(provisionIds: string[]): Promise<Record<string,
       icon: provisionTypes.icon,
       color: provisionTypes.color,
     })
-    .from(provisionTypeAssociations)
-    .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
-    .where(inArray(provisionTypeAssociations.provisionId, provisionIds))
+    .from(provisionTypeAssocs)
+    .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
+    .where(inArray(provisionTypeAssocs.provisionId, provisionIds))
 
   // Group types by provision
   return typeResults.reduce((acc, row) => {
@@ -346,8 +346,8 @@ export async function getFilteredProvisions(
   // If filtering by type, join with type associations
   if (filters.type) {
     baseQuery = baseQuery
-      .innerJoin(provisionTypeAssociations, eq(provisions.id, provisionTypeAssociations.provisionId))
-      .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
+      .innerJoin(provisionTypeAssocs, eq(provisions.id, provisionTypeAssocs.provisionId))
+      .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
       .where(and(...conditions, eq(provisionTypes.code, filters.type)))
   } else {
     baseQuery = baseQuery.where(and(...conditions))

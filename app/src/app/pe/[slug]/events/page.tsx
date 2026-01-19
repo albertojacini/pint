@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getEventsByEntity } from '@/lib/actions/events'
 import { db } from '@/lib/db/client'
-import { politicalEntities, administrations } from '@/lib/db/schema'
+import { entities, administrations } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { EventsClient } from './events-client'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
@@ -20,8 +20,8 @@ export default async function EventsPage({ params }: EventsPageProps) {
   // Fetch the entity to verify it exists
   const [entity] = await db
     .select()
-    .from(politicalEntities)
-    .where(idStartsWith(politicalEntities.id, idPrefix))
+    .from(entities)
+    .where(idStartsWith(entities.id, idPrefix))
 
   if (!entity) {
     notFound()

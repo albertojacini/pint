@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { events, administrations, politicalEntities } from '@/lib/db/schema'
+import { events, administrations, entities } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 
 export async function getEvents() {
@@ -14,13 +14,13 @@ export async function getEvents() {
       createdAt: events.createdAt,
       administrationId: administrations.id,
       administrationName: administrations.name,
-      entityId: politicalEntities.id,
-      entityName: politicalEntities.name,
-      entityType: politicalEntities.type,
+      entityId: entities.id,
+      entityName: entities.name,
+      entityType: entities.type,
     })
     .from(events)
     .leftJoin(administrations, eq(events.administrationId, administrations.id))
-    .leftJoin(politicalEntities, eq(administrations.entityId, politicalEntities.id))
+    .leftJoin(entities, eq(administrations.entityId, entities.id))
     .orderBy(desc(events.createdAt))
 
   return allEvents

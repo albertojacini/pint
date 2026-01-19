@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { db } from '@/lib/db/client'
-import { politicalEntities } from '@/lib/db/schema'
+import { entities as entitiesTable } from '@/lib/db/schema'
 import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
@@ -13,8 +13,8 @@ export default async function EntitiesPage() {
   // Fetch all political entities
   const entities = await db
     .select()
-    .from(politicalEntities)
-    .orderBy(desc(politicalEntities.createdAt))
+    .from(entitiesTable)
+    .orderBy(desc(entitiesTable.createdAt))
 
   return (
     <div className="container mx-auto py-8 px-4">

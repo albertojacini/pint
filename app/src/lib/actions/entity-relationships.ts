@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { entityRelationships, politicalEntities } from '@/lib/db/schema'
+import { entityRelations, entities } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
 // Type definitions
@@ -28,30 +28,30 @@ export async function getEntityRelationships(entityId: string): Promise<RelatedE
   // Fetch outgoing relationships (this entity -> related entity)
   const outgoing = await db
     .select({
-      relationshipType: entityRelationships.relationshipType,
-      relatedId: politicalEntities.id,
-      relatedName: politicalEntities.name,
-      relatedSlug: politicalEntities.slug,
-      relatedType: politicalEntities.type,
-      relatedAvatarUrl: politicalEntities.avatarUrl,
+      relationshipType: entityRelations.relationshipType,
+      relatedId: entities.id,
+      relatedName: entities.name,
+      relatedSlug: entities.slug,
+      relatedType: entities.type,
+      relatedAvatarUrl: entities.avatarUrl,
     })
-    .from(entityRelationships)
-    .innerJoin(politicalEntities, eq(entityRelationships.relatedEntityId, politicalEntities.id))
-    .where(eq(entityRelationships.entityId, entityId))
+    .from(entityRelations)
+    .innerJoin(entities, eq(entityRelations.relatedEntityId, entities.id))
+    .where(eq(entityRelations.entityId, entityId))
 
   // Fetch incoming relationships (other entity -> this entity)
   const incoming = await db
     .select({
-      relationshipType: entityRelationships.relationshipType,
-      relatedId: politicalEntities.id,
-      relatedName: politicalEntities.name,
-      relatedSlug: politicalEntities.slug,
-      relatedType: politicalEntities.type,
-      relatedAvatarUrl: politicalEntities.avatarUrl,
+      relationshipType: entityRelations.relationshipType,
+      relatedId: entities.id,
+      relatedName: entities.name,
+      relatedSlug: entities.slug,
+      relatedType: entities.type,
+      relatedAvatarUrl: entities.avatarUrl,
     })
-    .from(entityRelationships)
-    .innerJoin(politicalEntities, eq(entityRelationships.entityId, politicalEntities.id))
-    .where(eq(entityRelationships.relatedEntityId, entityId))
+    .from(entityRelations)
+    .innerJoin(entities, eq(entityRelations.entityId, entities.id))
+    .where(eq(entityRelations.relatedEntityId, entityId))
 
   // Transform outgoing relationships
   const outgoingRelated: RelatedEntity[] = outgoing.map(r => ({

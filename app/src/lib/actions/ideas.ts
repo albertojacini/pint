@@ -8,9 +8,9 @@ import {
   contributions,
   goals,
   provisions,
-  politicalEntities,
+  entities,
   categories,
-  stakeholderGroups
+  stakeholders
 } from '@/lib/db/schema'
 import { eq, sql, inArray } from 'drizzle-orm'
 import type { StakeholderGroupEffects } from '@pint/types'
@@ -100,29 +100,29 @@ export async function getIdea(id: string) {
       status: provisions.status,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
-      entityId: politicalEntities.id,
-      entityName: politicalEntities.name,
-      entityType: politicalEntities.type,
+      entityId: entities.id,
+      entityName: entities.name,
+      entityType: entities.type,
     })
     .from(provisions)
-    .innerJoin(politicalEntities, eq(provisions.entityId, politicalEntities.id))
+    .innerJoin(entities, eq(provisions.entityId, entities.id))
     .where(eq(provisions.ideaId, id))
     .orderBy(provisions.status, provisions.effectiveFrom)
 
   // Get stakeholder groups referenced in the effects diagram
   const stakeholderGroupIds = idea.effectsDiagram?.stakeholderGroups?.map((sg: StakeholderGroupEffects) => sg.stakeholderGroupId) || []
 
-  const stakeholderGroupsData = stakeholderGroupIds.length > 0
+  const stakeholdersData = stakeholderGroupIds.length > 0
     ? await db
         .select({
-          id: stakeholderGroups.id,
-          name: stakeholderGroups.name,
-          title: stakeholderGroups.title,
-          category: stakeholderGroups.category,
-          icon: stakeholderGroups.icon,
+          id: stakeholders.id,
+          name: stakeholders.name,
+          title: stakeholders.title,
+          category: stakeholders.category,
+          icon: stakeholders.icon,
         })
-        .from(stakeholderGroups)
-        .where(inArray(stakeholderGroups.id, stakeholderGroupIds))
+        .from(stakeholders)
+        .where(inArray(stakeholders.id, stakeholderGroupIds))
     : []
 
   return {
@@ -130,6 +130,6 @@ export async function getIdea(id: string) {
     effects: ideaEffects,
     goalContributions,
     provisions: ideaProvisions,
-    stakeholderGroups: stakeholderGroupsData,
+    stakeholders: stakeholdersData,
   }
 }

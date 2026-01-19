@@ -1,6 +1,6 @@
 import { createClient } from './supabase/server'
 import { db } from './db/client'
-import { userProfiles } from './db/schema'
+import { profiles } from './db/schema'
 import { eq } from 'drizzle-orm'
 
 export async function getUser() {
@@ -19,12 +19,12 @@ export async function requireUser() {
 
   // Sync user to local database if not exists
   try {
-    const existingProfile = await db.query.userProfiles.findFirst({
-      where: eq(userProfiles.id, user.id),
+    const existingProfile = await db.query.profiles.findFirst({
+      where: eq(profiles.id, user.id),
     })
 
     if (!existingProfile) {
-      await db.insert(userProfiles).values({
+      await db.insert(profiles).values({
         id: user.id,
         email: user.email || '',
         fullName: user.user_metadata?.full_name || null,

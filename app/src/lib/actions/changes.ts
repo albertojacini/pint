@@ -1,8 +1,8 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { changes, events, provisions, administrations, provisionTypes, provisionTypeAssociations } from '@/lib/db/schema'
-import { eq, desc, and, or, inArray, sql } from 'drizzle-orm'
+import { changes, events, provisions, administrations, provisionTypes, provisionTypeAssocs } from '@/lib/db/schema'
+import { eq, desc, and, or, inArray } from 'drizzle-orm'
 
 export interface ChangeWithContext {
   id: string
@@ -98,9 +98,9 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
         // Fetch types for this provision
         const types = await db
           .select({ code: provisionTypes.code })
-          .from(provisionTypeAssociations)
-          .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
-          .where(eq(provisionTypeAssociations.provisionId, change.targetId))
+          .from(provisionTypeAssocs)
+          .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
+          .where(eq(provisionTypeAssocs.provisionId, change.targetId))
 
         targetProvisionTypes = types.map(t => t.code)
       }
@@ -155,9 +155,9 @@ export async function getChangesByProvision(provisionId: string): Promise<Change
       // Fetch types for this provision
       const types = await db
         .select({ code: provisionTypes.code })
-        .from(provisionTypeAssociations)
-        .innerJoin(provisionTypes, eq(provisionTypeAssociations.typeId, provisionTypes.id))
-        .where(eq(provisionTypeAssociations.provisionId, change.targetId))
+        .from(provisionTypeAssocs)
+        .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
+        .where(eq(provisionTypeAssocs.provisionId, change.targetId))
 
       const targetProvisionTypes = types.map(t => t.code)
 
