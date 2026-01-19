@@ -8,8 +8,9 @@ interface ProvisionTimelineProps {
 }
 
 // Format timestamp to readable date
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString('en-US', {
+function formatDate(date: Date | null): string {
+  if (!date) return 'N/A'
+  return new Date(date).toLocaleDateString('it-IT', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -19,7 +20,7 @@ function formatDate(date: Date): string {
 export function ProvisionTimeline({ changes }: ProvisionTimelineProps) {
   if (changes.length === 0) return null
 
-  // Changes are already sorted by createdAt DESC from the server
+  // Changes are already sorted by effectiveDate DESC from the server
   return (
     <div className="space-y-4">
       {changes.map((change, index) => (
@@ -37,7 +38,7 @@ export function ProvisionTimeline({ changes }: ProvisionTimelineProps) {
             {/* Date and Event Type */}
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-sm font-medium text-foreground">
-                {formatDate(change.createdAt)}
+                {formatDate(change.effectiveDate || change.createdAt)}
               </span>
               {change.eventType && (
                 <Badge variant="secondary" className="text-xs">

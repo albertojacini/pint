@@ -23,6 +23,7 @@
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.46.1",
     "@tailwindcss/typography": "^0.5.19",
+    "cal-heatmap": "^4.2.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.0.6",

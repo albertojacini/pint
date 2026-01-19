@@ -18,6 +18,7 @@ import { Tags } from '@/components/custom-ui/tags'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
+import { ProvisionChangesHeatmap } from '@/components/provisions/provision-changes-heatmap'
 import { getChangesByProvision } from '@/lib/actions/changes'
 
 interface PageProps {
@@ -648,6 +649,14 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
           <h2 className="text-lg font-semibold mb-4">Change History</h2>
           <ProvisionTimeline changes={provisionChanges} />
+        </div>
+      )}
+
+      {/* Changes Heatmap */}
+      {provisionChanges.length > 0 && (
+        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
+          <h2 className="text-lg font-semibold mb-4">Calendario Modifiche</h2>
+          <ProvisionChangesHeatmap changes={provisionChanges} />
         </div>
       )}
 
