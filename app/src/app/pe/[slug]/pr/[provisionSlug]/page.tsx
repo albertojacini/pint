@@ -15,6 +15,7 @@ import {
 import { eq, and } from 'drizzle-orm'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
+import { Section } from '@/components/custom-ui/section'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
@@ -28,7 +29,6 @@ interface PageProps {
   }>
 }
 
-// Helper function to get status color
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
     active: 'bg-green-500',
@@ -38,13 +38,11 @@ const getStatusColor = (status: string) => {
   return colors[status] || 'bg-gray-500'
 }
 
-// Map 0-10 to 1-5 dots
 function getScoreDots(score: number | null): number {
   if (score === null || score === undefined) return 0
   return Math.ceil(score / 2)
 }
 
-// Get color based on score (0-10 scale)
 function getScoreColor(score: number | null): string {
   if (score === null || score === undefined) return 'rgb(209 213 219)'
   if (score >= 7) return 'rgb(34 197 94)'
@@ -52,7 +50,6 @@ function getScoreColor(score: number | null): string {
   return 'rgb(239 68 68)'
 }
 
-// Get icon for artifact type
 function getArtifactTypeIcon(type: string): string {
   const icons: Record<string, string> = {
     evolution: '📈',
@@ -64,7 +61,6 @@ function getArtifactTypeIcon(type: string): string {
   return icons[type] || '📄'
 }
 
-// Get label for artifact type
 function getArtifactTypeLabel(type: string): string {
   const labels: Record<string, string> = {
     evolution: 'Evolution',
@@ -76,7 +72,6 @@ function getArtifactTypeLabel(type: string): string {
   return labels[type] || type
 }
 
-// Get data quality indicator
 function getDataQualityIndicator(quality: string): { label: string; color: string; icon: string } {
   const indicators: Record<string, { label: string; color: string; icon: string }> = {
     verified: { label: 'Verified', color: 'text-green-600 bg-green-50', icon: '✓' },
@@ -95,7 +90,6 @@ type Artifact = {
   dataQuality: string
 }
 
-// Parse a single CSV line handling quoted fields
 function parseCsvLine(line: string): string[] {
   const result: string[] = []
   let current = ''
@@ -107,21 +101,17 @@ function parseCsvLine(line: string): string[] {
 
     if (inQuotes) {
       if (char === '"' && nextChar === '"') {
-        // Escaped quote
         current += '"'
         i++
       } else if (char === '"') {
-        // End of quoted field
         inQuotes = false
       } else {
         current += char
       }
     } else {
       if (char === '"') {
-        // Start of quoted field
         inQuotes = true
       } else if (char === ',') {
-        // Field separator
         result.push(current.trim())
         current = ''
       } else {
@@ -130,12 +120,10 @@ function parseCsvLine(line: string): string[] {
     }
   }
 
-  // Push the last field
   result.push(current.trim())
   return result
 }
 
-// Parse CSV content into rows
 function parseCsv(csv: string): { headers: string[]; rows: string[][] } {
   const lines = csv.trim().split('\n')
   if (lines.length === 0) return { headers: [], rows: [] }
@@ -144,7 +132,6 @@ function parseCsv(csv: string): { headers: string[]; rows: string[][] } {
   return { headers, rows }
 }
 
-// Parse YAML-like parameters content
 function parseParameters(content: string): { key: string; value: string }[] {
   const lines = content.trim().split('\n')
   return lines
@@ -158,37 +145,22 @@ function parseParameters(content: string): { key: string; value: string }[] {
     .filter((item): item is { key: string; value: string } => item !== null)
 }
 
-// Evolution Widget - multi-series display
 function TimeSeriesWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
   if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
-  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows (only header: {headers.join(', ')})</p>
+  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
 
-  // First column is the time label (e.g., year), rest are series
   const timeLabels = rows.map((row) => row[0] || '')
   const seriesNames = headers.slice(1)
-
-  // Build series data: for each series, get all values across time
   const series = seriesNames.map((name, seriesIndex) => ({
     name,
     values: rows.map((row) => parseFloat(row[seriesIndex + 1] || '0') || 0),
   }))
-
-  // Find max value across all series for scaling
   const maxValue = Math.max(...series.flatMap((s) => s.values), 1)
-
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-purple-500',
-    'bg-pink-500',
-  ]
+  const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-purple-500', 'bg-pink-500']
 
   return (
     <div className="space-y-4">
-      {/* Legend */}
       <div className="flex flex-wrap gap-3 text-xs">
         {series.map((s, i) => (
           <div key={s.name} className="flex items-center gap-1.5">
@@ -197,14 +169,10 @@ function TimeSeriesWidget({ content }: { content: string }) {
           </div>
         ))}
       </div>
-
-      {/* Rows: one per time period */}
       <div className="space-y-1.5">
         {timeLabels.map((label, timeIndex) => (
           <div key={timeIndex} className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-12 text-right flex-shrink-0">
-              {label}
-            </span>
+            <span className="text-xs text-muted-foreground w-12 text-right flex-shrink-0">{label}</span>
             <div className="flex-1 flex gap-1">
               {series.map((s, seriesIndex) => {
                 const value = s.values[timeIndex]
@@ -226,33 +194,17 @@ function TimeSeriesWidget({ content }: { content: string }) {
   )
 }
 
-// Breakdown Widget - horizontal stacked bar or individual bars with percentages
 function BreakdownWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
   if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
   if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
 
-  // Assume first column is category, second is value
-  const data = rows.map((row) => ({
-    label: row[0] || '',
-    value: parseFloat(row[1] || '0') || 0,
-  }))
-
+  const data = rows.map((row) => ({ label: row[0] || '', value: parseFloat(row[1] || '0') || 0 }))
   const total = data.reduce((sum, d) => sum + d.value, 0)
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-orange-500',
-  ]
+  const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-orange-500']
 
   return (
     <div className="space-y-3">
-      {/* Stacked bar */}
       <div className="h-6 bg-muted rounded-md overflow-hidden flex">
         {data.map((item, i) => {
           const percentage = total > 0 ? (item.value / total) * 100 : 0
@@ -267,7 +219,6 @@ function BreakdownWidget({ content }: { content: string }) {
           )
         })}
       </div>
-      {/* Legend */}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {data.map((item, i) => {
           const percentage = total > 0 ? (item.value / total) * 100 : 0
@@ -284,10 +235,9 @@ function BreakdownWidget({ content }: { content: string }) {
   )
 }
 
-// Parameters Widget - key-value grid
 function ParametersWidget({ content }: { content: string }) {
   const params = parseParameters(content)
-  if (params.length === 0) return <p className="text-sm text-yellow-600">No parameters found (content: {content.slice(0, 100)}...)</p>
+  if (params.length === 0) return <p className="text-sm text-yellow-600">No parameters found</p>
 
   return (
     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -301,20 +251,14 @@ function ParametersWidget({ content }: { content: string }) {
   )
 }
 
-// Narrative Widget - formatted prose
 function NarrativeWidget({ content }: { content: string }) {
-  return (
-    <div className="prose prose-sm max-w-none text-muted-foreground">
-      <p className="whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
-    </div>
-  )
+  return <p className="text-muted-foreground whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
 }
 
-// Dataset Widget - enhanced table
 function DatasetWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
   if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
-  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows (only header: {headers.join(', ')})</p>
+  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
 
   return (
     <div className="overflow-x-auto">
@@ -322,12 +266,7 @@ function DatasetWidget({ content }: { content: string }) {
         <thead>
           <tr>
             {headers.map((header, i) => (
-              <th
-                key={i}
-                className="bg-muted px-3 py-2 text-left font-medium border-b border-border/50"
-              >
-                {header}
-              </th>
+              <th key={i} className="bg-muted px-3 py-2 text-left font-medium border-b border-border/50">{header}</th>
             ))}
           </tr>
         </thead>
@@ -335,9 +274,7 @@ function DatasetWidget({ content }: { content: string }) {
           {rows.map((row, i) => (
             <tr key={i} className="hover:bg-muted/30 transition-colors">
               {row.map((cell, j) => (
-                <td key={j} className="px-3 py-1.5 border-b border-border/30">
-                  {cell}
-                </td>
+                <td key={j} className="px-3 py-1.5 border-b border-border/30">{cell}</td>
               ))}
             </tr>
           ))}
@@ -347,47 +284,22 @@ function DatasetWidget({ content }: { content: string }) {
   )
 }
 
-// Artifact Widget Router
 function ArtifactWidget({ artifact }: { artifact: Artifact }) {
-  if (artifact.content === null || artifact.content === undefined) {
-    return <p className="text-sm text-red-500">Error: content is null</p>
-  }
+  if (!artifact.content) return <p className="text-sm text-red-500">Error: content is empty</p>
 
-  if (artifact.content === '') {
-    return <p className="text-sm text-red-500">Error: content is empty string</p>
-  }
-
-  try {
-    switch (artifact.artifactType) {
-      case 'evolution':
-        return <TimeSeriesWidget content={artifact.content} />
-      case 'distribution':
-        return <BreakdownWidget content={artifact.content} />
-      case 'parameters':
-        return <ParametersWidget content={artifact.content} />
-      case 'narrative':
-        return <NarrativeWidget content={artifact.content} />
-      case 'table':
-        return <DatasetWidget content={artifact.content} />
-      default:
-        return (
-          <div>
-            <p className="text-sm text-yellow-600 mb-2">Unknown type: {artifact.artifactType}</p>
-            <pre className="text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">
-              {artifact.content}
-            </pre>
-          </div>
-        )
-    }
-  } catch (error) {
-    return (
-      <div className="text-sm text-red-500">
-        <p>Error rendering widget: {error instanceof Error ? error.message : 'Unknown error'}</p>
-        <pre className="text-xs bg-muted p-2 rounded mt-2 overflow-x-auto whitespace-pre-wrap font-mono">
-          {artifact.content.slice(0, 200)}...
-        </pre>
-      </div>
-    )
+  switch (artifact.artifactType) {
+    case 'evolution':
+      return <TimeSeriesWidget content={artifact.content} />
+    case 'distribution':
+      return <BreakdownWidget content={artifact.content} />
+    case 'parameters':
+      return <ParametersWidget content={artifact.content} />
+    case 'narrative':
+      return <NarrativeWidget content={artifact.content} />
+    case 'table':
+      return <DatasetWidget content={artifact.content} />
+    default:
+      return <pre className="text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">{artifact.content}</pre>
   }
 }
 
@@ -410,9 +322,7 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
           </span>
         )}
       </div>
-      {artifact.description && (
-        <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>
-      )}
+      {artifact.description && <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>}
       <ArtifactWidget artifact={artifact} />
     </div>
   )
@@ -423,17 +333,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const { idPrefix: entityIdPrefix } = parseUrlSlug(entityUrlSlug)
   const { idPrefix: provisionIdPrefix } = parseUrlSlug(provisionUrlSlug)
 
-  // Fetch the entity
-  const [entity] = await db
-    .select()
-    .from(entities)
-    .where(idStartsWith(entities.id, entityIdPrefix))
+  const [entity] = await db.select().from(entities).where(idStartsWith(entities.id, entityIdPrefix))
+  if (!entity) notFound()
 
-  if (!entity) {
-    notFound()
-  }
-
-  // Fetch the provision
   const [provisionResult] = await db
     .select({
       id: provisions.id,
@@ -453,11 +355,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
 
-  if (!provisionResult) {
-    notFound()
-  }
+  if (!provisionResult) notFound()
 
-  // Fetch types for this provision
   const provisionTypesList = await db
     .select({
       id: provisionTypes.id,
@@ -471,34 +370,20 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
     .where(eq(provisionTypeAssocs.provisionId, provisionResult.id))
 
-  // Fetch idea if linked
   let ideaTitle: string | null = null
   if (provisionResult.ideaId) {
-    const [idea] = await db
-      .select({ title: ideas.title })
-      .from(ideas)
-      .where(eq(ideas.id, provisionResult.ideaId))
+    const [idea] = await db.select({ title: ideas.title }).from(ideas).where(eq(ideas.id, provisionResult.ideaId))
     ideaTitle = idea?.title || null
   }
 
-  // Fetch tags for this provision
   const provisionTags = await db
-    .select({
-      id: tags.id,
-      name: tags.name,
-      slug: tags.slug,
-      category: tags.category,
-    })
+    .select({ id: tags.id, name: tags.name, slug: tags.slug, category: tags.category })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))
-    .where(
-      and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id))
-    )
+    .where(and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id)))
 
-  // Fetch changes for this provision
   const provisionChanges = await getChangesByProvision(provisionResult.id)
 
-  // Fetch artifacts linked to this provision
   const linkedArtifacts = await db
     .select({
       id: artifacts.id,
@@ -522,155 +407,120 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const relevanceDots = getScoreDots(provision.relevance)
   const relevanceColor = getScoreColor(provision.relevance)
   const mediaUrl = getStorageUrl('avatars', provision.avatarUrl)
-
-  // Filter tags to only show policy-topic and impact-area categories
-  const visibleTags = provision.tags.filter(
-    (tag) => tag.category === 'policy-topic' || tag.category === 'impact-area'
-  )
+  const visibleTags = provision.tags.filter((tag) => tag.category === 'policy-topic' || tag.category === 'impact-area')
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      {/* Back link */}
-      <Link
-        href={`${entityPath(entity)}/pr`}
-        className="text-sm text-muted-foreground hover:text-primary mb-6 inline-block"
-      >
-        ← Back to provisions
-      </Link>
+    <div className="container mx-auto py-8 px-4 max-w-4xl">
+      {/* Type Badges + Tags */}
+      <div className="flex items-center gap-2 mb-6">
+        {provisionTypesList.map((type) => (
+          <ProvisionClassificationBadge key={type.id} type={type.code as any} />
+        ))}
+        <Tags tags={visibleTags} maxTags={3} />
+      </div>
 
-      <div className="border border-border/50 rounded-lg p-6 bg-card">
-        {/* Row 1: Type Badges + Tags */}
-        <div className="flex items-center gap-2 mb-4 flex-wrap">
-          {provisionTypesList.map((type) => (
-            <ProvisionClassificationBadge key={type.id} type={type.code as any} />
-          ))}
-          <Tags tags={visibleTags} maxTags={3} />
-        </div>
-
-        {/* Row 2: Title + Relevance Dots */}
-        <div className="flex items-center gap-4 mb-4">
-          <h1 className="text-2xl font-bold flex-1">{provision.title}</h1>
-
-          {/* Relevance indicator (5 dots) */}
-          <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
-            {[1, 2, 3, 4, 5].map((dot) => (
-              <div
-                key={dot}
-                className="w-2.5 h-2.5 rounded-full transition-colors"
-                style={{
-                  backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)',
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Row 3: Avatar Image + Description */}
-        <div className="flex gap-4 mb-6">
-          {/* Avatar image (only show if exists) */}
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-center gap-4 mb-3">
           {mediaUrl && (
-            <img
-              src={mediaUrl}
-              alt={provision.title}
-              className="w-16 h-16 flex-shrink-0 rounded-lg object-cover"
-            />
+            <img src={mediaUrl} alt={provision.title} className="w-16 h-16 flex-shrink-0 rounded-lg object-cover" />
           )}
-
-          {/* Description */}
-          <p className="text-base text-muted-foreground flex-1">
-            {provision.descriptionShort || 'No description available'}
-          </p>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-2xl font-bold">{provision.title}</h1>
+              <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
+                {[1, 2, 3, 4, 5].map((dot) => (
+                  <div
+                    key={dot}
+                    className="w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)' }}
+                  />
+                ))}
+              </div>
+            </div>
+            <p className="text-muted-foreground">{provision.descriptionShort || 'No description available'}</p>
+          </div>
         </div>
 
-        {/* Row 4: Display Data */}
-        {provision.displayData?.items && provision.displayData.items.length > 0 && (
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            {provision.displayData.items.map((item, index) => (
-              <div key={index}>
-                <div className="text-xs text-muted-foreground">{item.label}</div>
-                <div className="text-sm font-semibold">{item.value}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Row 5: Stats + Info */}
-        <div className="flex items-center justify-between pt-4 border-t border-border">
-          {/* Left: Stats */}
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            {/* Status indicator */}
+        {/* Status bar */}
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${getStatusColor(provision.status)}`} />
               <span className="capitalize">{provision.status}</span>
             </div>
-
-            {/* Effective year */}
-            {provision.effectiveFrom && (
-              <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
-            )}
+            {provision.effectiveFrom && <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>}
           </div>
-
-          {/* Right: Info */}
-          <div className="flex items-center gap-2 text-sm">
-            {/* Linked idea */}
-            {provision.ideaTitle && provision.ideaId && (
-              <Link
-                href={`/ideas/${provision.ideaId}`}
-                className="text-primary hover:underline flex items-center gap-1.5"
-              >
-                <span>💡</span>
-                <span className="max-w-[150px] truncate">{provision.ideaTitle}</span>
-              </Link>
-            )}
-          </div>
+          {provision.ideaTitle && provision.ideaId && (
+            <Link href={`/ideas/${provision.ideaId}`} className="text-primary hover:underline flex items-center gap-1.5">
+              <span>💡</span>
+              <span className="max-w-[150px] truncate">{provision.ideaTitle}</span>
+            </Link>
+          )}
         </div>
       </div>
 
-      {/* Full Description */}
+      {/* Key Data */}
+      {provision.displayData?.items && provision.displayData.items.length > 0 && (
+        <Section title="Key Data">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {provision.displayData.items.map((item, index) => (
+              <div key={index}>
+                <div className="text-xs text-muted-foreground">{item.label}</div>
+                <div className="text-lg font-semibold">{item.value}</div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {/* Description */}
       {provision.description && (
-        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
-          <h2 className="text-lg font-semibold mb-3">Description</h2>
+        <Section title="Description">
           <p className="text-muted-foreground whitespace-pre-wrap">{provision.description}</p>
-        </div>
+        </Section>
       )}
 
       {/* Summary */}
       {provision.summaryMd && (
-        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
-          <h2 className="text-lg font-semibold mb-3">Summary</h2>
+        <Section title="Summary">
           <div className="prose prose-sm max-w-none text-muted-foreground">
             <pre className="whitespace-pre-wrap font-sans text-sm">{provision.summaryMd}</pre>
           </div>
-        </div>
-      )}
-
-      {/* Change History */}
-      {provisionChanges.length > 0 && (
-        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
-          <h2 className="text-lg font-semibold mb-4">Change History</h2>
-          <ProvisionTimeline changes={provisionChanges} />
-        </div>
+        </Section>
       )}
 
       {/* Changes Heatmap */}
       {provisionChanges.length > 0 && (
-        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
-          <h2 className="text-lg font-semibold mb-4">Calendario Modifiche</h2>
+        <Section title="Calendario Modifiche">
           <ProvisionChangesHeatmap changes={provisionChanges} />
-        </div>
+        </Section>
+      )}
+
+      {/* Change History */}
+      {provisionChanges.length > 0 && (
+        <Section title="Change History">
+          <ProvisionTimeline changes={provisionChanges} />
+        </Section>
       )}
 
       {/* Artifacts */}
       {linkedArtifacts.length > 0 && (
-        <div className="mt-6 border border-border/50 rounded-lg p-6 bg-card">
-          <h2 className="text-lg font-semibold mb-4">Data & Artifacts</h2>
+        <Section title="Data & Artifacts">
           <div className="space-y-4">
             {linkedArtifacts.map((artifact) => (
               <ArtifactCard key={artifact.id} artifact={artifact} />
             ))}
           </div>
-        </div>
+        </Section>
       )}
+
+      {/* Back link */}
+      <div className="mt-8 pt-4 border-t border-border">
+        <Link href={`${entityPath(entity)}/pr`} className="text-sm text-muted-foreground hover:text-primary">
+          ← Back to provisions
+        </Link>
+      </div>
     </div>
   )
 }
