@@ -1,4 +1,4 @@
-import { pgTable, text, uuid, timestamp, numeric, uniqueIndex, jsonb } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, numeric, uniqueIndex, jsonb, integer } from 'drizzle-orm/pg-core'
 import { entities, administrations } from './government'
 import { documents } from './sources'
 
@@ -77,7 +77,18 @@ export const eventDocuments = pgTable('ing_event_documents', {
   uniqueEventDocument: uniqueIndex('ing_event_documents_unique').on(table.eventId, table.documentId),
 }))
 
-// History (changes references events from this file)
+// ============================================================================
+// HISTORY SUBSYSTEM (gov_changes)
+// ============================================================================
+// A "change" is a manually tracked record of a modification to a government
+// target (provision, entity, or administration). Changes capture both:
+// - Actual changes: modifications that have taken effect (e.g., "Area C price raised to €7.50")
+// - Planned changes: announced future modifications (e.g., "Metro Line 4 extension scheduled for 2028")
+//
+// Changes are linked to ingestion events that document them, providing
+// traceability to source documents. The effective_date indicates when the
+// change takes/took effect (distinct from created_at which tracks when
+// the record was created in the system).
 export const changes = pgTable('gov_changes', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }),
@@ -85,6 +96,11 @@ export const changes = pgTable('gov_changes', {
     enum: ['provision', 'entity', 'administration']
   }).notNull(),
   targetId: uuid('target_id').notNull(),
+  type: text('type', {
+    enum: ['actual', 'planned']
+  }).notNull().default('actual'),
+  effectiveDate: timestamp('effective_date', { withTimezone: true }),
+  relevance: integer('relevance'), // 1-10 scale, how significant is this change
   description: text('description'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 })
