@@ -1,5 +1,4 @@
 import { pgTable, text, uuid, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
-import { provisions } from './government'
 import { documents } from './sources'
 
 // ============================================================================
@@ -32,13 +31,4 @@ export const artifactSources = pgTable('kno_artifact_sources', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 }, (table) => ({
   uniqueArtifactDocument: uniqueIndex('kno_artifact_sources_unique').on(table.artifactId, table.documentId),
-}))
-
-export const provisionArtifacts = pgTable('gov_provision_artifacts', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
-  artifactId: uuid('artifact_id').notNull().references(() => artifacts.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  uniqueProvisionArtifact: uniqueIndex('gov_provision_artifacts_unique').on(table.provisionId, table.artifactId),
 }))

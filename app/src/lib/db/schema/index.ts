@@ -43,6 +43,8 @@ export {
   provisionTypes,
   provisions,
   provisionTypeAssocs,
+  provisionArtifacts,
+  changes,
 } from './government'
 
 // taxonomy
@@ -59,7 +61,6 @@ export {
   sources as ingSources,
   events,
   eventDocuments,
-  changes,
   eventCandidates,
   candidateDocuments,
   changeCandidates,
@@ -73,4 +74,4 @@ export { provisionDrafts, draftDocuments } from './provision-pipeline'
 export { researches, sources as researchSources } from './research'
 
 // knowledge
-export { artifacts, artifactSources, provisionArtifacts } from './knowledge'
+export { artifacts, artifactSources } from './knowledge'

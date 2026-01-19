@@ -1,5 +1,7 @@
 import { pgTable, text, uuid, timestamp, integer, uniqueIndex, jsonb } from 'drizzle-orm/pg-core'
 import { ideas } from './policies'
+import { events } from './ingestion'
+import { artifacts } from './knowledge'
 
 // ============================================================================
 // GOVERNMENT SUBSYSTEM (gov_)
@@ -175,3 +177,41 @@ export const provisionTypeAssocs = pgTable('gov_provision_type_assocs', {
 }, (table) => ({
   uniqueAssociation: uniqueIndex('gov_provision_type_assocs_unique').on(table.provisionId, table.typeId),
 }))
+
+// Provision-Artifact junction table
+export const provisionArtifacts = pgTable('gov_provision_artifacts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
+  artifactId: uuid('artifact_id').notNull().references(() => artifacts.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (table) => ({
+  uniqueProvisionArtifact: uniqueIndex('gov_provision_artifacts_unique').on(table.provisionId, table.artifactId),
+}))
+
+// ============================================================================
+// HISTORY SUBSYSTEM (gov_changes)
+// ============================================================================
+// A "change" is a manually tracked record of a modification to a government
+// target (provision, entity, or administration). Changes capture both:
+// - Actual changes: modifications that have taken effect (e.g., "Area C price raised to €7.50")
+// - Planned changes: announced future modifications (e.g., "Metro Line 4 extension scheduled for 2028")
+//
+// Changes are linked to ingestion events that document them, providing
+// traceability to source documents. The effective_date indicates when the
+// change takes/took effect (distinct from created_at which tracks when
+// the record was created in the system).
+export const changes = pgTable('gov_changes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }),
+  targetType: text('target_type', {
+    enum: ['provision', 'entity', 'administration']
+  }).notNull(),
+  targetId: uuid('target_id').notNull(),
+  type: text('type', {
+    enum: ['actual', 'planned']
+  }).notNull().default('actual'),
+  effectiveDate: timestamp('effective_date', { withTimezone: true }),
+  relevance: integer('relevance'), // 1-10 scale, how significant is this change
+  description: text('description'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+})
