@@ -157,43 +157,70 @@ function parseParameters(content: string): { key: string; value: string }[] {
     .filter((item): item is { key: string; value: string } => item !== null)
 }
 
-// Time Series Widget - horizontal bar chart
+// Evolution Widget - multi-series display
 function TimeSeriesWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
   if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
   if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows (only header: {headers.join(', ')})</p>
 
-  // Assume first column is label (e.g., year), second is value
-  const labelIndex = 0
-  const valueIndex = headers.length > 1 ? 1 : 0
-  const valueHeader = headers[valueIndex] || 'Value'
+  // First column is the time label (e.g., year), rest are series
+  const timeLabels = rows.map((row) => row[0] || '')
+  const seriesNames = headers.slice(1)
 
-  const data = rows.map((row) => ({
-    label: row[labelIndex] || '',
-    value: parseFloat(row[valueIndex] || '0') || 0,
+  // Build series data: for each series, get all values across time
+  const series = seriesNames.map((name, seriesIndex) => ({
+    name,
+    values: rows.map((row) => parseFloat(row[seriesIndex + 1] || '0') || 0),
   }))
 
-  const maxValue = Math.max(...data.map((d) => d.value), 1)
+  // Find max value across all series for scaling
+  const maxValue = Math.max(...series.flatMap((s) => s.values), 1)
+
+  const colors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-red-500',
+    'bg-purple-500',
+    'bg-pink-500',
+  ]
 
   return (
-    <div className="space-y-2">
-      <div className="text-xs text-muted-foreground mb-3">{valueHeader}</div>
-      {data.map((item, i) => (
-        <div key={i} className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground w-16 text-right flex-shrink-0">
-            {item.label}
-          </span>
-          <div className="flex-1 h-5 bg-muted rounded-sm overflow-hidden">
-            <div
-              className="h-full bg-primary/70 rounded-sm transition-all"
-              style={{ width: `${(item.value / maxValue) * 100}%` }}
-            />
+    <div className="space-y-4">
+      {/* Legend */}
+      <div className="flex flex-wrap gap-3 text-xs">
+        {series.map((s, i) => (
+          <div key={s.name} className="flex items-center gap-1.5">
+            <div className={`w-3 h-3 rounded-sm ${colors[i % colors.length]}`} />
+            <span className="text-muted-foreground">{s.name}</span>
           </div>
-          <span className="text-xs font-medium w-16 flex-shrink-0">
-            {item.value.toLocaleString()}
-          </span>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      {/* Rows: one per time period */}
+      <div className="space-y-1.5">
+        {timeLabels.map((label, timeIndex) => (
+          <div key={timeIndex} className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground w-12 text-right flex-shrink-0">
+              {label}
+            </span>
+            <div className="flex-1 flex gap-1">
+              {series.map((s, seriesIndex) => {
+                const value = s.values[timeIndex]
+                const width = (value / maxValue) * 100
+                return (
+                  <div
+                    key={s.name}
+                    className={`h-4 ${colors[seriesIndex % colors.length]} rounded-sm`}
+                    style={{ width: `${width}%`, minWidth: value > 0 ? '2px' : '0' }}
+                    title={`${s.name}: ${value.toLocaleString()}`}
+                  />
+                )
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

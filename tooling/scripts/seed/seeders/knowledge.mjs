@@ -249,7 +249,7 @@ export async function seedKnowledge(client, _supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'kno_artifacts',
-        columns: ['id', 'title', 'description', 'artifact_type', 'content', 'state', 'state_notes'],
+        columns: ['id', 'title', 'description', 'artifact_type', 'content', 'state', 'state_notes', 'data_quality'],
         values: [
           id,
           artifact.title,
@@ -258,6 +258,7 @@ export async function seedKnowledge(client, _supabase, idMaps) {
           artifact.content || null,
           artifact.state || 'draft',
           artifact.state_notes || null,
+          artifact.data_quality || 'verified',
         ],
       })
 
