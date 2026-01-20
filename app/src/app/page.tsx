@@ -83,7 +83,7 @@ export default async function Home() {
 
           <div className="mt-6">
             <Button asChild size="lg">
-              <Link href={`/entities/${milanoEntity.id}`}>Explore Milano</Link>
+              <Link href={`/pe/${milanoEntity.slug}`}>Explore Milano</Link>
             </Button>
           </div>
         </div>
@@ -93,7 +93,7 @@ export default async function Home() {
       <div className="mt-12 text-center">
         <p className="text-gray-600 mb-4">Want to explore other cities?</p>
         <Button asChild variant="outline">
-          <Link href="/entities">Browse all entities</Link>
+          <Link href="/pe">Browse all entities</Link>
         </Button>
       </div>
     </div>
