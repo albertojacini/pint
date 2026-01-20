@@ -573,28 +573,208 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
       {/* Performance & Comparison - Coming Soon */}
       <Section title="Performance & Comparison">
-        <div className="border border-dashed border-border rounded-lg p-6 bg-muted/20">
-          <p className="text-sm text-muted-foreground mb-3">Coming soon:</p>
-          <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Goals & Achievements</li>
-            <li>• Implementation Analysis</li>
-            <li>• Stakeholder Impact</li>
-            <li>• Financial & Economic Impact</li>
-            <li>• Comparative Benchmarking</li>
-          </ul>
+        <div className="space-y-6">
+          {/* Goals & Achievements */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>🎯</span> Goals & Achievements
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              KPIs with targets vs. actuals, progress tracking over time
+            </p>
+            <div className="grid grid-cols-3 gap-3 opacity-50">
+              <div className="bg-background rounded p-2 text-center">
+                <div className="text-xs text-muted-foreground">Target</div>
+                <div className="text-sm font-medium">--</div>
+              </div>
+              <div className="bg-background rounded p-2 text-center">
+                <div className="text-xs text-muted-foreground">Actual</div>
+                <div className="text-sm font-medium">--</div>
+              </div>
+              <div className="bg-background rounded p-2 text-center">
+                <div className="text-xs text-muted-foreground">Progress</div>
+                <div className="text-sm font-medium">--%</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Theory vs Implementation Analysis */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>⚖️</span> Theory vs. Implementation
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              How the general policy concept compares to this specific implementation
+            </p>
+            <div className="overflow-x-auto opacity-50">
+              <table className="text-xs w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-border/50">
+                    <th className="text-left py-2 px-2 font-medium">Aspect</th>
+                    <th className="text-left py-2 px-2 font-medium">Theory (General)</th>
+                    <th className="text-left py-2 px-2 font-medium">This Implementation</th>
+                    <th className="text-center py-2 px-2 font-medium w-16">Rating</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/30">
+                    <td className="py-2 px-2">Coverage</td>
+                    <td className="py-2 px-2">City-wide zones</td>
+                    <td className="py-2 px-2">Central area only</td>
+                    <td className="py-2 px-2 text-center">
+                      <span className="inline-block w-4 h-4 rounded bg-yellow-200"></span>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/30">
+                    <td className="py-2 px-2">Pricing</td>
+                    <td className="py-2 px-2">Dynamic pricing</td>
+                    <td className="py-2 px-2">Fixed tariff</td>
+                    <td className="py-2 px-2 text-center">
+                      <span className="inline-block w-4 h-4 rounded bg-red-200"></span>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/30">
+                    <td className="py-2 px-2">Exemptions</td>
+                    <td className="py-2 px-2">Minimal</td>
+                    <td className="py-2 px-2">Well-targeted</td>
+                    <td className="py-2 px-2 text-center">
+                      <span className="inline-block w-4 h-4 rounded bg-green-200"></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Stakeholder Impact */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>👥</span> Stakeholder Impact
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Who benefits, who is affected, interest group positions
+            </p>
+            <div className="flex gap-4 opacity-50">
+              <div className="flex-1 bg-green-50 rounded p-2 text-center">
+                <div className="text-xs text-green-700">Benefits</div>
+                <div className="text-sm text-green-800">-- groups</div>
+              </div>
+              <div className="flex-1 bg-red-50 rounded p-2 text-center">
+                <div className="text-xs text-red-700">Affected</div>
+                <div className="text-sm text-red-800">-- groups</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Financial Impact */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>💰</span> Financial & Economic Impact
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Budget allocation, revenue generated, cost-benefit analysis
+            </p>
+            <div className="grid grid-cols-2 gap-3 opacity-50">
+              <div className="bg-background rounded p-2">
+                <div className="text-xs text-muted-foreground">Annual Budget</div>
+                <div className="text-sm font-medium">€--</div>
+              </div>
+              <div className="bg-background rounded p-2">
+                <div className="text-xs text-muted-foreground">Revenue Generated</div>
+                <div className="text-sm font-medium">€--</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Comparative Benchmarking */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>🌍</span> Comparative Benchmarking
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Similar provisions in other places, effectiveness comparison
+            </p>
+            <div className="flex flex-wrap gap-2 opacity-50">
+              <span className="text-xs bg-background px-2 py-1 rounded">London</span>
+              <span className="text-xs bg-background px-2 py-1 rounded">Stockholm</span>
+              <span className="text-xs bg-background px-2 py-1 rounded">Singapore</span>
+              <span className="text-xs text-muted-foreground px-2 py-1">+ more</span>
+            </div>
+          </div>
         </div>
       </Section>
 
       {/* Community & Sentiment - Coming Soon */}
       <Section title="Community & Sentiment">
-        <div className="border border-dashed border-border rounded-lg p-6 bg-muted/20">
-          <p className="text-sm text-muted-foreground mb-3">Coming soon:</p>
-          <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• Likes & Reactions</li>
-            <li>• Discussion Highlights</li>
-            <li>• Citizen Comments</li>
-            <li>• Sentiment Analysis</li>
-          </ul>
+        <div className="space-y-6">
+          {/* Reactions */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>👍</span> Community Reactions
+            </h4>
+            <div className="flex gap-6 opacity-50">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">👍</span>
+                <span className="text-sm font-medium">--</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">👎</span>
+                <span className="text-sm font-medium">--</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Sentiment Analysis */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>📊</span> Sentiment Analysis
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Overall public sentiment from discussions and comments
+            </p>
+            <div className="opacity-50">
+              <div className="h-3 bg-background rounded-full overflow-hidden flex">
+                <div className="bg-green-400 h-full" style={{ width: '40%' }}></div>
+                <div className="bg-gray-300 h-full" style={{ width: '35%' }}></div>
+                <div className="bg-red-400 h-full" style={{ width: '25%' }}></div>
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>Positive --%</span>
+                <span>Neutral --%</span>
+                <span>Negative --%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Discussion Highlights */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>💬</span> Discussion Highlights
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Summarized forum posts and trending topics
+            </p>
+            <div className="space-y-2 opacity-50">
+              <div className="bg-background rounded p-2">
+                <div className="text-xs text-muted-foreground">No discussions yet</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Comments */}
+          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <span>✍️</span> Recent Comments
+            </h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Latest citizen feedback and opinions
+            </p>
+            <div className="space-y-2 opacity-50">
+              <div className="bg-background rounded p-2">
+                <div className="text-xs text-muted-foreground">No comments yet</div>
+              </div>
+            </div>
+          </div>
         </div>
       </Section>
 
