@@ -22,6 +22,7 @@ import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
 import { ProvisionChangesHeatmap } from '@/components/provisions/provision-changes-heatmap'
 import { getChangesByProvision } from '@/lib/actions/changes'
+import { MarkdownContent } from '@/components/custom-ui/markdown-content'
 
 interface PageProps {
   params: Promise<{
@@ -541,9 +542,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       {/* Summary */}
       {provision.summaryMd && (
         <Section title="Summary">
-          <div className="prose prose-sm max-w-none text-muted-foreground">
-            <pre className="whitespace-pre-wrap font-sans text-sm">{provision.summaryMd}</pre>
-          </div>
+          <MarkdownContent content={provision.summaryMd} />
         </Section>
       )}
 
@@ -571,6 +570,33 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           </div>
         </Section>
       )}
+
+      {/* Performance & Comparison - Coming Soon */}
+      <Section title="Performance & Comparison">
+        <div className="border border-dashed border-border rounded-lg p-6 bg-muted/20">
+          <p className="text-sm text-muted-foreground mb-3">Coming soon:</p>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li>• Goals & Achievements</li>
+            <li>• Implementation Analysis</li>
+            <li>• Stakeholder Impact</li>
+            <li>• Financial & Economic Impact</li>
+            <li>• Comparative Benchmarking</li>
+          </ul>
+        </div>
+      </Section>
+
+      {/* Community & Sentiment - Coming Soon */}
+      <Section title="Community & Sentiment">
+        <div className="border border-dashed border-border rounded-lg p-6 bg-muted/20">
+          <p className="text-sm text-muted-foreground mb-3">Coming soon:</p>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li>• Likes & Reactions</li>
+            <li>• Discussion Highlights</li>
+            <li>• Citizen Comments</li>
+            <li>• Sentiment Analysis</li>
+          </ul>
+        </div>
+      </Section>
 
       {/* Back link */}
       <div className="mt-8 pt-4 border-t border-border">
