@@ -1,12 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Search, Menu, X, Info } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, Menu, X, Info, LogOut } from "lucide-react";
 import { Logo } from "./logo";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setIsMenuOpen(false);
+    router.refresh();
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
@@ -72,20 +96,32 @@ export function Navbar() {
             </Link>
 
             <div className="border-t border-gray-100 pt-4 mt-4 space-y-2">
-              <Link
-                href="/login"
-                onClick={() => setIsMenuOpen(false)}
-                className="block px-4 py-3 text-blue-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
-              >
-                Log In
-              </Link>
-              <Link
-                href="/signup"
-                onClick={() => setIsMenuOpen(false)}
-                className="block px-4 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors font-medium text-center"
-              >
-                Sign Up
-              </Link>
+              {user ? (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 w-full px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Log Out
+                </button>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-4 py-3 text-blue-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block px-4 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors font-medium text-center"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
