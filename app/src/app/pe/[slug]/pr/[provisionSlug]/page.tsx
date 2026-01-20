@@ -16,6 +16,7 @@ import { eq, and } from 'drizzle-orm'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { Section } from '@/components/custom-ui/section'
+import { PageTitle } from '@/components/custom-ui/typography'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
@@ -147,7 +148,8 @@ function parseParameters(content: string): { key: string; value: string }[] {
 
 function TimeSeriesWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
-  if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+  if (headers.length === 0)
+    return <p className="text-sm text-red-500">Error: no CSV headers found</p>
   if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
 
   const timeLabels = rows.map((row) => row[0] || '')
@@ -157,7 +159,14 @@ function TimeSeriesWidget({ content }: { content: string }) {
     values: rows.map((row) => parseFloat(row[seriesIndex + 1] || '0') || 0),
   }))
   const maxValue = Math.max(...series.flatMap((s) => s.values), 1)
-  const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-purple-500', 'bg-pink-500']
+  const colors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-red-500',
+    'bg-purple-500',
+    'bg-pink-500',
+  ]
 
   return (
     <div className="space-y-4">
@@ -172,7 +181,9 @@ function TimeSeriesWidget({ content }: { content: string }) {
       <div className="space-y-1.5">
         {timeLabels.map((label, timeIndex) => (
           <div key={timeIndex} className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-12 text-right flex-shrink-0">{label}</span>
+            <span className="text-xs text-muted-foreground w-12 text-right flex-shrink-0">
+              {label}
+            </span>
             <div className="flex-1 flex gap-1">
               {series.map((s, seriesIndex) => {
                 const value = s.values[timeIndex]
@@ -196,12 +207,22 @@ function TimeSeriesWidget({ content }: { content: string }) {
 
 function BreakdownWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
-  if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+  if (headers.length === 0)
+    return <p className="text-sm text-red-500">Error: no CSV headers found</p>
   if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
 
   const data = rows.map((row) => ({ label: row[0] || '', value: parseFloat(row[1] || '0') || 0 }))
   const total = data.reduce((sum, d) => sum + d.value, 0)
-  const colors = ['bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-red-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-orange-500']
+  const colors = [
+    'bg-blue-500',
+    'bg-green-500',
+    'bg-yellow-500',
+    'bg-red-500',
+    'bg-purple-500',
+    'bg-pink-500',
+    'bg-indigo-500',
+    'bg-orange-500',
+  ]
 
   return (
     <div className="space-y-3">
@@ -252,12 +273,15 @@ function ParametersWidget({ content }: { content: string }) {
 }
 
 function NarrativeWidget({ content }: { content: string }) {
-  return <p className="text-muted-foreground whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+  return (
+    <p className="text-muted-foreground whitespace-pre-wrap text-sm leading-relaxed">{content}</p>
+  )
 }
 
 function DatasetWidget({ content }: { content: string }) {
   const { headers, rows } = parseCsv(content)
-  if (headers.length === 0) return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+  if (headers.length === 0)
+    return <p className="text-sm text-red-500">Error: no CSV headers found</p>
   if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
 
   return (
@@ -266,7 +290,12 @@ function DatasetWidget({ content }: { content: string }) {
         <thead>
           <tr>
             {headers.map((header, i) => (
-              <th key={i} className="bg-muted px-3 py-2 text-left font-medium border-b border-border/50">{header}</th>
+              <th
+                key={i}
+                className="bg-muted px-3 py-2 text-left font-medium border-b border-border/50"
+              >
+                {header}
+              </th>
             ))}
           </tr>
         </thead>
@@ -274,7 +303,9 @@ function DatasetWidget({ content }: { content: string }) {
           {rows.map((row, i) => (
             <tr key={i} className="hover:bg-muted/30 transition-colors">
               {row.map((cell, j) => (
-                <td key={j} className="px-3 py-1.5 border-b border-border/30">{cell}</td>
+                <td key={j} className="px-3 py-1.5 border-b border-border/30">
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
@@ -299,7 +330,11 @@ function ArtifactWidget({ artifact }: { artifact: Artifact }) {
     case 'table':
       return <DatasetWidget content={artifact.content} />
     default:
-      return <pre className="text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">{artifact.content}</pre>
+      return (
+        <pre className="text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap font-mono">
+          {artifact.content}
+        </pre>
+      )
   }
 }
 
@@ -322,7 +357,9 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
           </span>
         )}
       </div>
-      {artifact.description && <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>}
+      {artifact.description && (
+        <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>
+      )}
       <ArtifactWidget artifact={artifact} />
     </div>
   )
@@ -372,7 +409,10 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
   let ideaTitle: string | null = null
   if (provisionResult.ideaId) {
-    const [idea] = await db.select({ title: ideas.title }).from(ideas).where(eq(ideas.id, provisionResult.ideaId))
+    const [idea] = await db
+      .select({ title: ideas.title })
+      .from(ideas)
+      .where(eq(ideas.id, provisionResult.ideaId))
     ideaTitle = idea?.title || null
   }
 
@@ -380,7 +420,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     .select({ id: tags.id, name: tags.name, slug: tags.slug, category: tags.category })
     .from(taggables)
     .innerJoin(tags, eq(taggables.tagId, tags.id))
-    .where(and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id)))
+    .where(
+      and(eq(taggables.taggableType, 'provision'), eq(taggables.taggableId, provisionResult.id))
+    )
 
   const provisionChanges = await getChangesByProvision(provisionResult.id)
 
@@ -407,7 +449,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const relevanceDots = getScoreDots(provision.relevance)
   const relevanceColor = getScoreColor(provision.relevance)
   const mediaUrl = getStorageUrl('avatars', provision.avatarUrl)
-  const visibleTags = provision.tags.filter((tag) => tag.category === 'policy-topic' || tag.category === 'impact-area')
+  const visibleTags = provision.tags.filter(
+    (tag) => tag.category === 'policy-topic' || tag.category === 'impact-area'
+  )
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -423,22 +467,30 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       <div className="mb-6">
         <div className="flex items-center gap-4 mb-3">
           {mediaUrl && (
-            <img src={mediaUrl} alt={provision.title} className="w-16 h-16 flex-shrink-0 rounded-lg object-cover" />
+            <img
+              src={mediaUrl}
+              alt={provision.title}
+              className="w-16 h-16 flex-shrink-0 rounded-lg object-cover"
+            />
           )}
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-2xl font-bold">{provision.title}</h1>
+              <PageTitle>{provision.title}</PageTitle>
               <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
                 {[1, 2, 3, 4, 5].map((dot) => (
                   <div
                     key={dot}
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)' }}
+                    style={{
+                      backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)',
+                    }}
                   />
                 ))}
               </div>
             </div>
-            <p className="text-muted-foreground">{provision.descriptionShort || 'No description available'}</p>
+            <p className="text-muted-foreground">
+              {provision.descriptionShort || 'No description available'}
+            </p>
           </div>
         </div>
 
@@ -449,10 +501,15 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
               <div className={`w-2 h-2 rounded-full ${getStatusColor(provision.status)}`} />
               <span className="capitalize">{provision.status}</span>
             </div>
-            {provision.effectiveFrom && <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>}
+            {provision.effectiveFrom && (
+              <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
+            )}
           </div>
           {provision.ideaTitle && provision.ideaId && (
-            <Link href={`/ideas/${provision.ideaId}`} className="text-primary hover:underline flex items-center gap-1.5">
+            <Link
+              href={`/ideas/${provision.ideaId}`}
+              className="text-primary hover:underline flex items-center gap-1.5"
+            >
               <span>💡</span>
               <span className="max-w-[150px] truncate">{provision.ideaTitle}</span>
             </Link>
@@ -517,7 +574,10 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
       {/* Back link */}
       <div className="mt-8 pt-4 border-t border-border">
-        <Link href={`${entityPath(entity)}/pr`} className="text-sm text-muted-foreground hover:text-primary">
+        <Link
+          href={`${entityPath(entity)}/pr`}
+          className="text-sm text-muted-foreground hover:text-primary"
+        >
           ← Back to provisions
         </Link>
       </div>

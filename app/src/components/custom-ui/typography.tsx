@@ -9,7 +9,7 @@ interface TypographyProps {
 }
 
 export function PageTitle({ children, className, as: Tag = 'h1' }: TypographyProps) {
-  return <Tag className={cn('text-4xl font-bold', className)}>{children}</Tag>
+  return <Tag className={cn('text-3xl font-bold', className)}>{children}</Tag>
 }
 
 export function SectionTitle({ children, className, as: Tag = 'h2' }: TypographyProps) {
