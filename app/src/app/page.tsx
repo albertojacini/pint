@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
+import { entityPath } from '@/lib/utils'
 
 export default async function Home() {
   // Fetch Comune di Milano
@@ -83,7 +84,7 @@ export default async function Home() {
 
           <div className="mt-6">
             <Button asChild size="lg">
-              <Link href={`/pe/${milanoEntity.slug}`}>Explore Milano</Link>
+              <Link href={entityPath(milanoEntity)}>Explore Milano</Link>
             </Button>
           </div>
         </div>
