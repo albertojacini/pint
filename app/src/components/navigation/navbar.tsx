@@ -97,13 +97,18 @@ export function Navbar() {
 
             <div className="border-t border-gray-100 pt-4 mt-4 space-y-2">
               {user ? (
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Log Out
-                </button>
+                <>
+                  <div className="px-4 py-2 text-sm text-gray-500">
+                    Logged as {user.email}
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Log Out
+                  </button>
+                </>
               ) : (
                 <>
                   <Link
