@@ -252,6 +252,53 @@ function ProposalsMiniWidget({
   )
 }
 
+function formatCount(n: number): string {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`
+  return n.toString()
+}
+
+function CommunityMiniWidget({
+  data,
+}: {
+  data: NonNullable<EvaluationSummary['community']>
+}) {
+  const fullStars = Math.floor(data.rating)
+  const hasHalfStar = data.rating % 1 >= 0.5
+
+  return (
+    <WidgetCard title="Community">
+      <div className="flex items-center gap-2 mb-1">
+        <div className="flex">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              className={`text-base ${
+                star <= fullStars
+                  ? 'text-orange-400'
+                  : star === fullStars + 1 && hasHalfStar
+                    ? 'text-orange-400/50'
+                    : 'text-gray-300'
+              }`}
+            >
+              ★
+            </span>
+          ))}
+        </div>
+        <span className="text-lg font-bold">{data.rating.toFixed(2)}</span>
+      </div>
+      <div className="text-xs text-muted-foreground">
+        <span>{formatCount(data.ratingsCount)} voti</span>
+        <span className="mx-1">·</span>
+        <span>{formatCount(data.commentsCount)} commenti</span>
+      </div>
+      <div className="text-xs text-muted-foreground mt-1">
+        <span className="font-medium text-foreground">{formatCount(data.followers)}</span> seguono
+      </div>
+    </WidgetCard>
+  )
+}
+
 export function EvaluationConsole({
   data,
 }: {
@@ -267,7 +314,8 @@ export function EvaluationConsole({
     data.activity ||
     data.dataConfidence ||
     data.stakeholders ||
-    data.proposals
+    data.proposals ||
+    data.community
 
   if (!hasAnyWidget) return null
 
@@ -283,6 +331,7 @@ export function EvaluationConsole({
         {data.proposals && data.proposals.items.length > 0 && (
           <ProposalsMiniWidget data={data.proposals} />
         )}
+        {data.community && <CommunityMiniWidget data={data.community} />}
       </div>
       {data.stakeholders && (
         <div className="mt-3 pt-3 border-t border-border/50">

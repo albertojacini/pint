@@ -221,6 +221,14 @@ export type ProposalsWidget = {
   confidence: ConfidenceLevel
 }
 
+export type CommunityWidget = {
+  type: 'community'
+  followers: number        // people tracking this provision
+  rating: number           // average rating 1-5
+  ratingsCount: number     // number of ratings
+  commentsCount: number    // discussions/comments count
+}
+
 export type EvaluationSummary = {
   effectiveness?: ScoreWidget
   impact?: ImpactWidget
@@ -230,6 +238,7 @@ export type EvaluationSummary = {
   dataConfidence?: DataConfidenceWidget
   stakeholders?: StakeholdersWidget
   proposals?: ProposalsWidget
+  community?: CommunityWidget
 }
 
 export const provisionTypes = pgTable('gov_provision_types', {
