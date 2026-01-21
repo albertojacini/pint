@@ -21,6 +21,7 @@ import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
 import { ProvisionChangesHeatmap } from '@/components/provisions/provision-changes-heatmap'
+import { EvaluationConsole } from '@/components/provisions/evaluation-console'
 import { getChangesByProvision } from '@/lib/actions/changes'
 import { MarkdownContent } from '@/components/custom-ui/markdown-content'
 
@@ -389,6 +390,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       effectiveUntil: provisions.effectiveUntil,
       ideaId: provisions.ideaId,
       displayData: provisions.displayData,
+      evaluationSummary: provisions.evaluationSummary,
     })
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
@@ -445,6 +447,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     tags: provisionTags,
     ideaTitle,
     displayData: provisionResult.displayData || { items: [] },
+    evaluationSummary: provisionResult.evaluationSummary,
   }
 
   const relevanceDots = getScoreDots(provision.relevance)
@@ -517,6 +520,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           )}
         </div>
       </div>
+
+      {/* Evaluation Console */}
+      <EvaluationConsole data={provision.evaluationSummary} />
 
       {/* Key Data */}
       {provision.displayData?.items && provision.displayData.items.length > 0 && (

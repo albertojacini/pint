@@ -139,6 +139,85 @@ export const members = pgTable('gov_members', {
 })
 
 // Provisions
+
+// Evaluation Summary Widget Types
+// These types define the structure of the evaluationSummary JSONB field
+// which powers the provision detail page header console.
+
+type ConfidenceLevel = 'high' | 'medium' | 'low' | 'none'
+type TrendDirection = 'up' | 'down' | 'stable'
+
+export type ScoreWidget = {
+  type: 'score'
+  value: number          // 1-10
+  maxValue?: number      // default 10
+  trend?: TrendDirection
+  label?: string         // e.g., "Funziona"
+  confidence: ConfidenceLevel
+}
+
+export type ImpactWidget = {
+  type: 'impact'
+  balance: number        // -1 (all losers) to +1 (all winners), 0 = neutral
+  winners: Array<{ group: string; detail?: string }>
+  losers: Array<{ group: string; detail?: string }>
+  confidence: ConfidenceLevel
+}
+
+export type FinancialWidget = {
+  type: 'financial'
+  value: string          // e.g., "€24M", "-€5M"
+  label: string          // e.g., "netto/anno", "costo/anno"
+  isPositive: boolean    // for color coding
+  trend?: TrendDirection
+  confidence: ConfidenceLevel
+}
+
+export type SentimentWidget = {
+  type: 'sentiment'
+  score: number          // 0-100 percentage support
+  label?: string         // e.g., "Supporto misto"
+  confidence: ConfidenceLevel
+}
+
+export type ActivityWidget = {
+  type: 'activity'
+  changesCount: number
+  period: string         // e.g., "ultimo anno", "ultimi 6 mesi"
+  trend?: 'increasing' | 'decreasing' | 'stable'
+  confidence: ConfidenceLevel
+}
+
+export type DataConfidenceWidget = {
+  type: 'dataConfidence'
+  level: ConfidenceLevel
+  coverage: number       // 0-100 percentage of data available
+  label?: string         // e.g., "Dati parziali"
+}
+
+export type StakeholderItem = {
+  group: string          // e.g., "Residenti", "Pendolari"
+  impact: 'positive' | 'negative' | 'neutral' | 'mixed'
+  size?: 'large' | 'medium' | 'small'  // affected population size
+  detail?: string        // brief explanation
+}
+
+export type StakeholdersWidget = {
+  type: 'stakeholders'
+  items: StakeholderItem[]
+  confidence: ConfidenceLevel
+}
+
+export type EvaluationSummary = {
+  effectiveness?: ScoreWidget
+  impact?: ImpactWidget
+  financial?: FinancialWidget
+  sentiment?: SentimentWidget
+  activity?: ActivityWidget
+  dataConfidence?: DataConfidenceWidget
+  stakeholders?: StakeholdersWidget
+}
+
 export const provisionTypes = pgTable('gov_provision_types', {
   id: uuid('id').primaryKey().defaultRandom(),
   code: text('code').notNull().unique(),
@@ -182,6 +261,9 @@ export const provisions = pgTable('gov_provisions', {
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
   displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
   displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
+  // evaluationSummary: Widget-based evaluation console for the provision header.
+  // All widgets are optional. See EvaluationSummary type above for structure.
+  evaluationSummary: jsonb('evaluation_summary').$type<EvaluationSummary>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

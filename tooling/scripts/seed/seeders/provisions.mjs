@@ -89,7 +89,7 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'gov_provisions',
-        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'summary_md', 'display_data', 'display_changes'],
+        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'summary_md', 'display_data', 'display_changes', 'evaluation_summary'],
         values: [
           id,
           entityId,
@@ -105,7 +105,8 @@ export async function seedProvisions(client, supabase, idMaps) {
           ideaId,
           provision.summary_md || null,
           JSON.stringify(provision.displayData || { items: [] }),
-          JSON.stringify(provision.displayChanges || { items: [] })
+          JSON.stringify(provision.displayChanges || { items: [] }),
+          provision.evaluationSummary ? JSON.stringify(provision.evaluationSummary) : null
         ],
       })
 
