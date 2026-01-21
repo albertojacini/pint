@@ -147,6 +147,30 @@ export const provisions = [
         ],
         confidence: 'medium',
       },
+      proposals: {
+        type: 'proposals',
+        items: [
+          {
+            label: 'Privatizzazione parziale',
+            description: 'Cedere il 30% delle quote ad un partner privato per migliorare efficienza e ridurre il deficit operativo',
+            support: 234,
+            oppose: 512,
+          },
+          {
+            label: 'Abbonamento unico regionale',
+            description: 'Creare un unico abbonamento per tutti i trasporti della Lombardia (treni, metro, bus)',
+            support: 876,
+            oppose: 45,
+          },
+          {
+            label: 'Aumentare frequenze notturne',
+            description: 'Estendere il servizio metro fino alle 2:00 nel weekend',
+            support: 654,
+            oppose: 123,
+          },
+        ],
+        confidence: 'medium',
+      },
     },
   },
   {
@@ -254,6 +278,36 @@ export const provisions = [
           { group: 'Commercianti centro', impact: 'mixed', size: 'medium', detail: 'Meno traffico ma anche meno clienti in auto' },
           { group: 'Proprietari veicoli vecchi', impact: 'negative', size: 'medium', detail: 'Costretti a cambiare veicolo' },
           { group: 'Ambiente', impact: 'positive', size: 'large', detail: 'PM10 -50%, NOx -11%/anno' },
+        ],
+        confidence: 'high',
+      },
+      proposals: {
+        type: 'proposals',
+        items: [
+          {
+            label: 'Tariffe dinamiche',
+            description: 'Introdurre tariffe variabili in base all\'orario e alla congestione, come a Londra',
+            support: 342,
+            oppose: 456,
+          },
+          {
+            label: 'Esenzione redditi bassi',
+            description: 'Creare esenzioni o riduzioni per famiglie con ISEE sotto €15.000',
+            support: 723,
+            oppose: 234,
+          },
+          {
+            label: 'Eliminare Area C',
+            description: 'Abolire completamente il pedaggio urbano e tornare al libero accesso',
+            support: 189,
+            oppose: 876,
+          },
+          {
+            label: 'Estendere orario notturno',
+            description: 'Estendere Area C fino alle 22:00 invece delle 19:30',
+            support: 145,
+            oppose: 567,
+          },
         ],
         confidence: 'high',
       },
@@ -405,6 +459,30 @@ export const provisions = [
           { group: 'Turisti', impact: 'positive', size: 'medium', detail: 'Atmosfera vivace' },
           { group: 'Disabili', impact: 'mixed', size: 'small', detail: '96% conformità accessibilità' },
           { group: 'Comune', impact: 'positive', size: 'small', detail: 'Entrate da canoni' },
+        ],
+        confidence: 'medium',
+      },
+      proposals: {
+        type: 'proposals',
+        items: [
+          {
+            label: 'Ridurre canoni',
+            description: 'Abbassare il canone del 30% per sostenere i piccoli esercizi dopo gli aumenti post-COVID',
+            support: 456,
+            oppose: 234,
+          },
+          {
+            label: 'Orario chiusura anticipato',
+            description: 'Obbligare la chiusura dei dehors alle 22:00 nelle zone residenziali',
+            support: 312,
+            oppose: 567,
+          },
+          {
+            label: 'Spazio minimo pedoni',
+            description: 'Aumentare lo spazio minimo di passaggio da 1,5m a 2m per migliorare l\'accessibilità',
+            support: 289,
+            oppose: 345,
+          },
         ],
         confidence: 'medium',
       },

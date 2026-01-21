@@ -214,6 +214,44 @@ function StakeholdersWidget({
   )
 }
 
+function ProposalsMiniWidget({
+  data,
+}: {
+  data: NonNullable<EvaluationSummary['proposals']>
+}) {
+  const totalProposals = data.items.length
+  const topProposal = data.items.reduce(
+    (best, item) => (item.support > best.support ? item : best),
+    data.items[0]
+  )
+  const totalSupport = data.items.reduce((sum, item) => sum + item.support, 0)
+  const totalOppose = data.items.reduce((sum, item) => sum + item.oppose, 0)
+  const supportRatio = totalSupport + totalOppose > 0
+    ? Math.round((totalSupport / (totalSupport + totalOppose)) * 100)
+    : 50
+
+  return (
+    <WidgetCard title="Proposte" confidence={data.confidence}>
+      <div className="flex items-baseline gap-2 mb-2">
+        <span className="text-xl font-bold">{totalProposals}</span>
+        <span className="text-xs text-muted-foreground">attive</span>
+      </div>
+      {topProposal && (
+        <div className="text-xs">
+          <span className="text-muted-foreground">Top: </span>
+          <span className="font-medium truncate">{topProposal.label}</span>
+          <span className="text-green-600 ml-1">+{topProposal.support}</span>
+          <span className="text-red-600 ml-1">-{topProposal.oppose}</span>
+        </div>
+      )}
+      <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden flex">
+        <div className="bg-green-500 h-full" style={{ width: `${supportRatio}%` }} />
+        <div className="bg-red-500 h-full" style={{ width: `${100 - supportRatio}%` }} />
+      </div>
+    </WidgetCard>
+  )
+}
+
 export function EvaluationConsole({
   data,
 }: {
@@ -228,7 +266,8 @@ export function EvaluationConsole({
     data.sentiment ||
     data.activity ||
     data.dataConfidence ||
-    data.stakeholders
+    data.stakeholders ||
+    data.proposals
 
   if (!hasAnyWidget) return null
 
@@ -241,6 +280,9 @@ export function EvaluationConsole({
         {data.sentiment && <SentimentWidget data={data.sentiment} />}
         {data.activity && <ActivityWidget data={data.activity} />}
         {data.dataConfidence && <DataConfidenceWidget data={data.dataConfidence} />}
+        {data.proposals && data.proposals.items.length > 0 && (
+          <ProposalsMiniWidget data={data.proposals} />
+        )}
       </div>
       {data.stakeholders && (
         <div className="mt-3 pt-3 border-t border-border/50">

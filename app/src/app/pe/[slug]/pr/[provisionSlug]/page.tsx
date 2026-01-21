@@ -22,6 +22,7 @@ import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
 import { ProvisionChangesHeatmap } from '@/components/provisions/provision-changes-heatmap'
 import { EvaluationConsole } from '@/components/provisions/evaluation-console'
+import { ChangeProposals } from '@/components/provisions/change-proposals'
 import { getChangesByProvision } from '@/lib/actions/changes'
 import { MarkdownContent } from '@/components/custom-ui/markdown-content'
 
@@ -551,6 +552,14 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           <MarkdownContent content={provision.summaryMd} />
         </Section>
       )}
+
+      {/* Change Proposals */}
+      {provision.evaluationSummary?.proposals &&
+        provision.evaluationSummary.proposals.items.length > 0 && (
+          <Section title="Proposte di Modifica">
+            <ChangeProposals data={provision.evaluationSummary.proposals} />
+          </Section>
+        )}
 
       {/* Changes Heatmap */}
       {provisionChanges.length > 0 && (

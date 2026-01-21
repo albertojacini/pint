@@ -208,6 +208,19 @@ export type StakeholdersWidget = {
   confidence: ConfidenceLevel
 }
 
+export type ProposalItem = {
+  label: string          // freeform label (e.g., "Rimuovere", "Estendere orari", "Aumentare tariffa")
+  description: string    // what the proposal suggests
+  support: number        // support count
+  oppose: number         // oppose count
+}
+
+export type ProposalsWidget = {
+  type: 'proposals'
+  items: ProposalItem[]
+  confidence: ConfidenceLevel
+}
+
 export type EvaluationSummary = {
   effectiveness?: ScoreWidget
   impact?: ImpactWidget
@@ -216,6 +229,7 @@ export type EvaluationSummary = {
   activity?: ActivityWidget
   dataConfidence?: DataConfidenceWidget
   stakeholders?: StakeholdersWidget
+  proposals?: ProposalsWidget
 }
 
 export const provisionTypes = pgTable('gov_provision_types', {
