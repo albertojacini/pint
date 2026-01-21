@@ -10,7 +10,7 @@ interface SectionProps {
 
 export function Section({ children, title, action, className }: SectionProps) {
   return (
-    <section className={cn('mb-4', className)}>
+    <section className={cn('mb-10', className)}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-3">
           {title && <SectionTitle>{title}</SectionTitle>}

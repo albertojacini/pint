@@ -156,6 +156,23 @@ export const provisions = pgTable('gov_provisions', {
   slug: text('slug').notNull(),
   descriptionShort: text('description_short'),
   description: text('description'),
+  // summaryMd: Q&A format evaluation summary (markdown). Each Q&A max 2 lines.
+  // LANGUAGE: Must be in the language of the parent political entity (e.g., Italian for Italian municipalities).
+  // Focus on Pint's value-add analysis, not static description.
+  // Template (use only questions where data/insights available):
+  //
+  // **Is it working?** [Effectiveness: goals vs actual results, KPIs]
+  // **Who wins, who loses?** [Stakeholder impact: beneficiaries and those bearing costs]
+  // **What's the financial picture?** [Budget, revenue generated, cost-benefit]
+  // **How does it compare?** [Benchmarking vs similar policies elsewhere]
+  // **What's changing?** [Recent updates, upcoming changes, trends]
+  // **What do citizens say?** [Community sentiment, main opinions]
+  // **What's debated?** [Controversies, contested aspects, open questions]
+  // **Should it be changed?** [Proposed modifications, reform ideas being discussed]
+  // **Should it be removed?** [Arguments for abolition, is it still necessary?]
+  // **What are the alternatives?** [Other approaches to achieve the same goals]
+  // **What's missing?** [Gaps, blind spots, unaddressed issues]
+  // **Is it future-proof?** [Sustainability, relevance with tech/social changes]
   summaryMd: text('summary_md'),
   avatarUrl: text('avatar_url'),
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
