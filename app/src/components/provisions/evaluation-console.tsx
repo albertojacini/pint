@@ -4,121 +4,86 @@ import type { EvaluationSummary } from '@/lib/db/schema/government'
 
 type ConfidenceLevel = 'high' | 'medium' | 'low' | 'none'
 
-function ConfidenceBadge({ level }: { level: ConfidenceLevel }) {
-  const styles: Record<ConfidenceLevel, string> = {
-    high: 'bg-green-100 text-green-700',
-    medium: 'bg-yellow-100 text-yellow-700',
-    low: 'bg-orange-100 text-orange-700',
-    none: 'bg-gray-100 text-gray-500',
-  }
-  const labels: Record<ConfidenceLevel, string> = {
-    high: 'Alta',
-    medium: 'Media',
-    low: 'Bassa',
-    none: 'N/D',
-  }
-  return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded ${styles[level]}`}>{labels[level]}</span>
-  )
-}
-
-function WidgetCard({
-  title,
-  confidence,
-  children,
-}: {
-  title: string
-  confidence?: ConfidenceLevel
-  children: React.ReactNode
-}) {
-  return (
-    <div className="bg-muted/30 rounded-lg p-3 flex flex-col">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-muted-foreground tracking-wide">
-          {title}
-        </span>
-        {confidence && confidence !== 'high' && <ConfidenceBadge level={confidence} />}
-      </div>
-      <div className="flex-1">{children}</div>
-    </div>
-  )
-}
-
 function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiveness']> }) {
   const percentage = (data.value / (data.maxValue || 10)) * 100
-  const color = data.value >= 7 ? 'bg-green-500' : data.value >= 4 ? 'bg-yellow-500' : 'bg-red-500'
+  const color = data.value >= 7 ? 'bg-lime-400' : data.value >= 4 ? 'bg-yellow-400' : 'bg-rose-400'
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
   const trendColor =
     data.trend === 'up'
-      ? 'text-green-600'
+      ? 'text-lime-500'
       : data.trend === 'down'
-        ? 'text-red-600'
+        ? 'text-rose-500'
         : 'text-gray-500'
 
   return (
-    <WidgetCard title="Effectiveness" confidence={data.confidence}>
-      <div className="flex items-end gap-2">
-        <span className="text-2xl font-bold">{data.value}</span>
-        <span className="text-sm text-muted-foreground mb-0.5">/{data.maxValue || 10}</span>
-        {data.trend && <span className={`text-lg ${trendColor} mb-0.5`}>{trendIcon}</span>}
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Effectiveness</span>
+        <div className="flex items-center gap-1">
+          <span className="text-sm font-bold">{data.value}</span>
+          <span className="text-xs text-muted-foreground">/{data.maxValue || 10}</span>
+          {data.trend && <span className={`text-xs ${trendColor}`}>{trendIcon}</span>}
+        </div>
       </div>
-      <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
+      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
       </div>
-    </WidgetCard>
+    </div>
   )
 }
 
 function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']> }) {
   const balancePercent = ((data.balance + 1) / 2) * 100
+  const balanceLabel = data.balance > 0.3 ? 'Positive' : data.balance < -0.3 ? 'Negative' : 'Neutral'
 
   return (
-    <WidgetCard title="Impact" confidence={data.confidence}>
-      <div className="space-y-2">
-        <div className="h-3 bg-gradient-to-r from-red-400 via-gray-300 to-green-400 rounded-full relative">
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-gray-800 rounded-full"
-            style={{ left: `calc(${balancePercent}% - 6px)` }}
-          />
-        </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground">
-          <span>Perdenti</span>
-          <span>Vincenti</span>
-        </div>
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Impact</span>
+        <span className="text-sm font-bold">{balanceLabel}</span>
       </div>
-    </WidgetCard>
+      <div className="mt-1.5 h-1.5 bg-gradient-to-r from-rose-400 via-gray-300 to-lime-400 rounded-full relative">
+        <div
+          className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-white border-2 border-gray-700 rounded-full"
+          style={{ left: `calc(${balancePercent}% - 4px)` }}
+        />
+      </div>
+    </div>
   )
 }
 
 function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financial']> }) {
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
-  const valueColor = data.isPositive ? 'text-green-600' : 'text-red-600'
+  const valueColor = data.isPositive ? 'text-lime-500' : 'text-rose-500'
 
   return (
-    <WidgetCard title="Budget" confidence={data.confidence}>
-      <div className="flex items-baseline gap-1">
-        <span className={`text-xl font-bold ${valueColor}`}>{data.value}</span>
-        {data.trend && <span className="text-muted-foreground">{trendIcon}</span>}
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Budget</span>
+        <div className="flex items-center gap-1">
+          <span className={`text-sm font-bold ${valueColor}`}>{data.value}</span>
+          {data.trend && <span className="text-xs text-muted-foreground">{trendIcon}</span>}
+        </div>
       </div>
-      <div className="text-xs text-muted-foreground">{data.label}</div>
-    </WidgetCard>
+      {data.label && <div className="text-[10px] text-muted-foreground mt-1">{data.label}</div>}
+    </div>
   )
 }
 
 function SentimentWidget({ data }: { data: NonNullable<EvaluationSummary['sentiment']> }) {
   const color =
-    data.score >= 60 ? 'bg-green-500' : data.score >= 40 ? 'bg-yellow-500' : 'bg-red-500'
+    data.score >= 60 ? 'bg-lime-400' : data.score >= 40 ? 'bg-yellow-400' : 'bg-rose-400'
 
   return (
-    <WidgetCard title="Sentiment" confidence={data.confidence}>
-      <div className="flex items-baseline gap-1">
-        <span className="text-xl font-bold">{data.score}%</span>
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Sentiment</span>
+        <span className="text-sm font-bold">{data.score}%</span>
       </div>
-      <div className="mt-1 h-2 bg-muted rounded-full overflow-hidden">
+      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full`} style={{ width: `${data.score}%` }} />
       </div>
-      {data.label && <div className="text-xs text-muted-foreground mt-1">{data.label}</div>}
-    </WidgetCard>
+    </div>
   )
 }
 
@@ -126,14 +91,17 @@ function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activit
   const trendIcon = data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
 
   return (
-    <WidgetCard title="Activity" confidence={data.confidence}>
-      <div className="flex items-baseline gap-1">
-        <span className="text-xl font-bold">{data.changesCount}</span>
-        <span className="text-xs text-muted-foreground">modifiche</span>
-        {data.trend && <span className="text-muted-foreground ml-1">{trendIcon}</span>}
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Activity</span>
+        <div className="flex items-center gap-1">
+          <span className="text-sm font-bold">{data.changesCount}</span>
+          <span className="text-xs text-muted-foreground">changes</span>
+          {data.trend && <span className="text-xs text-muted-foreground">{trendIcon}</span>}
+        </div>
       </div>
-      <div className="text-xs text-muted-foreground">{data.period}</div>
-    </WidgetCard>
+      <div className="text-[10px] text-muted-foreground mt-1">{data.period}</div>
+    </div>
   )
 }
 
@@ -143,34 +111,34 @@ function DataConfidenceWidget({
   data: NonNullable<EvaluationSummary['dataConfidence']>
 }) {
   const levelColors: Record<ConfidenceLevel, string> = {
-    high: 'bg-green-500',
-    medium: 'bg-yellow-500',
-    low: 'bg-orange-500',
+    high: 'bg-lime-400',
+    medium: 'bg-yellow-400',
+    low: 'bg-orange-400',
     none: 'bg-gray-400',
   }
 
   return (
-    <WidgetCard title="Data">
-      <div className="flex items-baseline gap-1">
-        <span className="text-xl font-bold">{data.coverage}%</span>
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Data</span>
+        <span className="text-sm font-bold">{data.coverage}%</span>
       </div>
-      <div className="mt-1 h-2 bg-muted rounded-full overflow-hidden">
+      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
         <div
           className={`h-full ${levelColors[data.level]} rounded-full`}
           style={{ width: `${data.coverage}%` }}
         />
       </div>
-      {data.label && <div className="text-xs text-muted-foreground mt-1">{data.label}</div>}
-    </WidgetCard>
+    </div>
   )
 }
 
 function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['stakeholders']> }) {
   const impactColors = {
-    positive: 'bg-green-500',
-    negative: 'bg-red-500',
+    positive: 'bg-lime-400',
+    negative: 'bg-rose-400',
     neutral: 'bg-gray-400',
-    mixed: 'bg-yellow-500',
+    mixed: 'bg-yellow-400',
   }
   const impactLabels = {
     positive: '+',
@@ -180,36 +148,36 @@ function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['sta
   }
 
   return (
-    <WidgetCard title="Stakeholders" confidence={data.confidence}>
-      <div className="flex flex-wrap gap-1.5">
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
+        <span className="text-xs text-muted-foreground">{data.items.length} groups</span>
+      </div>
+      <div className="flex flex-wrap gap-1">
         {data.items.slice(0, 6).map((item, i) => (
           <div
             key={i}
-            className="flex items-center gap-1 bg-background rounded px-2 py-1 text-xs"
+            className="flex items-center gap-1 bg-background rounded px-1.5 py-0.5 text-[10px]"
             title={item.detail}
           >
             <span
-              className={`w-4 h-4 rounded-full ${impactColors[item.impact]} text-white text-[10px] flex items-center justify-center font-bold`}
+              className={`w-3 h-3 rounded-full ${impactColors[item.impact]} text-white text-[8px] flex items-center justify-center font-bold`}
             >
               {impactLabels[item.impact]}
             </span>
-            <span className="truncate max-w-[80px]">{item.group}</span>
+            <span className="truncate max-w-[70px]">{item.group}</span>
           </div>
         ))}
         {data.items.length > 6 && (
-          <div className="text-xs text-muted-foreground px-2 py-1">+{data.items.length - 6}</div>
+          <div className="text-[10px] text-muted-foreground px-1.5 py-0.5">+{data.items.length - 6}</div>
         )}
       </div>
-    </WidgetCard>
+    </div>
   )
 }
 
 function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['proposals']> }) {
   const totalProposals = data.items.length
-  const topProposal = data.items.reduce(
-    (best, item) => (item.support > best.support ? item : best),
-    data.items[0]
-  )
   const totalSupport = data.items.reduce((sum, item) => sum + item.support, 0)
   const totalOppose = data.items.reduce((sum, item) => sum + item.oppose, 0)
   const supportRatio =
@@ -218,24 +186,23 @@ function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['pr
       : 50
 
   return (
-    <WidgetCard title="Proposals" confidence={data.confidence}>
-      <div className="flex items-baseline gap-2 mb-2">
-        <span className="text-xl font-bold">{totalProposals}</span>
-        <span className="text-xs text-muted-foreground">attive</span>
-      </div>
-      {topProposal && (
-        <div className="text-xs">
-          <span className="text-muted-foreground">Top: </span>
-          <span className="font-medium truncate">{topProposal.label}</span>
-          <span className="text-green-600 ml-1">+{topProposal.support}</span>
-          <span className="text-red-600 ml-1">-{topProposal.oppose}</span>
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Proposals</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-bold">{totalProposals}</span>
+          <span className="text-xs text-muted-foreground">active</span>
         </div>
-      )}
-      <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden flex">
-        <div className="bg-green-500 h-full" style={{ width: `${supportRatio}%` }} />
-        <div className="bg-red-500 h-full" style={{ width: `${100 - supportRatio}%` }} />
       </div>
-    </WidgetCard>
+      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden flex">
+        <div className="bg-lime-400 h-full rounded-l-full" style={{ width: `${supportRatio}%` }} />
+        <div className="bg-rose-400 h-full rounded-r-full" style={{ width: `${100 - supportRatio}%` }} />
+      </div>
+      <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+        <span className="text-lime-500">+{totalSupport}</span>
+        <span className="text-rose-500">-{totalOppose}</span>
+      </div>
+    </div>
   )
 }
 
@@ -250,35 +217,150 @@ function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['co
   const hasHalfStar = data.rating % 1 >= 0.5
 
   return (
-    <WidgetCard title="Community">
-      <div className="flex items-center gap-2 mb-1">
-        <div className="flex">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              className={`text-base ${
-                star <= fullStars
-                  ? 'text-orange-400'
-                  : star === fullStars + 1 && hasHalfStar
-                    ? 'text-orange-400/50'
-                    : 'text-gray-300'
-              }`}
-            >
-              ★
-            </span>
-          ))}
+    <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Community</span>
+        <div className="flex items-center gap-1">
+          <div className="flex">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`text-xs ${
+                  star <= fullStars
+                    ? 'text-orange-400'
+                    : star === fullStars + 1 && hasHalfStar
+                      ? 'text-orange-400/50'
+                      : 'text-gray-300'
+                }`}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          <span className="text-sm font-bold">{data.rating.toFixed(1)}</span>
         </div>
-        <span className="text-lg font-bold">{data.rating.toFixed(2)}</span>
       </div>
-      <div className="text-xs text-muted-foreground">
-        <span>{formatCount(data.ratingsCount)} voti</span>
-        <span className="mx-1">·</span>
-        <span>{formatCount(data.commentsCount)} commenti</span>
+      <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
+        <span>{formatCount(data.ratingsCount)} votes · {formatCount(data.commentsCount)} comments</span>
+        <span>{formatCount(data.followers)} followers</span>
       </div>
-      <div className="text-xs text-muted-foreground mt-1">
-        <span className="font-medium text-foreground">{formatCount(data.followers)}</span> seguono
+    </div>
+  )
+}
+
+// TEMP: Demo variants for effectiveness widget
+function EffectivenessVariantsDemo() {
+  const mockData = { value: 7.2, maxValue: 10, trend: 'up' as const, confidence: 'high' as const }
+  const percentage = (mockData.value / mockData.maxValue) * 100
+  const color = mockData.value >= 7 ? 'bg-lime-400' : mockData.value >= 4 ? 'bg-yellow-400' : 'bg-rose-400'
+
+  return (
+    <div className="mb-6 p-4 border-2 border-dashed border-yellow-400 rounded-lg">
+      <div className="text-xs font-medium text-yellow-600 mb-4">DEMO: Effectiveness Widget Variants</div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+
+        {/* V1: Minimal - label left, score right, thin bar below */}
+        <div className="bg-muted/30 rounded-lg p-3">
+          <div className="text-[10px] text-muted-foreground mb-1">V1: Minimal</div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-muted-foreground">Effectiveness</span>
+            <span className="text-sm font-bold">{mockData.value}<span className="text-muted-foreground font-normal">/{mockData.maxValue}</span></span>
+          </div>
+          <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
+            <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
+          </div>
+        </div>
+
+        {/* V2: Ultra minimal - just bar with number overlay */}
+        <div className="bg-muted/30 rounded-lg p-3">
+          <div className="text-[10px] text-muted-foreground mb-1">V2: Ultra Minimal</div>
+          <div className="text-xs font-medium text-muted-foreground mb-2">Effectiveness</div>
+          <div className="relative h-6 bg-muted rounded overflow-hidden">
+            <div className={`h-full ${color}`} style={{ width: `${percentage}%` }} />
+            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold">{mockData.value}</span>
+          </div>
+        </div>
+
+        {/* V3: Circular gauge */}
+        <div className="bg-muted/30 rounded-lg p-3">
+          <div className="text-[10px] text-muted-foreground mb-1">V3: Circular</div>
+          <div className="text-xs font-medium text-muted-foreground mb-2">Effectiveness</div>
+          <div className="relative w-16 h-16 mx-auto">
+            <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15" fill="none" className="stroke-muted" strokeWidth="3" />
+              <circle cx="18" cy="18" r="15" fill="none" className="stroke-lime-400" strokeWidth="3"
+                strokeDasharray={`${percentage} 100`} strokeLinecap="round" />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">{mockData.value}</span>
+          </div>
+        </div>
+
+        {/* V4: Big centered number */}
+        <div className="bg-muted/30 rounded-lg p-3 flex flex-col items-center justify-center">
+          <div className="text-[10px] text-muted-foreground mb-1">V4: Big Number</div>
+          <span className="text-3xl font-bold">{mockData.value}</span>
+          <span className="text-xs text-muted-foreground">/ {mockData.maxValue}</span>
+          <div className="mt-1 w-full h-1 bg-muted rounded-full overflow-hidden">
+            <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
+          </div>
+          <span className="text-[10px] text-muted-foreground mt-1">Effectiveness</span>
+        </div>
+
+        {/* V5: Segmented dots */}
+        <div className="bg-muted/30 rounded-lg p-3">
+          <div className="text-[10px] text-muted-foreground mb-1">V5: Dots</div>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium text-muted-foreground">Effectiveness</span>
+            <span className="text-sm font-bold">{mockData.value}</span>
+          </div>
+          <div className="flex gap-1">
+            {[1,2,3,4,5,6,7,8,9,10].map(i => (
+              <div key={i} className={`h-2 flex-1 rounded-full ${i <= mockData.value ? color : 'bg-muted'}`} />
+            ))}
+          </div>
+        </div>
+
+        {/* V6: Vertical bar */}
+        <div className="bg-muted/30 rounded-lg p-3">
+          <div className="text-[10px] text-muted-foreground mb-1">V6: Vertical</div>
+          <div className="flex items-end gap-3">
+            <div className="flex-1">
+              <div className="text-xs font-medium text-muted-foreground">Effectiveness</div>
+              <div className="text-xl font-bold">{mockData.value}<span className="text-sm text-muted-foreground font-normal">/{mockData.maxValue}</span></div>
+            </div>
+            <div className="h-12 w-3 bg-muted rounded-full overflow-hidden flex flex-col-reverse">
+              <div className={`w-full ${color} rounded-full`} style={{ height: `${percentage}%` }} />
+            </div>
+          </div>
+        </div>
+
+        {/* V7: Gradient background card */}
+        <div className={`rounded-lg p-3 bg-gradient-to-br from-lime-400/20 to-lime-400/5`}>
+          <div className="text-[10px] text-muted-foreground mb-1">V7: Gradient BG</div>
+          <div className="text-xs font-medium text-muted-foreground">Effectiveness</div>
+          <div className="flex items-baseline gap-1 mt-1">
+            <span className="text-2xl font-bold">{mockData.value}</span>
+            <span className="text-sm text-muted-foreground">/{mockData.maxValue}</span>
+            <span className="text-lime-500 ml-1">↑</span>
+          </div>
+        </div>
+
+        {/* V8: Compact inline */}
+        <div className="bg-muted/30 rounded-lg p-3">
+          <div className="text-[10px] text-muted-foreground mb-1">V8: Compact</div>
+          <div className="flex items-center gap-2">
+            <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center`}>
+              <span className="text-lg font-bold text-white">{mockData.value}</span>
+            </div>
+            <div>
+              <div className="text-xs font-medium">Effectiveness</div>
+              <div className="text-[10px] text-muted-foreground">out of {mockData.maxValue}</div>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </WidgetCard>
+    </div>
   )
 }
 
@@ -300,6 +382,7 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
 
   return (
     <div>
+      <EffectivenessVariantsDemo />
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
         {data.impact && <ImpactWidget data={data.impact} />}
