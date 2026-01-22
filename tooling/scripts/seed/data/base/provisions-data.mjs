@@ -269,7 +269,7 @@ export const provisions = [
 **Cosa manca?** Dati correlazione qualità aria in tempo reale, studi impatto traffico spostato verso aree circostanti, analisi equità per livello di reddito.
 
 **È a prova di futuro?** Progettata con roadmap 2030. Crescita veicoli elettrici potrebbe ridurre ricavi; potrebbe servire ristrutturazione. Obiettivi climatici probabilmente stringeranno ulteriormente le restrizioni.`,
-    avatarUrl: './assets/avatars/provisions/comune-di-milano-areac.png',
+    avatarUrl: 'provisions/comune-di-milano-areac.png',
     types: ['taxation'],
     status: 'active',
     relevance: 9,
@@ -295,8 +295,8 @@ export const provisions = [
       effectiveness: {
         type: 'score',
         value: 8,
-        trend: 'stable',
-        label: 'Effectiveness',
+        trend: 'up',
+        label: 'Funziona',
         confidence: 'high',
       },
       impact: {

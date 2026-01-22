@@ -17,16 +17,53 @@ function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiven
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
+      <div className="h-1 bg-muted rounded-full overflow-hidden mb-3">
+        <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
+      </div>
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">Effectiveness</span>
         <div className="flex items-center gap-1">
-          <span className="text-sm font-bold">{data.value}</span>
-          <span className="text-xs text-muted-foreground">/{data.maxValue || 10}</span>
           {data.trend && <span className={`text-xs ${trendColor}`}>{trendIcon}</span>}
+          <span className="text-sm font-bold">{data.value}</span>
         </div>
       </div>
-      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
-        <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
+      <div className="flex items-center justify-between -mt-0.5">
+        <div className="text-[8px] text-muted-foreground/70">Pint calculate index</div>
+        <div className="flex gap-1">
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </button>
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -34,7 +71,8 @@ function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiven
 
 function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']> }) {
   const balancePercent = ((data.balance + 1) / 2) * 100
-  const balanceLabel = data.balance > 0.3 ? 'Positive' : data.balance < -0.3 ? 'Negative' : 'Neutral'
+  const balanceLabel =
+    data.balance > 0.3 ? 'Positive' : data.balance < -0.3 ? 'Negative' : 'Neutral'
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
@@ -89,18 +127,80 @@ function SentimentWidget({ data }: { data: NonNullable<EvaluationSummary['sentim
 
 function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activity']> }) {
   const trendIcon = data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
+  const trendColor =
+    data.trend === 'increasing'
+      ? 'text-lime-500'
+      : data.trend === 'decreasing'
+        ? 'text-rose-500'
+        : 'text-gray-500'
+
+  // Mock 18 data points - in real implementation, this would come from data
+  const activityData = [1, 2, 3, 2, 4, 3, 5, 4, 2, 3, 4, 5, 3, 5, 2, 3, 4, 5]
+  const maxActivity = Math.max(...activityData)
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex justify-between items-center mb-3">
+        {activityData.map((count, i) => {
+          const size = 2 + (count / maxActivity) * 4 // 2px to 6px
+          return (
+            <div
+              key={i}
+              className="rounded-full bg-lime-400"
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                opacity: 0.2 + (count / maxActivity) * 0.8,
+              }}
+            />
+          )
+        })}
+      </div>
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">Activity</span>
         <div className="flex items-center gap-1">
+          {data.trend && <span className={`text-xs ${trendColor}`}>{trendIcon}</span>}
           <span className="text-sm font-bold">{data.changesCount}</span>
-          <span className="text-xs text-muted-foreground">changes</span>
-          {data.trend && <span className="text-xs text-muted-foreground">{trendIcon}</span>}
         </div>
       </div>
-      <div className="text-[10px] text-muted-foreground mt-1">{data.period}</div>
+      <div className="flex items-center justify-between -mt-0.5">
+        <div className="text-[8px] text-muted-foreground/70">Changes last year</div>
+        <div className="flex gap-1">
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </button>
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -169,7 +269,9 @@ function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['sta
           </div>
         ))}
         {data.items.length > 6 && (
-          <div className="text-[10px] text-muted-foreground px-1.5 py-0.5">+{data.items.length - 6}</div>
+          <div className="text-[10px] text-muted-foreground px-1.5 py-0.5">
+            +{data.items.length - 6}
+          </div>
         )}
       </div>
     </div>
@@ -196,7 +298,10 @@ function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['pr
       </div>
       <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden flex">
         <div className="bg-lime-400 h-full rounded-l-full" style={{ width: `${supportRatio}%` }} />
-        <div className="bg-rose-400 h-full rounded-r-full" style={{ width: `${100 - supportRatio}%` }} />
+        <div
+          className="bg-rose-400 h-full rounded-r-full"
+          style={{ width: `${100 - supportRatio}%` }}
+        />
       </div>
       <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
         <span className="text-lime-500">+{totalSupport}</span>
@@ -241,124 +346,10 @@ function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['co
         </div>
       </div>
       <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
-        <span>{formatCount(data.ratingsCount)} votes · {formatCount(data.commentsCount)} comments</span>
+        <span>
+          {formatCount(data.ratingsCount)} votes · {formatCount(data.commentsCount)} comments
+        </span>
         <span>{formatCount(data.followers)} followers</span>
-      </div>
-    </div>
-  )
-}
-
-// TEMP: Demo variants for effectiveness widget
-function EffectivenessVariantsDemo() {
-  const mockData = { value: 7.2, maxValue: 10, trend: 'up' as const, confidence: 'high' as const }
-  const percentage = (mockData.value / mockData.maxValue) * 100
-  const color = mockData.value >= 7 ? 'bg-lime-400' : mockData.value >= 4 ? 'bg-yellow-400' : 'bg-rose-400'
-
-  return (
-    <div className="mb-6 p-4 border-2 border-dashed border-yellow-400 rounded-lg">
-      <div className="text-xs font-medium text-yellow-600 mb-4">DEMO: Effectiveness Widget Variants</div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-
-        {/* V1: Minimal - label left, score right, thin bar below */}
-        <div className="bg-muted/30 rounded-lg p-3">
-          <div className="text-[10px] text-muted-foreground mb-1">V1: Minimal</div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-muted-foreground">Effectiveness</span>
-            <span className="text-sm font-bold">{mockData.value}<span className="text-muted-foreground font-normal">/{mockData.maxValue}</span></span>
-          </div>
-          <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
-            <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
-          </div>
-        </div>
-
-        {/* V2: Ultra minimal - just bar with number overlay */}
-        <div className="bg-muted/30 rounded-lg p-3">
-          <div className="text-[10px] text-muted-foreground mb-1">V2: Ultra Minimal</div>
-          <div className="text-xs font-medium text-muted-foreground mb-2">Effectiveness</div>
-          <div className="relative h-6 bg-muted rounded overflow-hidden">
-            <div className={`h-full ${color}`} style={{ width: `${percentage}%` }} />
-            <span className="absolute inset-0 flex items-center justify-center text-xs font-bold">{mockData.value}</span>
-          </div>
-        </div>
-
-        {/* V3: Circular gauge */}
-        <div className="bg-muted/30 rounded-lg p-3">
-          <div className="text-[10px] text-muted-foreground mb-1">V3: Circular</div>
-          <div className="text-xs font-medium text-muted-foreground mb-2">Effectiveness</div>
-          <div className="relative w-16 h-16 mx-auto">
-            <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-              <circle cx="18" cy="18" r="15" fill="none" className="stroke-muted" strokeWidth="3" />
-              <circle cx="18" cy="18" r="15" fill="none" className="stroke-lime-400" strokeWidth="3"
-                strokeDasharray={`${percentage} 100`} strokeLinecap="round" />
-            </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">{mockData.value}</span>
-          </div>
-        </div>
-
-        {/* V4: Big centered number */}
-        <div className="bg-muted/30 rounded-lg p-3 flex flex-col items-center justify-center">
-          <div className="text-[10px] text-muted-foreground mb-1">V4: Big Number</div>
-          <span className="text-3xl font-bold">{mockData.value}</span>
-          <span className="text-xs text-muted-foreground">/ {mockData.maxValue}</span>
-          <div className="mt-1 w-full h-1 bg-muted rounded-full overflow-hidden">
-            <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
-          </div>
-          <span className="text-[10px] text-muted-foreground mt-1">Effectiveness</span>
-        </div>
-
-        {/* V5: Segmented dots */}
-        <div className="bg-muted/30 rounded-lg p-3">
-          <div className="text-[10px] text-muted-foreground mb-1">V5: Dots</div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted-foreground">Effectiveness</span>
-            <span className="text-sm font-bold">{mockData.value}</span>
-          </div>
-          <div className="flex gap-1">
-            {[1,2,3,4,5,6,7,8,9,10].map(i => (
-              <div key={i} className={`h-2 flex-1 rounded-full ${i <= mockData.value ? color : 'bg-muted'}`} />
-            ))}
-          </div>
-        </div>
-
-        {/* V6: Vertical bar */}
-        <div className="bg-muted/30 rounded-lg p-3">
-          <div className="text-[10px] text-muted-foreground mb-1">V6: Vertical</div>
-          <div className="flex items-end gap-3">
-            <div className="flex-1">
-              <div className="text-xs font-medium text-muted-foreground">Effectiveness</div>
-              <div className="text-xl font-bold">{mockData.value}<span className="text-sm text-muted-foreground font-normal">/{mockData.maxValue}</span></div>
-            </div>
-            <div className="h-12 w-3 bg-muted rounded-full overflow-hidden flex flex-col-reverse">
-              <div className={`w-full ${color} rounded-full`} style={{ height: `${percentage}%` }} />
-            </div>
-          </div>
-        </div>
-
-        {/* V7: Gradient background card */}
-        <div className={`rounded-lg p-3 bg-gradient-to-br from-lime-400/20 to-lime-400/5`}>
-          <div className="text-[10px] text-muted-foreground mb-1">V7: Gradient BG</div>
-          <div className="text-xs font-medium text-muted-foreground">Effectiveness</div>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-bold">{mockData.value}</span>
-            <span className="text-sm text-muted-foreground">/{mockData.maxValue}</span>
-            <span className="text-lime-500 ml-1">↑</span>
-          </div>
-        </div>
-
-        {/* V8: Compact inline */}
-        <div className="bg-muted/30 rounded-lg p-3">
-          <div className="text-[10px] text-muted-foreground mb-1">V8: Compact</div>
-          <div className="flex items-center gap-2">
-            <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center`}>
-              <span className="text-lg font-bold text-white">{mockData.value}</span>
-            </div>
-            <div>
-              <div className="text-xs font-medium">Effectiveness</div>
-              <div className="text-[10px] text-muted-foreground">out of {mockData.maxValue}</div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   )
@@ -382,7 +373,6 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
 
   return (
     <div>
-      <EffectivenessVariantsDemo />
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
         {data.impact && <ImpactWidget data={data.impact} />}
