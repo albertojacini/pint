@@ -2,6 +2,8 @@ import { createClient as createBrowserClient } from './supabase/client'
 
 export type StorageBucket = 'avatars' | 'media' | 'documents'
 
+const STORAGE_BASE_URL = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL
+
 export type UploadResult = {
   url: string
   path: string
@@ -66,6 +68,8 @@ export async function deleteFile(bucket: StorageBucket, path: string): Promise<v
 /**
  * Get Supabase Storage URL for a file with optional transformations
  * Returns null if path is null/empty
+ * If NEXT_PUBLIC_SUPABASE_STORAGE_URL is set, uses that as the base URL
+ * (useful for pointing local dev to production storage)
  */
 export function getStorageUrl(
   bucket: StorageBucket,
@@ -77,6 +81,20 @@ export function getStorageUrl(
   }
 ): string | null {
   if (!path) return null
+
+  // Use custom storage base URL if configured (e.g., for using prod images locally)
+  if (STORAGE_BASE_URL) {
+    const baseUrl = `${STORAGE_BASE_URL}/storage/v1/object/public/${bucket}/${path}`
+    if (options) {
+      const params = new URLSearchParams()
+      if (options.width) params.set('width', options.width.toString())
+      if (options.height) params.set('height', options.height.toString())
+      if (options.quality) params.set('quality', options.quality.toString())
+      const queryString = params.toString()
+      return queryString ? `${baseUrl}?${queryString}` : baseUrl
+    }
+    return baseUrl
+  }
 
   const supabase = createBrowserClient()
   const { data } = supabase.storage.from(bucket).getPublicUrl(path, {

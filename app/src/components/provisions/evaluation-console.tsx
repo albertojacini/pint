@@ -18,9 +18,7 @@ function ConfidenceBadge({ level }: { level: ConfidenceLevel }) {
     none: 'N/D',
   }
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded ${styles[level]}`}>
-      {labels[level]}
-    </span>
+    <span className={`text-[10px] px-1.5 py-0.5 rounded ${styles[level]}`}>{labels[level]}</span>
   )
 }
 
@@ -36,7 +34,7 @@ function WidgetCard({
   return (
     <div className="bg-muted/30 rounded-lg p-3 flex flex-col">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <span className="text-xs font-medium text-muted-foreground tracking-wide">
           {title}
         </span>
         {confidence && confidence !== 'high' && <ConfidenceBadge level={confidence} />}
@@ -48,8 +46,7 @@ function WidgetCard({
 
 function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiveness']> }) {
   const percentage = (data.value / (data.maxValue || 10)) * 100
-  const color =
-    data.value >= 7 ? 'bg-green-500' : data.value >= 4 ? 'bg-yellow-500' : 'bg-red-500'
+  const color = data.value >= 7 ? 'bg-green-500' : data.value >= 4 ? 'bg-yellow-500' : 'bg-red-500'
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
   const trendColor =
     data.trend === 'up'
@@ -59,7 +56,7 @@ function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiven
         : 'text-gray-500'
 
   return (
-    <WidgetCard title={data.label || 'Efficacia'} confidence={data.confidence}>
+    <WidgetCard title="Effectiveness" confidence={data.confidence}>
       <div className="flex items-end gap-2">
         <span className="text-2xl font-bold">{data.value}</span>
         <span className="text-sm text-muted-foreground mb-0.5">/{data.maxValue || 10}</span>
@@ -76,7 +73,7 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
   const balancePercent = ((data.balance + 1) / 2) * 100
 
   return (
-    <WidgetCard title="Impatto" confidence={data.confidence}>
+    <WidgetCard title="Impact" confidence={data.confidence}>
       <div className="space-y-2">
         <div className="h-3 bg-gradient-to-r from-red-400 via-gray-300 to-green-400 rounded-full relative">
           <div
@@ -98,7 +95,7 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
   const valueColor = data.isPositive ? 'text-green-600' : 'text-red-600'
 
   return (
-    <WidgetCard title="Bilancio" confidence={data.confidence}>
+    <WidgetCard title="Budget" confidence={data.confidence}>
       <div className="flex items-baseline gap-1">
         <span className={`text-xl font-bold ${valueColor}`}>{data.value}</span>
         {data.trend && <span className="text-muted-foreground">{trendIcon}</span>}
@@ -113,7 +110,7 @@ function SentimentWidget({ data }: { data: NonNullable<EvaluationSummary['sentim
     data.score >= 60 ? 'bg-green-500' : data.score >= 40 ? 'bg-yellow-500' : 'bg-red-500'
 
   return (
-    <WidgetCard title="Consenso" confidence={data.confidence}>
+    <WidgetCard title="Sentiment" confidence={data.confidence}>
       <div className="flex items-baseline gap-1">
         <span className="text-xl font-bold">{data.score}%</span>
       </div>
@@ -126,11 +123,10 @@ function SentimentWidget({ data }: { data: NonNullable<EvaluationSummary['sentim
 }
 
 function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activity']> }) {
-  const trendIcon =
-    data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
+  const trendIcon = data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
 
   return (
-    <WidgetCard title="Attività" confidence={data.confidence}>
+    <WidgetCard title="Activity" confidence={data.confidence}>
       <div className="flex items-baseline gap-1">
         <span className="text-xl font-bold">{data.changesCount}</span>
         <span className="text-xs text-muted-foreground">modifiche</span>
@@ -154,7 +150,7 @@ function DataConfidenceWidget({
   }
 
   return (
-    <WidgetCard title="Dati">
+    <WidgetCard title="Data">
       <div className="flex items-baseline gap-1">
         <span className="text-xl font-bold">{data.coverage}%</span>
       </div>
@@ -169,11 +165,7 @@ function DataConfidenceWidget({
   )
 }
 
-function StakeholdersWidget({
-  data,
-}: {
-  data: NonNullable<EvaluationSummary['stakeholders']>
-}) {
+function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['stakeholders']> }) {
   const impactColors = {
     positive: 'bg-green-500',
     negative: 'bg-red-500',
@@ -188,7 +180,7 @@ function StakeholdersWidget({
   }
 
   return (
-    <WidgetCard title="Stakeholder" confidence={data.confidence}>
+    <WidgetCard title="Stakeholders" confidence={data.confidence}>
       <div className="flex flex-wrap gap-1.5">
         {data.items.slice(0, 6).map((item, i) => (
           <div
@@ -205,20 +197,14 @@ function StakeholdersWidget({
           </div>
         ))}
         {data.items.length > 6 && (
-          <div className="text-xs text-muted-foreground px-2 py-1">
-            +{data.items.length - 6}
-          </div>
+          <div className="text-xs text-muted-foreground px-2 py-1">+{data.items.length - 6}</div>
         )}
       </div>
     </WidgetCard>
   )
 }
 
-function ProposalsMiniWidget({
-  data,
-}: {
-  data: NonNullable<EvaluationSummary['proposals']>
-}) {
+function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['proposals']> }) {
   const totalProposals = data.items.length
   const topProposal = data.items.reduce(
     (best, item) => (item.support > best.support ? item : best),
@@ -226,12 +212,13 @@ function ProposalsMiniWidget({
   )
   const totalSupport = data.items.reduce((sum, item) => sum + item.support, 0)
   const totalOppose = data.items.reduce((sum, item) => sum + item.oppose, 0)
-  const supportRatio = totalSupport + totalOppose > 0
-    ? Math.round((totalSupport / (totalSupport + totalOppose)) * 100)
-    : 50
+  const supportRatio =
+    totalSupport + totalOppose > 0
+      ? Math.round((totalSupport / (totalSupport + totalOppose)) * 100)
+      : 50
 
   return (
-    <WidgetCard title="Proposte" confidence={data.confidence}>
+    <WidgetCard title="Proposals" confidence={data.confidence}>
       <div className="flex items-baseline gap-2 mb-2">
         <span className="text-xl font-bold">{totalProposals}</span>
         <span className="text-xs text-muted-foreground">attive</span>
@@ -258,11 +245,7 @@ function formatCount(n: number): string {
   return n.toString()
 }
 
-function CommunityMiniWidget({
-  data,
-}: {
-  data: NonNullable<EvaluationSummary['community']>
-}) {
+function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['community']> }) {
   const fullStars = Math.floor(data.rating)
   const hasHalfStar = data.rating % 1 >= 0.5
 
@@ -299,11 +282,7 @@ function CommunityMiniWidget({
   )
 }
 
-export function EvaluationConsole({
-  data,
-}: {
-  data: EvaluationSummary | null | undefined
-}) {
+export function EvaluationConsole({ data }: { data: EvaluationSummary | null | undefined }) {
   if (!data) return null
 
   const hasAnyWidget =
@@ -320,7 +299,7 @@ export function EvaluationConsole({
   if (!hasAnyWidget) return null
 
   return (
-    <div className="border border-border rounded-lg p-4 bg-background/50 mb-6">
+    <div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
         {data.impact && <ImpactWidget data={data.impact} />}
