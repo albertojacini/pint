@@ -92,7 +92,12 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
 
 function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financial']> }) {
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
-  const trendColor = data.trend === 'up' ? 'text-lime-500' : data.trend === 'down' ? 'text-rose-500' : 'text-gray-500'
+  const trendColor =
+    data.trend === 'up'
+      ? 'text-lime-500'
+      : data.trend === 'down'
+        ? 'text-rose-500'
+        : 'text-gray-500'
 
   // Mock budget trend data over time (12 months)
   const trendData = [2.1, 2.3, 2.2, 2.4, 2.5, 2.3, 2.6, 2.4, 2.5, 2.7, 2.6, 2.8]
@@ -135,14 +140,32 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
         <div className="text-[8px] text-muted-foreground/70">Trend last year</div>
         <div className="flex gap-1">
           <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
-            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="16" x2="12" y2="12" />
               <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
           </button>
           <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
-            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <polyline points="15 3 21 3 21 9" />
               <polyline points="9 21 3 21 3 15" />
               <line x1="21" y1="3" x2="14" y2="10" />
@@ -154,7 +177,6 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
     </div>
   )
 }
-
 
 function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activity']> }) {
   const trendIcon = data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
@@ -334,21 +356,26 @@ function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['pr
   const totalProposals = data.items.length
 
   // Calculate total engagement and sort by size
-  const proposalsWithSize = data.items.map(p => ({
+  const proposalsWithSize = data.items.map((p) => ({
     ...p,
     total: p.support + p.oppose,
-    supportRatio: (p.support / (p.support + p.oppose))
+    supportRatio: p.support / (p.support + p.oppose),
   }))
 
   const sorted = [...proposalsWithSize].sort((a, b) => b.total - a.total)
-  const maxEngagement = Math.max(...sorted.map(p => p.total))
+  const maxEngagement = Math.max(...sorted.map((p) => p.total))
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
       <div className="flex gap-1.5 items-center mb-3">
         {sorted.map((p, i) => {
           const size = 3 + (p.total / maxEngagement) * 9 // 3px to 12px
-          const color = p.supportRatio > 0.6 ? 'bg-lime-400' : p.supportRatio < 0.4 ? 'bg-rose-400' : 'bg-yellow-400'
+          const color =
+            p.supportRatio > 0.6
+              ? 'bg-lime-400'
+              : p.supportRatio < 0.4
+                ? 'bg-rose-400'
+                : 'bg-yellow-400'
 
           return (
             <div
@@ -494,20 +521,52 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
   if (!hasAnyWidget) return null
 
   return (
-    <div className="columns-2 sm:columns-3 lg:columns-4 gap-3">
+    <div className="columns-2 sm:columns-3 lg:columns-4 mb-10 gap-3">
       {data.ideas && data.ideas.items.length > 0 && (
-        <div className="break-inside-avoid mb-3"><IdeasWidget data={data.ideas} /></div>
+        <div className="break-inside-avoid mb-3">
+          <IdeasWidget data={data.ideas} />
+        </div>
       )}
-      {data.effectiveness && <div className="break-inside-avoid mb-3"><ScoreWidget data={data.effectiveness} /></div>}
-      {data.impact && <div className="break-inside-avoid mb-3"><ImpactWidget data={data.impact} /></div>}
-      {data.financial && <div className="break-inside-avoid mb-3"><FinancialWidget data={data.financial} /></div>}
-      {data.activity && <div className="break-inside-avoid mb-3"><ActivityWidget data={data.activity} /></div>}
-      {data.dataConfidence && <div className="break-inside-avoid mb-3"><DataConfidenceWidget data={data.dataConfidence} /></div>}
+      {data.effectiveness && (
+        <div className="break-inside-avoid mb-3">
+          <ScoreWidget data={data.effectiveness} />
+        </div>
+      )}
+      {data.impact && (
+        <div className="break-inside-avoid mb-3">
+          <ImpactWidget data={data.impact} />
+        </div>
+      )}
+      {data.financial && (
+        <div className="break-inside-avoid mb-3">
+          <FinancialWidget data={data.financial} />
+        </div>
+      )}
+      {data.activity && (
+        <div className="break-inside-avoid mb-3">
+          <ActivityWidget data={data.activity} />
+        </div>
+      )}
+      {data.dataConfidence && (
+        <div className="break-inside-avoid mb-3">
+          <DataConfidenceWidget data={data.dataConfidence} />
+        </div>
+      )}
       {data.proposals && data.proposals.items.length > 0 && (
-        <div className="break-inside-avoid mb-3"><ProposalsMiniWidget data={data.proposals} /></div>
+        <div className="break-inside-avoid mb-3">
+          <ProposalsMiniWidget data={data.proposals} />
+        </div>
       )}
-      {data.community && <div className="break-inside-avoid mb-3"><CommunityMiniWidget data={data.community} /></div>}
-      {data.stakeholders && <div className="break-inside-avoid mb-3"><StakeholdersWidget data={data.stakeholders} /></div>}
+      {data.community && (
+        <div className="break-inside-avoid mb-3">
+          <CommunityMiniWidget data={data.community} />
+        </div>
+      )}
+      {data.stakeholders && (
+        <div className="break-inside-avoid mb-3">
+          <StakeholdersWidget data={data.stakeholders} />
+        </div>
+      )}
     </div>
   )
 }

@@ -32,15 +32,6 @@ interface PageProps {
   }>
 }
 
-const getStatusColor = (status: string) => {
-  const colors: Record<string, string> = {
-    active: 'bg-green-500',
-    repealed: 'bg-red-500',
-    suspended: 'bg-yellow-500',
-  }
-  return colors[status] || 'bg-gray-500'
-}
-
 function getScoreDots(score: number | null): number {
   if (score === null || score === undefined) return 0
   return Math.ceil(score / 2)
@@ -384,7 +375,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       descriptionShort: provisions.descriptionShort,
       summaryMd: provisions.summaryMd,
       avatarUrl: provisions.avatarUrl,
-      status: provisions.status,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
@@ -487,18 +477,11 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Status bar */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${getStatusColor(provision.status)}`} />
-              <span className="capitalize">{provision.status}</span>
-            </div>
-            {provision.effectiveFrom && (
-              <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
-            )}
+        {provision.effectiveFrom && (
+          <div className="text-sm text-muted-foreground">
+            Since {new Date(provision.effectiveFrom).getFullYear()}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Evaluation Console */}
