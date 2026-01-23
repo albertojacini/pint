@@ -281,63 +281,6 @@ function DataConfidenceWidget({
 }
 
 function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['stakeholders']> }) {
-  const impactColors = {
-    positive: 'bg-lime-400',
-    negative: 'bg-rose-400',
-    neutral: 'bg-gray-400',
-    mixed: 'bg-yellow-400',
-  }
-  const impactLabels = {
-    positive: '+',
-    negative: '-',
-    neutral: '=',
-    mixed: '±',
-  }
-
-  return (
-    <div className="bg-muted/30 rounded-lg p-3">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <span className="text-xs text-muted-foreground">{data.items.length} groups</span>
-      </div>
-      <div className="flex flex-wrap gap-1">
-        {data.items.slice(0, 6).map((item, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-1 bg-background rounded px-1.5 py-0.5 text-[10px]"
-            title={item.detail}
-          >
-            <span
-              className={`w-3 h-3 rounded-full ${impactColors[item.impact]} text-white text-[8px] flex items-center justify-center font-bold`}
-            >
-              {impactLabels[item.impact]}
-            </span>
-            <span className="truncate max-w-[70px]">{item.group}</span>
-          </div>
-        ))}
-        {data.items.length > 6 && (
-          <div className="text-[10px] text-muted-foreground px-1.5 py-0.5">
-            +{data.items.length - 6}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// DEMO: Stakeholders Widget Variants
-function StakeholdersVariantsDemo() {
-  const mockData = {
-    items: [
-      { group: 'Citizens', impact: 'positive' as const, detail: 'High positive impact' },
-      { group: 'Local Businesses', impact: 'positive' as const, detail: 'Moderate positive impact' },
-      { group: 'Environmental Groups', impact: 'negative' as const, detail: 'Strong opposition' },
-      { group: 'City Council', impact: 'neutral' as const, detail: 'Neutral stance' },
-      { group: 'Transport Workers', impact: 'mixed' as const, detail: 'Mixed reactions' },
-      { group: 'Tech Companies', impact: 'positive' as const, detail: 'Supportive' },
-    ],
-  }
-
   const borderColors = {
     positive: 'border-lime-400',
     negative: 'border-rose-400',
@@ -345,176 +288,21 @@ function StakeholdersVariantsDemo() {
     mixed: 'border-yellow-400',
   }
 
-  // Sort items by color for some variants
-  const sortedByColor = [...mockData.items].sort((a, b) => {
+  // Sort items by color
+  const sortedByColor = [...data.items].sort((a, b) => {
     const order = { positive: 0, negative: 1, neutral: 2, mixed: 3 }
     return order[a.impact] - order[b.impact]
   })
 
-  // V5a: Original two-column layout
-  const V5a = () => {
-    return (
-      <div className="bg-muted/30 rounded-lg p-3">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <div className="mt-2 grid grid-cols-2 gap-1">
-          {mockData.items.map((item, i) => (
-            <div
-              key={i}
-              className={`border-l-2 ${borderColors[item.impact]} pl-1.5 text-[10px] truncate`}
-            >
-              {item.group}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // V5b: Two columns, tighter padding
-  const V5b = () => {
-    return (
-      <div className="bg-muted/30 rounded-lg p-3">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-0.5">
-          {mockData.items.map((item, i) => (
-            <div
-              key={i}
-              className={`border-l-2 ${borderColors[item.impact]} pl-1 text-[10px] truncate`}
-            >
-              {item.group}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // V5c: Two columns, more padding
-  const V5c = () => {
-    return (
-      <div className="bg-muted/30 rounded-lg p-3">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {mockData.items.map((item, i) => (
-            <div
-              key={i}
-              className={`border-l-2 ${borderColors[item.impact]} pl-2 py-0.5 text-[10px] truncate`}
-            >
-              {item.group}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // V5d: Sorted by color, no forced newlines, wrapping flow
-  const V5d = () => {
-    return (
-      <div className="bg-muted/30 rounded-lg p-3">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <div className="mt-2 flex flex-wrap gap-x-2 gap-y-1">
-          {sortedByColor.map((item, i) => (
-            <div
-              key={i}
-              className={`border-l-2 ${borderColors[item.impact]} pl-1.5 text-[10px]`}
-            >
-              {item.group}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // V5e: New line only when color changes
-  const V5e = () => {
-    return (
-      <div className="bg-muted/30 rounded-lg p-3">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <div className="mt-2 space-y-2">
-          {['positive', 'negative', 'neutral', 'mixed'].map((impact) => {
-            const items = sortedByColor.filter((item) => item.impact === impact)
-            if (items.length === 0) return null
-            return (
-              <div key={impact} className="flex flex-wrap gap-x-2 gap-y-0.5">
-                {items.map((item, i) => (
-                  <div
-                    key={i}
-                    className={`border-l-2 ${borderColors[item.impact as keyof typeof borderColors]} pl-1.5 text-[10px]`}
-                  >
-                    {item.group}
-                  </div>
-                ))}
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
-
-  // V5f: New line when color changes, two-column grid per color
-  const V5f = () => {
-    return (
-      <div className="bg-muted/30 rounded-lg p-3">
-        <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
-        <div className="mt-2 space-y-2">
-          {['positive', 'negative', 'neutral', 'mixed'].map((impact) => {
-            const items = sortedByColor.filter((item) => item.impact === impact)
-            if (items.length === 0) return null
-            return (
-              <div key={impact} className="grid grid-cols-2 gap-1">
-                {items.map((item, i) => (
-                  <div
-                    key={i}
-                    className={`border-l-2 ${borderColors[item.impact as keyof typeof borderColors]} pl-1.5 text-[10px] truncate`}
-                  >
-                    {item.group}
-                  </div>
-                ))}
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="space-y-4 mb-8 p-4 border-2 border-purple-500 rounded-lg">
-      <h3 className="text-lg font-bold text-purple-500">DEMO: Stakeholders Widget Variants</h3>
-
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <div className="text-xs text-muted-foreground mb-1">V5a: Two columns (original)</div>
-          <V5a />
-        </div>
-
-        <div>
-          <div className="text-xs text-muted-foreground mb-1">V5b: Two columns, tight padding</div>
-          <V5b />
-        </div>
-
-        <div>
-          <div className="text-xs text-muted-foreground mb-1">V5c: Two columns, more padding</div>
-          <V5c />
-        </div>
-
-        <div>
-          <div className="text-xs text-muted-foreground mb-1">V5d: Flow, sorted by color</div>
-          <V5d />
-        </div>
-
-        <div>
-          <div className="text-xs text-muted-foreground mb-1">V5e: New line per color</div>
-          <V5e />
-        </div>
-
-        <div>
-          <div className="text-xs text-muted-foreground mb-1">V5f: Two columns per color</div>
-          <V5f />
-        </div>
+    <div className="bg-muted/30 rounded-lg p-3">
+      <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
+      <div className="mt-2 flex flex-wrap gap-x-2 gap-y-1">
+        {sortedByColor.map((item, i) => (
+          <div key={i} className={`border-l-2 ${borderColors[item.impact]} pl-1.5 text-[10px]`}>
+            {item.group}
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -522,32 +310,77 @@ function StakeholdersVariantsDemo() {
 
 function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['proposals']> }) {
   const totalProposals = data.items.length
-  const totalSupport = data.items.reduce((sum, item) => sum + item.support, 0)
-  const totalOppose = data.items.reduce((sum, item) => sum + item.oppose, 0)
-  const supportRatio =
-    totalSupport + totalOppose > 0
-      ? Math.round((totalSupport / (totalSupport + totalOppose)) * 100)
-      : 50
+
+  // Calculate total engagement and sort by size
+  const proposalsWithSize = data.items.map(p => ({
+    ...p,
+    total: p.support + p.oppose,
+    supportRatio: (p.support / (p.support + p.oppose))
+  }))
+
+  const sorted = [...proposalsWithSize].sort((a, b) => b.total - a.total)
+  const maxEngagement = Math.max(...sorted.map(p => p.total))
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
+      <div className="flex gap-1.5 items-center mb-3">
+        {sorted.map((p, i) => {
+          const size = 3 + (p.total / maxEngagement) * 9 // 3px to 12px
+          const color = p.supportRatio > 0.6 ? 'bg-lime-400' : p.supportRatio < 0.4 ? 'bg-rose-400' : 'bg-yellow-400'
+
+          return (
+            <div
+              key={i}
+              className={`rounded-full ${color}`}
+              style={{
+                width: `${size}px`,
+                height: `${size}px`,
+                opacity: 0.2 + (p.total / maxEngagement) * 0.8,
+              }}
+            />
+          )
+        })}
+      </div>
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">Proposals</span>
-        <div className="flex items-center gap-1.5">
-          <span className="text-sm font-bold">{totalProposals}</span>
-          <span className="text-xs text-muted-foreground">active</span>
+        <span className="text-sm font-bold">{totalProposals}</span>
+      </div>
+      <div className="flex items-center justify-end -mt-0.5">
+        <div className="flex gap-1">
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </button>
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+          </button>
         </div>
-      </div>
-      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden flex">
-        <div className="bg-lime-400 h-full rounded-l-full" style={{ width: `${supportRatio}%` }} />
-        <div
-          className="bg-rose-400 h-full rounded-r-full"
-          style={{ width: `${100 - supportRatio}%` }}
-        />
-      </div>
-      <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-        <span className="text-lime-500">+{totalSupport}</span>
-        <span className="text-rose-500">-{totalOppose}</span>
       </div>
     </div>
   )
@@ -614,25 +447,18 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
   if (!hasAnyWidget) return null
 
   return (
-    <div>
-      <StakeholdersVariantsDemo />
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
-        {data.impact && <ImpactWidget data={data.impact} />}
-        {data.financial && <FinancialWidget data={data.financial} />}
-        {data.sentiment && <SentimentWidget data={data.sentiment} />}
-        {data.activity && <ActivityWidget data={data.activity} />}
-        {data.dataConfidence && <DataConfidenceWidget data={data.dataConfidence} />}
-        {data.proposals && data.proposals.items.length > 0 && (
-          <ProposalsMiniWidget data={data.proposals} />
-        )}
-        {data.community && <CommunityMiniWidget data={data.community} />}
-      </div>
-      {data.stakeholders && (
-        <div className="mt-3 pt-3 border-t border-border/50">
-          <StakeholdersWidget data={data.stakeholders} />
-        </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+      {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
+      {data.impact && <ImpactWidget data={data.impact} />}
+      {data.financial && <FinancialWidget data={data.financial} />}
+      {data.sentiment && <SentimentWidget data={data.sentiment} />}
+      {data.activity && <ActivityWidget data={data.activity} />}
+      {data.dataConfidence && <DataConfidenceWidget data={data.dataConfidence} />}
+      {data.proposals && data.proposals.items.length > 0 && (
+        <ProposalsMiniWidget data={data.proposals} />
       )}
+      {data.community && <CommunityMiniWidget data={data.community} />}
+      {data.stakeholders && <StakeholdersWidget data={data.stakeholders} />}
     </div>
   )
 }
