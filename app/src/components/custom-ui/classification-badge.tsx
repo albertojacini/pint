@@ -19,13 +19,13 @@ export function ClassificationBadge({ type, color, className = '' }: Classificat
 }
 
 const PROVISION_TYPE_COLORS: Record<string, string> = {
-  ownership: 'rgb(147 51 234)',       // purple
-  contract: 'rgb(37 99 235)',         // blue
-  regulation: 'rgb(234 88 12)',       // orange
-  taxation: 'rgb(22 163 74)',         // green
-  allocation: 'rgb(219 39 119)',      // pink
-  designation: 'rgb(71 85 105)',      // slate (default)
-  infrastructure: 'rgb(6 182 212)',   // cyan
+  ownership: 'hsl(var(--tag-purple))',
+  contract: 'hsl(var(--tag-blue))',
+  regulation: 'hsl(var(--tag-orange))',
+  taxation: 'hsl(var(--tag-green))',
+  allocation: 'hsl(var(--tag-pink))',
+  designation: 'hsl(var(--tag-slate))',
+  infrastructure: 'hsl(var(--tag-cyan))',
 }
 
 function getProvisionTypeColor(type: string): string {
@@ -43,13 +43,13 @@ export function ProvisionClassificationBadge({ type, className }: ProvisionClass
 }
 
 const ENTITY_TYPE_COLORS: Record<string, string> = {
-  neighborhood: 'rgb(139 92 246)',  // violet
-  district: 'rgb(59 130 246)',      // blue
-  borough: 'rgb(14 165 233)',       // sky
-  city: 'rgb(16 185 129)',          // emerald
-  region: 'rgb(245 158 11)',        // amber
-  country: 'rgb(239 68 68)',        // red
-  supranational: 'rgb(168 85 247)', // purple
+  neighborhood: 'hsl(var(--tag-purple))',
+  district: 'hsl(var(--tag-blue))',
+  borough: 'hsl(var(--tag-cyan))',
+  city: 'hsl(var(--tag-teal))',
+  region: 'hsl(var(--tag-orange))',
+  country: 'hsl(var(--tag-pink))',
+  supranational: 'hsl(var(--tag-slate))',
 }
 
 function getEntityTypeColor(type: string): string {

@@ -66,6 +66,16 @@ const config: Config = {
           DEFAULT: 'hsl(var(--neutral))',
           light: 'hsl(var(--neutral-light))',
         },
+        tag: {
+          purple: 'hsl(var(--tag-purple))',
+          blue: 'hsl(var(--tag-blue))',
+          cyan: 'hsl(var(--tag-cyan))',
+          teal: 'hsl(var(--tag-teal))',
+          green: 'hsl(var(--tag-green))',
+          orange: 'hsl(var(--tag-orange))',
+          pink: 'hsl(var(--tag-pink))',
+          slate: 'hsl(var(--tag-slate))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
