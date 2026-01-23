@@ -6,14 +6,15 @@ type ConfidenceLevel = 'high' | 'medium' | 'low' | 'none'
 
 function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiveness']> }) {
   const percentage = (data.value / (data.maxValue || 10)) * 100
-  const color = data.value >= 7 ? 'bg-positive-light' : data.value >= 4 ? 'bg-warning-light' : 'bg-negative-light'
+  const color =
+    data.value >= 7
+      ? 'bg-positive-light'
+      : data.value >= 4
+        ? 'bg-warning-light'
+        : 'bg-negative-light'
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
   const trendColor =
-    data.trend === 'up'
-      ? 'text-positive'
-      : data.trend === 'down'
-        ? 'text-negative'
-        : 'text-neutral'
+    data.trend === 'up' ? 'text-positive' : data.trend === 'down' ? 'text-negative' : 'text-neutral'
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
@@ -93,11 +94,7 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
 function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financial']> }) {
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
   const trendColor =
-    data.trend === 'up'
-      ? 'text-positive'
-      : data.trend === 'down'
-        ? 'text-negative'
-        : 'text-neutral'
+    data.trend === 'up' ? 'text-positive' : data.trend === 'down' ? 'text-negative' : 'text-neutral'
 
   // Mock budget trend data over time (12 months)
   const trendData = [2.1, 2.3, 2.2, 2.4, 2.5, 2.3, 2.6, 2.4, 2.5, 2.7, 2.6, 2.8]
@@ -472,22 +469,7 @@ function IdeasWidget({ data }: { data: NonNullable<EvaluationSummary['ideas']> }
   return (
     <div className="rounded-lg p-3 border-2 border-dashed border-amber-400/70">
       <div className="flex items-center gap-2 mb-2">
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-amber-400"
-        >
-          <path d="M9 18h6" />
-          <path d="M10 22h4" />
-          <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
-        </svg>
-        <span className="text-xs font-medium text-muted-foreground">Ideas</span>
+        <span className="text-xs font-medium text-muted-foreground">Implemented ideas</span>
         <span className="text-sm font-bold ml-auto">{data.items.length}</span>
       </div>
       <div className="space-y-1.5">

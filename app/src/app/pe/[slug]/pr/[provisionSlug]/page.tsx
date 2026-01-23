@@ -483,7 +483,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       {/* Description */}
       {provision.description && (
         <Section title="Description">
-          <p className="text-muted-foreground whitespace-pre-wrap">{provision.description}</p>
+          <MarkdownContent content={provision.description} />
         </Section>
       )}
 

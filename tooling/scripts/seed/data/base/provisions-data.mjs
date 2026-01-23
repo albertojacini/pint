@@ -9,7 +9,7 @@ export const provisions = [
     title: 'ATM Ownership Stake',
     descriptionShort: '100% ownership of ATM public transport company',
     description:
-      'The Comune di Milano holds 100% ownership of ATM (Azienda Trasporti Milanesi), the public transport company managing metro, tram, bus, and trolleybus services across Milan and surrounding municipalities.',
+      'The Comune di Milano holds **100% ownership** of *ATM (Azienda Trasporti Milanesi)*, the public transport company managing metro, tram, bus, and trolleybus services across Milan and **96 surrounding municipalities**.',
     summary_md: `**Funziona?** ATM serve 800M+ passeggeri/anno in 96 comuni. Affidabilità migliorata nel 2024-25 con aumento frequenze metro ed elettrificazione flotta.
 
 **Chi vince, chi perde?** Vincono: residenti (tariffe agevolate), ambiente (riduzione emissioni). Perdono: contribuenti (coprono deficit), automobilisti (minore priorità stradale).
@@ -245,7 +245,7 @@ export const provisions = [
     descriptionShort:
       'Zone a traffico limitato per ridurre inquinamento e congestione con pedaggi e restrizioni.',
     description:
-      "Il Comune di Milano gestisce un sistema articolato di zone a traffico limitato (ZTL) composto da Area C (zona centrale a pagamento con ticket da 5€) e Area B (zona estesa di 128 km² con restrizioni ambientali gratuite). Area C opera tramite 43 varchi elettronici nella Cerchia dei Bastioni, mentre Area B copre il 72% del territorio comunale escludendo i veicoli più inquinanti. Il sistema, evoluzione di Ecopass (2008), mira a ridurre l'inquinamento atmosferico e finanziare il trasporto pubblico, con restrizioni progressive fino al 2030. I risultati documentati mostrano riduzioni significative di PM10 (-50% in 4 anni) e NOx (-11% annuo dal 2023).",
+      "Il Comune di Milano gestisce un sistema articolato di zone a traffico limitato (ZTL) composto da **Area C** (zona centrale a pagamento con ticket da *€5*) e **Area B** (zona estesa di *128 km²* con restrizioni ambientali gratuite). Area C opera tramite **43 varchi elettronici** nella *Cerchia dei Bastioni*, mentre Area B copre il *72% del territorio comunale* escludendo i veicoli più inquinanti. Il sistema, evoluzione di *Ecopass (2008)*, mira a ridurre l'inquinamento atmosferico e finanziare il trasporto pubblico, con restrizioni progressive fino al **2030**. I risultati documentati mostrano riduzioni significative di **PM10 (-50%** in 4 anni) e **NOx (-11%** annuo dal 2023).",
     summary_md: `**Funziona?** Sì, con risultati significativi: PM10 ridotto del 50% in 4 anni, NOx -11% annuo dal 2023. Traffico in Area C -30% rispetto ai livelli pre-Ecopass.
 
 **Chi vince, chi perde?** Vincono: residenti (aria più pulita, meno congestione), trasporto pubblico (€30M/anno di finanziamenti). Perdono: proprietari di veicoli vecchi costretti a cambiare, pendolari che pagano €5/giorno, piccole imprese con costi di consegna.
@@ -436,7 +436,7 @@ export const provisions = [
     title: 'Public Space Occupation Permits (Dehors)',
     descriptionShort: 'Outdoor seating permits for restaurants',
     description:
-      'Municipal regulation governing outdoor seating areas (dehors) for restaurants and bars, including design standards, size limits, seasonal permissions, and accessibility requirements.',
+      'Municipal regulation governing outdoor seating areas (*dehors*) for restaurants and bars, including **design standards**, **size limits**, seasonal permissions, and **accessibility requirements**. Permits cost *€15-30/m²* per month with a minimum pedestrian clearance of *1.5m*.',
     summary_md: `**Funziona?** Tasso di conformità 92% nel 2025. 1.247 permessi attivi generano €2,2M/anno. Capacità posti esterni aumentata dell'8% in città.
 
 **Chi vince, chi perde?** Vincono: ristoratori (+50% posti a sedere, più ricavi), vita cittadina (vivacità), Comune (entrate da canoni). Perdono: pedoni (meno spazio sui marciapiedi), residenti vicino ai locali (rumore), attività senza spazio disponibile.
