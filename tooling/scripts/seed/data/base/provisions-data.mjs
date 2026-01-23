@@ -420,6 +420,15 @@ export const provisions = [
         ratingsCount: 15672,
         commentsCount: 3421,
       },
+      ideas: {
+        type: 'ideas',
+        items: [
+          {
+            title: 'Urban congestion charge',
+            description: 'Road pricing to reduce traffic and pollution in city centers',
+          },
+        ],
+      },
     },
   },
   {

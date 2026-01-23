@@ -6,7 +6,6 @@ import {
   provisions,
   tags,
   taggables,
-  ideas,
   provisionTypes,
   provisionTypeAssocs,
   artifacts,
@@ -389,7 +388,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
-      ideaId: provisions.ideaId,
       displayData: provisions.displayData,
       evaluationSummary: provisions.evaluationSummary,
     })
@@ -410,15 +408,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     .from(provisionTypeAssocs)
     .innerJoin(provisionTypes, eq(provisionTypeAssocs.typeId, provisionTypes.id))
     .where(eq(provisionTypeAssocs.provisionId, provisionResult.id))
-
-  let ideaTitle: string | null = null
-  if (provisionResult.ideaId) {
-    const [idea] = await db
-      .select({ title: ideas.title })
-      .from(ideas)
-      .where(eq(ideas.id, provisionResult.ideaId))
-    ideaTitle = idea?.title || null
-  }
 
   const provisionTags = await db
     .select({ id: tags.id, name: tags.name, slug: tags.slug, category: tags.category })
@@ -446,7 +435,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const provision = {
     ...provisionResult,
     tags: provisionTags,
-    ideaTitle,
     displayData: provisionResult.displayData || { items: [] },
     evaluationSummary: provisionResult.evaluationSummary,
   }
@@ -510,15 +498,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
               <span>Since {new Date(provision.effectiveFrom).getFullYear()}</span>
             )}
           </div>
-          {provision.ideaTitle && provision.ideaId && (
-            <Link
-              href={`/ideas/${provision.ideaId}`}
-              className="text-primary hover:underline flex items-center gap-1.5"
-            >
-              <span>💡</span>
-              <span className="max-w-[150px] truncate">{provision.ideaTitle}</span>
-            </Link>
-          )}
         </div>
       </div>
 

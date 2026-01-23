@@ -441,6 +441,42 @@ function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['co
   )
 }
 
+function IdeasWidget({ data }: { data: NonNullable<EvaluationSummary['ideas']> }) {
+  return (
+    <div className="rounded-lg p-3 border-2 border-dashed border-amber-400/70">
+      <div className="flex items-center gap-2 mb-2">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-amber-400"
+        >
+          <path d="M9 18h6" />
+          <path d="M10 22h4" />
+          <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+        </svg>
+        <span className="text-xs font-medium text-muted-foreground">Ideas</span>
+        <span className="text-sm font-bold ml-auto">{data.items.length}</span>
+      </div>
+      <div className="space-y-1.5">
+        {data.items.map((idea, i) => (
+          <div key={i} className="text-[10px]">
+            <div className="font-medium truncate">{idea.title}</div>
+            {idea.description && (
+              <div className="text-muted-foreground/70 truncate">{idea.description}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function EvaluationConsole({ data }: { data: EvaluationSummary | null | undefined }) {
   if (!data) return null
 
@@ -452,22 +488,26 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
     data.dataConfidence ||
     data.stakeholders ||
     data.proposals ||
-    data.community
+    data.community ||
+    data.ideas
 
   if (!hasAnyWidget) return null
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-      {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
-      {data.impact && <ImpactWidget data={data.impact} />}
-      {data.financial && <FinancialWidget data={data.financial} />}
-      {data.activity && <ActivityWidget data={data.activity} />}
-      {data.dataConfidence && <DataConfidenceWidget data={data.dataConfidence} />}
-      {data.proposals && data.proposals.items.length > 0 && (
-        <ProposalsMiniWidget data={data.proposals} />
+    <div className="columns-2 sm:columns-3 lg:columns-4 gap-3">
+      {data.ideas && data.ideas.items.length > 0 && (
+        <div className="break-inside-avoid mb-3"><IdeasWidget data={data.ideas} /></div>
       )}
-      {data.community && <CommunityMiniWidget data={data.community} />}
-      {data.stakeholders && <StakeholdersWidget data={data.stakeholders} />}
+      {data.effectiveness && <div className="break-inside-avoid mb-3"><ScoreWidget data={data.effectiveness} /></div>}
+      {data.impact && <div className="break-inside-avoid mb-3"><ImpactWidget data={data.impact} /></div>}
+      {data.financial && <div className="break-inside-avoid mb-3"><FinancialWidget data={data.financial} /></div>}
+      {data.activity && <div className="break-inside-avoid mb-3"><ActivityWidget data={data.activity} /></div>}
+      {data.dataConfidence && <div className="break-inside-avoid mb-3"><DataConfidenceWidget data={data.dataConfidence} /></div>}
+      {data.proposals && data.proposals.items.length > 0 && (
+        <div className="break-inside-avoid mb-3"><ProposalsMiniWidget data={data.proposals} /></div>
+      )}
+      {data.community && <div className="break-inside-avoid mb-3"><CommunityMiniWidget data={data.community} /></div>}
+      {data.stakeholders && <div className="break-inside-avoid mb-3"><StakeholdersWidget data={data.stakeholders} /></div>}
     </div>
   )
 }

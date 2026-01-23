@@ -229,6 +229,14 @@ export type CommunityWidget = {
   commentsCount: number    // discussions/comments count
 }
 
+export type IdeasWidget = {
+  type: 'ideas'
+  items: Array<{
+    title: string
+    description?: string
+  }>
+}
+
 export type EvaluationSummary = {
   effectiveness?: ScoreWidget
   impact?: ImpactWidget
@@ -239,6 +247,7 @@ export type EvaluationSummary = {
   stakeholders?: StakeholdersWidget
   proposals?: ProposalsWidget
   community?: CommunityWidget
+  ideas?: IdeasWidget
 }
 
 export const provisionTypes = pgTable('gov_provision_types', {
