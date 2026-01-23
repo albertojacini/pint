@@ -50,6 +50,22 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        positive: {
+          DEFAULT: 'hsl(var(--positive))',
+          light: 'hsl(var(--positive-light))',
+        },
+        negative: {
+          DEFAULT: 'hsl(var(--negative))',
+          light: 'hsl(var(--negative-light))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          light: 'hsl(var(--warning-light))',
+        },
+        neutral: {
+          DEFAULT: 'hsl(var(--neutral))',
+          light: 'hsl(var(--neutral-light))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',

@@ -24,6 +24,16 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
+
+    /* Semantic status colors */
+    --positive: 84 81% 44%;
+    --positive-light: 82 85% 67%;
+    --negative: 0 84% 60%;
+    --negative-light: 0 91% 71%;
+    --warning: 45 93% 47%;
+    --warning-light: 45 93% 58%;
+    --neutral: 220 9% 46%;
+    --neutral-light: 220 14% 96%;
   }
 
   .dark {
@@ -46,6 +56,16 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+
+    /* Semantic status colors (dark mode) */
+    --positive: 84 81% 44%;
+    --positive-light: 82 85% 67%;
+    --negative: 0 62% 50%;
+    --negative-light: 0 91% 60%;
+    --warning: 45 93% 47%;
+    --warning-light: 45 93% 58%;
+    --neutral: 220 13% 69%;
+    --neutral-light: 220 14% 20%;
   }
 }
 

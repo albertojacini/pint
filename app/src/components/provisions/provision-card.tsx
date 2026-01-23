@@ -33,11 +33,11 @@ interface ProvisionCardProps {
 // Helper function to get status color
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    active: 'bg-green-500',
-    repealed: 'bg-red-500',
-    suspended: 'bg-yellow-500',
+    active: 'bg-positive',
+    repealed: 'bg-negative',
+    suspended: 'bg-warning',
   }
-  return colors[status] || 'bg-gray-500'
+  return colors[status] || 'bg-neutral'
 }
 
 // Map 0-10 to 1-5 dots
@@ -48,10 +48,10 @@ function getScoreDots(score: number | null): number {
 
 // Get color based on score (0-10 scale) - green for high values
 function getScoreColor(score: number | null): string {
-  if (score === null || score === undefined) return 'rgb(209 213 219)' // gray-300 for unknown
-  if (score >= 7) return 'rgb(34 197 94)' // green-500 (high: 7-10)
-  if (score >= 4) return 'rgb(234 179 8)' // yellow-500 (medium: 4-6)
-  return 'rgb(239 68 68)' // red-500 (low: 0-3)
+  if (score === null || score === undefined) return 'hsl(var(--neutral-light))'
+  if (score >= 7) return 'hsl(var(--positive))'
+  if (score >= 4) return 'hsl(var(--warning))'
+  return 'hsl(var(--negative))'
 }
 
 export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
@@ -93,7 +93,7 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
               key={dot}
               className="w-2 h-2 rounded-full transition-colors"
               style={{
-                backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)',
+                backgroundColor: dot <= relevanceDots ? relevanceColor : 'hsl(var(--neutral-light))',
               }}
             />
           ))}

@@ -6,14 +6,14 @@ type ConfidenceLevel = 'high' | 'medium' | 'low' | 'none'
 
 function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiveness']> }) {
   const percentage = (data.value / (data.maxValue || 10)) * 100
-  const color = data.value >= 7 ? 'bg-lime-400' : data.value >= 4 ? 'bg-yellow-400' : 'bg-rose-400'
+  const color = data.value >= 7 ? 'bg-positive-light' : data.value >= 4 ? 'bg-warning-light' : 'bg-negative-light'
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
   const trendColor =
     data.trend === 'up'
-      ? 'text-lime-500'
+      ? 'text-positive'
       : data.trend === 'down'
-        ? 'text-rose-500'
-        : 'text-gray-500'
+        ? 'text-negative'
+        : 'text-neutral'
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
@@ -80,7 +80,7 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
         <span className="text-xs font-medium text-muted-foreground">Impact</span>
         <span className="text-sm font-bold">{balanceLabel}</span>
       </div>
-      <div className="mt-1.5 h-1 bg-gradient-to-r from-rose-400 via-gray-300 to-lime-400 rounded-full relative">
+      <div className="mt-1.5 h-1 bg-gradient-to-r from-negative-light via-neutral-light to-positive-light rounded-full relative">
         <div
           className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-white border border-gray-700 rounded-full"
           style={{ left: `calc(${balancePercent}% - 3px)` }}
@@ -94,10 +94,10 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
   const trendIcon = data.trend === 'up' ? '↑' : data.trend === 'down' ? '↓' : '→'
   const trendColor =
     data.trend === 'up'
-      ? 'text-lime-500'
+      ? 'text-positive'
       : data.trend === 'down'
-        ? 'text-rose-500'
-        : 'text-gray-500'
+        ? 'text-negative'
+        : 'text-neutral'
 
   // Mock budget trend data over time (12 months)
   const trendData = [2.1, 2.3, 2.2, 2.4, 2.5, 2.3, 2.6, 2.4, 2.5, 2.7, 2.6, 2.8]
@@ -131,7 +131,7 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-lime-400"
+            className="text-positive-light"
             vectorEffect="non-scaling-stroke"
           />
         </svg>
@@ -182,10 +182,10 @@ function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activit
   const trendIcon = data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
   const trendColor =
     data.trend === 'increasing'
-      ? 'text-lime-500'
+      ? 'text-positive'
       : data.trend === 'decreasing'
-        ? 'text-rose-500'
-        : 'text-gray-500'
+        ? 'text-negative'
+        : 'text-neutral'
 
   // Mock 18 data points - in real implementation, this would come from data
   const activityData = [1, 2, 3, 2, 4, 3, 5, 4, 2, 3, 4, 5, 3, 5, 2, 3, 4, 5]
@@ -199,7 +199,7 @@ function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activit
           return (
             <div
               key={i}
-              className="rounded-full bg-lime-400"
+              className="rounded-full bg-positive-light"
               style={{
                 width: `${size}px`,
                 height: `${size}px`,
@@ -264,10 +264,10 @@ function DataConfidenceWidget({
   data: NonNullable<EvaluationSummary['dataConfidence']>
 }) {
   const levelColors: Record<ConfidenceLevel, string> = {
-    high: 'bg-lime-400',
-    medium: 'bg-yellow-400',
-    low: 'bg-orange-400',
-    none: 'bg-gray-400',
+    high: 'bg-positive-light',
+    medium: 'bg-warning-light',
+    low: 'bg-warning',
+    none: 'bg-neutral',
   }
 
   return (
@@ -326,10 +326,10 @@ function DataConfidenceWidget({
 
 function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['stakeholders']> }) {
   const borderColors = {
-    positive: 'border-lime-400',
-    negative: 'border-rose-400',
-    neutral: 'border-gray-400',
-    mixed: 'border-yellow-400',
+    positive: 'border-positive-light',
+    negative: 'border-negative-light',
+    neutral: 'border-neutral',
+    mixed: 'border-warning-light',
   }
 
   // Sort items by color
@@ -372,10 +372,10 @@ function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['pr
           const size = 3 + (p.total / maxEngagement) * 9 // 3px to 12px
           const color =
             p.supportRatio > 0.6
-              ? 'bg-lime-400'
+              ? 'bg-positive-light'
               : p.supportRatio < 0.4
-                ? 'bg-rose-400'
-                : 'bg-yellow-400'
+                ? 'bg-negative-light'
+                : 'bg-warning-light'
 
           return (
             <div
@@ -452,7 +452,7 @@ function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['co
             height="14"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="text-yellow-400"
+            className="text-warning-light"
           >
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
