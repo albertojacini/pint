@@ -266,15 +266,53 @@ function DataConfidenceWidget({
 
   return (
     <div className="bg-muted/30 rounded-lg p-3">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">Data</span>
-        <span className="text-sm font-bold">{data.coverage}%</span>
-      </div>
-      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
+      <div className="h-1 bg-muted rounded-full overflow-hidden mb-3">
         <div
           className={`h-full ${levelColors[data.level]} rounded-full`}
           style={{ width: `${data.coverage}%` }}
         />
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">Data</span>
+        <span className="text-sm font-bold">{data.coverage}%</span>
+      </div>
+      <div className="flex items-center justify-between -mt-0.5">
+        <div className="text-[8px] text-muted-foreground/70">% of verification</div>
+        <div className="flex gap-1">
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          </button>
+          <button className="text-muted-foreground/40 hover:text-muted-foreground transition-colors">
+            <svg
+              width="8"
+              height="8"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 3 21 3 21 9" />
+              <polyline points="9 21 3 21 3 15" />
+              <line x1="21" y1="3" x2="14" y2="10" />
+              <line x1="3" y1="21" x2="10" y2="14" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   )
