@@ -24,24 +24,13 @@ import { EvaluationConsole } from '@/components/provisions/evaluation-console'
 import { ChangeProposals } from '@/components/provisions/change-proposals'
 import { getChangesByProvision } from '@/lib/actions/changes'
 import { MarkdownContent } from '@/components/custom-ui/markdown-content'
+import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
 
 interface PageProps {
   params: Promise<{
     slug: string
     provisionSlug: string
   }>
-}
-
-function getScoreDots(score: number | null): number {
-  if (score === null || score === undefined) return 0
-  return Math.ceil(score / 2)
-}
-
-function getScoreColor(score: number | null): string {
-  if (score === null || score === undefined) return 'rgb(209 213 219)'
-  if (score >= 7) return 'rgb(34 197 94)'
-  if (score >= 4) return 'rgb(234 179 8)'
-  return 'rgb(239 68 68)'
 }
 
 function getArtifactTypeIcon(type: string): string {
@@ -429,8 +418,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     evaluationSummary: provisionResult.evaluationSummary,
   }
 
-  const relevanceDots = getScoreDots(provision.relevance)
-  const relevanceColor = getScoreColor(provision.relevance)
   const mediaUrl = getStorageUrl('avatars', provision.avatarUrl)
   const visibleTags = provision.tags.filter(
     (tag) => tag.category === 'policy-topic' || tag.category === 'impact-area'
@@ -459,16 +446,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
               <PageTitle>{provision.title}</PageTitle>
-              <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
-                {[1, 2, 3, 4, 5].map((dot) => (
-                  <div
-                    key={dot}
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{
-                      backgroundColor: dot <= relevanceDots ? relevanceColor : 'rgb(229 231 235)',
-                    }}
-                  />
-                ))}
+              <div className="ml-auto">
+                <RelevanceDots score={provision.relevance} size="md" />
               </div>
             </div>
             <p className="text-muted-foreground">

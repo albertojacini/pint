@@ -6,6 +6,7 @@ import { provisionPath } from '@/lib/utils'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionChangesDensity } from './provision-changes-density'
 
@@ -30,33 +31,7 @@ interface ProvisionCardProps {
   entity: { id: string; slug: string }
 }
 
-// Helper function to get status color
-const getStatusColor = (status: string) => {
-  const colors: Record<string, string> = {
-    active: 'bg-positive',
-    repealed: 'bg-negative',
-    suspended: 'bg-warning',
-  }
-  return colors[status] || 'bg-neutral'
-}
-
-// Map 0-10 to 1-5 dots
-function getScoreDots(score: number | null): number {
-  if (score === null || score === undefined) return 0
-  return Math.ceil(score / 2) // 0→0, 1-2→1, 3-4→2, 5-6→3, 7-8→4, 9-10→5
-}
-
-// Get color based on score (0-10 scale) - green for high values
-function getScoreColor(score: number | null): string {
-  if (score === null || score === undefined) return 'hsl(var(--neutral-light))'
-  if (score >= 7) return 'hsl(var(--positive))'
-  if (score >= 4) return 'hsl(var(--warning))'
-  return 'hsl(var(--negative))'
-}
-
 export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
-  const relevanceDots = getScoreDots(provision.relevance)
-  const relevanceColor = getScoreColor(provision.relevance)
   const mediaUrl = getStorageUrl('avatars', provision.avatarUrl)
 
   // Filter tags to only show policy-topic and impact-area categories
@@ -87,16 +62,8 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
         </Link>
 
         {/* Relevance indicator (5 dots) */}
-        <div className="flex items-center gap-0.5 flex-shrink-0" title="Relevance">
-          {[1, 2, 3, 4, 5].map((dot) => (
-            <div
-              key={dot}
-              className="w-2 h-2 rounded-full transition-colors"
-              style={{
-                backgroundColor: dot <= relevanceDots ? relevanceColor : 'hsl(var(--neutral-light))',
-              }}
-            />
-          ))}
+        <div className="flex-shrink-0">
+          <RelevanceDots score={provision.relevance} />
         </div>
       </div>
 
