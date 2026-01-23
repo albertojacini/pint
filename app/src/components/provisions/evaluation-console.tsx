@@ -80,10 +80,10 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
         <span className="text-xs font-medium text-muted-foreground">Impact</span>
         <span className="text-sm font-bold">{balanceLabel}</span>
       </div>
-      <div className="mt-1.5 h-1.5 bg-gradient-to-r from-rose-400 via-gray-300 to-lime-400 rounded-full relative">
+      <div className="mt-1.5 h-1 bg-gradient-to-r from-rose-400 via-gray-300 to-lime-400 rounded-full relative">
         <div
-          className="absolute top-1/2 -translate-y-1/2 w-2 h-2 bg-white border-2 border-gray-700 rounded-full"
-          style={{ left: `calc(${balancePercent}% - 4px)` }}
+          className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-white border border-gray-700 rounded-full"
+          style={{ left: `calc(${balancePercent}% - 3px)` }}
         />
       </div>
     </div>
@@ -155,22 +155,6 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
   )
 }
 
-function SentimentWidget({ data }: { data: NonNullable<EvaluationSummary['sentiment']> }) {
-  const color =
-    data.score >= 60 ? 'bg-lime-400' : data.score >= 40 ? 'bg-yellow-400' : 'bg-rose-400'
-
-  return (
-    <div className="bg-muted/30 rounded-lg p-3">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">Sentiment</span>
-        <span className="text-sm font-bold">{data.score}%</span>
-      </div>
-      <div className="mt-1.5 h-1 bg-muted rounded-full overflow-hidden">
-        <div className={`h-full ${color} rounded-full`} style={{ width: `${data.score}%` }} />
-      </div>
-    </div>
-  )
-}
 
 function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activity']> }) {
   const trendIcon = data.trend === 'increasing' ? '↑' : data.trend === 'decreasing' ? '↓' : '→'
@@ -431,37 +415,26 @@ function formatCount(n: number): string {
 }
 
 function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['community']> }) {
-  const fullStars = Math.floor(data.rating)
-  const hasHalfStar = data.rating % 1 >= 0.5
-
   return (
     <div className="bg-muted/30 rounded-lg p-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-muted-foreground">Community</span>
         <div className="flex items-center gap-1">
-          <div className="flex">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span
-                key={star}
-                className={`text-xs ${
-                  star <= fullStars
-                    ? 'text-orange-400'
-                    : star === fullStars + 1 && hasHalfStar
-                      ? 'text-orange-400/50'
-                      : 'text-gray-300'
-                }`}
-              >
-                ★
-              </span>
-            ))}
-          </div>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="text-yellow-400"
+          >
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+          </svg>
           <span className="text-sm font-bold">{data.rating.toFixed(1)}</span>
         </div>
       </div>
-      <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5">
-        <span>
-          {formatCount(data.ratingsCount)} votes · {formatCount(data.commentsCount)} comments
-        </span>
+      <div className="flex gap-3 text-[10px] text-muted-foreground">
+        <span>{formatCount(data.ratingsCount)} votes</span>
+        <span>{formatCount(data.commentsCount)} comments</span>
         <span>{formatCount(data.followers)} followers</span>
       </div>
     </div>
@@ -475,7 +448,6 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
     data.effectiveness ||
     data.impact ||
     data.financial ||
-    data.sentiment ||
     data.activity ||
     data.dataConfidence ||
     data.stakeholders ||
@@ -489,7 +461,6 @@ export function EvaluationConsole({ data }: { data: EvaluationSummary | null | u
       {data.effectiveness && <ScoreWidget data={data.effectiveness} />}
       {data.impact && <ImpactWidget data={data.impact} />}
       {data.financial && <FinancialWidget data={data.financial} />}
-      {data.sentiment && <SentimentWidget data={data.sentiment} />}
       {data.activity && <ActivityWidget data={data.activity} />}
       {data.dataConfidence && <DataConfidenceWidget data={data.dataConfidence} />}
       {data.proposals && data.proposals.items.length > 0 && (
