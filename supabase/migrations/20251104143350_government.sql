@@ -116,8 +116,10 @@ CREATE TRIGGER set_updated_at_gov_members
   EXECUTE FUNCTION public.handle_updated_at();
 
 -- ============================================================================
--- PROVISIONS: Laws, regulations, infrastructure owned by entities
+-- PROVISIONS: Policy instruments used by entities to intervene in public life
 -- ============================================================================
+-- A provision is the mechanism itself, not its parameters, zones, or details.
+-- See app/src/lib/db/schema/government.ts for full definition and test criteria.
 
 -- Provision types reference table
 CREATE TABLE IF NOT EXISTS public.gov_provision_types (
@@ -140,7 +142,7 @@ INSERT INTO public.gov_provision_types (code, label, description) VALUES
   ('designation', 'Designation', 'Zones, landmarks, protected areas, institutions'),
   ('infrastructure', 'Infrastructure', 'Public works, utilities, transportation networks, digital systems');
 
--- Provisions: institutional/legal/operational infrastructure owned by entities
+-- Provisions: policy instruments (mechanisms, not their parameters or instances)
 CREATE TABLE IF NOT EXISTS public.gov_provisions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   title text NOT NULL,

@@ -96,7 +96,7 @@ export const artifacts = [
 2023-07-01,435000,218000,505000,1158000
 2023-10-01,440000,220000,510000,1170000`,
     sourceDocuments: ['ATM Service Statistics Q4 2023'],
-    provisions: ['ATM Ownership Stake'],
+    provisions: ['Partecipazione ATM'],
   },
   {
     title: 'ATM Revenue Breakdown 2023',
@@ -110,7 +110,7 @@ Bus Tickets,95000000,22.3
 Subscriptions,52000000,12.2
 Tourist Passes,14500000,3.4`,
     sourceDocuments: ['ATM Annual Report 2023'],
-    provisions: ['ATM Ownership Stake'],
+    provisions: ['Partecipazione ATM'],
   },
   {
     title: 'ATM Operational Parameters',
@@ -150,7 +150,7 @@ fares:
   monthly_pass: 39.00
   annual_pass: 330.00`,
     sourceDocuments: ['ATM Annual Report 2023'],
-    provisions: ['ATM Ownership Stake'],
+    provisions: ['Partecipazione ATM'],
   },
   {
     title: 'Area C Traffic Impact Analysis',

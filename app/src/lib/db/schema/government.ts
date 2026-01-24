@@ -138,7 +138,38 @@ export const members = pgTable('gov_members', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-// Provisions
+// ============================================================================
+// PROVISIONS
+// ============================================================================
+// A provision is a distinct policy instrument that a government entity uses
+// to intervene in public life. It represents the mechanism itself, not its
+// specific parameters, zones, or implementation details.
+//
+// TEST: All three must pass for something to be a provision:
+//
+// 1. INSTRUMENT TEST: Is this the policy mechanism itself, not a parameter,
+//    zone, or instance of a larger mechanism?
+//    ✗ "Area C" (a zone within congestion pricing)
+//    ✓ "Pedaggi urbani" (the congestion pricing mechanism)
+//
+// 2. PORTABILITY TEST: Could another city adopt this same type of instrument
+//    (with their own parameters)?
+//    ✗ "Area C" (Rome can't adopt Milan's Area C)
+//    ✓ "Pedaggi urbani" (Rome could adopt congestion pricing)
+//
+// 3. REMOVAL TEST: If removed entirely, would it eliminate a whole category
+//    of government intervention?
+//    ✗ "Area C" (removing it still leaves Area B)
+//    ✓ "Pedaggi urbani" (removing it ends all urban road pricing)
+//
+// Examples:
+// ✓ Pedaggi urbani (urban road pricing mechanism)
+// ✓ Partecipazione ATM (public transport company ownership)
+// ✓ Regolamento dehors (outdoor seating regulation)
+// ✗ Area C, Area B (zones within pedaggi urbani)
+// ✗ Metro Line 4 (asset within transport system)
+// ✗ €15/m² fee (parameter within dehors regulation)
+// ============================================================================
 
 // Evaluation Summary Widget Types
 // These types define the structure of the evaluationSummary JSONB field

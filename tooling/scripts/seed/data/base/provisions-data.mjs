@@ -6,8 +6,8 @@
 export const provisions = [
   {
     entity: 'Comune di Milano',
-    title: 'ATM Ownership Stake',
-    descriptionShort: '100% ownership of ATM public transport company',
+    title: 'Partecipazione ATM',
+    descriptionShort: 'Partecipazione azionaria al 100% in ATM, azienda trasporti pubblici',
     description:
       'The Comune di Milano holds **100% ownership** of *ATM (Azienda Trasporti Milanesi)*, the public transport company managing metro, tram, bus, and trolleybus services across Milan and **96 surrounding municipalities**.',
     summary_md: `**Funziona?** ATM serve 800M+ passeggeri/anno in 96 comuni. Affidabilità migliorata nel 2024-25 con aumento frequenze metro ed elettrificazione flotta.

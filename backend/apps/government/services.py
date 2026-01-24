@@ -74,7 +74,7 @@ The research prompt should:
 3. Specify the political entity context
 4. Mention key aspects: legal status, history, current state, stakeholders, financial details
 
-A provision is a piece of state infrastructure: laws, regulations, contracts, ownership stakes, allocations, or designations that a political entity maintains.
+A provision is a distinct policy instrument that a government entity uses to intervene in public life. It represents the mechanism itself, not its specific parameters, zones, or implementation details. See app/src/lib/db/schema/government.ts for the full definition and test criteria.
 
 Keep the prompt focused and under 200 words. Write in a concise, clear, professional tone - all in the {entity_language} language."""
 
@@ -120,7 +120,7 @@ Generate a detailed research prompt in {entity_language} that will guide compreh
         """
         system_prompt = """You generate structured provision drafts from research summaries.
 
-A provision is a piece of state infrastructure that a political entity maintains. There are 7 types:
+A provision is a distinct policy instrument that a government entity uses to intervene in public life. There are 7 types:
 - ownership: Stakes in companies, property, infrastructure
 - contract: Service agreements, concessions, partnerships
 - regulation: Rules, ordinances, codes, standards
