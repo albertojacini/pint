@@ -49,11 +49,11 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
         ))}
 
         {/* Tags */}
-        <Tags tags={visibleTags} maxTags={3} />
+        <Tags tags={visibleTags} maxTags={3} className="ml-auto" />
       </div>
 
       {/* Row 2: Title + Relevance Dots */}
-      <div className="flex items-center gap-3 mb-3">
+      <div className="flex items-start gap-3 mb-3">
         <Link
           href={provisionPath(entity, provision)}
           className="line-clamp-2 flex-1 hover:text-primary hover:underline transition-colors"

@@ -1,5 +1,3 @@
-import { Badge } from '@/components/ui/badge'
-
 interface ClassificationBadgeProps {
   type: string
   color: string
@@ -8,13 +6,12 @@ interface ClassificationBadgeProps {
 
 export function ClassificationBadge({ type, color, className = '' }: ClassificationBadgeProps) {
   return (
-    <Badge
-      variant="outline"
-      className={className}
-      style={{ color, borderColor: color }}
+    <span
+      className={`inline-flex items-center text-xs font-medium border-b-2 pb-0.5 ${className}`}
+      style={{ color, borderBottomColor: color }}
     >
       {type}
-    </Badge>
+    </span>
   )
 }
 

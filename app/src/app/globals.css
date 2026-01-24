@@ -35,15 +35,15 @@
     --neutral: 220 9% 46%;
     --neutral-light: 220 14% 96%;
 
-    /* Tagging colors - harmonious palette with consistent saturation/lightness */
-    --tag-purple: 271 81% 56%;
-    --tag-blue: 217 91% 60%;
-    --tag-cyan: 189 94% 43%;
-    --tag-teal: 168 76% 42%;
-    --tag-green: 142 71% 45%;
-    --tag-orange: 25 95% 53%;
-    --tag-pink: 330 81% 60%;
-    --tag-slate: 215 16% 47%;
+    /* Tagging colors - muted palette (lower saturation to not compete with semantic colors) */
+    --tag-purple: 271 50% 55%;
+    --tag-blue: 217 55% 55%;
+    --tag-cyan: 189 55% 45%;
+    --tag-teal: 168 50% 45%;
+    --tag-green: 142 45% 45%;
+    --tag-orange: 25 60% 50%;
+    --tag-pink: 330 50% 55%;
+    --tag-slate: 215 20% 50%;
   }
 
   .dark {
@@ -77,15 +77,15 @@
     --neutral: 220 13% 69%;
     --neutral-light: 220 14% 20%;
 
-    /* Tagging colors (dark mode - slightly adjusted for visibility) */
-    --tag-purple: 271 81% 66%;
-    --tag-blue: 217 91% 70%;
-    --tag-cyan: 189 94% 53%;
-    --tag-teal: 168 76% 52%;
-    --tag-green: 142 71% 55%;
-    --tag-orange: 25 95% 63%;
-    --tag-pink: 330 81% 70%;
-    --tag-slate: 215 16% 57%;
+    /* Tagging colors (dark mode - increased lightness for visibility) */
+    --tag-purple: 271 50% 65%;
+    --tag-blue: 217 55% 65%;
+    --tag-cyan: 189 55% 55%;
+    --tag-teal: 168 50% 55%;
+    --tag-green: 142 45% 55%;
+    --tag-orange: 25 60% 60%;
+    --tag-pink: 330 50% 65%;
+    --tag-slate: 215 20% 60%;
   }
 }
 

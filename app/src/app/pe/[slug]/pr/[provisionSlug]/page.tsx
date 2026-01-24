@@ -430,7 +430,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         {provisionTypesList.map((type) => (
           <ProvisionClassificationBadge key={type.id} type={type.code as any} />
         ))}
-        <Tags tags={visibleTags} maxTags={3} />
+        <Tags tags={visibleTags} maxTags={3} className="ml-auto" />
       </div>
 
       {/* Header */}
@@ -444,7 +444,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
             />
           )}
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-1">
+            <div className="flex items-start gap-3 mb-1">
               <PageTitle>{provision.title}</PageTitle>
               <div className="ml-auto">
                 <RelevanceDots score={provision.relevance} size="md" />
