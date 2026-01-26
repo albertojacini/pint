@@ -51,6 +51,7 @@ lerna-debug.log*
 
 # Database
 postgres-data/
+backups/
 *.db
 *.db-shm
 *.db-wal
