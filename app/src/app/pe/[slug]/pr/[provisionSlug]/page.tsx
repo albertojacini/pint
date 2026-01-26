@@ -25,6 +25,9 @@ import { ChangeProposals } from '@/components/provisions/change-proposals'
 import { getChangesByProvision } from '@/lib/actions/changes'
 import { MarkdownContent } from '@/components/custom-ui/markdown-content'
 import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
+import { parseCsv } from '@/lib/csv'
+import { TimeSeriesChart } from '@/components/charts/time-series-chart'
+import { BreakdownChart } from '@/components/charts/breakdown-chart'
 
 interface PageProps {
   params: Promise<{
@@ -73,48 +76,6 @@ type Artifact = {
   dataQuality: string
 }
 
-function parseCsvLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i]
-    const nextChar = line[i + 1]
-
-    if (inQuotes) {
-      if (char === '"' && nextChar === '"') {
-        current += '"'
-        i++
-      } else if (char === '"') {
-        inQuotes = false
-      } else {
-        current += char
-      }
-    } else {
-      if (char === '"') {
-        inQuotes = true
-      } else if (char === ',') {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-  }
-
-  result.push(current.trim())
-  return result
-}
-
-function parseCsv(csv: string): { headers: string[]; rows: string[][] } {
-  const lines = csv.trim().split('\n')
-  if (lines.length === 0) return { headers: [], rows: [] }
-  const headers = parseCsvLine(lines[0])
-  const rows = lines.slice(1).map((line) => parseCsvLine(line))
-  return { headers, rows }
-}
-
 function parseParameters(content: string): { key: string; value: string }[] {
   const lines = content.trim().split('\n')
   return lines
@@ -128,115 +89,6 @@ function parseParameters(content: string): { key: string; value: string }[] {
     .filter((item): item is { key: string; value: string } => item !== null)
 }
 
-function TimeSeriesWidget({ content }: { content: string }) {
-  const { headers, rows } = parseCsv(content)
-  if (headers.length === 0)
-    return <p className="text-sm text-red-500">Error: no CSV headers found</p>
-  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
-
-  const timeLabels = rows.map((row) => row[0] || '')
-  const seriesNames = headers.slice(1)
-  const series = seriesNames.map((name, seriesIndex) => ({
-    name,
-    values: rows.map((row) => parseFloat(row[seriesIndex + 1] || '0') || 0),
-  }))
-  const maxValue = Math.max(...series.flatMap((s) => s.values), 1)
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-purple-500',
-    'bg-pink-500',
-  ]
-
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-3 text-xs">
-        {series.map((s, i) => (
-          <div key={s.name} className="flex items-center gap-1.5">
-            <div className={`w-3 h-3 rounded-sm ${colors[i % colors.length]}`} />
-            <span className="text-muted-foreground">{s.name}</span>
-          </div>
-        ))}
-      </div>
-      <div className="space-y-1.5">
-        {timeLabels.map((label, timeIndex) => (
-          <div key={timeIndex} className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground w-12 text-right flex-shrink-0">
-              {label}
-            </span>
-            <div className="flex-1 flex gap-1">
-              {series.map((s, seriesIndex) => {
-                const value = s.values[timeIndex]
-                const width = (value / maxValue) * 100
-                return (
-                  <div
-                    key={s.name}
-                    className={`h-4 ${colors[seriesIndex % colors.length]} rounded-sm`}
-                    style={{ width: `${width}%`, minWidth: value > 0 ? '2px' : '0' }}
-                    title={`${s.name}: ${value.toLocaleString()}`}
-                  />
-                )
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function BreakdownWidget({ content }: { content: string }) {
-  const { headers, rows } = parseCsv(content)
-  if (headers.length === 0)
-    return <p className="text-sm text-red-500">Error: no CSV headers found</p>
-  if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
-
-  const data = rows.map((row) => ({ label: row[0] || '', value: parseFloat(row[1] || '0') || 0 }))
-  const total = data.reduce((sum, d) => sum + d.value, 0)
-  const colors = [
-    'bg-blue-500',
-    'bg-green-500',
-    'bg-yellow-500',
-    'bg-red-500',
-    'bg-purple-500',
-    'bg-pink-500',
-    'bg-indigo-500',
-    'bg-orange-500',
-  ]
-
-  return (
-    <div className="space-y-3">
-      <div className="h-6 bg-muted rounded-md overflow-hidden flex">
-        {data.map((item, i) => {
-          const percentage = total > 0 ? (item.value / total) * 100 : 0
-          if (percentage < 1) return null
-          return (
-            <div
-              key={i}
-              className={`${colors[i % colors.length]} h-full transition-all`}
-              style={{ width: `${percentage}%` }}
-              title={`${item.label}: ${percentage.toFixed(1)}%`}
-            />
-          )
-        })}
-      </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1">
-        {data.map((item, i) => {
-          const percentage = total > 0 ? (item.value / total) * 100 : 0
-          return (
-            <div key={i} className="flex items-center gap-1.5 text-xs">
-              <div className={`w-2.5 h-2.5 rounded-sm ${colors[i % colors.length]}`} />
-              <span className="text-muted-foreground">{item.label}</span>
-              <span className="font-medium">{percentage.toFixed(1)}%</span>
-            </div>
-          )
-        })}
-      </div>
-    </div>
-  )
-}
 
 function ParametersWidget({ content }: { content: string }) {
   const params = parseParameters(content)
@@ -301,10 +153,29 @@ function ArtifactWidget({ artifact }: { artifact: Artifact }) {
   if (!artifact.content) return <p className="text-sm text-red-500">Error: content is empty</p>
 
   switch (artifact.artifactType) {
-    case 'evolution':
-      return <TimeSeriesWidget content={artifact.content} />
-    case 'distribution':
-      return <BreakdownWidget content={artifact.content} />
+    case 'evolution': {
+      const { headers, rows } = parseCsv(artifact.content)
+      if (headers.length === 0)
+        return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+      if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
+      const timeLabels = rows.map((row) => row[0] || '')
+      const series = headers.slice(1).map((name, i) => ({
+        name,
+        values: rows.map((row) => parseFloat(row[i + 1] || '0') || 0),
+      }))
+      return <TimeSeriesChart data={{ timeLabels, series }} />
+    }
+    case 'distribution': {
+      const { headers, rows } = parseCsv(artifact.content)
+      if (headers.length === 0)
+        return <p className="text-sm text-red-500">Error: no CSV headers found</p>
+      if (rows.length === 0) return <p className="text-sm text-yellow-600">No data rows</p>
+      const items = rows.map((row) => ({
+        label: row[0] || '',
+        value: parseFloat(row[1] || '0') || 0,
+      }))
+      return <BreakdownChart data={{ items }} />
+    }
     case 'parameters':
       return <ParametersWidget content={artifact.content} />
     case 'narrative':
