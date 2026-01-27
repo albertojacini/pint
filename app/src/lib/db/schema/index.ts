@@ -13,6 +13,7 @@ import * as ingestion from './ingestion'
 import * as provisionPipeline from './provision-pipeline'
 import * as research from './research'
 import * as knowledge from './knowledge'
+import * as discussions from './discussions'
 
 export {
   accounts,
@@ -24,6 +25,7 @@ export {
   provisionPipeline,
   research,
   knowledge,
+  discussions,
 }
 
 // ============================================================================
@@ -75,3 +77,11 @@ export { researches, sources as researchSources } from './research'
 
 // knowledge
 export { artifacts, artifactSources } from './knowledge'
+
+// discussions
+export {
+  posts as discPosts,
+  comments as discComments,
+  votes as discVotes,
+  proposalVotes as discProposalVotes,
+} from './discussions'

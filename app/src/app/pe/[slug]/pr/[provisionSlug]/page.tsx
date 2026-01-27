@@ -28,6 +28,7 @@ import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
 import { parseCsv } from '@/lib/csv'
 import { TimeSeriesChart } from '@/components/charts/time-series-chart'
 import { BreakdownChart } from '@/components/charts/breakdown-chart'
+import { getPosts } from '@/lib/actions/discussions'
 
 interface PageProps {
   params: Promise<{
@@ -282,6 +283,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
     .innerJoin(artifacts, eq(provisionArtifacts.artifactId, artifacts.id))
     .where(eq(provisionArtifacts.provisionId, provisionResult.id))
 
+  const recentPosts = await getPosts('provision', provisionResult.id, 'recent')
+
   const provision = {
     ...provisionResult,
     tags: provisionTags,
@@ -531,78 +534,56 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         </div>
       </Section>
 
-      {/* Community & Sentiment - Coming Soon */}
-      <Section title="Community & Sentiment">
-        <div className="space-y-6">
-          {/* Reactions */}
-          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
-            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-              <span>👍</span> Community Reactions
-            </h4>
-            <div className="flex gap-6 opacity-50">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">👍</span>
-                <span className="text-sm font-medium">--</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">👎</span>
-                <span className="text-sm font-medium">--</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Sentiment Analysis */}
-          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
-            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-              <span>📊</span> Sentiment Analysis
-            </h4>
-            <p className="text-xs text-muted-foreground mb-3">
-              Overall public sentiment from discussions and comments
+      {/* Community Discussions */}
+      <Section
+        title="Discussions"
+        action={
+          <Link
+            href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`}
+            className="text-sm text-primary hover:underline"
+          >
+            View all →
+          </Link>
+        }
+      >
+        {recentPosts.length === 0 ? (
+          <div className="border border-dashed border-border rounded-lg p-6 bg-muted/20 text-center">
+            <p className="text-sm text-muted-foreground mb-3">
+              No discussions yet. Be the first to start a conversation!
             </p>
-            <div className="opacity-50">
-              <div className="h-3 bg-background rounded-full overflow-hidden flex">
-                <div className="bg-green-400 h-full" style={{ width: '40%' }}></div>
-                <div className="bg-gray-300 h-full" style={{ width: '35%' }}></div>
-                <div className="bg-red-400 h-full" style={{ width: '25%' }}></div>
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>Positive --%</span>
-                <span>Neutral --%</span>
-                <span>Negative --%</span>
-              </div>
-            </div>
+            <Link
+              href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions/new`}
+              className="text-sm text-primary hover:underline"
+            >
+              Start a discussion
+            </Link>
           </div>
-
-          {/* Discussion Highlights */}
-          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
-            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-              <span>💬</span> Discussion Highlights
-            </h4>
-            <p className="text-xs text-muted-foreground mb-3">
-              Summarized forum posts and trending topics
-            </p>
-            <div className="space-y-2 opacity-50">
-              <div className="bg-background rounded p-2">
-                <div className="text-xs text-muted-foreground">No discussions yet</div>
-              </div>
-            </div>
+        ) : (
+          <div className="space-y-2">
+            {recentPosts.slice(0, 5).map((post) => (
+              <Link
+                key={post.id}
+                href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions/${post.id}`}
+                className="block border border-border/50 rounded-lg p-3 hover:bg-muted/30 transition-colors"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-medium text-muted-foreground uppercase">
+                    {post.postType}
+                  </span>
+                  {post.isPinned && (
+                    <span className="text-xs text-muted-foreground">Pinned</span>
+                  )}
+                </div>
+                <h4 className="text-sm font-medium">{post.title}</h4>
+                <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                  <span>{post.score} votes</span>
+                  <span>{post.commentCount} comments</span>
+                  <span>{post.authorName || 'Anonymous'}</span>
+                </div>
+              </Link>
+            ))}
           </div>
-
-          {/* Recent Comments */}
-          <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
-            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
-              <span>✍️</span> Recent Comments
-            </h4>
-            <p className="text-xs text-muted-foreground mb-3">
-              Latest citizen feedback and opinions
-            </p>
-            <div className="space-y-2 opacity-50">
-              <div className="bg-background rounded p-2">
-                <div className="text-xs text-muted-foreground">No comments yet</div>
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
       </Section>
 
       {/* Back link */}
