@@ -375,17 +375,17 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           </Section>
         )}
 
-      {/* Changes Heatmap */}
+      {/* Changes Heatmap + Timeline */}
       {provisionChanges.length > 0 && (
         <Section title="Calendario">
-          <ProvisionChangesHeatmap changes={provisionChanges} />
-        </Section>
-      )}
-
-      {/* Change History */}
-      {provisionChanges.length > 0 && (
-        <Section title="Change History">
-          <ProvisionTimeline changes={provisionChanges} />
+          <div className="flex gap-6">
+            <div className="flex-shrink-0">
+              <ProvisionChangesHeatmap changes={provisionChanges} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <ProvisionTimeline changes={provisionChanges} />
+            </div>
+          </div>
         </Section>
       )}
 

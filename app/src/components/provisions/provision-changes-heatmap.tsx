@@ -69,7 +69,7 @@ export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProp
   if (changes.length === 0 || years.length === 0) return null
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col space-y-4">
       {/* Heatmap grid */}
       <div className="overflow-x-auto">
         <table className="border-collapse">
