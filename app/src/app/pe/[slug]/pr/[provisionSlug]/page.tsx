@@ -90,7 +90,6 @@ function parseParameters(content: string): { key: string; value: string }[] {
     .filter((item): item is { key: string; value: string } => item !== null)
 }
 
-
 function ParametersWidget({ content }: { content: string }) {
   const params = parseParameters(content)
   if (params.length === 0) return <p className="text-sm text-yellow-600">No parameters found</p>
@@ -378,7 +377,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
       {/* Changes Heatmap */}
       {provisionChanges.length > 0 && (
-        <Section title="Calendario Modifiche">
+        <Section title="Calendario">
           <ProvisionChangesHeatmap changes={provisionChanges} />
         </Section>
       )}
@@ -570,9 +569,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
                   <span className="text-xs font-medium text-muted-foreground uppercase">
                     {post.postType}
                   </span>
-                  {post.isPinned && (
-                    <span className="text-xs text-muted-foreground">Pinned</span>
-                  )}
+                  {post.isPinned && <span className="text-xs text-muted-foreground">Pinned</span>}
                 </div>
                 <h4 className="text-sm font-medium">{post.title}</h4>
                 <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">

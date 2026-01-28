@@ -25,7 +25,8 @@ export function createIdMaps() {
     changes: new Map(),
     publishers: new Map(),
     documents: new Map(),
-    artifacts: new Map()
+    artifacts: new Map(),
+    discProfiles: new Map()
   }
 
   /**

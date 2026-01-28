@@ -9,14 +9,14 @@ interface ProvisionChangesHeatmapProps {
 
 const MONTHS = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
 
-// Color scale based on relevance (1-10)
+// Color scale based on relevance (1-10), using positive (green) with varying opacity
 function getColor(relevance: number | null): string {
-  if (relevance === null) return '#f3f4f6' // gray-100
-  if (relevance <= 2) return '#dcfce7' // green-100
-  if (relevance <= 4) return '#86efac' // green-300
-  if (relevance <= 6) return '#4ade80' // green-400
-  if (relevance <= 8) return '#22c55e' // green-500
-  return '#16a34a' // green-600
+  if (relevance === null) return 'hsl(var(--muted))'
+  if (relevance <= 2) return 'hsl(var(--positive) / 0.2)'
+  if (relevance <= 4) return 'hsl(var(--positive) / 0.4)'
+  if (relevance <= 6) return 'hsl(var(--positive) / 0.6)'
+  if (relevance <= 8) return 'hsl(var(--positive) / 0.8)'
+  return 'hsl(var(--positive))'
 }
 
 export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProps) {
@@ -69,7 +69,7 @@ export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProp
   if (changes.length === 0 || years.length === 0) return null
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col items-center space-y-4">
       {/* Heatmap grid */}
       <div className="overflow-x-auto">
         <table className="border-collapse">
@@ -77,7 +77,7 @@ export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProp
             <tr>
               <th className="w-10" />
               {years.map((year) => (
-                <th key={year} className="px-1 py-1 text-xs font-medium text-muted-foreground text-center">{year}</th>
+                <th key={year} className="px-1 py-1 text-xs font-medium text-muted-foreground text-center">{String(year).slice(-2)}</th>
               ))}
             </tr>
           </thead>
@@ -130,11 +130,11 @@ export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProp
         <div className="flex items-center gap-1">
           <span>Bassa</span>
           <div className="flex gap-0.5">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#dcfce7' }} />
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#86efac' }} />
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#4ade80' }} />
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#22c55e' }} />
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: '#16a34a' }} />
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--positive) / 0.2)' }} />
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--positive) / 0.4)' }} />
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--positive) / 0.6)' }} />
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--positive) / 0.8)' }} />
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--positive))' }} />
           </div>
           <span>Alta</span>
         </div>
