@@ -1,10 +1,6 @@
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 import { sql, type SQL, type Column } from 'drizzle-orm'
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export { cn } from './cn'
 
 /**
  * Create a SQL condition to match UUID by prefix (casts to text for LIKE)

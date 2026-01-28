@@ -75,6 +75,9 @@ env/
 .venv
 agents/**/output/
 
+# Storybook
+storybook-static/
+
 # Misc
 *.pem
 .cache
