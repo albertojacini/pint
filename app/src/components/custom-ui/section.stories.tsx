@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Section } from './section'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 
 const meta = {
   title: 'Foundations/Section',
@@ -20,8 +18,8 @@ export const Default: Story = {
     title: 'Provisions',
     children: (
       <div className="grid grid-cols-2 gap-4">
-        <Card><CardContent className="pt-6">Provision A</CardContent></Card>
-        <Card><CardContent className="pt-6">Provision B</CardContent></Card>
+        <div className="rounded-lg border bg-card p-6">Provision A</div>
+        <div className="rounded-lg border bg-card p-6">Provision B</div>
       </div>
     ),
   },
@@ -30,11 +28,11 @@ export const Default: Story = {
 export const WithAction: Story = {
   args: {
     title: 'Recent changes',
-    action: <Button variant="outline" size="sm">View all</Button>,
+    action: <button className="inline-flex items-center rounded-md border px-3 py-1.5 text-sm">View all</button>,
     children: (
       <div className="space-y-2">
-        <Card><CardContent className="pt-6">Change proposal #1</CardContent></Card>
-        <Card><CardContent className="pt-6">Change proposal #2</CardContent></Card>
+        <div className="rounded-lg border bg-card p-6">Change proposal #1</div>
+        <div className="rounded-lg border bg-card p-6">Change proposal #2</div>
       </div>
     ),
   },
@@ -43,7 +41,7 @@ export const WithAction: Story = {
 export const NoTitle: Story = {
   args: {
     children: (
-      <Card><CardContent className="pt-6">Content without a section title</CardContent></Card>
+      <div className="rounded-lg border bg-card p-6">Content without a section title</div>
     ),
   },
 }

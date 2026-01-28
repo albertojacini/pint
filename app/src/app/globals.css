@@ -106,4 +106,9 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* System monospace for data-forward elements */
+  .font-mono-ui {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  }
 }
