@@ -197,9 +197,6 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
   return (
     <div className="border border-border/30 rounded-md p-4 bg-background/50">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg" title={getArtifactTypeLabel(artifact.artifactType)}>
-          {getArtifactTypeIcon(artifact.artifactType)}
-        </span>
         <h3 className="font-medium text-sm flex-1">{artifact.title}</h3>
         <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
           {getArtifactTypeLabel(artifact.artifactType)}
