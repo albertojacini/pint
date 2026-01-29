@@ -10,8 +10,10 @@ import {
   provisionTypeAssocs,
   artifacts,
   provisionArtifacts,
+  artifactSources,
+  documents,
 } from '@/lib/db/schema'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, inArray } from 'drizzle-orm'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { Section } from '@/components/custom-ui/section'
@@ -58,6 +60,23 @@ function getArtifactOriginIndicator(origin: string): { label: string; color: str
   return null
 }
 
+function getStateIndicator(state: string): { label: string; color: string; icon: string } {
+  const indicators: Record<string, { label: string; color: string; icon: string }> = {
+    draft: { label: 'Draft', color: 'text-gray-600 bg-gray-100', icon: '○' },
+    partial: { label: 'Partial', color: 'text-amber-600 bg-amber-50', icon: '◐' },
+    complete: { label: 'Complete', color: 'text-green-600 bg-green-50', icon: '●' },
+    stale: { label: 'Stale', color: 'text-red-600 bg-red-50', icon: '◌' },
+  }
+  return indicators[state] || indicators.draft
+}
+
+type ArtifactSource = {
+  id: string
+  title: string | null
+  url: string | null
+  documentType: string
+}
+
 type Artifact = {
   id: string
   title: string
@@ -65,6 +84,10 @@ type Artifact = {
   artifactType: string
   content: string | null
   artifactOrigin: string
+  state: string
+  stateNotes: string | null
+  derivationNotes: string | null
+  sources: ArtifactSource[]
 }
 
 function parseParameters(content: string): { key: string; value: string }[] {
@@ -183,13 +206,22 @@ function ArtifactWidget({ artifact }: { artifact: Artifact }) {
 
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
   const originIndicator = getArtifactOriginIndicator(artifact.artifactOrigin)
+  const stateIndicator = getStateIndicator(artifact.state)
+  const hasMetadata = artifact.derivationNotes || artifact.stateNotes || artifact.sources.length > 0
 
   return (
     <div className="border border-border/30 rounded-md p-4 bg-background/50">
+      {/* Header */}
       <div className="flex items-center gap-2 mb-3">
         <h3 className="font-medium text-sm flex-1">{artifact.title}</h3>
         <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
           {getArtifactTypeLabel(artifact.artifactType)}
+        </span>
+        <span
+          className={`text-xs px-1.5 py-0.5 rounded ${stateIndicator.color}`}
+          title={`Data state: ${stateIndicator.label}`}
+        >
+          {stateIndicator.icon} {stateIndicator.label}
         </span>
         {originIndicator && (
           <span
@@ -200,10 +232,61 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
           </span>
         )}
       </div>
+
+      {/* Description */}
       {artifact.description && (
         <p className="text-sm text-muted-foreground mb-3">{artifact.description}</p>
       )}
+
+      {/* Data Widget */}
       <ArtifactWidget artifact={artifact} />
+
+      {/* Metadata Section */}
+      {hasMetadata && (
+        <div className="mt-4 pt-3 border-t border-border/30 space-y-2">
+          {/* State Notes */}
+          {artifact.stateNotes && (
+            <div className="text-xs">
+              <span className="text-muted-foreground font-medium">Data notes: </span>
+              <span className="text-muted-foreground">{artifact.stateNotes}</span>
+            </div>
+          )}
+
+          {/* Derivation Notes */}
+          {artifact.derivationNotes && (
+            <div className="text-xs">
+              <span className="text-muted-foreground font-medium">Methodology: </span>
+              <span className="text-muted-foreground">{artifact.derivationNotes}</span>
+            </div>
+          )}
+
+          {/* Sources */}
+          {artifact.sources.length > 0 && (
+            <div className="text-xs">
+              <span className="text-muted-foreground font-medium">Sources: </span>
+              <span className="text-muted-foreground">
+                {artifact.sources.map((source, i) => (
+                  <span key={source.id}>
+                    {i > 0 && ', '}
+                    {source.url ? (
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {source.title || 'Source document'}
+                      </a>
+                    ) : (
+                      source.title || 'Source document'
+                    )}
+                  </span>
+                ))}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -259,7 +342,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
   const provisionChanges = await getChangesByProvision(provisionResult.id)
 
-  const linkedArtifacts = await db
+  const artifactsData = await db
     .select({
       id: artifacts.id,
       title: artifacts.title,
@@ -267,10 +350,49 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       artifactType: artifacts.artifactType,
       content: artifacts.content,
       artifactOrigin: artifacts.artifactOrigin,
+      state: artifacts.state,
+      stateNotes: artifacts.stateNotes,
+      derivationNotes: artifacts.derivationNotes,
     })
     .from(provisionArtifacts)
     .innerJoin(artifacts, eq(provisionArtifacts.artifactId, artifacts.id))
     .where(eq(provisionArtifacts.provisionId, provisionResult.id))
+
+  // Fetch sources for each artifact
+  const artifactIds = artifactsData.map((a) => a.id)
+  const sourcesData = artifactIds.length > 0
+    ? await db
+        .select({
+          artifactId: artifactSources.artifactId,
+          documentId: documents.id,
+          title: documents.title,
+          url: documents.url,
+          documentType: documents.documentType,
+        })
+        .from(artifactSources)
+        .innerJoin(documents, eq(artifactSources.documentId, documents.id))
+        .where(inArray(artifactSources.artifactId, artifactIds))
+    : []
+
+  // Group sources by artifact
+  const sourcesByArtifact = sourcesData.reduce(
+    (acc, source) => {
+      if (!acc[source.artifactId]) acc[source.artifactId] = []
+      acc[source.artifactId].push({
+        id: source.documentId,
+        title: source.title,
+        url: source.url,
+        documentType: source.documentType,
+      })
+      return acc
+    },
+    {} as Record<string, ArtifactSource[]>
+  )
+
+  const linkedArtifacts: Artifact[] = artifactsData.map((a) => ({
+    ...a,
+    sources: sourcesByArtifact[a.id] || [],
+  }))
 
   const recentPosts = await getPosts('provision', provisionResult.id, 'recent')
 

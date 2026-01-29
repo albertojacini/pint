@@ -297,9 +297,13 @@ export const provisions = pgTable('gov_provisions', {
   title: text('title').notNull(),
   slug: text('slug').notNull(),
   descriptionShort: text('description_short'),
-  // description: Full provision description in Markdown format.
-  // Supports standard markdown: **bold**, *italic*, [links](url), lists, etc.
-  // Use formatting to highlight key terms, numbers, and important concepts.
+  // description: Factual snapshot of the provision in a single dense paragraph.
+  // LANGUAGE: Native language of the parent entity (e.g., Italian for Milan).
+  // FORMAT: Single paragraph, no headers. Use **bold** for key concepts/names,
+  // *italics* for values and specifics (amounts, percentages, place names).
+  // CONTENT: What it is, how it works, historical context, objectives, key results.
+  // Keep data-rich with specific numbers. ~100-150 words.
+  // NOTE: This is descriptive (WHAT), not evaluative (HOW WELL) - use summaryMd for evaluation.
   description: text('description'),
   // summaryMd: Q&A format evaluation summary (markdown). Each Q&A max 2 lines.
   // LANGUAGE: Must be in the language of the parent political entity (e.g., Italian for Italian municipalities).
