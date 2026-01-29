@@ -82,9 +82,19 @@ The project is modularized into the following apps:
 
 Pint leverages AI not as a replacement for politics, but as a **force multiplier**:
 
-* **For Users:** Suggesting when two initiatives should merge; assisting in drafting legal text.  
-* **For Data:** Rapidly aggregating and comparing complex public data across different jurisdictions.  
+* **For Users:** Suggesting when two initiatives should merge; assisting in drafting legal text.
+* **For Data:** Rapidly aggregating and comparing complex public data across different jurisdictions.
 * **For Developers:** Generating sample content and testing governance schemas.
+
+### **The AI Cost Revolution**
+
+AI fundamentally changes the economics of civic engagement:
+
+* **Data Collection at Scale:** Tasks that previously required armies of researchers (surveying, scraping public records, monitoring legislative changes) can now be automated at a fraction of the cost.
+* **Analysis Democratization:** Complex policy analysis—cost-benefit modeling, impact projections, cross-jurisdiction comparisons—was historically accessible only to well-funded corporate lobbies and think tanks. AI slashes these costs by 10-100x, enabling citizen groups to operate with the same analytical firepower.
+* **Aggregation & Synthesis:** Consolidating fragmented public data (budgets, permits, environmental reports) into coherent narratives used to require specialized consultants. AI can now synthesize thousands of documents into actionable insights in minutes.
+* **Leveling the Playing Field:** The asymmetry between corporate lobbies (with legal teams and data analysts) and grassroots movements (with passion but limited resources) can be dramatically reduced. A small advocacy group can now match the research output of a professional lobbying firm.
+* **Continuous Monitoring:** Instead of periodic, expensive audits, AI enables real-time tracking of policy implementation, budget adherence, and outcome metrics—turning civic oversight from a snapshot into a live feed.
 
 ## ---
 
