@@ -49,13 +49,13 @@ function getArtifactTypeLabel(type: string): string {
   return labels[type] || type
 }
 
-function getDataQualityIndicator(quality: string): { label: string; color: string; icon: string } {
-  const indicators: Record<string, { label: string; color: string; icon: string }> = {
-    verified: { label: 'Verified', color: 'text-green-600 bg-green-50', icon: '✓' },
-    estimated: { label: 'Estimated', color: 'text-yellow-600 bg-yellow-50', icon: '~' },
-    placeholder: { label: 'Placeholder', color: 'text-red-600 bg-red-50', icon: '?' },
+function getArtifactOriginIndicator(origin: string): { label: string; color: string; icon: string } | null {
+  // 'extracted' is the default (source-backed), no indicator needed
+  // 'curated' may contain gaps/estimates, show indicator
+  if (origin === 'curated') {
+    return { label: 'Curated', color: 'text-blue-600 bg-blue-50', icon: '◇' }
   }
-  return indicators[quality] || { label: quality, color: 'text-gray-600 bg-gray-50', icon: '•' }
+  return null
 }
 
 type Artifact = {
@@ -64,7 +64,7 @@ type Artifact = {
   description: string | null
   artifactType: string
   content: string | null
-  dataQuality: string
+  artifactOrigin: string
 }
 
 function parseParameters(content: string): { key: string; value: string }[] {
@@ -182,7 +182,7 @@ function ArtifactWidget({ artifact }: { artifact: Artifact }) {
 }
 
 function ArtifactCard({ artifact }: { artifact: Artifact }) {
-  const quality = getDataQualityIndicator(artifact.dataQuality)
+  const originIndicator = getArtifactOriginIndicator(artifact.artifactOrigin)
 
   return (
     <div className="border border-border/30 rounded-md p-4 bg-background/50">
@@ -191,9 +191,12 @@ function ArtifactCard({ artifact }: { artifact: Artifact }) {
         <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
           {getArtifactTypeLabel(artifact.artifactType)}
         </span>
-        {artifact.dataQuality !== 'verified' && (
-          <span className={`text-xs px-1.5 py-0.5 rounded ${quality.color}`} title={quality.label}>
-            {quality.icon} {quality.label}
+        {originIndicator && (
+          <span
+            className={`text-xs px-1.5 py-0.5 rounded ${originIndicator.color}`}
+            title="May contain estimates or gaps"
+          >
+            {originIndicator.icon} {originIndicator.label}
           </span>
         )}
       </div>
@@ -263,7 +266,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       description: artifacts.description,
       artifactType: artifacts.artifactType,
       content: artifacts.content,
-      dataQuality: artifacts.dataQuality,
+      artifactOrigin: artifacts.artifactOrigin,
     })
     .from(provisionArtifacts)
     .innerJoin(artifacts, eq(provisionArtifacts.artifactId, artifacts.id))

@@ -250,9 +250,9 @@ Area B,N1/N2,Euro 0-3,diesel,2019-02-25,07:30-19:30 lun-ven`,
     title: 'Entrate Pedaggi Urbani per Tipo',
     description: 'Evoluzione delle entrate annuali generate dai pedaggi urbani di Milano per tipologia (Area C, Area B, ZTL) dal 2012 ad oggi',
     artifact_type: 'evolution',
+    artifact_origin: 'curated',
     state: 'draft',
     state_notes: 'Dati stimati in attesa di fonti ufficiali',
-    data_quality: 'placeholder',
     content: `anno,area_c_eur,area_b_eur,ztl_eur
 2012,16200000,0,2100000
 2013,42000000,0,2300000
