@@ -37,17 +37,6 @@ interface PageProps {
   }>
 }
 
-function getArtifactTypeIcon(type: string): string {
-  const icons: Record<string, string> = {
-    evolution: '📈',
-    distribution: '📊',
-    table: '📋',
-    parameters: '⚙️',
-    narrative: '📝',
-  }
-  return icons[type] || '📄'
-}
-
 function getArtifactTypeLabel(type: string): string {
   const labels: Record<string, string> = {
     evolution: 'Evolution',
