@@ -5,6 +5,7 @@ import { db } from '@/lib/db/client'
 import { entities } from '@/lib/db/schema'
 import { Button } from '@/components/ui/button'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 
 interface ProvisionsPageProps {
   params: Promise<{
@@ -47,12 +48,14 @@ export default async function ProvisionsPage({ params }: ProvisionsPageProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      {/* Back button */}
-      <div className="mb-6">
-        <Link href={entityPath(entity)} className="text-blue-600 hover:underline">
-          ← Back to {entity.name}
-        </Link>
-      </div>
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Entities', href: '/pe' },
+          { label: entity.name, href: entityPath(entity) },
+          { label: 'Provisions' },
+        ]}
+      />
 
       {/* Page header with CTA */}
       <div className="flex justify-between items-center mb-8">

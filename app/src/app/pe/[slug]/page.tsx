@@ -31,6 +31,7 @@ import {
 import { Section } from '@/components/custom-ui/section'
 import { Tags } from '@/components/custom-ui/tags'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 
 interface EntityPageProps {
@@ -152,6 +153,14 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Entities', href: '/pe' },
+          { label: entity.name },
+        ]}
+      />
+
       {/* Entity Type Badge + Tags */}
       <div className="flex items-center gap-2 mb-6">
         <EntityClassificationBadge type={entity.type as any} />

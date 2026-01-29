@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { db } from '@/lib/db/client'
 import { entities, provisions } from '@/lib/db/schema'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 import { getUser } from '@/lib/auth'
 import { getPostWithComments } from '@/lib/actions/discussions'
 import { PostDetail } from '@/components/discussions/post-detail'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 
 interface PageProps {
   params: Promise<{ slug: string; provisionSlug: string; postId: string }>
@@ -34,14 +34,16 @@ export default async function PostDetailPage({ params }: PageProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
-      <div className="mb-6">
-        <Link
-          href={basePath}
-          className="text-sm text-muted-foreground hover:text-primary"
-        >
-          ← Back to discussions
-        </Link>
-      </div>
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Entities', href: '/pe' },
+          { label: entity.name, href: `/pe/${entityUrlSlug}` },
+          { label: provision.title, href: `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}` },
+          { label: 'Discussions', href: basePath },
+          { label: post.title },
+        ]}
+      />
 
       <PostDetail post={post} userId={user?.id} />
     </div>

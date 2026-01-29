@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { db } from '@/lib/db/client'
 import { entities, provisions } from '@/lib/db/schema'
-import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
+import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 import { getPosts } from '@/lib/actions/discussions'
 import { PostList } from '@/components/discussions/post-list'
 import { PageTitle } from '@/components/custom-ui/typography'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 
 interface PageProps {
   params: Promise<{ slug: string; provisionSlug: string }>
@@ -36,14 +36,18 @@ export default async function DiscussionsPage({ params, searchParams }: PageProp
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Entities', href: '/pe' },
+          { label: entity.name, href: `/pe/${entityUrlSlug}` },
+          { label: provision.title, href: `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}` },
+          { label: 'Discussions' },
+        ]}
+      />
+
       <div className="mb-6">
-        <Link
-          href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}`}
-          className="text-sm text-muted-foreground hover:text-primary"
-        >
-          ← {provision.title}
-        </Link>
-        <PageTitle className="mt-2">Discussions</PageTitle>
+        <PageTitle>Discussions</PageTitle>
       </div>
 
       <PostList posts={posts} basePath={basePath} />

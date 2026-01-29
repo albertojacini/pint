@@ -17,6 +17,7 @@ import { Tags } from '@/components/custom-ui/tags'
 import { Section } from '@/components/custom-ui/section'
 import { PageTitle } from '@/components/custom-ui/typography'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionTimeline } from '@/components/provisions/provision-timeline'
 import { ProvisionChangesHeatmap } from '@/components/provisions/provision-changes-heatmap'
@@ -284,6 +285,16 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Entities', href: '/pe' },
+          { label: entity.name, href: entityPath(entity) },
+          { label: 'Provisions', href: `${entityPath(entity)}/pr` },
+          { label: provision.title },
+        ]}
+      />
+
       {/* Type Badges + Tags */}
       <div className="flex items-center gap-2 mb-6">
         {provisionTypesList.map((type) => (
@@ -569,15 +580,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         )}
       </Section>
 
-      {/* Back link */}
-      <div className="mt-8 pt-4 border-t border-border">
-        <Link
-          href={`${entityPath(entity)}/pr`}
-          className="text-sm text-muted-foreground hover:text-primary"
-        >
-          ← Back to provisions
-        </Link>
-      </div>
     </div>
   )
 }

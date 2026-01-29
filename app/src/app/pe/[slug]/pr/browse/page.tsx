@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import { getFilteredProvisions } from '@/lib/actions/provisions'
 import { db } from '@/lib/db/client'
 import { entities } from '@/lib/db/schema'
 import { ProvisionCard } from '@/components/provisions/provision-card'
 import { ProvisionsFilterBar } from '@/components/provisions/provisions-filter-bar'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface BrowseProvisionsPageProps {
@@ -45,12 +45,15 @@ export default async function BrowseProvisionsPage({
 
   return (
     <div className="container mx-auto py-8 px-4">
-      {/* Back button */}
-      <div className="mb-6">
-        <Link href={`${entityPath(entity)}/pr`} className="text-blue-600 hover:underline">
-          ← Back to Provisions Overview
-        </Link>
-      </div>
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: 'Entities', href: '/pe' },
+          { label: entity.name, href: entityPath(entity) },
+          { label: 'Provisions', href: `${entityPath(entity)}/pr` },
+          { label: 'Browse' },
+        ]}
+      />
 
       {/* Page header */}
       <div className="mb-6">
