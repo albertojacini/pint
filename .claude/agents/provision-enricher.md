@@ -1,7 +1,7 @@
 ---
 name: provision-enricher
 description: "Use this agent when you need to create a new provision in the production database or enrich/update an existing provision with comprehensive information. This includes searching for similar provisions, gathering information from the web, filling in basic fields according to the schema, creating artifacts, and generating derived fields like summary_md and display_data.\\n\\nExamples:\\n\\n<example>\\nContext: User wants to add a new policy provision to the database.\\nuser: \"Add the Universal Basic Income provision for Finland\"\\nassistant: \"I'll use the provision-enricher agent to create and fully populate this provision in the production database.\"\\n<Task tool call to launch provision-enricher agent>\\n</example>\\n\\n<example>\\nContext: User mentions a provision that needs to be documented in the system.\\nuser: \"We need to track the Spanish Minimum Vital Income policy\"\\nassistant: \"Let me launch the provision-enricher agent to check if this provision exists and create or enrich it with comprehensive information.\"\\n<Task tool call to launch provision-enricher agent>\\n</example>\\n\\n<example>\\nContext: User wants to update an existing provision with more complete information.\\nuser: \"Can you enrich the Germany child benefit provision with more details and artifacts?\"\\nassistant: \"I'll use the provision-enricher agent to search for additional information and update this provision with complete data and artifacts.\"\\n<Task tool call to launch provision-enricher agent>\\n</example>"
-model: opus
+model: sonnet
 color: blue
 ---
 
