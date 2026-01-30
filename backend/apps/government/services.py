@@ -132,9 +132,9 @@ A provision is a distinct policy instrument that a government entity uses to int
 Given research findings, extract and structure the provision information according to the schema.
 
 CRITICAL CHARACTER LIMITS (will fail validation if exceeded):
-- description_short: MAXIMUM 100 characters (one short sentence)
+- tagline: MAXIMUM 100 characters (one short sentence)
 - description: MAXIMUM 1000 characters (2-3 paragraphs explaining the provision)
-- summary_md: MAXIMUM 20000 characters (full markdown with sections)
+- analysis: MAXIMUM 20000 characters (full markdown with sections)
 
 OTHER CONSTRAINTS:
 - provision_type_codes is an array that can contain multiple types (e.g., ["ownership", "contract"] for a company stake with service agreements)
@@ -142,8 +142,8 @@ OTHER CONSTRAINTS:
 - All textual fields (tiles, descriptions, summaries etc.) MUST be in the language of the political entity (which is supposed to be the same as the source research summary)
 - Ensure all text is factual and based on the research provided
 
-DISPLAY DATA (REQUIRED):
-You MUST populate the display_data field with 3-5 key facts extracted from the research summary.
+HIGHLIGHTS (REQUIRED):
+You MUST populate the highlights field with 3-5 key facts extracted from the research summary.
 - Extract the most important quantifiable information: financial figures, ownership percentages, key dates, important numbers, budget amounts, etc.
 - Format values for easy reading: use currency symbols (€, $), units (km, m², ha), percentages (%)
 - Keep labels concise (2-4 words max)
@@ -156,7 +156,7 @@ Examples:
 - {"label": "Service Area", "value": "125 km²"}
 - {"label": "Daily Users", "value": "1.4M"}
 
-The display_data is shown prominently in the UI, so choose the most striking/important facts that give users immediate insight into the provision's scale and significance."""
+The highlights are shown prominently in the UI, so choose the most striking/important facts that give users immediate insight into the provision's scale and significance."""
 
         user_message = f"""Generate a provision draft from this research:
 

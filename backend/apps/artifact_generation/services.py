@@ -86,8 +86,8 @@ class ArtifactGenerator:
             row = await conn.fetchrow(
                 """
                 SELECT
-                    p.id, p.title, p.slug, p.description, p.description_short,
-                    p.summary_md, p.entity_id,
+                    p.id, p.title, p.slug, p.description, p.tagline,
+                    p.analysis, p.entity_id,
                     e.name as entity_name
                 FROM gov_provisions p
                 JOIN gov_entities e ON e.id = p.entity_id
@@ -115,8 +115,8 @@ class ArtifactGenerator:
                 title=row["title"],
                 slug=row["slug"],
                 description=row["description"],
-                description_short=row["description_short"],
-                summary_md=row["summary_md"],
+                tagline=row["tagline"],
+                analysis=row["analysis"],
                 entity_id=row["entity_id"],
                 entity_name=row["entity_name"],
                 provision_types=provision_types,
@@ -162,7 +162,7 @@ class ArtifactGenerator:
 == PROVISION ==
 Title: {provision.title}
 Description: {provision.description or 'N/A'}
-Short description: {provision.description_short or 'N/A'}
+Tagline: {provision.tagline or 'N/A'}
 Type(s): {', '.join(provision.provision_types) if provision.provision_types else 'unknown'}
 Entity: {provision.entity_name}
 

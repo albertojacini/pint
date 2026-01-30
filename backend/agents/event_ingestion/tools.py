@@ -52,7 +52,7 @@ class CreateCandidateChangeInput(BaseModel):
     candidate_id: str = Field(description="UUID of the candidate this change belongs to")
     target_type: str = Field(description="Type of target: 'provision' (only provisions can be updated through events)")
     target_id: str = Field(description="UUID of the existing provision to update (REQUIRED - use SearchProvisions to find it)")
-    proposed_data: dict = Field(description="Data to apply to the target (e.g., {title: ..., displayChanges: ...})")
+    proposed_data: dict = Field(description="Data to apply to the target (e.g., {title: ..., changelog: ...})")
     description: str = Field(description="Human-readable description of what this change does")
 
 
@@ -172,7 +172,7 @@ async def search_provisions_impl(
 
     output = f"## Found {len(provisions)} provisions:\n\n"
     for p in provisions:
-        desc = p.get('description_short') or 'No description'
+        desc = p.get('tagline') or 'No description'
         output += f"- **{p['title']}** - {desc}\n  ID: {p['id']}\n"
 
     return output

@@ -89,24 +89,24 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'gov_provisions',
-        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'description_short', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'summary_md', 'display_data', 'display_changes', 'evaluation_summary'],
+        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'tagline', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'analysis', 'highlights', 'changelog', 'console'],
         values: [
           id,
           entityId,
           provision.title,
           slug,
           provision.description,
-          provision.descriptionShort || null,
+          provision.tagline || null,
           avatarUrl,
           provision.status,
           provision.relevance || null,
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
           ideaId,
-          provision.summary_md || null,
-          JSON.stringify(provision.displayData || { items: [] }),
-          JSON.stringify(provision.displayChanges || { items: [] }),
-          provision.evaluationSummary ? JSON.stringify(provision.evaluationSummary) : null
+          provision.analysis || null,
+          JSON.stringify(provision.highlights || { items: [] }),
+          JSON.stringify(provision.changelog || { items: [] }),
+          provision.console ? JSON.stringify(provision.console) : null
         ],
       })
 

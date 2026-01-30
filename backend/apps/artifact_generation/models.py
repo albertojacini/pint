@@ -15,8 +15,8 @@ class ProvisionContext(BaseModel):
     title: str
     slug: str
     description: Optional[str] = None
-    description_short: Optional[str] = None
-    summary_md: Optional[str] = None
+    tagline: Optional[str] = None
+    analysis: Optional[str] = None
     entity_id: UUID
     entity_name: str
     provision_types: list[str] = []

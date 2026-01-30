@@ -132,10 +132,10 @@ export type CandidateProposedData = {
   // For provisions
   title?: string
   description?: string
-  descriptionShort?: string
-  summaryMd?: string
-  displayData?: { items: Array<{ label: string; value: string }> }
-  displayChanges?: { items: Array<{ timestamp: string; label: string }> }
+  tagline?: string
+  analysis?: string
+  highlights?: { items: Array<{ label: string; value: string }> }
+  changelog?: { items: Array<{ timestamp: string; label: string }> }
   // For other targets - extensible
   [key: string]: unknown
 }

@@ -32,7 +32,7 @@ class ProvisionDraftOutput(BaseModel):
         description="Official name of the provision (clear, concise)"
     )
 
-    description_short: str = Field(
+    tagline: str = Field(
         max_length=100,
         description="One-sentence summary (STRICT LIMIT: exactly 100 characters or less)"
     )
@@ -42,7 +42,7 @@ class ProvisionDraftOutput(BaseModel):
         description="Detailed description explaining what this provision is"
     )
 
-    summary_md: str = Field(
+    analysis: str = Field(
         max_length=20000,
         description="Full markdown summary with sections: Overview, Key Details, History, Current Status"
     )
@@ -78,7 +78,7 @@ class ProvisionDraftOutput(BaseModel):
         description="List of source URLs used for research"
     )
 
-    display_data: DisplayData = Field(
+    highlights: DisplayData = Field(
         default_factory=DisplayData,
         description=(
             "Key-value pairs for UI display. Extract 3-5 important facts from the research "
@@ -87,12 +87,12 @@ class ProvisionDraftOutput(BaseModel):
         )
     )
 
-    @field_validator('description_short')
+    @field_validator('tagline')
     @classmethod
-    def validate_description_short_length(cls, v: str) -> str:
-        """Enforce strict 100 character limit for description_short."""
+    def validate_tagline_length(cls, v: str) -> str:
+        """Enforce strict 100 character limit for tagline."""
         if len(v) > 100:
-            raise ValueError(f"description_short must be <= 100 characters, got {len(v)}")
+            raise ValueError(f"tagline must be <= 100 characters, got {len(v)}")
         return v
 
     @field_validator('provision_type_codes')

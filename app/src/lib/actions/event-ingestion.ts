@@ -472,16 +472,16 @@ export async function approveCandidate(candidateId: string): Promise<ApiResponse
     if (candidateChange.targetId && candidateChange.targetType === 'provision') {
       const updateData: Record<string, unknown> = { ...candidateChange.proposedData }
 
-      // Handle display_changes append
-      if (candidateChange.proposedData.displayChanges) {
+      // Handle changelog append
+      if (candidateChange.proposedData.changelog) {
         const [currentProvision] = await db
-          .select({ displayChanges: provisions.displayChanges })
+          .select({ changelog: provisions.changelog })
           .from(provisions)
           .where(eq(provisions.id, candidateChange.targetId))
 
-        const currentItems = currentProvision?.displayChanges?.items || []
-        const newItems = candidateChange.proposedData.displayChanges.items || []
-        updateData.displayChanges = { items: [...currentItems, ...newItems] }
+        const currentItems = currentProvision?.changelog?.items || []
+        const newItems = candidateChange.proposedData.changelog.items || []
+        updateData.changelog = { items: [...currentItems, ...newItems] }
       }
 
       await db

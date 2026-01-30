@@ -15,7 +15,7 @@ interface ProvisionCardProps {
     id: string
     slug: string
     title: string
-    descriptionShort: string | null
+    tagline: string | null
     avatarUrl: string | null
     types: ProvisionType[]
     status: string
@@ -24,8 +24,8 @@ interface ProvisionCardProps {
     effectiveUntil: string | null
     ideaId: string | null
     ideaTitle: string | null
-    displayData: { items: Array<{ label: string; value: string }> } | null
-    displayChanges: { items: Array<{ timestamp: string; label: string }> } | null
+    highlights: { items: Array<{ label: string; value: string }> } | null
+    changelog: { items: Array<{ timestamp: string; label: string }> } | null
     tags: Tag[]
   }
   entity: { id: string; slug: string }
@@ -80,15 +80,15 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
 
         {/* Description */}
         <p className="text-sm text-muted-foreground line-clamp-3 flex-1">
-          {provision.descriptionShort || 'No description available'}
+          {provision.tagline || 'No description available'}
         </p>
       </div>
 
-      {/* Row 4: Display Data - stretches to push footer down */}
+      {/* Row 4: Highlights - stretches to push footer down */}
       <div className="flex-1">
-        {provision.displayData?.items && provision.displayData.items.length > 0 && (
+        {provision.highlights?.items && provision.highlights.items.length > 0 && (
           <div className="grid grid-cols-2 gap-1.5 mb-3">
-            {provision.displayData.items.map((item, index) => (
+            {provision.highlights.items.map((item, index) => (
               <div key={index}>
                 <div className="text-xs text-muted-foreground">{item.label}</div>
                 <div className="text-sm font-semibold">{item.value}</div>
@@ -99,9 +99,9 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
       </div>
 
       {/* Row 4.5: Change Density Diagram */}
-      {provision.displayChanges?.items && provision.displayChanges.items.length > 0 && (
+      {provision.changelog?.items && provision.changelog.items.length > 0 && (
         <ProvisionChangesDensity
-          changes={provision.displayChanges.items as any}
+          changes={provision.changelog.items as any}
           maxMonths={12}
         />
       )}

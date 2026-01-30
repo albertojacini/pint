@@ -358,7 +358,7 @@ class EiDatabaseTools:
             if search_term and entity_id:
                 rows = await conn.fetch(
                     """
-                    SELECT id, title, description_short, entity_id
+                    SELECT id, title, tagline, entity_id
                     FROM gov_provisions
                     WHERE entity_id = $1
                       AND (title ILIKE $2 OR description ILIKE $2)
@@ -371,7 +371,7 @@ class EiDatabaseTools:
             elif entity_id:
                 rows = await conn.fetch(
                     """
-                    SELECT id, title, description_short, entity_id
+                    SELECT id, title, tagline, entity_id
                     FROM gov_provisions
                     WHERE entity_id = $1
                     LIMIT $2
@@ -382,7 +382,7 @@ class EiDatabaseTools:
             elif search_term:
                 rows = await conn.fetch(
                     """
-                    SELECT id, title, description_short, entity_id
+                    SELECT id, title, tagline, entity_id
                     FROM gov_provisions
                     WHERE title ILIKE $1 OR description ILIKE $1
                     LIMIT $2
@@ -392,7 +392,7 @@ class EiDatabaseTools:
                 )
             else:
                 rows = await conn.fetch(
-                    "SELECT id, title, description_short, entity_id FROM gov_provisions LIMIT $1",
+                    "SELECT id, title, tagline, entity_id FROM gov_provisions LIMIT $1",
                     limit
                 )
 
@@ -435,7 +435,7 @@ class EiDatabaseTools:
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 """
-                SELECT id, title, description_short, slug
+                SELECT id, title, tagline, slug
                 FROM gov_provisions
                 WHERE entity_id = $1
                 ORDER BY title

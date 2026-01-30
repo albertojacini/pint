@@ -172,7 +172,7 @@ export const members = pgTable('gov_members', {
 // ============================================================================
 
 // Evaluation Summary Widget Types
-// These types define the structure of the evaluationSummary JSONB field
+// These types define the structure of the console JSONB field
 // which powers the provision detail page header console.
 
 type ConfidenceLevel = 'high' | 'medium' | 'low' | 'none'
@@ -296,16 +296,16 @@ export const provisions = pgTable('gov_provisions', {
   entityId: uuid('entity_id').notNull().references(() => entities.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   slug: text('slug').notNull(),
-  descriptionShort: text('description_short'),
+  tagline: text('tagline'),
   // description: Factual snapshot of the provision in a single dense paragraph.
   // LANGUAGE: Native language of the parent entity (e.g., Italian for Milan).
   // FORMAT: Single paragraph, no headers. Use **bold** for key concepts/names,
   // *italics* for values and specifics (amounts, percentages, place names).
   // CONTENT: What it is, how it works, historical context, objectives, key results.
   // Keep data-rich with specific numbers. ~100-150 words.
-  // NOTE: This is descriptive (WHAT), not evaluative (HOW WELL) - use summaryMd for evaluation.
+  // NOTE: This is descriptive (WHAT), not evaluative (HOW WELL) - use analysis for evaluation.
   description: text('description'),
-  // summaryMd: Q&A format evaluation summary (markdown). Each Q&A max 2 lines.
+  // analysis: Q&A format evaluation summary (markdown). Each Q&A max 2 lines.
   // LANGUAGE: Must be in the language of the parent political entity (e.g., Italian for Italian municipalities).
   // Focus on Pint's value-add analysis, not static description.
   // Template (use only questions where data/insights available):
@@ -322,18 +322,18 @@ export const provisions = pgTable('gov_provisions', {
   // **What are the alternatives?** [Other approaches to achieve the same goals]
   // **What's missing?** [Gaps, blind spots, unaddressed issues]
   // **Is it future-proof?** [Sustainability, relevance with tech/social changes]
-  summaryMd: text('summary_md'),
+  analysis: text('analysis'),
   avatarUrl: text('avatar_url'),
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   relevance: integer('relevance'),
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
-  displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
-  displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
-  // evaluationSummary: Widget-based evaluation console for the provision header.
+  highlights: jsonb('highlights').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
+  changelog: jsonb('changelog').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
+  // console: Widget-based evaluation console for the provision header.
   // All widgets are optional. See EvaluationSummary type above for structure.
-  evaluationSummary: jsonb('evaluation_summary').$type<EvaluationSummary>(),
+  console: jsonb('console').$type<EvaluationSummary>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

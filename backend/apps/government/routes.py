@@ -80,11 +80,11 @@ class DisplayData(BaseModel):
 
 class GenerateDraftResponse(BaseModel):
     title: str
-    description_short: str
+    tagline: str
     description: str
-    summary_md: str
+    analysis: str
     provision_type_codes: List[str]
-    display_data: DisplayData
+    highlights: DisplayData
     relevance: int
     confidence: float
     source_urls: List[str]

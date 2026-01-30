@@ -24,11 +24,11 @@ export interface ProvisionDraft {
   jobStatus: JobStatus
   errorMessage: string | null
   title: string | null
-  descriptionShort: string | null
+  tagline: string | null
   description: string | null
-  summaryMd: string | null
+  analysis: string | null
   provisionTypeCodes: string[] | null
-  displayData: { items: Array<{ label: string; value: string }> } | null
+  highlights: { items: Array<{ label: string; value: string }> } | null
   confidence: string | null
   relevance: number | null
   sourceUrls: string[] | null
@@ -76,11 +76,11 @@ export async function updateDraft(
     jobStatus: JobStatus
     errorMessage: string
     title: string
-    descriptionShort: string
+    tagline: string
     description: string
-    summaryMd: string
+    analysis: string
     provisionTypeCodes: string[]
-    displayData: { items: Array<{ label: string; value: string }> }
+    highlights: { items: Array<{ label: string; value: string }> }
     confidence: string
     relevance: number
     sourceUrls: string[]
@@ -138,12 +138,12 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
       entityId: draft.entityId,
       title: draft.title,
       slug,
-      descriptionShort: draft.descriptionShort,
+      tagline: draft.tagline,
       description: draft.description,
-      summaryMd: draft.summaryMd,
+      analysis: draft.analysis,
       status: 'active',
       relevance: draft.relevance,
-      displayData: draft.displayData || { items: [] },
+      highlights: draft.highlights || { items: [] },
     })
     .returning({ id: provisions.id })
 
@@ -187,11 +187,11 @@ export async function getDrafts(): Promise<ProvisionDraft[]> {
       jobStatus: provisionDrafts.jobStatus,
       errorMessage: provisionDrafts.errorMessage,
       title: provisionDrafts.title,
-      descriptionShort: provisionDrafts.descriptionShort,
+      tagline: provisionDrafts.tagline,
       description: provisionDrafts.description,
-      summaryMd: provisionDrafts.summaryMd,
+      analysis: provisionDrafts.analysis,
       provisionTypeCodes: provisionDrafts.provisionTypeCodes,
-      displayData: provisionDrafts.displayData,
+      highlights: provisionDrafts.highlights,
       confidence: provisionDrafts.confidence,
       relevance: provisionDrafts.relevance,
       sourceUrls: provisionDrafts.sourceUrls,
@@ -222,11 +222,11 @@ export async function getDraft(id: string): Promise<ProvisionDraft | null> {
       jobStatus: provisionDrafts.jobStatus,
       errorMessage: provisionDrafts.errorMessage,
       title: provisionDrafts.title,
-      descriptionShort: provisionDrafts.descriptionShort,
+      tagline: provisionDrafts.tagline,
       description: provisionDrafts.description,
-      summaryMd: provisionDrafts.summaryMd,
+      analysis: provisionDrafts.analysis,
       provisionTypeCodes: provisionDrafts.provisionTypeCodes,
-      displayData: provisionDrafts.displayData,
+      highlights: provisionDrafts.highlights,
       confidence: provisionDrafts.confidence,
       relevance: provisionDrafts.relevance,
       sourceUrls: provisionDrafts.sourceUrls,

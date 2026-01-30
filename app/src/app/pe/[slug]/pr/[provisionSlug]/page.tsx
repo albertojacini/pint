@@ -305,14 +305,14 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       title: provisions.title,
       slug: provisions.slug,
       description: provisions.description,
-      descriptionShort: provisions.descriptionShort,
-      summaryMd: provisions.summaryMd,
+      tagline: provisions.tagline,
+      analysis: provisions.analysis,
       avatarUrl: provisions.avatarUrl,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
-      displayData: provisions.displayData,
-      evaluationSummary: provisions.evaluationSummary,
+      highlights: provisions.highlights,
+      console: provisions.console,
     })
     .from(provisions)
     .where(idStartsWith(provisions.id, provisionIdPrefix))
@@ -399,8 +399,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   const provision = {
     ...provisionResult,
     tags: provisionTags,
-    displayData: provisionResult.displayData || { items: [] },
-    evaluationSummary: provisionResult.evaluationSummary,
+    highlights: provisionResult.highlights || { items: [] },
+    console: provisionResult.console,
   }
 
   const mediaUrl = getStorageUrl('avatars', provision.avatarUrl)
@@ -446,7 +446,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
               </div>
             </div>
             <p className="text-muted-foreground">
-              {provision.descriptionShort || 'No description available'}
+              {provision.tagline || 'No description available'}
             </p>
           </div>
         </div>
@@ -459,13 +459,13 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       </div>
 
       {/* Evaluation Console */}
-      <EvaluationConsole data={provision.evaluationSummary} />
+      <EvaluationConsole data={provision.console} />
 
       {/* Key Data */}
-      {provision.displayData?.items && provision.displayData.items.length > 0 && (
+      {provision.highlights?.items && provision.highlights.items.length > 0 && (
         <Section title="Key Data">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {provision.displayData.items.map((item, index) => (
+            {provision.highlights.items.map((item, index) => (
               <div key={index}>
                 <div className="text-xs text-muted-foreground">{item.label}</div>
                 <div className="text-lg font-semibold">{item.value}</div>
@@ -482,18 +482,18 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         </Section>
       )}
 
-      {/* Summary */}
-      {provision.summaryMd && (
-        <Section title="Summary">
-          <MarkdownContent content={provision.summaryMd} />
+      {/* Analysis */}
+      {provision.analysis && (
+        <Section title="Analysis">
+          <MarkdownContent content={provision.analysis} />
         </Section>
       )}
 
       {/* Change Proposals */}
-      {provision.evaluationSummary?.proposals &&
-        provision.evaluationSummary.proposals.items.length > 0 && (
+      {provision.console?.proposals &&
+        provision.console.proposals.items.length > 0 && (
           <Section title="Proposte di Modifica">
-            <ChangeProposals data={provision.evaluationSummary.proposals} />
+            <ChangeProposals data={provision.console.proposals} />
           </Section>
         )}
 

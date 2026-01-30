@@ -51,9 +51,9 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
 
   // Editable fields for review step
   const [editedTitle, setEditedTitle] = useState(draft.title || '')
-  const [editedDescriptionShort, setEditedDescriptionShort] = useState(draft.descriptionShort || '')
+  const [editedTagline, setEditedTagline] = useState(draft.tagline || '')
   const [editedDescription, setEditedDescription] = useState(draft.description || '')
-  const [editedSummary, setEditedSummary] = useState(draft.summaryMd || '')
+  const [editedAnalysis, setEditedAnalysis] = useState(draft.analysis || '')
   const [editedRelevance, setEditedRelevance] = useState<number | null>(draft.relevance || null)
   const [editedProvisionTypeCodes, setEditedProvisionTypeCodes] = useState<string[]>(
     draft.provisionTypeCodes || []
@@ -244,11 +244,11 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
       // Update draft with generated content
       await updateDraft(draft.id, {
         title: result.title,
-        descriptionShort: result.description_short,
+        tagline: result.tagline,
         description: result.description,
-        summaryMd: result.summary_md,
+        analysis: result.analysis,
         provisionTypeCodes: result.provision_type_codes,
-        displayData: result.display_data,
+        highlights: result.highlights,
         relevance: result.relevance,
         confidence: String(result.confidence),
         sourceUrls: result.source_urls,
@@ -258,11 +258,11 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
       setDraft((d) => ({
         ...d,
         title: result.title,
-        descriptionShort: result.description_short,
+        tagline: result.tagline,
         description: result.description,
-        summary_md: result.summary_md,
+        analysis: result.analysis,
         provisionTypeCodes: result.provision_type_codes,
-        displayData: result.display_data,
+        highlights: result.highlights,
         relevance: result.relevance,
         confidence: String(result.confidence),
         sourceUrls: result.source_urls,
@@ -271,9 +271,9 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
 
       // Update editable fields
       setEditedTitle(result.title || '')
-      setEditedDescriptionShort(result.description_short || '')
+      setEditedTagline(result.tagline || '')
       setEditedDescription(result.description || '')
-      setEditedSummary(result.summary_md || '')
+      setEditedAnalysis(result.analysis || '')
       setEditedRelevance(result.relevance || null)
       setEditedProvisionTypeCodes(result.provision_type_codes || [])
 
@@ -317,9 +317,9 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
       // First save any edits
       await updateDraft(draft.id, {
         title: editedTitle,
-        descriptionShort: editedDescriptionShort,
+        tagline: editedTagline,
         description: editedDescription,
-        summaryMd: editedSummary,
+        analysis: editedAnalysis,
         provisionTypeCodes: editedProvisionTypeCodes,
         relevance: editedRelevance ?? undefined,
       })
@@ -523,14 +523,14 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="descriptionShort">Short Description (max 100 chars)</Label>
+              <Label htmlFor="tagline">Tagline (max 100 chars)</Label>
               <Input
-                id="descriptionShort"
-                value={editedDescriptionShort}
-                onChange={(e) => setEditedDescriptionShort(e.target.value)}
+                id="tagline"
+                value={editedTagline}
+                onChange={(e) => setEditedTagline(e.target.value)}
                 maxLength={100}
               />
-              <p className="text-xs text-gray-400">{editedDescriptionShort.length}/100</p>
+              <p className="text-xs text-gray-400">{editedTagline.length}/100</p>
             </div>
 
             <div className="space-y-2">
@@ -546,16 +546,16 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="summary">Summary (markdown, max 20000 chars)</Label>
+              <Label htmlFor="analysis">Analysis (markdown, max 20000 chars)</Label>
               <Textarea
-                id="summary"
-                value={editedSummary}
-                onChange={(e) => setEditedSummary(e.target.value)}
+                id="analysis"
+                value={editedAnalysis}
+                onChange={(e) => setEditedAnalysis(e.target.value)}
                 maxLength={20000}
                 rows={10}
                 className="font-mono text-sm"
               />
-              <p className="text-xs text-gray-400">{editedSummary.length}/20000</p>
+              <p className="text-xs text-gray-400">{editedAnalysis.length}/20000</p>
             </div>
 
             <div className="space-y-2">

@@ -7,10 +7,10 @@ export const provisions = [
   {
     entity: 'Comune di Milano',
     title: 'Partecipazione ATM',
-    descriptionShort: 'Partecipazione azionaria al 100% in ATM, azienda trasporti pubblici',
+    tagline: 'Partecipazione azionaria al 100% in ATM, azienda trasporti pubblici',
     description:
       'The Comune di Milano holds **100% ownership** of *ATM (Azienda Trasporti Milanesi)*, the public transport company managing metro, tram, bus, and trolleybus services across Milan and **96 surrounding municipalities**.',
-    summary_md: `**Funziona?** ATM serve 800M+ passeggeri/anno in 96 comuni. Affidabilità migliorata nel 2024-25 con aumento frequenze metro ed elettrificazione flotta.
+    analysis: `**Funziona?** ATM serve 800M+ passeggeri/anno in 96 comuni. Affidabilità migliorata nel 2024-25 con aumento frequenze metro ed elettrificazione flotta.
 
 **Chi vince, chi perde?** Vincono: residenti (tariffe agevolate), ambiente (riduzione emissioni). Perdono: contribuenti (coprono deficit), automobilisti (minore priorità stradale).
 
@@ -28,14 +28,14 @@ export const provisions = [
     types: ['ownership'],
     status: 'active',
     relevance: 8,
-    displayData: {
+    highlights: {
       items: [
         { label: 'Ownership', value: '100%' },
         { label: 'Asset Type', value: 'Public Transport' },
         { label: 'Service Area', value: '96 Municipalities' },
       ],
     },
-    displayChanges: {
+    changelog: {
       items: [
         { timestamp: '2025-01-08T09:00:00Z', label: 'Annual service performance review completed' },
         { timestamp: '2025-01-15T10:30:00Z', label: 'New fare structure for seniors implemented' },
@@ -125,7 +125,7 @@ export const provisions = [
         },
       ],
     },
-    evaluationSummary: {
+    console: {
       effectiveness: {
         type: 'score',
         value: 7,
@@ -242,11 +242,11 @@ export const provisions = [
   {
     entity: 'Comune di Milano',
     title: 'Pedaggi urbani',
-    descriptionShort:
+    tagline:
       'Zone a traffico limitato per ridurre inquinamento e congestione con pedaggi e restrizioni.',
     description:
       "Il Comune di Milano gestisce un sistema articolato di zone a traffico limitato (ZTL) composto da **Area C** (zona centrale a pagamento con ticket da *€5*) e **Area B** (zona estesa di *128 km²* con restrizioni ambientali gratuite). Area C opera tramite **43 varchi elettronici** nella *Cerchia dei Bastioni*, mentre Area B copre il *72% del territorio comunale* escludendo i veicoli più inquinanti. Il sistema, evoluzione di *Ecopass (2008)*, mira a ridurre l'inquinamento atmosferico e finanziare il trasporto pubblico, con restrizioni progressive fino al **2030**. I risultati documentati mostrano riduzioni significative di **PM10** (**-50%** in 4 anni) e **NOx** (**-11%** annuo dal 2023).",
-    summary_md: `**Funziona?** Sì, con risultati significativi: PM10 ridotto del 50% in 4 anni, NOx -11% annuo dal 2023. Traffico in Area C -30% rispetto ai livelli pre-Ecopass.
+    analysis: `**Funziona?** Sì, con risultati significativi: PM10 ridotto del 50% in 4 anni, NOx -11% annuo dal 2023. Traffico in Area C -30% rispetto ai livelli pre-Ecopass.
 
 **Chi vince, chi perde?** Vincono: residenti (aria più pulita, meno congestione), trasporto pubblico (€30M/anno di finanziamenti). Perdono: proprietari di veicoli vecchi costretti a cambiare, pendolari che pagano €5/giorno, piccole imprese con costi di consegna.
 
@@ -274,7 +274,7 @@ export const provisions = [
     status: 'active',
     relevance: 9,
     idea: 'Urban congestion charge',
-    displayData: {
+    highlights: {
       items: [
         { label: 'Estensione Area B', value: '128 km²' },
         { label: 'Tariffa Area C', value: '€5' },
@@ -283,7 +283,7 @@ export const provisions = [
         { label: 'Varchi Elettronici', value: '43' },
       ],
     },
-    displayChanges: {
+    changelog: {
       items: [
         {
           label: 'Area C extended to weekends - now active 7 days/week (7:30-19:30)',
@@ -291,7 +291,7 @@ export const provisions = [
         },
       ],
     },
-    evaluationSummary: {
+    console: {
       effectiveness: {
         type: 'score',
         value: 8,
@@ -434,10 +434,10 @@ export const provisions = [
   {
     entity: 'Comune di Milano',
     title: 'Public Space Occupation Permits (Dehors)',
-    descriptionShort: 'Outdoor seating permits for restaurants',
+    tagline: 'Outdoor seating permits for restaurants',
     description:
       'Municipal regulation governing outdoor seating areas (*dehors*) for restaurants and bars, including **design standards**, **size limits**, seasonal permissions, and **accessibility requirements**. Permits cost *€15-30/m²* per month with a minimum pedestrian clearance of *1.5m*.',
-    summary_md: `**Funziona?** Tasso di conformità 92% nel 2025. 1.247 permessi attivi generano €2,2M/anno. Capacità posti esterni aumentata dell'8% in città.
+    analysis: `**Funziona?** Tasso di conformità 92% nel 2025. 1.247 permessi attivi generano €2,2M/anno. Capacità posti esterni aumentata dell'8% in città.
 
 **Chi vince, chi perde?** Vincono: ristoratori (+50% posti a sedere, più ricavi), vita cittadina (vivacità), Comune (entrate da canoni). Perdono: pedoni (meno spazio sui marciapiedi), residenti vicino ai locali (rumore), attività senza spazio disponibile.
 
@@ -459,14 +459,14 @@ export const provisions = [
     types: ['regulation'],
     status: 'active',
     relevance: 6,
-    displayData: {
+    highlights: {
       items: [
         { label: 'Permit Duration', value: '1-3 Years' },
         { label: 'Monthly Fee', value: '€15-30/m²' },
         { label: 'Minimum Clearance', value: '1.5m' },
       ],
     },
-    displayChanges: {
+    changelog: {
       items: [
         { timestamp: '2025-01-10T09:00:00Z', label: 'Winter permit renewals begin' },
         { timestamp: '2025-01-17T11:00:00Z', label: 'Inspection schedule published for Q1' },
@@ -526,7 +526,7 @@ export const provisions = [
         { timestamp: '2025-12-19T11:00:00Z', label: 'Annual permits issued: 1,247 total' },
       ],
     },
-    evaluationSummary: {
+    console: {
       effectiveness: {
         type: 'score',
         value: 7,

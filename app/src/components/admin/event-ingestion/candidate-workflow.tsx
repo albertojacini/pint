@@ -643,7 +643,7 @@ function AddManualChange({
   const [formData, setFormData] = useState({
     targetId: '',
     description: '',
-    proposedData: '{\n  "displayChanges": {\n    "items": [\n      {"timestamp": "", "label": ""}\n    ]\n  }\n}',
+    proposedData: '{\n  "changelog": {\n    "items": [\n      {"timestamp": "", "label": ""}\n    ]\n  }\n}',
   })
   const { toast } = useToast()
 
@@ -685,7 +685,7 @@ function AddManualChange({
       setFormData({
         targetId: '',
         description: '',
-        proposedData: '{\n  "displayChanges": {\n    "items": [\n      {"timestamp": "", "label": ""}\n    ]\n  }\n}',
+        proposedData: '{\n  "changelog": {\n    "items": [\n      {"timestamp": "", "label": ""}\n    ]\n  }\n}',
       })
       onAdded()
     } catch {

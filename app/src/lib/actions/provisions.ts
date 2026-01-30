@@ -28,7 +28,7 @@ export type ProvisionWithTags = {
   id: string
   slug: string
   title: string
-  descriptionShort: string | null
+  tagline: string | null
   avatarUrl: string | null
   types: ProvisionType[]
   status: string
@@ -37,8 +37,8 @@ export type ProvisionWithTags = {
   effectiveUntil: string | null
   ideaId: string | null
   ideaTitle: string | null
-  displayData: { items: Array<{ label: string; value: string }> } | null
-  displayChanges: { items: Array<{ timestamp: string; label: string }> } | null
+  highlights: { items: Array<{ label: string; value: string }> } | null
+  changelog: { items: Array<{ timestamp: string; label: string }> } | null
   tags: Tag[]
 }
 
@@ -84,15 +84,15 @@ export async function getProvisionsByEntity(entityId: string) {
     .select({
       id: provisions.id,
       title: provisions.title,
-      descriptionShort: provisions.descriptionShort,
+      tagline: provisions.tagline,
       status: provisions.status,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
-      displayData: provisions.displayData,
-      displayChanges: provisions.displayChanges,
+      highlights: provisions.highlights,
+      changelog: provisions.changelog,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -231,7 +231,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       id: provisions.id,
       slug: provisions.slug,
       title: provisions.title,
-      descriptionShort: provisions.descriptionShort,
+      tagline: provisions.tagline,
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
       relevance: provisions.relevance,
@@ -239,8 +239,8 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
-      displayData: provisions.displayData,
-      displayChanges: provisions.displayChanges,
+      highlights: provisions.highlights,
+      changelog: provisions.changelog,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -276,7 +276,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     id: provision.id,
     slug: provision.slug,
     title: provision.title,
-    descriptionShort: provision.descriptionShort,
+    tagline: provision.tagline,
     avatarUrl: provision.avatarUrl,
     types: typesByProvision[provisionId] || [],
     status: provision.status,
@@ -285,8 +285,8 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     effectiveUntil: provision.effectiveUntil,
     ideaId: provision.ideaId,
     ideaTitle: provision.ideaTitle,
-    displayData: provision.displayData as { items: Array<{ label: string; value: string }> } | null,
-    displayChanges: provision.displayChanges as { items: Array<{ timestamp: string; label: string }> } | null,
+    highlights: provision.highlights as { items: Array<{ label: string; value: string }> } | null,
+    changelog: provision.changelog as { items: Array<{ timestamp: string; label: string }> } | null,
     tags: provisionTags.map(t => ({
       id: t.tagId,
       name: t.tagName,
@@ -313,7 +313,7 @@ export async function getFilteredProvisions(
     conditions.push(
       or(
         ilike(provisions.title, `%${filters.search}%`),
-        ilike(provisions.descriptionShort, `%${filters.search}%`)
+        ilike(provisions.tagline, `%${filters.search}%`)
       )!
     )
   }
@@ -328,7 +328,7 @@ export async function getFilteredProvisions(
       id: provisions.id,
       slug: provisions.slug,
       title: provisions.title,
-      descriptionShort: provisions.descriptionShort,
+      tagline: provisions.tagline,
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
       relevance: provisions.relevance,
@@ -336,8 +336,8 @@ export async function getFilteredProvisions(
       effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
-      displayData: provisions.displayData,
-      displayChanges: provisions.displayChanges,
+      highlights: provisions.highlights,
+      changelog: provisions.changelog,
     })
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
@@ -416,7 +416,7 @@ export async function getFilteredProvisions(
     id: p.id,
     slug: p.slug,
     title: p.title,
-    descriptionShort: p.descriptionShort,
+    tagline: p.tagline,
     avatarUrl: p.avatarUrl,
     types: typesByProvision[p.id] || [],
     status: p.status,
@@ -425,8 +425,8 @@ export async function getFilteredProvisions(
     effectiveUntil: p.effectiveUntil,
     ideaId: p.ideaId,
     ideaTitle: p.ideaTitle,
-    displayData: p.displayData as { items: Array<{ label: string; value: string }> } | null,
-    displayChanges: p.displayChanges as { items: Array<{ timestamp: string; label: string }> } | null,
+    highlights: p.highlights as { items: Array<{ label: string; value: string }> } | null,
+    changelog: p.changelog as { items: Array<{ timestamp: string; label: string }> } | null,
     tags: tagsByProvision[p.id] || []
   }))
 }

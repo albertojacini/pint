@@ -28,12 +28,12 @@ export const provisionDrafts = pgTable('propl_provision_drafts', {
 
   // Draft content (populated by LLM after research)
   title: text('title'),
-  descriptionShort: text('description_short'),
+  tagline: text('tagline'),
   description: text('description'),
-  summaryMd: text('summary_md'),
+  analysis: text('analysis'),
   provisionTypeCodes: text('provision_type_codes').array(), // Array of provision type codes
-  displayData: jsonb('display_data').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
-  displayChanges: jsonb('display_changes').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
+  highlights: jsonb('highlights').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
+  changelog: jsonb('changelog').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
 
   // Metadata
   confidence: numeric('confidence'),
