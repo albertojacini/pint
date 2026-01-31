@@ -17,7 +17,7 @@ export const entities = pgTable('gov_entities', {
   description: text('description'),
   avatarUrl: text('avatar_url'),
   type: text('type', {
-    enum: ['neighborhood', 'district', 'borough', 'city', 'region', 'country', 'supranational']
+    enum: ['neighborhood', 'district', 'borough', 'city', 'region', 'country', 'supranational'],
   }).notNull(),
   population: integer('population'),
   scoreInnovation: integer('score_innovation'),
@@ -73,15 +73,27 @@ export const entities = pgTable('gov_entities', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-export const entityRelations = pgTable('gov_entity_relations', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  entityId: uuid('entity_id').notNull().references(() => entities.id, { onDelete: 'cascade' }),
-  relatedEntityId: uuid('related_entity_id').notNull().references(() => entities.id, { onDelete: 'cascade' }),
-  relationshipType: text('relationship_type').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  uniqueRelationship: uniqueIndex('gov_entity_relations_unique').on(table.entityId, table.relatedEntityId, table.relationshipType),
-}))
+export const entityRelations = pgTable(
+  'gov_entity_relations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    entityId: uuid('entity_id')
+      .notNull()
+      .references(() => entities.id, { onDelete: 'cascade' }),
+    relatedEntityId: uuid('related_entity_id')
+      .notNull()
+      .references(() => entities.id, { onDelete: 'cascade' }),
+    relationshipType: text('relationship_type').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex('gov_entity_relations_unique').on(
+      table.entityId,
+      table.relatedEntityId,
+      table.relationshipType
+    ),
+  ]
+)
 
 // Leadership
 export const people = pgTable('gov_people', {
@@ -94,17 +106,21 @@ export const people = pgTable('gov_people', {
 
 export const administrations = pgTable('gov_administrations', {
   id: uuid('id').primaryKey().defaultRandom(),
-  entityId: uuid('entity_id').notNull().references(() => entities.id, { onDelete: 'cascade' }),
+  entityId: uuid('entity_id')
+    .notNull()
+    .references(() => entities.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   termStart: timestamp('term_start', { withTimezone: true }).notNull(),
   termEnd: timestamp('term_end', { withTimezone: true }),
   status: text('status', { enum: ['active', 'historical', 'upcoming'] }).notNull(),
   description: text('description'),
-  councilComposition: jsonb('council_composition').$type<Array<{
-    party: string
-    seats: number
-    color: string
-  }>>(),
+  councilComposition: jsonb('council_composition').$type<
+    Array<{
+      party: string
+      seats: number
+      color: string
+    }>
+  >(),
   electionData: jsonb('election_data').$type<{
     electionDate?: string
     turnout?: number
@@ -123,10 +139,14 @@ export const administrations = pgTable('gov_administrations', {
 
 export const members = pgTable('gov_members', {
   id: uuid('id').primaryKey().defaultRandom(),
-  administrationId: uuid('administration_id').notNull().references(() => administrations.id, { onDelete: 'cascade' }),
-  personId: uuid('person_id').notNull().references(() => people.id, { onDelete: 'cascade' }),
+  administrationId: uuid('administration_id')
+    .notNull()
+    .references(() => administrations.id, { onDelete: 'cascade' }),
+  personId: uuid('person_id')
+    .notNull()
+    .references(() => people.id, { onDelete: 'cascade' }),
   roleType: text('role_type', {
-    enum: ['mayor', 'councilor', 'minister', 'president', 'governor', 'member']
+    enum: ['mayor', 'councilor', 'minister', 'president', 'governor', 'member'],
   }).notNull(),
   roleTitle: text('role_title'),
   icon: text('icon'),
@@ -180,16 +200,16 @@ type TrendDirection = 'up' | 'down' | 'stable'
 
 export type ScoreWidget = {
   type: 'score'
-  value: number          // 1-10
-  maxValue?: number      // default 10
+  value: number // 1-10
+  maxValue?: number // default 10
   trend?: TrendDirection
-  label?: string         // e.g., "Funziona"
+  label?: string // e.g., "Funziona"
   confidence: ConfidenceLevel
 }
 
 export type ImpactWidget = {
   type: 'impact'
-  balance: number        // -1 (all losers) to +1 (all winners), 0 = neutral
+  balance: number // -1 (all losers) to +1 (all winners), 0 = neutral
   winners: Array<{ group: string; detail?: string }>
   losers: Array<{ group: string; detail?: string }>
   confidence: ConfidenceLevel
@@ -197,24 +217,24 @@ export type ImpactWidget = {
 
 export type FinancialWidget = {
   type: 'financial'
-  value: string          // e.g., "€24M", "-€5M"
-  label: string          // e.g., "netto/anno", "costo/anno"
-  isPositive: boolean    // for color coding
+  value: string // e.g., "€24M", "-€5M"
+  label: string // e.g., "netto/anno", "costo/anno"
+  isPositive: boolean // for color coding
   trend?: TrendDirection
   confidence: ConfidenceLevel
 }
 
 export type SentimentWidget = {
   type: 'sentiment'
-  score: number          // 0-100 percentage support
-  label?: string         // e.g., "Supporto misto"
+  score: number // 0-100 percentage support
+  label?: string // e.g., "Supporto misto"
   confidence: ConfidenceLevel
 }
 
 export type ActivityWidget = {
   type: 'activity'
   changesCount: number
-  period: string         // e.g., "ultimo anno", "ultimi 6 mesi"
+  period: string // e.g., "ultimo anno", "ultimi 6 mesi"
   trend?: 'increasing' | 'decreasing' | 'stable'
   confidence: ConfidenceLevel
 }
@@ -222,15 +242,15 @@ export type ActivityWidget = {
 export type DataConfidenceWidget = {
   type: 'dataConfidence'
   level: ConfidenceLevel
-  coverage: number       // 0-100 percentage of data available
-  label?: string         // e.g., "Dati parziali"
+  coverage: number // 0-100 percentage of data available
+  label?: string // e.g., "Dati parziali"
 }
 
 export type StakeholderItem = {
-  group: string          // e.g., "Residenti", "Pendolari"
+  group: string // e.g., "Residenti", "Pendolari"
   impact: 'positive' | 'negative' | 'neutral' | 'mixed'
-  size?: 'large' | 'medium' | 'small'  // affected population size
-  detail?: string        // brief explanation
+  size?: 'large' | 'medium' | 'small' // affected population size
+  detail?: string // brief explanation
 }
 
 export type StakeholdersWidget = {
@@ -240,10 +260,10 @@ export type StakeholdersWidget = {
 }
 
 export type ProposalItem = {
-  label: string          // freeform label (e.g., "Rimuovere", "Estendere orari", "Aumentare tariffa")
-  description: string    // what the proposal suggests
-  support: number        // support count
-  oppose: number         // oppose count
+  label: string // freeform label (e.g., "Rimuovere", "Estendere orari", "Aumentare tariffa")
+  description: string // what the proposal suggests
+  support: number // support count
+  oppose: number // oppose count
 }
 
 export type ProposalsWidget = {
@@ -254,10 +274,10 @@ export type ProposalsWidget = {
 
 export type CommunityWidget = {
   type: 'community'
-  followers: number        // people tracking this provision
-  rating: number           // average rating 1-5
-  ratingsCount: number     // number of ratings
-  commentsCount: number    // discussions/comments count
+  followers: number // people tracking this provision
+  rating: number // average rating 1-5
+  ratingsCount: number // number of ratings
+  commentsCount: number // discussions/comments count
 }
 
 export type IdeasWidget = {
@@ -293,7 +313,9 @@ export const provisionTypes = pgTable('gov_provision_types', {
 
 export const provisions = pgTable('gov_provisions', {
   id: uuid('id').primaryKey().defaultRandom(),
-  entityId: uuid('entity_id').notNull().references(() => entities.id, { onDelete: 'cascade' }),
+  entityId: uuid('entity_id')
+    .notNull()
+    .references(() => entities.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   slug: text('slug').notNull(),
   tagline: text('tagline'),
@@ -305,57 +327,82 @@ export const provisions = pgTable('gov_provisions', {
   // Keep data-rich with specific numbers. ~100-150 words.
   // NOTE: This is descriptive (WHAT), not evaluative (HOW WELL) - use analysis for evaluation.
   description: text('description'),
-  // analysis: Q&A format evaluation summary (markdown). Each Q&A max 2 lines.
-  // LANGUAGE: Must be in the language of the parent political entity (e.g., Italian for Italian municipalities).
-  // Focus on Pint's value-add analysis, not static description.
-  // Template (use only questions where data/insights available):
-  //
-  // **Is it working?** [Effectiveness: goals vs actual results, KPIs]
-  // **Who wins, who loses?** [Stakeholder impact: beneficiaries and those bearing costs]
-  // **What's the financial picture?** [Budget, revenue generated, cost-benefit]
-  // **How does it compare?** [Benchmarking vs similar policies elsewhere]
-  // **What's changing?** [Recent updates, upcoming changes, trends]
-  // **What do citizens say?** [Community sentiment, main opinions]
-  // **What's debated?** [Controversies, contested aspects, open questions]
-  // **Should it be changed?** [Proposed modifications, reform ideas being discussed]
-  // **Should it be removed?** [Arguments for abolition, is it still necessary?]
-  // **What are the alternatives?** [Other approaches to achieve the same goals]
-  // **What's missing?** [Gaps, blind spots, unaddressed issues]
-  // **Is it future-proof?** [Sustainability, relevance with tech/social changes]
-  analysis: text('analysis'),
   avatarUrl: text('avatar_url'),
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   relevance: integer('relevance'),
   effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
   effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
-  highlights: jsonb('highlights').$type<{ items: Array<{ label: string; value: string }> }>().default({ items: [] }).notNull(),
-  changelog: jsonb('changelog').$type<{ items: Array<{ timestamp: string; label: string }> }>().default({ items: [] }).notNull(),
-  // console: Widget-based evaluation console for the provision header.
-  // All widgets are optional. See EvaluationSummary type above for structure.
+  // ============================================================================
+  // DERIVED DISPLAY FIELDS
+  // Pre-computed fields optimized for UI rendering. These fields synthesize data
+  // from source tables (artifacts, changes, events) into display-ready formats.
+  // Regenerated by enrichment pipelines; do not edit manually.
+  // ============================================================================
+  // analysis: DERIVED DISPLAY FIELD. Q&A format evaluation synthesized from artifacts.
+  // LANGUAGE: Native language of parent entity. FORMAT: Markdown, max 2 lines per Q&A.
+  // Focuses on evaluative insights (HOW WELL), not description (WHAT).
+  // Template questions (include only where data available):
+  // **Is it working?** **Who wins, who loses?** **What's the financial picture?**
+  // **How does it compare?** **What's changing?** **What do citizens say?**
+  // **What's debated?** **Should it be changed/removed?** **What are the alternatives?**
+  analysis: text('analysis'),
+  // highlights: Key facts extracted from artifacts for the provision card/header.
+  // Shows at-a-glance metrics (e.g., "Tariffa: €7.50", "Veicoli/giorno: 95.000").
+  highlights: jsonb('highlights')
+    .$type<{ items: Array<{ label: string; value: string }> }>()
+    .default({ items: [] })
+    .notNull(),
+  // changelog: Timeline of significant changes derived from gov_changes table.
+  // Powers the provision history UI with human-readable event labels.
+  changelog: jsonb('changelog')
+    .$type<{ items: Array<{ timestamp: string; label: string }> }>()
+    .default({ items: [] })
+    .notNull(),
+  // console: Widget-based evaluation dashboard for the provision detail header.
+  // Aggregates analysis from multiple sources into typed widgets (score, impact,
+  // financial, sentiment, etc.). All widgets optional. See EvaluationSummary type.
   console: jsonb('console').$type<EvaluationSummary>(),
+
+  // Metadata fields
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })
 
-export const provisionTypeAssocs = pgTable('gov_provision_type_assocs', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
-  typeId: uuid('type_id').notNull().references(() => provisionTypes.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  uniqueAssociation: uniqueIndex('gov_provision_type_assocs_unique').on(table.provisionId, table.typeId),
-}))
+export const provisionTypeAssocs = pgTable(
+  'gov_provision_type_assocs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    provisionId: uuid('provision_id')
+      .notNull()
+      .references(() => provisions.id, { onDelete: 'cascade' }),
+    typeId: uuid('type_id')
+      .notNull()
+      .references(() => provisionTypes.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex('gov_provision_type_assocs_unique').on(table.provisionId, table.typeId),
+  ]
+)
 
 // Provision-Artifact junction table
-export const provisionArtifacts = pgTable('gov_provision_artifacts', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  provisionId: uuid('provision_id').notNull().references(() => provisions.id, { onDelete: 'cascade' }),
-  artifactId: uuid('artifact_id').notNull().references(() => artifacts.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-}, (table) => ({
-  uniqueProvisionArtifact: uniqueIndex('gov_provision_artifacts_unique').on(table.provisionId, table.artifactId),
-}))
+export const provisionArtifacts = pgTable(
+  'gov_provision_artifacts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    provisionId: uuid('provision_id')
+      .notNull()
+      .references(() => provisions.id, { onDelete: 'cascade' }),
+    artifactId: uuid('artifact_id')
+      .notNull()
+      .references(() => artifacts.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex('gov_provision_artifacts_unique').on(table.provisionId, table.artifactId),
+  ]
+)
 
 // ============================================================================
 // HISTORY SUBSYSTEM (gov_changes)
@@ -373,12 +420,14 @@ export const changes = pgTable('gov_changes', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }),
   targetType: text('target_type', {
-    enum: ['provision', 'entity', 'administration']
+    enum: ['provision', 'entity', 'administration'],
   }).notNull(),
   targetId: uuid('target_id').notNull(),
   type: text('type', {
-    enum: ['actual', 'planned']
-  }).notNull().default('actual'),
+    enum: ['actual', 'planned'],
+  })
+    .notNull()
+    .default('actual'),
   effectiveDate: timestamp('effective_date', { withTimezone: true }),
   relevance: integer('relevance'), // 1-10 scale, how significant is this change
   description: text('description'),
