@@ -32,6 +32,7 @@ export type ProvisionWithTags = {
   avatarUrl: string | null
   types: ProvisionType[]
   status: string
+  level: number // 1 = domain, 2 = sub-domain, 3 = instrument
   relevance: number | null
   effectiveFrom: string | null
   effectiveUntil: string | null
@@ -234,6 +235,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       tagline: provisions.tagline,
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
+      level: provisions.level,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
@@ -280,6 +282,7 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     avatarUrl: provision.avatarUrl,
     types: typesByProvision[provisionId] || [],
     status: provision.status,
+    level: provision.level,
     relevance: provision.relevance,
     effectiveFrom: provision.effectiveFrom,
     effectiveUntil: provision.effectiveUntil,
@@ -303,6 +306,7 @@ export async function getFilteredProvisions(
     search?: string
     type?: string
     status?: string
+    level?: string
     sort?: string
   }
 ): Promise<ProvisionWithTags[]> {
@@ -322,6 +326,13 @@ export async function getFilteredProvisions(
     conditions.push(eq(provisions.status, filters.status as any))
   }
 
+  if (filters.level) {
+    const levelNum = parseInt(filters.level, 10)
+    if (levelNum >= 1 && levelNum <= 3) {
+      conditions.push(eq(provisions.level, levelNum))
+    }
+  }
+
   // Build base query
   let baseQuery = db
     .select({
@@ -331,6 +342,7 @@ export async function getFilteredProvisions(
       tagline: provisions.tagline,
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
+      level: provisions.level,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
@@ -420,6 +432,7 @@ export async function getFilteredProvisions(
     avatarUrl: p.avatarUrl,
     types: typesByProvision[p.id] || [],
     status: p.status,
+    level: p.level,
     relevance: p.relevance,
     effectiveFrom: p.effectiveFrom,
     effectiveUntil: p.effectiveUntil,

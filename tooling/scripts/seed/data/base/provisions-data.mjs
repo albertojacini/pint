@@ -27,6 +27,7 @@ export const provisions = [
 **Quali alternative?** Modello concessione (come Londra), misto pubblico-privato (come Parigi), o privatizzazione totale (rara per trasporto urbano).`,
     types: ['ownership'],
     status: 'active',
+    level: 3, // instrument
     relevance: 8,
     highlights: {
       items: [
@@ -272,6 +273,7 @@ export const provisions = [
     avatarUrl: 'provisions/comune-di-milano-areac.png',
     types: ['taxation'],
     status: 'active',
+    level: 3, // instrument
     relevance: 9,
     idea: 'Urban congestion charge',
     highlights: {
@@ -458,6 +460,7 @@ export const provisions = [
 **Cosa manca?** Studio impatto flussi pedonali, dati monitoraggio livelli rumore, analisi economica effetti su attività vicine.`,
     types: ['regulation'],
     status: 'active',
+    level: 3, // instrument
     relevance: 6,
     highlights: {
       items: [

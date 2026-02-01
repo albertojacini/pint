@@ -316,6 +316,39 @@ export const provisions = pgTable('gov_provisions', {
   entityId: uuid('entity_id')
     .notNull()
     .references(() => entities.id, { onDelete: 'cascade' }),
+  // ============================================================================
+  // HIERARCHY FIELDS
+  // Provisions are organized in a 3-tier hierarchy for navigation and filtering.
+  // This loose structure groups provisions without changing their nature as
+  // policy instruments.
+  //
+  // TIER STRUCTURE:
+  //   Level 1 (Domain): Broad policy areas. Examples: "Rete dei trasporti",
+  //     "Politiche abitative", "Istruzione". These are containers that group
+  //     related sub-domains. parentId = null.
+  //
+  //   Level 2 (Sub-domain): Specific areas within a domain. Examples:
+  //     "Rete metropolitana", "Rete autobus", "Piste ciclabili" under transport.
+  //     parentId points to a Level 1 provision.
+  //
+  //   Level 3 (Instrument): Concrete policy instruments - the actual provisions
+  //     that pass the instrument/portability/removal tests. Examples: "Linea M4",
+  //     "Pedaggi urbani", "BikeMi". parentId points to a Level 2 provision.
+  //
+  // USAGE:
+  //   - Filter by level for different views (overview vs. detail)
+  //   - Navigate hierarchically (domain → sub-domain → instrument)
+  //   - Level 1 and 2 provisions may have lighter content (description only)
+  //   - Level 3 provisions have full content (artifacts, console, analysis)
+  //
+  // CONSTRAINTS:
+  //   - level must be 1, 2, or 3
+  //   - Level 1: parentId = null
+  //   - Level 2: parentId → Level 1 provision
+  //   - Level 3: parentId → Level 2 provision
+  // ============================================================================
+  parentId: uuid('parent_id').references((): any => provisions.id, { onDelete: 'set null' }),
+  level: integer('level').notNull().default(3), // 1 = domain, 2 = sub-domain, 3 = instrument
   title: text('title').notNull(),
   slug: text('slug').notNull(),
   tagline: text('tagline'),
