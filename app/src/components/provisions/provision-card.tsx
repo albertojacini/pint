@@ -10,12 +10,6 @@ import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionChangesDensity } from './provision-changes-density'
 
-const LEVEL_LABELS: Record<number, { short: string; color: string }> = {
-  1: { short: 'L1', color: 'bg-purple-100 text-purple-700' },
-  2: { short: 'L2', color: 'bg-blue-100 text-blue-700' },
-  3: { short: 'L3', color: 'bg-gray-100 text-gray-600' },
-}
-
 interface ProvisionCardProps {
   provision: {
     id: string
@@ -25,7 +19,6 @@ interface ProvisionCardProps {
     avatarUrl: string | null
     types: ProvisionType[]
     status: string
-    level: number
     relevance: number | null
     effectiveFrom: string | null
     effectiveUntil: string | null
@@ -48,18 +41,8 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
 
   return (
     <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
-      {/* Row 1: Level Badge + Type Badges + Tags */}
+      {/* Row 1: Type Badges + Tags */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        {/* Level badge */}
-        {provision.level && LEVEL_LABELS[provision.level] && (
-          <span
-            className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${LEVEL_LABELS[provision.level].color}`}
-            title={`Level ${provision.level}: ${provision.level === 1 ? 'Domain' : provision.level === 2 ? 'Sub-domain' : 'Instrument'}`}
-          >
-            {LEVEL_LABELS[provision.level].short}
-          </span>
-        )}
-
         {/* Type badges */}
         {provision.types.map((type) => (
           <ProvisionClassificationBadge key={type.id} type={type.code as any} />

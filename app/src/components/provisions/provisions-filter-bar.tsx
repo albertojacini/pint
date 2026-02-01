@@ -23,12 +23,6 @@ const PROVISION_STATUSES = [
   { value: 'suspended', label: 'Suspended' },
 ]
 
-const PROVISION_LEVELS = [
-  { value: '1', label: 'Domain' },
-  { value: '2', label: 'Sub-domain' },
-  { value: '3', label: 'Instrument' },
-]
-
 const SORT_OPTIONS = [
   { value: 'date-desc', label: 'Newest first' },
   { value: 'date-asc', label: 'Oldest first' },
@@ -43,7 +37,6 @@ export function ProvisionsFilterBar() {
 
   const currentType = searchParams.get('type')
   const currentStatus = searchParams.get('status')
-  const currentLevel = searchParams.get('level')
   const currentSort = searchParams.get('sort') || 'date-desc'
 
   // Debounced search update
@@ -76,8 +69,8 @@ export function ProvisionsFilterBar() {
     router.push('?', { scroll: false })
   }
 
-  const hasActiveFilters = currentType || currentStatus || currentLevel || search
-  const hasExpandedFilters = currentStatus || currentLevel || currentSort !== 'date-desc'
+  const hasActiveFilters = currentType || currentStatus || search
+  const hasExpandedFilters = currentStatus || currentSort !== 'date-desc'
 
   return (
     <div className="space-y-3">
@@ -198,32 +191,6 @@ export function ProvisionsFilterBar() {
                   className="text-xs"
                 >
                   {status.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Level */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Level:</span>
-            <div className="flex gap-1">
-              <Button
-                variant={!currentLevel ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => updateFilters({ level: undefined })}
-                className="text-xs"
-              >
-                All
-              </Button>
-              {PROVISION_LEVELS.map((level) => (
-                <Button
-                  key={level.value}
-                  variant={currentLevel === level.value ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => updateFilters({ level: level.value })}
-                  className="text-xs"
-                >
-                  {level.label}
                 </Button>
               ))}
             </div>

@@ -51,12 +51,6 @@ function getArtifactTypeLabel(type: string): string {
   return labels[type] || type
 }
 
-const LEVEL_CONFIG: Record<number, { label: string; color: string }> = {
-  1: { label: 'Domain', color: 'bg-purple-100 text-purple-700' },
-  2: { label: 'Sub-domain', color: 'bg-blue-100 text-blue-700' },
-  3: { label: 'Instrument', color: 'bg-gray-100 text-gray-600' },
-}
-
 function getArtifactOriginIndicator(origin: string): { label: string; color: string; icon: string } | null {
   // 'extracted' is the default (source-backed), no indicator needed
   // 'curated' may contain gaps/estimates, show indicator
@@ -314,7 +308,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       tagline: provisions.tagline,
       analysis: provisions.analysis,
       avatarUrl: provisions.avatarUrl,
-      level: provisions.level,
       relevance: provisions.relevance,
       effectiveFrom: provisions.effectiveFrom,
       effectiveUntil: provisions.effectiveUntil,
@@ -427,16 +420,8 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         ]}
       />
 
-      {/* Level Badge + Type Badges + Tags */}
+      {/* Type Badges + Tags */}
       <div className="flex items-center gap-2 mb-6">
-        {/* Level badge */}
-        {provision.level && LEVEL_CONFIG[provision.level] && (
-          <span
-            className={`text-xs font-medium px-2 py-0.5 rounded ${LEVEL_CONFIG[provision.level].color}`}
-          >
-            {LEVEL_CONFIG[provision.level].label}
-          </span>
-        )}
         {provisionTypesList.map((type) => (
           <ProvisionClassificationBadge key={type.id} type={type.code as any} />
         ))}

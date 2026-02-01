@@ -13,7 +13,6 @@ interface ProvisionsPageProps {
     search?: string
     type?: string
     status?: string
-    level?: string
     sort?: string
   }>
 }
@@ -41,7 +40,6 @@ export default async function ProvisionsPage({
     search: filters.search,
     type: filters.type,
     status: filters.status,
-    level: filters.level,
     sort: filters.sort || 'date-desc',
   })
 
