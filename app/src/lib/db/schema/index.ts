@@ -14,6 +14,7 @@ import * as provisionPipeline from './provision-pipeline'
 import * as research from './research'
 import * as knowledge from './knowledge'
 import * as discussions from './discussions'
+import * as voterBudget from './voter-budget'
 
 export {
   accounts,
@@ -26,6 +27,7 @@ export {
   research,
   knowledge,
   discussions,
+  voterBudget,
 }
 
 // ============================================================================
@@ -85,3 +87,10 @@ export {
   votes as discVotes,
   proposalVotes as discProposalVotes,
 } from './discussions'
+
+// voter-budget
+export {
+  items as gamvotItems,
+  sessions as gamvotSessions,
+  votes as gamvotVotes,
+} from './voter-budget'
