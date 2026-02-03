@@ -3,8 +3,6 @@ import { db } from '@/lib/db/client'
 import { gamvotSessions, gamvotVotes, gamvotItems } from '@/lib/db/schema'
 import { eq, and } from 'drizzle-orm'
 
-type Dimension = 'ideas' | 'likes' | 'dislikes'
-
 // POST /api/games/voter-budget/sessions/:sessionId/votes
 // Add a vote (creates item if it doesn't exist)
 export async function POST(
@@ -14,19 +12,12 @@ export async function POST(
   const { sessionId } = await params
   const body = await request.json()
 
-  const { text, dimension, notes, amount } = body
+  const { text, notes, amount } = body
 
   // Validate input
-  if (!text || !dimension || !amount) {
+  if (!text || !amount) {
     return NextResponse.json(
-      { error: 'text, dimension, and amount are required' },
-      { status: 400 }
-    )
-  }
-
-  if (!['ideas', 'likes', 'dislikes'].includes(dimension)) {
-    return NextResponse.json(
-      { error: 'Invalid dimension' },
+      { error: 'text and amount are required' },
       { status: 400 }
     )
   }
@@ -57,11 +48,10 @@ export async function POST(
     )
   }
 
-  // Find or create the item
+  // Find or create the item (using 'ideas' as default dimension for backwards compatibility)
   let item = await db.query.gamvotItems.findFirst({
     where: and(
       eq(gamvotItems.entityId, session.entityId),
-      eq(gamvotItems.dimension, dimension as Dimension),
       eq(gamvotItems.text, text)
     ),
   })
@@ -72,7 +62,7 @@ export async function POST(
       .values({
         entityId: session.entityId,
         text,
-        dimension: dimension as Dimension,
+        dimension: 'ideas', // Default dimension for backwards compatibility
         createdBy: session.userId,
       })
       .returning()
@@ -110,7 +100,6 @@ export async function POST(
       id: vote.id,
       itemId: vote.itemId,
       text: item.text,
-      dimension: item.dimension,
       amount: vote.amount,
       notes: vote.notes,
     },

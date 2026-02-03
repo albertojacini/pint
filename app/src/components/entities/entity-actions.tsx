@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Search, MessageCircle } from 'lucide-react'
+import { Search, MessageCircle, Gamepad2 } from 'lucide-react'
 import { entityPath } from '@/lib/utils'
 
 interface EntityActionsProps {
@@ -29,6 +29,13 @@ export function EntityActions({ entity }: EntityActionsProps) {
       >
         <span>&ge;</span>
         <span>Compare</span>
+      </Link>
+      <Link
+        href={`/games/voter-budget/${entity.id}`}
+        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+      >
+        <Gamepad2 className="w-4 h-4" />
+        <span>Games</span>
       </Link>
     </div>
   )

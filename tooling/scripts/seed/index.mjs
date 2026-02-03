@@ -20,6 +20,7 @@ import { seedIdeas } from './seeders/ideas.mjs'
 import { seedProvisions } from './seeders/provisions.mjs'
 import { seedKnowledge } from './seeders/knowledge.mjs'
 import { seedDiscussions } from './seeders/discussions.mjs'
+import { seedVoterBudget } from './seeders/voter-budget.mjs'
 
 /**
  * Main seeding function
@@ -58,6 +59,7 @@ async function runSeed() {
       { name: 'provisions', fn: seedProvisions }, // needs: ideas, entities, administrations
       { name: 'knowledge', fn: seedKnowledge }, // needs: provisions
       { name: 'discussions', fn: seedDiscussions }, // needs: provisions
+      { name: 'voter-budget', fn: seedVoterBudget }, // needs: entities
     ]
 
     // Execute seeders in order

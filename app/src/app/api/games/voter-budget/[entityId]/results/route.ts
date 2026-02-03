@@ -3,18 +3,13 @@ import { db } from '@/lib/db/client'
 import { gamvotItems, gamvotSessions, gamvotVotes } from '@/lib/db/schema'
 import { eq, and, desc, sum, countDistinct } from 'drizzle-orm'
 
-type Dimension = 'ideas' | 'likes' | 'dislikes'
-
-// GET /api/games/voter-budget/:entityId/results?dimension=ideas
+// GET /api/games/voter-budget/:entityId/results
 // Get community results
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ entityId: string }> }
 ) {
   const { entityId } = await params
-  const { searchParams } = new URL(request.url)
-
-  const dimension = searchParams.get('dimension') as Dimension | null
 
   // Get overall stats
   const [stats] = await db
@@ -31,20 +26,11 @@ export async function GET(
       )
     )
 
-  // Build conditions for items query
-  const itemConditions = dimension
-    ? and(
-        eq(gamvotItems.entityId, entityId),
-        eq(gamvotItems.dimension, dimension)
-      )
-    : eq(gamvotItems.entityId, entityId)
-
   // Get top items
   const items = await db
     .select({
       id: gamvotItems.id,
       text: gamvotItems.text,
-      dimension: gamvotItems.dimension,
       totalAmount: sum(gamvotVotes.amount),
       voterCount: countDistinct(gamvotVotes.sessionId),
     })
@@ -57,7 +43,7 @@ export async function GET(
         eq(gamvotSessions.status, 'completed')
       )
     )
-    .where(itemConditions)
+    .where(eq(gamvotItems.entityId, entityId))
     .groupBy(gamvotItems.id)
     .orderBy(desc(sum(gamvotVotes.amount)))
     .limit(50)
@@ -72,7 +58,6 @@ export async function GET(
       .map(item => ({
         id: item.id,
         text: item.text,
-        dimension: item.dimension,
         totalAmount: Number(item.totalAmount) || 0,
         voterCount: Number(item.voterCount) || 0,
       })),

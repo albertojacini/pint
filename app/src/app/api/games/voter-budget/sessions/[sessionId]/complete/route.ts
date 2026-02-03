@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db/client'
 import { gamvotSessions, gamvotVotes } from '@/lib/db/schema'
-import { eq, sum } from 'drizzle-orm'
-
-const MIN_TO_SUBMIT = 80
+import { eq, sum, count } from 'drizzle-orm'
 
 // POST /api/games/voter-budget/sessions/:sessionId/complete
-// Complete a session (validates 80% budget spent)
+// Complete a session
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ sessionId: string }> }
@@ -32,19 +30,22 @@ export async function POST(
     )
   }
 
-  // Calculate total spent
+  // Calculate total spent and vote count
   const [totals] = await db
     .select({
       totalSpent: sum(gamvotVotes.amount),
+      voteCount: count(gamvotVotes.id),
     })
     .from(gamvotVotes)
     .where(eq(gamvotVotes.sessionId, sessionId))
 
   const totalSpent = Number(totals?.totalSpent) || 0
+  const voteCount = Number(totals?.voteCount) || 0
 
-  if (totalSpent < MIN_TO_SUBMIT) {
+  // Require at least one vote
+  if (voteCount === 0) {
     return NextResponse.json(
-      { error: `Must spend at least €${MIN_TO_SUBMIT}. Currently spent: €${totalSpent}` },
+      { error: 'Must have at least one vote to complete' },
       { status: 400 }
     )
   }
@@ -65,6 +66,7 @@ export async function POST(
       status: updated.status,
       completedAt: updated.completedAt,
       totalSpent,
+      voteCount,
     },
   })
 }

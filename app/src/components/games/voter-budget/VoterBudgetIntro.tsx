@@ -1,6 +1,5 @@
 'use client'
 
-import { cn } from '@/lib/cn'
 import { Users, Euro, TrendingUp, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -9,7 +8,6 @@ export interface CommunityStats {
   totalInvested: number
   topItems: {
     text: string
-    dimension: 'ideas' | 'likes' | 'dislikes'
     totalAmount: number
   }[]
 }
@@ -25,24 +23,12 @@ const defaultStats: CommunityStats = {
   participants: 847,
   totalInvested: 84700,
   topItems: [
-    { text: 'More bike lanes in the center', dimension: 'ideas', totalAmount: 4250 },
-    { text: 'Public parks', dimension: 'likes', totalAmount: 3800 },
-    { text: 'Traffic congestion', dimension: 'dislikes', totalAmount: 3420 },
-    { text: 'Free public transport for students', dimension: 'ideas', totalAmount: 2890 },
-    { text: 'Night metro service', dimension: 'ideas', totalAmount: 2540 },
+    { text: 'More bike lanes in the center', totalAmount: 4250 },
+    { text: 'Free public transport for students', totalAmount: 3800 },
+    { text: 'Reduce traffic congestion', totalAmount: 3420 },
+    { text: 'More affordable housing', totalAmount: 2890 },
+    { text: 'Improve air quality', totalAmount: 2540 },
   ],
-}
-
-const dimensionColors = {
-  ideas: 'bg-amber-100 text-amber-700',
-  likes: 'bg-emerald-100 text-emerald-700',
-  dislikes: 'bg-rose-100 text-rose-700',
-}
-
-const dimensionLabels = {
-  ideas: 'Idea',
-  likes: 'Like',
-  dislikes: 'Dislike',
 }
 
 export function VoterBudgetIntro({
@@ -77,7 +63,7 @@ export function VoterBudgetIntro({
             You have €100
           </h1>
           <p className="text-slate-600 text-sm leading-relaxed max-w-xs mx-auto">
-            Invest in ideas you want to see, things you appreciate, and things you'd change about your city.
+            Invest in the changes and priorities that matter most to you about your city.
           </p>
         </div>
 
@@ -111,23 +97,22 @@ export function VoterBudgetIntro({
           </div>
 
           {/* Top items */}
-          <div className="border-t border-slate-100 pt-3">
-            <p className="text-xs text-slate-400 mb-2">Trending</p>
-            <div className="space-y-2">
-              {stats.topItems.slice(0, 4).map((item, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-xs text-slate-400 w-4 tabular-nums">{i + 1}</span>
-                  <span className="flex-1 text-sm text-slate-700 truncate">{item.text}</span>
-                  <span className={cn(
-                    'text-xs px-1.5 py-0.5 rounded font-medium',
-                    dimensionColors[item.dimension]
-                  )}>
-                    {dimensionLabels[item.dimension]}
-                  </span>
-                </div>
-              ))}
+          {stats.topItems && stats.topItems.length > 0 && (
+            <div className="border-t border-slate-100 pt-3">
+              <p className="text-xs text-slate-400 mb-2">Top priorities</p>
+              <div className="space-y-2">
+                {stats.topItems.slice(0, 5).map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400 w-4 tabular-nums">{i + 1}</span>
+                    <span className="flex-1 text-sm text-slate-700 truncate">{item.text}</span>
+                    <span className="text-xs text-slate-400 tabular-nums">
+                      €{item.totalAmount.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Spacer */}

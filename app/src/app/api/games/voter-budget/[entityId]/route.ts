@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db/client'
 import { gamvotItems, gamvotSessions, gamvotVotes } from '@/lib/db/schema'
-import { eq, and, desc, sql, sum, count, countDistinct } from 'drizzle-orm'
+import { eq, and, desc, sql, sum, countDistinct } from 'drizzle-orm'
 
 // GET /api/games/voter-budget/:entityId
 // Returns intro data: entity info, community stats, top items
@@ -33,7 +33,6 @@ export async function GET(
     .select({
       id: gamvotItems.id,
       text: gamvotItems.text,
-      dimension: gamvotItems.dimension,
       totalAmount: sum(gamvotVotes.amount),
       voterCount: countDistinct(gamvotVotes.sessionId),
     })
@@ -61,7 +60,6 @@ export async function GET(
     topItems: topItems.map(item => ({
       id: item.id,
       text: item.text,
-      dimension: item.dimension,
       totalAmount: Number(item.totalAmount) || 0,
       voterCount: Number(item.voterCount) || 0,
     })),
