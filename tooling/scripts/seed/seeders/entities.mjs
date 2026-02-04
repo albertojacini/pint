@@ -8,7 +8,6 @@ import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
-import { uploadAvatar } from '../utils/storage.mjs'
 
 /**
  * Generate a slug from text
@@ -45,16 +44,7 @@ export async function seedEntities(client, supabase, idMaps) {
     // Insert each political entity
     for (const entity of politicalEntities) {
       const id = generateUUID()
-
-      // Upload avatar to Supabase Storage if available
-      let avatarUrl = entity.avatar_url || null
-      if (supabase && avatarUrl && avatarUrl !== 'https://example.com/avatar.jpg') {
-        const uploadedUrl = await uploadAvatar(supabase, avatarUrl, entity.name, 'entities')
-        if (uploadedUrl) {
-          avatarUrl = uploadedUrl
-        }
-      }
-
+      const avatarUrl = entity.avatar_url || null
       const slug = generateSlug(entity.name)
 
       await insertQuery(client, {

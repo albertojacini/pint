@@ -16,15 +16,15 @@ export const AllLevels: Story = {
   render: () => (
     <div className="space-y-6 max-w-2xl">
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-muted-foreground">PageTitle — text-3xl font-bold</span>
+        <span className="text-[10px] font-mono text-muted-foreground">PageTitle — text-2xl font-semibold</span>
         <PageTitle>Public housing policy in Barcelona</PageTitle>
       </div>
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-muted-foreground">SectionTitle — text-2xl font-semibold</span>
+        <span className="text-[10px] font-mono text-muted-foreground">SectionTitle — text-xl font-medium</span>
         <SectionTitle>Ownership regulations</SectionTitle>
       </div>
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-muted-foreground">SubsectionTitle — text-xl font-semibold</span>
+        <span className="text-[10px] font-mono text-muted-foreground">SubsectionTitle — text-lg font-medium</span>
         <SubsectionTitle>Rental price limits</SubsectionTitle>
       </div>
       <div className="space-y-1">

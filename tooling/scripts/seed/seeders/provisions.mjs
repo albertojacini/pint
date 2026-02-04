@@ -8,7 +8,6 @@ import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
-import { uploadAvatar } from '../utils/storage.mjs'
 
 /**
  * Generate a slug from text
@@ -74,22 +73,14 @@ export async function seedProvisions(client, supabase, idMaps) {
         ? idMaps.ideas.get(provision.idea)
         : null;
 
-      // Upload avatar to Supabase Storage if available
-      let avatarUrl = provision.avatarUrl || null
-      if (supabase && avatarUrl && avatarUrl !== 'https://example.com/avatar.jpg') {
-        const uploadedUrl = await uploadAvatar(supabase, avatarUrl, provision.title, 'provisions')
-        if (uploadedUrl) {
-          avatarUrl = uploadedUrl
-        }
-      }
-
+      const avatarUrl = provision.avatarUrl || null
       const id = generateUUID()
 
       const slug = generateSlug(provision.title)
 
       await insertQuery(client, {
         table: 'gov_provisions',
-        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'tagline', 'avatar_url', 'status', 'level', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'analysis', 'highlights', 'changelog', 'console'],
+        columns: ['id', 'entity_id', 'title', 'slug', 'description', 'tagline', 'avatar_url', 'status', 'relevance', 'effective_from', 'effective_until', 'idea_id', 'analysis', 'highlights', 'changelog', 'console'],
         values: [
           id,
           entityId,
@@ -99,7 +90,6 @@ export async function seedProvisions(client, supabase, idMaps) {
           provision.tagline || null,
           avatarUrl,
           provision.status,
-          provision.level || 3, // default to level 3 (instrument)
           provision.relevance || null,
           provision.effectiveFrom || null,
           provision.effectiveUntil || null,
