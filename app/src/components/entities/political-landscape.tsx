@@ -1,4 +1,3 @@
-import { PercentageBar, type PercentageBarItem } from '@/components/custom-ui/percentage-bar'
 import { CouncilDots } from './council-dots'
 import { ExecutiveMembers } from './executive-members'
 
@@ -96,39 +95,93 @@ function ExecutiveSection({
   )
 }
 
-// Election result bar
-function ElectionResultBar({
+// Election card constants
+const MAX_CANDIDATES = 6
+
+// Thin bar component for election results
+function ThinResultBar({
   results,
 }: {
   results: Array<{ candidate: string; coalition: string; percentage: number; color: string }>
 }) {
-  if (results.length === 0) return null
+  const visibleResults = results.slice(0, MAX_CANDIDATES)
+  const aggregatedResults = results.slice(MAX_CANDIDATES)
+  const altriPercentage = aggregatedResults.reduce((sum, r) => sum + r.percentage, 0)
 
-  const totalPercentage = results.reduce((sum, r) => sum + r.percentage, 0)
-  const othersPercentage = Math.max(0, 100 - totalPercentage)
+  const allResults = [
+    ...visibleResults,
+    ...(altriPercentage > 0
+      ? [{ candidate: 'Altri', coalition: '', percentage: altriPercentage, color: '#9E9E9E' }]
+      : []),
+  ]
 
-  // Transform results to PercentageBar format
-  const items: PercentageBarItem[] = results.map((result) => ({
-    label: result.candidate,
-    value: result.percentage,
-    color: result.color,
-    metadata: result.coalition,
-  }))
+  const total = allResults.reduce((sum, r) => sum + r.percentage, 0)
 
-  // Add "Others" if there's remaining percentage
-  if (othersPercentage > 0) {
-    items.push({
-      label: 'Altri',
-      value: othersPercentage,
-      color: '#9E9E9E',
-      metadata: undefined,
-    })
-  }
-
-  return <PercentageBar items={items} valueType="percentage" />
+  return (
+    <div className="w-full h-1 rounded-full overflow-hidden flex">
+      {allResults.map((result, idx) => (
+        <div
+          key={idx}
+          style={{
+            backgroundColor: result.color,
+            width: `${(result.percentage / total) * 100}%`,
+          }}
+        />
+      ))}
+    </div>
+  )
 }
 
-// Elections section - Next election + historical results
+// Single election card with bar + list
+function ElectionCard({
+  election,
+}: {
+  election: {
+    date: string
+    turnout?: number
+    results: Array<{ candidate: string; coalition: string; percentage: number; color: string }>
+  }
+}) {
+  const visibleResults = election.results.slice(0, MAX_CANDIDATES)
+  const aggregatedResults = election.results.slice(MAX_CANDIDATES)
+  const altriPercentage = aggregatedResults.reduce((sum, r) => sum + r.percentage, 0)
+
+  return (
+    <div className="space-y-1.5">
+      {/* Header */}
+      <div className="text-xs text-muted-foreground">
+        {formatElectionDate(election.date)}
+        {election.turnout && ` · Affluenza ${election.turnout.toFixed(1)}%`}
+      </div>
+
+      {/* Thin bar */}
+      <ThinResultBar results={election.results} />
+
+      {/* Results list */}
+      <div className="space-y-0.5">
+        {visibleResults.map((result, idx) => (
+          <div key={idx} className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: result.color }} />
+            <span className="text-xs flex-1 truncate">
+              <span className="font-medium">{result.candidate}</span>
+              <span className="text-muted-foreground"> ({result.coalition})</span>
+            </span>
+            <span className="text-xs font-semibold tabular-nums">{result.percentage.toFixed(1)}%</span>
+          </div>
+        ))}
+        {altriPercentage > 0 && (
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full flex-shrink-0 bg-gray-400" />
+            <span className="text-xs text-muted-foreground flex-1">Altri</span>
+            <span className="text-xs tabular-nums text-muted-foreground">{altriPercentage.toFixed(1)}%</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// Elections section - Next election + historical results in grid
 function ElectionsSection({
   nextElection,
   history,
@@ -138,13 +191,15 @@ function ElectionsSection({
 }) {
   if (!nextElection && (!history || history.length === 0)) return null
 
+  const electionsWithResults = history?.filter((election) => election.results.length > 0) || []
+
   return (
     <div>
       <SectionHeader>Elezioni</SectionHeader>
 
       {/* Next election */}
       {nextElection && (
-        <div className="flex justify-between items-center mb-3">
+        <div className="flex justify-between items-center mb-4">
           <span className="text-sm font-medium">Prossime elezioni</span>
           <span className="text-sm text-gray-600">
             {formatElectionDate(nextElection.date)} ({formatTimeUntil(nextElection.date)})
@@ -152,21 +207,12 @@ function ElectionsSection({
         </div>
       )}
 
-      {/* Historical elections */}
-      {history && history.length > 0 && (
-        <div className="space-y-2">
-          {history
-            .filter((election) => election.results.length > 0)
-            .map((election, idx) => (
-              <div key={idx} className="flex items-start gap-3">
-                <span className="text-xs text-gray-500 w-16 flex-shrink-0">
-                  {formatElectionDate(election.date)}
-                </span>
-                <div className="flex-1">
-                  <ElectionResultBar results={election.results} />
-                </div>
-              </div>
-            ))}
+      {/* Historical elections in grid */}
+      {electionsWithResults.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {electionsWithResults.map((election, idx) => (
+            <ElectionCard key={idx} election={election} />
+          ))}
         </div>
       )}
     </div>
