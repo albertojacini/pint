@@ -17,11 +17,11 @@ export const Default: Story = {
   args: {
     data: {
       councilComposition: [
-        { party: 'PD', seats: 18, color: '#E53935' },
-        { party: 'Lega', seats: 8, color: '#1976D2' },
-        { party: 'FdI', seats: 6, color: '#0D47A1' },
-        { party: 'FI', seats: 4, color: '#42A5F5' },
-        { party: 'M5S', seats: 4, color: '#FFC107' },
+        { party: 'PD', seats: 18 },
+        { party: 'Lega', seats: 8 },
+        { party: 'FdI', seats: 6 },
+        { party: 'FI', seats: 4 },
+        { party: 'M5S', seats: 4 },
       ],
       executiveMembers: [
         { name: 'Giuseppe Sala', role: 'mayor', party: 'PD' },
@@ -35,16 +35,16 @@ export const Default: Story = {
           date: '2021-10-04',
           turnout: 47.69,
           results: [
-            { candidate: 'Giuseppe Sala', coalition: 'Centrosinistra', percentage: 57.73, color: '#E53935' },
-            { candidate: 'Luca Bernardo', coalition: 'Centrodestra', percentage: 31.91, color: '#1976D2' },
+            { candidate: 'Giuseppe Sala', coalition: 'Centrosinistra', percentage: 57.73, color: 'hsl(var(--tag-pink))' },
+            { candidate: 'Luca Bernardo', coalition: 'Centrodestra', percentage: 31.91, color: 'hsl(var(--tag-blue))' },
           ],
         },
         {
           date: '2016-06-19',
           turnout: 54.65,
           results: [
-            { candidate: 'Giuseppe Sala', coalition: 'Centrosinistra', percentage: 51.7, color: '#E53935' },
-            { candidate: 'Stefano Parisi', coalition: 'Centrodestra', percentage: 48.3, color: '#1976D2' },
+            { candidate: 'Giuseppe Sala', coalition: 'Centrosinistra', percentage: 51.7, color: 'hsl(var(--tag-pink))' },
+            { candidate: 'Stefano Parisi', coalition: 'Centrodestra', percentage: 48.3, color: 'hsl(var(--tag-blue))' },
           ],
         },
       ],
@@ -57,9 +57,9 @@ export const CouncilOnly: Story = {
   args: {
     data: {
       councilComposition: [
-        { party: 'PD', seats: 15, color: '#E53935' },
-        { party: 'FdI', seats: 10, color: '#0D47A1' },
-        { party: 'Lega', seats: 5, color: '#1976D2' },
+        { party: 'PD', seats: 15 },
+        { party: 'FdI', seats: 10 },
+        { party: 'Lega', seats: 5 },
       ],
     },
     entitySlug: 'rome',
@@ -88,9 +88,9 @@ export const ElectionsOnly: Story = {
           date: '2022-05-20',
           turnout: 52.3,
           results: [
-            { candidate: 'Maria Rossi', coalition: 'Centro', percentage: 45.2, color: '#4CAF50' },
-            { candidate: 'Giovanni Bianchi', coalition: 'Destra', percentage: 38.1, color: '#2196F3' },
-            { candidate: 'Franco Neri', coalition: 'Sinistra', percentage: 12.4, color: '#F44336' },
+            { candidate: 'Maria Rossi', coalition: 'Centro', percentage: 45.2, color: 'hsl(var(--tag-green))' },
+            { candidate: 'Giovanni Bianchi', coalition: 'Destra', percentage: 38.1, color: 'hsl(var(--tag-blue))' },
+            { candidate: 'Franco Neri', coalition: 'Sinistra', percentage: 12.4, color: 'hsl(var(--tag-pink))' },
           ],
         },
       ],

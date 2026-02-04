@@ -1,12 +1,12 @@
 import { PercentageBar, type PercentageBarItem } from '@/components/custom-ui/percentage-bar'
-import Link from 'next/link'
+import { CouncilDots } from './council-dots'
 
 interface PoliticalLandscapeProps {
   data: {
     councilComposition?: Array<{
       party: string
       seats: number
-      color: string
+      color?: string // Optional - CouncilDots assigns colors from palette
     }>
     executiveMembers?: Array<{
       name: string
@@ -66,12 +66,12 @@ function formatElectionDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 
-// Section header component
+// Section header component - uses muted foreground for secondary hierarchy
 function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <h4 className="text-xs font-semibold text-blue-600 mb-2">{children}</h4>
+  return <h4 className="text-sm font-medium text-muted-foreground mb-2">{children}</h4>
 }
 
-// Legislative section - Council composition bar chart
+// Legislative section - Council composition with dots
 function LegislativeSection({
   composition,
 }: {
@@ -79,20 +79,10 @@ function LegislativeSection({
 }) {
   if (!composition || composition.length === 0) return null
 
-  const totalSeats = composition.reduce((sum, p) => sum + p.seats, 0)
-
-  // Transform composition to PercentageBar format
-  const items = composition.map((party) => ({
-    label: party.party,
-    value: party.seats,
-    color: party.color,
-  }))
-
   return (
     <div>
       <SectionHeader>Consiglio comunale</SectionHeader>
-      <div className="text-xs text-gray-500 mb-2">Council Composition ({totalSeats} seats)</div>
-      <PercentageBar items={items} valueType="count" barHeight="h-4" />
+      <CouncilDots composition={composition} />
     </div>
   )
 }
