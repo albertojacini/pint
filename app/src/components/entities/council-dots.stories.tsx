@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { CouncilDots } from './council-dots'
 
 const meta = {
-  title: 'Entities/Administration/CouncilDots',
+  title: 'Entities/CouncilDots',
   component: CouncilDots,
   tags: ['autodocs'],
   parameters: {

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { ExecutiveMembers, type ExecutiveMember } from './executive-members'
 
 const meta = {
-  title: 'Entities/Administration/ExecutiveMembers',
+  title: 'Entities/ExecutiveMembers',
   component: ExecutiveMembers,
   tags: ['autodocs'],
   parameters: {
