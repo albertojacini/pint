@@ -1,3 +1,4 @@
+import { Vote } from 'lucide-react'
 import { CouncilDots } from './council-dots'
 import { ExecutiveMembers } from './executive-members'
 
@@ -32,30 +33,43 @@ interface PoliticalLandscapeProps {
   entitySlug?: string
 }
 
-function formatTimeUntil(dateStr: string): string {
+function formatTimeUntil(dateStr: string): { text: string; isPast: boolean; isNear: boolean } {
   const target = new Date(dateStr)
   const now = new Date()
   const diffMs = target.getTime() - now.getTime()
 
-  if (diffMs < 0) return 'past'
+  if (diffMs < 0) return { text: 'passate', isPast: true, isNear: false }
 
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24))
   const months = Math.floor(days / 30)
   const years = Math.floor(months / 12)
   const remainingMonths = months % 12
 
+  const isNear = months < 6
+
   if (years > 0) {
-    return `in ${years}y ${remainingMonths}m`
+    const yearText = years === 1 ? '1 anno' : `${years} anni`
+    const monthText = remainingMonths > 0 ? ` e ${remainingMonths} ${remainingMonths === 1 ? 'mese' : 'mesi'}` : ''
+    return { text: `tra ${yearText}${monthText}`, isPast: false, isNear }
   } else if (months > 0) {
-    return `in ${months}m`
+    return { text: `tra ${months} ${months === 1 ? 'mese' : 'mesi'}`, isPast: false, isNear }
+  } else if (days > 1) {
+    return { text: `tra ${days} giorni`, isPast: false, isNear: true }
+  } else if (days === 1) {
+    return { text: 'domani', isPast: false, isNear: true }
   } else {
-    return `in ${days}d`
+    return { text: 'oggi', isPast: false, isNear: true }
   }
 }
 
 function formatElectionDate(dateStr: string): string {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+}
+
+function formatFullElectionDate(dateStr: string): string {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 // Section header component - uses muted foreground for secondary hierarchy
@@ -181,6 +195,33 @@ function ElectionCard({
   )
 }
 
+// Next election card with countdown
+function NextElectionCard({ date }: { date: string }) {
+  const countdown = formatTimeUntil(date)
+  const fullDate = formatFullElectionDate(date)
+
+  return (
+    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 mb-4">
+      <Vote className="w-6 h-6 text-muted-foreground" />
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-medium">Prossime elezioni</div>
+        <div className="text-xs text-muted-foreground">{fullDate}</div>
+      </div>
+      <div
+        className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+          countdown.isNear
+            ? 'bg-warning/15 text-warning'
+            : countdown.isPast
+              ? 'bg-muted text-muted-foreground'
+              : 'bg-primary/10 text-primary'
+        }`}
+      >
+        {countdown.text}
+      </div>
+    </div>
+  )
+}
+
 // Elections section - Next election + historical results in grid
 function ElectionsSection({
   nextElection,
@@ -198,14 +239,7 @@ function ElectionsSection({
       <SectionHeader>Elezioni</SectionHeader>
 
       {/* Next election */}
-      {nextElection && (
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-sm font-medium">Prossime elezioni</span>
-          <span className="text-sm text-gray-600">
-            {formatElectionDate(nextElection.date)} ({formatTimeUntil(nextElection.date)})
-          </span>
-        </div>
-      )}
+      {nextElection && <NextElectionCard date={nextElection.date} />}
 
       {/* Historical elections in grid */}
       {electionsWithResults.length > 0 && (
