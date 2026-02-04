@@ -25,9 +25,9 @@ export const Default: Story = {
       ],
       executiveMembers: [
         { name: 'Giuseppe Sala', role: 'mayor', party: 'PD' },
-        { name: 'Anna Scavuzzo', role: 'vice-mayor', party: 'PD' },
-        { name: 'Pierfrancesco Maran', role: 'assessor', party: 'PD' },
-        { name: 'Marco Granelli', role: 'assessor', party: 'PD' },
+        { name: 'Anna Scavuzzo', role: 'councilor', party: 'PD' },
+        { name: 'Pierfrancesco Maran', role: 'councilor', party: 'PD' },
+        { name: 'Marco Granelli', role: 'councilor', party: 'PD' },
       ],
       nextElection: { date: '2026-06-15' },
       electionHistory: [
@@ -71,8 +71,8 @@ export const ExecutiveOnly: Story = {
     data: {
       executiveMembers: [
         { name: 'Mario Rossi', role: 'mayor', icon: '👨‍💼' },
-        { name: 'Laura Bianchi', role: 'vice-mayor' },
-        { name: 'Paolo Verdi', role: 'assessor', roleTitle: 'Urban Planning' },
+        { name: 'Laura Bianchi', role: 'councilor' },
+        { name: 'Paolo Verdi', role: 'councilor', roleTitle: 'Urban Planning' },
       ],
     },
     entitySlug: 'turin',

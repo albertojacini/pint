@@ -190,7 +190,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
                   councilComposition: activeAdmin.councilComposition || undefined,
                   executiveMembers: executiveMembers.map((m) => ({
                     name: m.name,
-                    role: m.role as 'mayor' | 'vice-mayor' | 'assessor' | 'councilor',
+                    role: m.role as 'mayor' | 'councilor' | 'minister' | 'president' | 'governor' | 'member',
                     roleTitle: m.roleTitle || undefined,
                     icon: m.icon || undefined,
                     party: m.party || undefined,

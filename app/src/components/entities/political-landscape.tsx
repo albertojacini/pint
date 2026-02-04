@@ -1,5 +1,6 @@
 import { PercentageBar, type PercentageBarItem } from '@/components/custom-ui/percentage-bar'
 import { CouncilDots } from './council-dots'
+import { ExecutiveMembers } from './executive-members'
 
 interface PoliticalLandscapeProps {
   data: {
@@ -10,7 +11,7 @@ interface PoliticalLandscapeProps {
     }>
     executiveMembers?: Array<{
       name: string
-      role: 'mayor' | 'vice-mayor' | 'assessor' | 'councilor'
+      role: 'mayor' | 'councilor' | 'minister' | 'president' | 'governor' | 'member'
       roleTitle?: string
       icon?: string
       party?: string
@@ -30,14 +31,6 @@ interface PoliticalLandscapeProps {
     }>
   } | null
   entitySlug?: string
-}
-
-// Fallback role icons (used when icon not specified in data)
-const ROLE_ICONS: Record<string, string> = {
-  mayor: '🎖️',
-  'vice-mayor': '🎖️',
-  assessor: '📋',
-  councilor: '🏛️',
 }
 
 function formatTimeUntil(dateStr: string): string {
@@ -98,14 +91,7 @@ function ExecutiveSection({
   return (
     <div>
       <SectionHeader>Giunta comunale</SectionHeader>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-        {members.map((member, idx) => (
-          <div key={idx} className="flex items-center gap-1.5">
-            <span>{member.icon || ROLE_ICONS[member.role] || '👤'}</span>
-            <span className="text-gray-700">{member.name}</span>
-          </div>
-        ))}
-      </div>
+      <ExecutiveMembers members={members} variant="grid-minimal" />
     </div>
   )
 }
