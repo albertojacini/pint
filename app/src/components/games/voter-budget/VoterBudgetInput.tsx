@@ -219,7 +219,7 @@ export function VoterBudgetInput({
                     className="w-full flex items-center gap-2 px-4 py-3 text-left bg-blue-50 text-blue-600"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>Add "{searchText}"</span>
+                    <span>Add &ldquo;{searchText}&rdquo;</span>
                   </button>
                 )}
               </div>
