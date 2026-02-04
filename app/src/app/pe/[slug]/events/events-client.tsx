@@ -93,7 +93,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="text-sm text-blue-600 hover:underline md:hidden"
+            className="text-sm text-link hover:underline md:hidden"
           >
             {showFilters ? 'Hide' : 'Show'} filters
           </button>
@@ -216,7 +216,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
                       <span className="text-gray-500">Administration: </span>
                       <Link
                         href={`/administrations/${event.administrationId}`}
-                        className="text-blue-600 hover:underline font-medium"
+                        className="text-link hover:underline font-medium"
                       >
                         {event.administrationName}
                       </Link>

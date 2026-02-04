@@ -44,6 +44,9 @@
     --tag-orange: 25 60% 50%;
     --tag-pink: 330 50% 55%;
     --tag-slate: 215 20% 50%;
+
+    /* Link color */
+    --link: 220 45% 50%;
   }
 
   .dark {
@@ -86,6 +89,9 @@
     --tag-orange: 25 60% 60%;
     --tag-pink: 330 50% 65%;
     --tag-slate: 215 20% 60%;
+
+    /* Link color (dark mode - lighter for visibility) */
+    --link: 220 45% 65%;
   }
 }
 

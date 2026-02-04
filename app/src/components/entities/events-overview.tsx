@@ -58,7 +58,7 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
                 Administration:{' '}
                 <Link
                   href={`/administrations/${event.administrationId}`}
-                  className="text-blue-600 hover:underline font-medium"
+                  className="text-link hover:underline font-medium"
                 >
                   {event.administrationName}
                 </Link>

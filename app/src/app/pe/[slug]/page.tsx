@@ -177,7 +177,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
         action={
           <Link
             href={getPoliticalLandscapeViewAllLink(urlSlug)}
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-link hover:underline"
           >
             View all
           </Link>
@@ -216,7 +216,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <Section
         title="Provisions"
         action={
-          <Link href={`/pe/${urlSlug}/pr`} className="text-sm text-blue-600 hover:underline">
+          <Link href={`/pe/${urlSlug}/pr`} className="text-sm text-link hover:underline">
             View all
           </Link>
         }
@@ -233,7 +233,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
         action={
           <Link
             href={getEventsViewAllLink(entity)}
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-link hover:underline"
           >
             View all
           </Link>

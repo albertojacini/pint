@@ -31,7 +31,7 @@ export default async function CandidatesPage() {
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       <Link
         href="/admin/event-ingestion"
-        className="text-blue-600 hover:underline text-sm mb-4 inline-block"
+        className="text-link hover:underline text-sm mb-4 inline-block"
       >
         &larr; Back to Event Ingestion
       </Link>

@@ -482,7 +482,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
             <summary className="text-sm font-medium text-blue-800 cursor-pointer">
               View Research Summary
             </summary>
-            <pre className="text-xs text-blue-600 mt-2 whitespace-pre-wrap overflow-auto max-h-64">
+            <pre className="text-xs text-link mt-2 whitespace-pre-wrap overflow-auto max-h-64">
               {draft.researchSummary}
             </pre>
           </details>
@@ -588,7 +588,7 @@ export function DraftWorkflow({ draft: initialDraft }: DraftWorkflowProps) {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline break-all"
+                        className="text-link hover:underline break-all"
                       >
                         {url}
                       </a>

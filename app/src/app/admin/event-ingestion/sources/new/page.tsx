@@ -9,7 +9,7 @@ export default async function NewSourcePage() {
     <div className="container mx-auto py-8 px-4 max-w-2xl">
       <Link
         href="/admin/event-ingestion/sources"
-        className="text-blue-600 hover:underline text-sm mb-4 inline-block"
+        className="text-link hover:underline text-sm mb-4 inline-block"
       >
         &larr; Back to sources
       </Link>

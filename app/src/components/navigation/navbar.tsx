@@ -114,7 +114,7 @@ export function Navbar() {
                   <Link
                     href="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block px-4 py-3 text-blue-600 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+                    className="block px-4 py-3 text-link hover:bg-gray-50 rounded-lg transition-colors font-medium"
                   >
                     Log In
                   </Link>

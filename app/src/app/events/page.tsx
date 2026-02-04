@@ -52,7 +52,7 @@ export default async function EventsPage() {
                       <span className="text-muted-foreground">Administration: </span>
                       <Link
                         href={`/administrations/${event.administrationId}`}
-                        className="text-blue-600 hover:underline"
+                        className="text-link hover:underline"
                       >
                         {event.administrationName}
                       </Link>
@@ -61,7 +61,7 @@ export default async function EventsPage() {
                       <span className="text-muted-foreground">Entity: </span>
                       <Link
                         href={`/entities/${event.entityId}`}
-                        className="text-blue-600 hover:underline"
+                        className="text-link hover:underline"
                       >
                         {event.entityName}
                       </Link>

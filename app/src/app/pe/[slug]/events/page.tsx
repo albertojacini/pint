@@ -43,7 +43,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
     <div className="container mx-auto py-8 px-4 max-w-5xl">
       {/* Back button */}
       <div className="mb-6">
-        <Link href={entityPath(entity)} className="text-blue-600 hover:underline">
+        <Link href={entityPath(entity)} className="text-link hover:underline">
           ← Back to {entity.name}
         </Link>
       </div>

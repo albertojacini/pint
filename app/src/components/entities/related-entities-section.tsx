@@ -44,7 +44,7 @@ export function RelatedEntitiesSection({ relationships }: RelatedEntitiesSection
         <span key={entity.id}>
           <Link
             href={entityPath(entity)}
-            className="text-blue-600 hover:text-blue-800 hover:underline"
+            className="text-link hover:text-blue-800 hover:underline"
           >
             {entity.name}
           </Link>

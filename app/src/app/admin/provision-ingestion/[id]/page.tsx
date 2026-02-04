@@ -20,7 +20,7 @@ export default async function DraftPage({ params }: Props) {
     <div className="container mx-auto py-8 px-4 max-w-3xl">
       <Link
         href="/admin/provision-ingestion"
-        className="text-blue-600 hover:underline text-sm mb-4 inline-block"
+        className="text-link hover:underline text-sm mb-4 inline-block"
       >
         ← Back to drafts
       </Link>

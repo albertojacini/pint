@@ -66,6 +66,7 @@ const config: Config = {
           DEFAULT: 'hsl(var(--neutral))',
           light: 'hsl(var(--neutral-light))',
         },
+        link: 'hsl(var(--link))',
         tag: {
           purple: 'hsl(var(--tag-purple))',
           blue: 'hsl(var(--tag-blue))',

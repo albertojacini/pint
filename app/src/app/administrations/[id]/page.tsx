@@ -86,7 +86,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Back button */}
       <div className="mb-6">
-        <Link href={`/entities/${administration.entity.id}`} className="text-blue-600 hover:underline">
+        <Link href={`/entities/${administration.entity.id}`} className="text-link hover:underline">
           ← Back to {administration.entity.name}
         </Link>
       </div>
