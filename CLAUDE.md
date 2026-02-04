@@ -68,35 +68,6 @@ IMPORTANT: This is an early stage project:
   - `pnpm db:seed` - Seed the database
   - `pnpm db:reset` - Reset and seed the database
 
-## Production Database Access
-
-**⚠️ WARNING: REMOVE THIS SECTION BEFORE GOING TO PRODUCTION ⚠️**
-
-Production database credentials are stored in `/.env.prod`. To query the production database:
-
-```bash
-cd /Users/albertojacini/Projects/pint/app && npx tsx -e "
-const { Pool } = require('pg');
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-pool.query('YOUR SQL QUERY HERE')
-  .then(res => { console.log(res.rows); pool.end(); })
-  .catch(err => { console.error(err.message); pool.end(); });
-"
-```
-
-Or load the connection string from `.env.prod`:
-```bash
-export $(grep DATABASE_URL /Users/albertojacini/Projects/pint/.env.prod | xargs) && cd /Users/albertojacini/Projects/pint/app && npx tsx -e "
-const { Pool } = require('pg');
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-pool.query('SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = \\'public\\'')
-  .then(res => { console.log(res.rows); pool.end(); })
-  .catch(err => { console.error(err.message); pool.end(); });
-"
-```
-
-**⚠️ WARNING: REMOVE THIS SECTION BEFORE GOING TO PRODUCTION ⚠️**
-
 ## Documentation Policy
 
 **CRITICAL**:
@@ -104,3 +75,7 @@ pool.query('SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 
 - NEVER create README files for packages, modules, or features
 - Use inline code comments and docstrings for documentation instead
 - The only documentation files in this project are README.md and CLAUDE.md
+
+## UI Development
+
+UI development and experimentation is done with Storybook. 

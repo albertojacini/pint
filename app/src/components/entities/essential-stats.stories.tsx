@@ -13,16 +13,20 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
+const sampleData = {
+  population: 1_352_000,
+  stats: {
+    area: 182,
+    density: 7428,
+    gdpPerCapita: 45000,
+    unemploymentRate: 5.2,
+    povertyRate: 8.5,
+  },
+}
+
 export const Default: Story = {
   args: {
-    population: 1_352_000,
-    stats: {
-      area: 182,
-      density: 7428,
-      gdpPerCapita: 45000,
-      unemploymentRate: 5.2,
-      povertyRate: 8.5,
-    },
+    ...sampleData,
   },
 }
 
