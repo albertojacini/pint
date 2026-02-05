@@ -35,7 +35,7 @@ export default async function DiscussionsPage({ params, searchParams }: PageProp
   const basePath = `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="py-8">
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[

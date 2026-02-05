@@ -17,7 +17,7 @@ export default async function EventIngestionPage() {
   const approvedCandidates = candidates.filter(c => c.status === 'approved')
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="py-8">
       <div className="mb-8">
         <PageTitle>Event Ingestion</PageTitle>
         <p className="text-gray-500 mt-2">

@@ -34,8 +34,8 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container">
+        <div className="flex items-center justify-between h-14">
           {/* Left Section: Logo */}
           <Logo />
 
@@ -64,7 +64,7 @@ export function Navbar() {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="border-t border-gray-200 bg-white">
-          <div className="px-4 py-4 space-y-2">
+          <div className="container py-4 space-y-2">
             <Link
               href="/pe"
               onClick={() => setIsMenuOpen(false)}

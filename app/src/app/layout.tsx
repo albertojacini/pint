@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={notoSans.className}>
         <Navbar />
-        <main className="pb-16 md:pb-0">{children}</main>
+        <main className="container pb-16 md:pb-0">{children}</main>
         <BottomNav />
         <Toaster />
       </body>

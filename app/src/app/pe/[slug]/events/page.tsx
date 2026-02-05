@@ -40,7 +40,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
     .where(eq(administrations.entityId, entity.id))
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-5xl">
+    <div className="py-8">
       {/* Back button */}
       <div className="mb-6">
         <Link href={entityPath(entity)} className="text-link hover:underline">

@@ -16,7 +16,7 @@ const adminPages = [
 
 export default function AdminPage() {
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="py-8">
       <PageTitle className="mb-8">Admin</PageTitle>
 
       <div className="grid gap-4">

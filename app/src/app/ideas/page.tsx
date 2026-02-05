@@ -10,7 +10,7 @@ export default async function IdeasPage() {
   const ideas = await getIdeas()
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="py-8">
       <div className="mb-8">
         <PageTitle className="mb-2">Policy Ideas</PageTitle>
         <p className="text-muted-foreground">

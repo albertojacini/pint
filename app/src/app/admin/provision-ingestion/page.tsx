@@ -30,7 +30,7 @@ export default async function ProvisionIngestionPage() {
   const drafts = await getDrafts()
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="py-8">
       <div className="flex justify-between items-center mb-8">
         <PageTitle>Provision Ingestion</PageTitle>
         <Link href="/admin/provision-ingestion/new">

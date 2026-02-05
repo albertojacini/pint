@@ -9,7 +9,7 @@ export default async function NewProvisionDraftPage() {
   const entities = await getEntities()
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-2xl">
+    <div className="py-8">
       <Link
         href="/admin/provision-ingestion"
         className="text-link hover:underline text-sm mb-4 inline-block"

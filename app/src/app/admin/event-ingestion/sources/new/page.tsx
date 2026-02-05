@@ -6,7 +6,7 @@ import { NewSourceForm } from '@/components/admin/event-ingestion/new-source-for
 
 export default async function NewSourcePage() {
   return (
-    <div className="container mx-auto py-8 px-4 max-w-2xl">
+    <div className="py-8">
       <Link
         href="/admin/event-ingestion/sources"
         className="text-link hover:underline text-sm mb-4 inline-block"

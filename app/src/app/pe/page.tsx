@@ -17,7 +17,7 @@ export default async function EntitiesPage() {
     .orderBy(desc(entitiesTable.createdAt))
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="py-8">
       <div className="mb-8">
         <PageTitle className="mb-2">Political Entities</PageTitle>
         <p className="text-gray-600">

@@ -132,7 +132,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
     .where(and(eq(taggables.taggableType, 'entity'), eq(taggables.taggableId, entity.id)))
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="py-8">
       {/* Breadcrumbs */}
       <Breadcrumbs items={[{ label: 'Entities', href: '/pe' }, { label: entity.name }]} />
 
