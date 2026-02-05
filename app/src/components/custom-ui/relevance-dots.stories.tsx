@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { RelevanceDots } from './relevance-dots'
 
 const meta = {
-  title: 'Foundations/Relevance Dots',
+  title: 'Custom-UI/Relevance Dots',
   component: RelevanceDots,
   tags: ['autodocs'],
   parameters: {

@@ -1,4 +1,5 @@
 import { Vote } from 'lucide-react'
+import { Box } from '@/components/custom-ui/box'
 import { CouncilDots } from './council-dots'
 import { ExecutiveMembers } from './executive-members'
 
@@ -201,8 +202,8 @@ function NextElectionCard({ date }: { date: string }) {
   const fullDate = formatFullElectionDate(date)
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 mb-4">
-      <Vote className="w-6 h-6 text-muted-foreground" />
+    <Box variant="highlighted" className="flex items-center gap-3 mb-4">
+      <Vote className="w-6 h-6 text-amber-500" />
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium">Prossime elezioni</div>
         <div className="text-xs text-muted-foreground">{fullDate}</div>
@@ -218,7 +219,7 @@ function NextElectionCard({ date }: { date: string }) {
       >
         {countdown.text}
       </div>
-    </div>
+    </Box>
   )
 }
 

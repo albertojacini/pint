@@ -1,12 +1,5 @@
 import { db } from '@/lib/db/client'
-import {
-  entities,
-  administrations,
-  members,
-  people,
-  taggables,
-  tags,
-} from '@/lib/db/schema'
+import { entities, administrations, members, people, taggables, tags } from '@/lib/db/schema'
 import { eq, desc, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -45,10 +38,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
   const { idPrefix } = parseUrlSlug(urlSlug)
 
   // Fetch the entity by ID prefix
-  const [entity] = await db
-    .select()
-    .from(entities)
-    .where(idStartsWith(entities.id, idPrefix))
+  const [entity] = await db.select().from(entities).where(idStartsWith(entities.id, idPrefix))
 
   if (!entity) {
     notFound()
@@ -93,12 +83,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       })
       .from(members)
       .innerJoin(people, eq(members.personId, people.id))
-      .where(
-        and(
-          eq(members.administrationId, activeAdmin.id),
-          eq(members.status, 'active')
-        )
-      )
+      .where(and(eq(members.administrationId, activeAdmin.id), eq(members.status, 'active')))
   }
 
   // For each administration, get the mayor
@@ -112,12 +97,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
         })
         .from(members)
         .innerJoin(people, eq(members.personId, people.id))
-        .where(
-          and(
-            eq(members.administrationId, admin.id),
-            eq(members.roleType, 'mayor')
-          )
-        )
+        .where(and(eq(members.administrationId, admin.id), eq(members.roleType, 'mayor')))
         .limit(1)
 
       return {
@@ -154,12 +134,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
   return (
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Breadcrumbs */}
-      <Breadcrumbs
-        items={[
-          { label: 'Entities', href: '/pe' },
-          { label: entity.name },
-        ]}
-      />
+      <Breadcrumbs items={[{ label: 'Entities', href: '/pe' }, { label: entity.name }]} />
 
       {/* Entity Type Badge + Tags */}
       <div className="flex items-center gap-2 mb-6">
@@ -173,7 +148,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
       <EntityActions entity={entity} />
       <Section
-        title="Administration"
+        title="Politics"
         action={
           <Link
             href={getPoliticalLandscapeViewAllLink(urlSlug)}
@@ -190,7 +165,13 @@ export default async function EntityPage({ params }: EntityPageProps) {
                   councilComposition: activeAdmin.councilComposition || undefined,
                   executiveMembers: executiveMembers.map((m) => ({
                     name: m.name,
-                    role: m.role as 'mayor' | 'councilor' | 'minister' | 'president' | 'governor' | 'member',
+                    role: m.role as
+                      | 'mayor'
+                      | 'councilor'
+                      | 'minister'
+                      | 'president'
+                      | 'governor'
+                      | 'member',
                     roleTitle: m.roleTitle || undefined,
                     icon: m.icon || undefined,
                     party: m.party || undefined,
@@ -214,14 +195,18 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </Section>
 
       <Section
-        title="Provisions"
+        title="Administration"
         action={
           <Link href={`/pe/${urlSlug}/pr`} className="text-sm text-link hover:underline">
             View all
           </Link>
         }
       >
-        <ProvisionsOverview entity={entity} aggregates={provisionAggregates} changes={provisionChanges} />
+        <ProvisionsOverview
+          entity={entity}
+          aggregates={provisionAggregates}
+          changes={provisionChanges}
+        />
       </Section>
 
       <Section title="Financials">
@@ -231,10 +216,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <Section
         title="Recent Events"
         action={
-          <Link
-            href={getEventsViewAllLink(entity)}
-            className="text-sm text-link hover:underline"
-          >
+          <Link href={getEventsViewAllLink(entity)} className="text-sm text-link hover:underline">
             View all
           </Link>
         }

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { PercentageBar } from './percentage-bar'
 
 const meta = {
-  title: 'Foundations/Percentage Bar',
+  title: 'Custom-UI/Percentage Bar',
   component: PercentageBar,
   tags: ['autodocs'],
   parameters: {

@@ -6,7 +6,7 @@ import {
 } from './classification-badge'
 
 const meta = {
-  title: 'Foundations/Classification Badge',
+  title: 'Custom-UI/Classification Badge',
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',

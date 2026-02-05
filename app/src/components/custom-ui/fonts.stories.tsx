@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 const meta = {
-  title: 'Foundations/Fonts',
+  title: 'Custom-UI/Fonts',
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',

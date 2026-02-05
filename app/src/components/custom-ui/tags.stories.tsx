@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Tag, Tags } from './tags'
 
 const meta = {
-  title: 'Foundations/Tags',
+  title: 'Custom-UI/Tags',
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',

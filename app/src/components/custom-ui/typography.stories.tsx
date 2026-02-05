@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { PageTitle, SectionTitle, SubsectionTitle, Lead, Muted } from './typography'
 
 const meta = {
-  title: 'Foundations/Typography',
+  title: 'Custom-UI/Typography',
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',

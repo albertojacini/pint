@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { MarkdownContent } from './markdown-content'
 
 const meta = {
-  title: 'Foundations/Markdown Content',
+  title: 'Custom-UI/Markdown Content',
   component: MarkdownContent,
   tags: ['autodocs'],
   parameters: {

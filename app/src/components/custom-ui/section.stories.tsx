@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Section } from './section'
 
 const meta = {
-  title: 'Foundations/Section',
+  title: 'Custom-UI/Section',
   component: Section,
   tags: ['autodocs'],
   parameters: {

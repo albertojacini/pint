@@ -1,6 +1,7 @@
 'use client'
 
 import type { EvaluationSummary } from '@/lib/db/schema/government'
+import { Box } from '@/components/custom-ui/box'
 
 type ConfidenceLevel = 'high' | 'medium' | 'low' | 'none'
 
@@ -17,7 +18,7 @@ function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiven
     data.trend === 'up' ? 'text-positive' : data.trend === 'down' ? 'text-negative' : 'text-neutral'
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="h-1 bg-muted rounded-full overflow-hidden mb-3">
         <div className={`h-full ${color} rounded-full`} style={{ width: `${percentage}%` }} />
       </div>
@@ -66,7 +67,7 @@ function ScoreWidget({ data }: { data: NonNullable<EvaluationSummary['effectiven
           </button>
         </div>
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -76,7 +77,7 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
     data.balance > 0.3 ? 'Positive' : data.balance < -0.3 ? 'Negative' : 'Neutral'
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">Impact</span>
         <span className="text-sm font-bold">{balanceLabel}</span>
@@ -87,7 +88,7 @@ function ImpactWidget({ data }: { data: NonNullable<EvaluationSummary['impact']>
           style={{ left: `calc(${balancePercent}% - 3px)` }}
         />
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -111,7 +112,7 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
   const pathD = `M ${points.join(' L ')}`
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-muted-foreground">Budget</span>
         <div className="flex items-center gap-1">
@@ -171,7 +172,7 @@ function FinancialWidget({ data }: { data: NonNullable<EvaluationSummary['financ
           </button>
         </div>
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -189,7 +190,7 @@ function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activit
   const maxActivity = Math.max(...activityData)
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="flex justify-between items-center mb-3">
         {activityData.map((count, i) => {
           const size = 2 + (count / maxActivity) * 4 // 2px to 6px
@@ -251,7 +252,7 @@ function ActivityWidget({ data }: { data: NonNullable<EvaluationSummary['activit
           </button>
         </div>
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -268,7 +269,7 @@ function DataConfidenceWidget({
   }
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="h-1 bg-muted rounded-full overflow-hidden mb-3">
         <div
           className={`h-full ${levelColors[data.level]} rounded-full`}
@@ -317,7 +318,7 @@ function DataConfidenceWidget({
           </button>
         </div>
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -336,7 +337,7 @@ function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['sta
   })
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <span className="text-xs font-medium text-muted-foreground">Stakeholders</span>
       <div className="mt-2 flex flex-wrap gap-x-2 gap-y-1">
         {sortedByColor.map((item, i) => (
@@ -345,7 +346,7 @@ function StakeholdersWidget({ data }: { data: NonNullable<EvaluationSummary['sta
           </div>
         ))}
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -363,7 +364,7 @@ function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['pr
   const maxEngagement = Math.max(...sorted.map((p) => p.total))
 
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="flex gap-1.5 items-center mb-3">
         {sorted.map((p, i) => {
           const size = 3 + (p.total / maxEngagement) * 9 // 3px to 12px
@@ -428,7 +429,7 @@ function ProposalsMiniWidget({ data }: { data: NonNullable<EvaluationSummary['pr
           </button>
         </div>
       </div>
-    </div>
+    </Box>
   )
 }
 
@@ -440,7 +441,7 @@ function formatCount(n: number): string {
 
 function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['community']> }) {
   return (
-    <div className="bg-muted/30 rounded-lg p-3">
+    <Box variant="muted">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-muted-foreground">Community</span>
         <div className="flex items-center gap-1">
@@ -461,13 +462,13 @@ function CommunityMiniWidget({ data }: { data: NonNullable<EvaluationSummary['co
         <span>{formatCount(data.commentsCount)} comments</span>
         <span>{formatCount(data.followers)} followers</span>
       </div>
-    </div>
+    </Box>
   )
 }
 
 function IdeasWidget({ data }: { data: NonNullable<EvaluationSummary['ideas']> }) {
   return (
-    <div className="rounded-lg p-3 border-2 border-dashed border-amber-400/70">
+    <Box variant="highlighted">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-xs font-medium text-muted-foreground">Implemented ideas</span>
         <span className="text-sm font-bold ml-auto">{data.items.length}</span>
@@ -482,7 +483,7 @@ function IdeasWidget({ data }: { data: NonNullable<EvaluationSummary['ideas']> }
           </div>
         ))}
       </div>
-    </div>
+    </Box>
   )
 }
 

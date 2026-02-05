@@ -78,4 +78,11 @@ IMPORTANT: This is an early stage project:
 
 ## UI Development
 
-UI development and experimentation is done with Storybook. 
+UI development and experimentation is done with Storybook.
+
+- **Run Storybook**: `cd app && pnpm storybook`
+- **Component locations**:
+  - `app/src/components/ui/` - shadcn/ui components (standard library)
+  - `app/src/components/custom-ui/` - Custom Pint components (Box, Section, Tags, etc.)
+- **Story files**: Place `*.stories.tsx` alongside components in the same directory
+- **Storybook category**: Use `title: 'Custom-UI/ComponentName'` for custom components
