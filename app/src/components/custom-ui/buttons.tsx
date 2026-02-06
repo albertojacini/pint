@@ -1,0 +1,146 @@
+import * as React from 'react'
+import { cn } from '@/lib/utils'
+import { Button, ButtonProps } from '@/components/ui/button'
+import { Loader2 } from 'lucide-react'
+
+// LoadingButton - Button with loading state
+export interface LoadingButtonProps extends ButtonProps {
+  loading?: boolean
+  loadingText?: string
+}
+
+export const LoadingButton = React.forwardRef<HTMLButtonElement, LoadingButtonProps>(
+  ({ loading, loadingText, children, disabled, ...props }, ref) => {
+    return (
+      <Button ref={ref} disabled={disabled || loading} {...props}>
+        {loading && <Loader2 className="animate-spin" />}
+        {loading && loadingText ? loadingText : children}
+      </Button>
+    )
+  }
+)
+LoadingButton.displayName = 'LoadingButton'
+
+// IconButton - Compact button for icons with optional label
+export interface IconButtonProps extends ButtonProps {
+  icon: React.ReactNode
+  label?: string
+}
+
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
+  ({ icon, label, className, ...props }, ref) => {
+    return (
+      <Button
+        ref={ref}
+        variant="ghost"
+        size={label ? 'default' : 'icon'}
+        className={cn('gap-2', className)}
+        {...props}
+      >
+        {icon}
+        {label && <span>{label}</span>}
+      </Button>
+    )
+  }
+)
+IconButton.displayName = 'IconButton'
+
+// FilterButton - Toggle button for filters (like in calendar heatmap)
+export interface FilterButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onToggle'> {
+  selected?: boolean
+  indicator?: React.ReactNode
+  onSelectedChange?: (selected: boolean) => void
+}
+
+export const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProps>(
+  ({ selected, indicator, onSelectedChange, children, className, onClick, ...props }, ref) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      onSelectedChange?.(!selected)
+      onClick?.(e)
+    }
+
+    return (
+      <button
+        ref={ref}
+        type="button"
+        onClick={handleClick}
+        className={cn(
+          'px-3 py-1.5 rounded-full text-sm font-medium transition-all',
+          'flex items-center gap-2',
+          selected
+            ? 'bg-foreground text-background'
+            : 'bg-muted text-muted-foreground hover:bg-muted/80',
+          className
+        )}
+        {...props}
+      >
+        {indicator}
+        {children}
+      </button>
+    )
+  }
+)
+FilterButton.displayName = 'FilterButton'
+
+// ButtonGroup - Group of related buttons
+export interface ButtonGroupProps {
+  children: React.ReactNode
+  className?: string
+  orientation?: 'horizontal' | 'vertical'
+}
+
+export function ButtonGroup({ children, className, orientation = 'horizontal' }: ButtonGroupProps) {
+  return (
+    <div
+      className={cn(
+        'inline-flex',
+        orientation === 'horizontal'
+          ? '[&>*:not(:first-child)]:rounded-l-none [&>*:not(:last-child)]:rounded-r-none [&>*:not(:last-child)]:border-r-0'
+          : 'flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:last-child)]:rounded-b-none [&>*:not(:last-child)]:border-b-0',
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+// ToggleButtonGroup - Group of mutually exclusive toggle buttons
+export interface ToggleButtonGroupProps<T extends string> {
+  value: T
+  onChange: (value: T) => void
+  options: Array<{ value: T; label: string; icon?: React.ReactNode }>
+  className?: string
+}
+
+export function ToggleButtonGroup<T extends string>({
+  value,
+  onChange,
+  options,
+  className,
+}: ToggleButtonGroupProps<T>) {
+  return (
+    <div className={cn('inline-flex rounded-md border border-input', className)}>
+      {options.map((option, index) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={cn(
+            'px-3 py-2 text-sm font-medium transition-colors',
+            'flex items-center gap-2',
+            index === 0 && 'rounded-l-md',
+            index === options.length - 1 && 'rounded-r-md',
+            index !== options.length - 1 && 'border-r border-input',
+            value === option.value
+              ? 'bg-accent text-accent-foreground'
+              : 'bg-background text-muted-foreground hover:bg-muted'
+          )}
+        >
+          {option.icon}
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
