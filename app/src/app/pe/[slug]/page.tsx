@@ -17,6 +17,7 @@ import {
   CommunityMetrics,
   ProvisionsOverview,
   EventsOverview,
+  EventsHeatmap,
   getEventsViewAllLink,
   EntityMetadata,
   RelatedEntitiesSection,
@@ -221,7 +222,10 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <EventsOverview entity={entity} events={events} />
+        <EventsHeatmap events={events} />
+        <div className="mt-6">
+          <EventsOverview entity={entity} events={events} />
+        </div>
       </Section>
 
       <Section title="Performance Indicators">

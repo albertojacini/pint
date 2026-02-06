@@ -45,15 +45,14 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 )
 IconButton.displayName = 'IconButton'
 
-// FilterButton - Toggle button for filters (like in calendar heatmap)
+// FilterButton - Toggle button for filters
 export interface FilterButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onToggle'> {
   selected?: boolean
-  indicator?: React.ReactNode
   onSelectedChange?: (selected: boolean) => void
 }
 
 export const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProps>(
-  ({ selected, indicator, onSelectedChange, children, className, onClick, ...props }, ref) => {
+  ({ selected, onSelectedChange, children, className, onClick, ...props }, ref) => {
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       onSelectedChange?.(!selected)
       onClick?.(e)
@@ -65,16 +64,14 @@ export const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProp
         type="button"
         onClick={handleClick}
         className={cn(
-          'px-3 py-1.5 rounded-full text-sm font-medium transition-all',
-          'flex items-center gap-2',
+          'px-2 py-0.5 rounded-sm text-xs font-medium transition-all',
           selected
-            ? 'bg-foreground text-background'
-            : 'bg-muted text-muted-foreground hover:bg-muted/80',
+            ? 'text-foreground border border-black dark:border-white'
+            : 'text-muted-foreground hover:text-foreground border border-transparent',
           className
         )}
         {...props}
       >
-        {indicator}
         {children}
       </button>
     )

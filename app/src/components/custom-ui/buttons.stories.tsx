@@ -49,9 +49,8 @@ export const FilterButtons: StoryObj<typeof FilterButton> = {
     <div className="flex gap-2">
       <FilterButton selected>Selected</FilterButton>
       <FilterButton>Not Selected</FilterButton>
-      <FilterButton selected indicator={<span className="w-2 h-2 rounded-full bg-blue-500" />}>
-        With Indicator
-      </FilterButton>
+      <FilterButton>Another</FilterButton>
+      <FilterButton selected>Also Selected</FilterButton>
     </div>
   ),
 }

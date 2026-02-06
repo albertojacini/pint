@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { CalendarHeatmap, CalendarHeatmapDataPoint } from './calendar-heatmap'
+import { FilterButton } from './buttons'
 
 const meta: Meta<typeof CalendarHeatmap> = {
   title: 'Custom-UI/CalendarHeatmapExperiments',
@@ -28,9 +29,9 @@ interface EventDataPoint extends CalendarHeatmapDataPoint {
 function generateSampleDataWithTypes(): EventDataPoint[] {
   const data: EventDataPoint[] = []
   const now = new Date()
-  const twoYearsAgo = new Date(now.getFullYear() - 2, 0, 1)
+  const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
 
-  for (let d = new Date(twoYearsAgo); d <= now; d.setDate(d.getDate() + 1)) {
+  for (let d = new Date(oneYearAgo); d <= now; d.setDate(d.getDate() + 1)) {
     if (Math.random() > 0.7) {
       const eventType = EVENT_TYPES[Math.floor(Math.random() * EVENT_TYPES.length)]
       data.push({
@@ -46,7 +47,7 @@ function generateSampleDataWithTypes(): EventDataPoint[] {
 
 const sampleDataWithTypes = generateSampleDataWithTypes()
 
-// Wrapper component with filter controls
+// Base experiment with filters
 function CalendarHeatmapWithFilters() {
   const [selectedTypes, setSelectedTypes] = useState<Set<EventType>>(new Set(EVENT_TYPES))
 
@@ -62,9 +63,6 @@ function CalendarHeatmapWithFilters() {
     })
   }
 
-  const selectAll = () => setSelectedTypes(new Set(EVENT_TYPES))
-  const selectNone = () => setSelectedTypes(new Set())
-
   // Filter and aggregate data by date
   const filteredData = sampleDataWithTypes
     .filter((d) => selectedTypes.has(d.eventType))
@@ -79,88 +77,32 @@ function CalendarHeatmapWithFilters() {
       return acc
     }, [])
 
-  // Color mapping for event types
-  const typeColors: Record<EventType, string> = {
-    Elections: 'bg-blue-500',
-    Regulation: 'bg-green-500',
-    Appointment: 'bg-purple-500',
-    Budget: 'bg-yellow-500',
-    Meeting: 'bg-orange-500',
-    Announcement: 'bg-pink-500',
-  }
-
   return (
     <div>
-      {/* Filter controls */}
-      <div className="mb-6 p-4 bg-muted/50 rounded-lg">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium">Filter by Event Type</span>
-          <div className="flex gap-2">
-            <button
-              onClick={selectAll}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              Select all
-            </button>
-            <span className="text-muted-foreground">|</span>
-            <button
-              onClick={selectNone}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {EVENT_TYPES.map((type) => (
-            <button
-              key={type}
-              onClick={() => toggleType(type)}
-              className={`
-                px-3 py-1.5 rounded-full text-sm font-medium transition-all
-                flex items-center gap-2
-                ${
-                  selectedTypes.has(type)
-                    ? 'bg-foreground text-background'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }
-              `}
-            >
-              <span className={`w-2 h-2 rounded-full ${typeColors[type]}`} />
-              {type}
-            </button>
-          ))}
-        </div>
-        <div className="mt-3 text-xs text-muted-foreground">
-          Showing {filteredData.length} days with events ({selectedTypes.size} types selected)
-        </div>
+      {/* Filters using official FilterButton */}
+      <div className="flex flex-wrap gap-1 mb-4">
+        {EVENT_TYPES.map((type) => (
+          <FilterButton
+            key={type}
+            selected={selectedTypes.has(type)}
+            onSelectedChange={() => toggleType(type)}
+          >
+            {type}
+          </FilterButton>
+        ))}
       </div>
 
       {/* Heatmap */}
       <CalendarHeatmap
         data={filteredData}
-        onDateClick={(date, value) => {
-          const eventsOnDate = sampleDataWithTypes.filter(
-            (d) =>
-              d.date.toISOString().split('T')[0] === date.toISOString().split('T')[0] &&
-              selectedTypes.has(d.eventType)
-          )
-          const breakdown = EVENT_TYPES.filter((t) => selectedTypes.has(t))
-            .map((type) => {
-              const count = eventsOnDate.filter((e) => e.eventType === type).length
-              return count > 0 ? `${type}: ${count}` : null
-            })
-            .filter(Boolean)
-            .join('\n')
-
-          alert(`Date: ${date.toLocaleDateString()}\nTotal events: ${value}\n\n${breakdown}`)
+        onDateClick={(date: Date, value: number) => {
+          alert(`Date: ${date.toLocaleDateString()}\nEvents: ${value}`)
         }}
       />
     </div>
   )
 }
 
-// Base experiment with filters
 export const Base: Story = {
   render: () => <CalendarHeatmapWithFilters />,
 }
