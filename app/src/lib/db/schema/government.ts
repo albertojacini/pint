@@ -1,6 +1,6 @@
 import { pgTable, text, uuid, timestamp, integer, uniqueIndex, jsonb } from 'drizzle-orm/pg-core'
 import { ideas } from './policies'
-import { events } from './ingestion'
+import { events } from './events'
 import { artifacts } from './knowledge'
 
 // ============================================================================
@@ -414,7 +414,7 @@ export const provisionArtifacts = pgTable(
 // - Actual changes: modifications that have taken effect (e.g., "Area C price raised to €7.50")
 // - Planned changes: announced future modifications (e.g., "Metro Line 4 extension scheduled for 2028")
 //
-// Changes are linked to ingestion events that document them, providing
+// Changes are linked to events that document them, providing
 // traceability to source documents. The effective_date indicates when the
 // change takes/took effect (distinct from created_at which tracks when
 // the record was created in the system).

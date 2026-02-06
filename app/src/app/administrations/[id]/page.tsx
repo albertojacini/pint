@@ -4,7 +4,6 @@ import { eq } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { getEventsByAdministration } from '@/lib/actions/events'
 import { getStorageUrl } from '@/lib/storage'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -62,9 +61,6 @@ export default async function AdministrationPage({ params }: AdministrationPageP
     .from(members)
     .innerJoin(people, eq(members.personId, people.id))
     .where(eq(members.administrationId, id))
-
-  // Fetch events for this administration
-  const events = await getEventsByAdministration(id)
 
   const termPeriod = administration.termEnd
     ? `${format(new Date(administration.termStart), 'MMMM dd, yyyy')} - ${format(new Date(administration.termEnd), 'MMMM dd, yyyy')}`
@@ -184,35 +180,6 @@ export default async function AdministrationPage({ params }: AdministrationPageP
         </div>
       )}
 
-      {/* Events Section */}
-      {events.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
-          <SectionTitle className="mb-6">Events</SectionTitle>
-          <div className="grid gap-4 md:grid-cols-2">
-            {events.map((event) => (
-              <Card key={event.id}>
-                <CardHeader>
-                  <div className="mb-2 flex gap-2">
-                    <Badge variant="outline" className="text-xs font-mono">EVENT</Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {event.type}
-                    </Badge>
-                  </div>
-                  <SubsectionTitle>{event.title}</SubsectionTitle>
-                  <div className="text-sm text-muted-foreground">
-                    {format(new Date(event.createdAt), 'PPP')}
-                  </div>
-                </CardHeader>
-                {event.description && (
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{event.description}</p>
-                  </CardContent>
-                )}
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Metadata */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">

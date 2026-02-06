@@ -180,42 +180,28 @@ export async function seedProvisions(client, supabase, idMaps) {
   logger.startSection('events')
 
   let eventsCount = 0
-  let eventsSkipped = 0
 
-  if (await hasData(client, 'ing_events')) {
+  if (await hasData(client, 'eve_events')) {
     logger.skipSection('Events')
   } else {
     for (const event of events) {
-      // Look up administration ID
-      const administrationId = idMaps.administrations.get(event.administration)
-
-      if (!administrationId) {
-        logger.warning(`Skipping event "${event.title}" - administration not found: ${event.administration}`)
-        eventsSkipped++
-        continue
-      }
-
       const id = generateUUID()
 
       await insertQuery(client, {
-        table: 'ing_events',
-        columns: ['id', 'administration_id', 'title', 'description', 'description_short', 'type'],
+        table: 'eve_events',
+        columns: ['id', 'title', 'description', 'description_short', 'type', 'date'],
         values: [
           id,
-          administrationId,
           event.title,
           event.description,
           event.descriptionShort || null,
-          event.type
+          event.type,
+          event.date
         ],
       })
 
       eventsCount++
       idMaps.events.set(event.title, id)
-    }
-
-    if (eventsSkipped > 0) {
-      logger.warning(`Skipped ${eventsSkipped} events due to missing dependencies`)
     }
 
     logger.endSection('events', eventsCount)
@@ -232,13 +218,7 @@ export async function seedProvisions(client, supabase, idMaps) {
   } else {
     for (const change of changes) {
       // Look up event ID
-      const eventId = idMaps.events.get(change.event)
-
-      if (!eventId) {
-        logger.warning(`Skipping change for event "${change.event}" - event not found`)
-        changesSkipped++
-        continue
-      }
+      const eventId = change.event ? idMaps.events.get(change.event) : null
 
       // Look up target ID based on target type
       let targetId = null

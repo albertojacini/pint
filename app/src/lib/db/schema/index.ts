@@ -1,37 +1,6 @@
 // ============================================================================
 // SCHEMA INDEX
-// Provides both namespaced and flat exports for all subsystems
-// ============================================================================
-
-// Namespaced exports (recommended for new code)
-import * as accounts from './accounts'
-import * as government from './government'
-import * as taxonomy from './taxonomy'
-import * as policies from './policies'
-import * as sources from './sources'
-import * as ingestion from './ingestion'
-import * as provisionPipeline from './provision-pipeline'
-import * as research from './research'
-import * as knowledge from './knowledge'
-import * as discussions from './discussions'
-import * as voterBudget from './voter-budget'
-
-export {
-  accounts,
-  government,
-  taxonomy,
-  policies,
-  sources,
-  ingestion,
-  provisionPipeline,
-  research,
-  knowledge,
-  discussions,
-  voterBudget,
-}
-
-// ============================================================================
-// Flat exports
+// Flat exports of all table definitions for Drizzle ORM
 // ============================================================================
 
 // accounts
@@ -60,16 +29,8 @@ export { goals, measurables, ideas, effects, contributions, stakeholders } from 
 // sources
 export { publishers, documents, documentChunks } from './sources'
 
-// ingestion
-export {
-  sources as ingSources,
-  events,
-  eventDocuments,
-  eventCandidates,
-  candidateDocuments,
-  changeCandidates,
-} from './ingestion'
-export type { SourceExtractedData, CandidateProposedData } from './ingestion'
+// events
+export { events } from './events'
 
 // provision-pipeline
 export { provisionDrafts, draftDocuments } from './provision-pipeline'

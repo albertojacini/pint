@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { entityPath } from '@/lib/utils'
@@ -8,9 +7,7 @@ interface Event {
   title: string
   description: string | null
   type: string
-  createdAt: Date
-  administrationId: string | null
-  administrationName: string | null
+  date: string
 }
 
 interface EventsOverviewProps {
@@ -43,7 +40,7 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
                 </Badge>
               </div>
               <span className="text-xs text-gray-500 whitespace-nowrap">
-                {format(new Date(event.createdAt), 'PPP')}
+                {format(new Date(event.date), 'PPP')}
               </span>
             </div>
 
@@ -51,18 +48,6 @@ export function EventsOverview({ entity, events }: EventsOverviewProps) {
 
             {event.description && (
               <p className="text-sm text-gray-600 mb-3 line-clamp-2">{event.description}</p>
-            )}
-
-            {event.administrationName && event.administrationId && (
-              <div className="text-xs text-gray-500">
-                Administration:{' '}
-                <Link
-                  href={`/administrations/${event.administrationId}`}
-                  className="text-link hover:underline font-medium"
-                >
-                  {event.administrationName}
-                </Link>
-              </div>
             )}
           </div>
         ))}

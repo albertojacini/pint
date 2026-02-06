@@ -1,7 +1,6 @@
 export const dynamic = 'force-dynamic'
 
 import { getEvents } from '@/lib/actions/events'
-import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
@@ -36,7 +35,7 @@ export default async function EventsPage() {
                 </div>
                 <SubsectionTitle>{event.title}</SubsectionTitle>
                 <CardDescription className="text-sm">
-                  {format(new Date(event.createdAt), 'PPP')}
+                  {format(new Date(event.date), 'PPP')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -46,37 +45,6 @@ export default async function EventsPage() {
                   </p>
                 )}
 
-                {event.administrationName && event.entityName && (
-                  <div className="space-y-2">
-                    <div className="text-sm">
-                      <span className="text-muted-foreground">Administration: </span>
-                      <Link
-                        href={`/administrations/${event.administrationId}`}
-                        className="text-link hover:underline"
-                      >
-                        {event.administrationName}
-                      </Link>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-muted-foreground">Entity: </span>
-                      <Link
-                        href={`/entities/${event.entityId}`}
-                        className="text-link hover:underline"
-                      >
-                        {event.entityName}
-                      </Link>
-                      <Badge variant="outline" className="text-xs">
-                        {event.entityType}
-                      </Badge>
-                    </div>
-                  </div>
-                )}
-
-                {!event.administrationName && (
-                  <div className="text-sm text-muted-foreground">
-                    Independent event (no administration)
-                  </div>
-                )}
               </CardContent>
             </Card>
           ))}

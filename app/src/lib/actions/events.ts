@@ -1,8 +1,8 @@
 'use server'
 
 import { db } from '@/lib/db/client'
-import { events, administrations, entities } from '@/lib/db/schema'
-import { eq, desc } from 'drizzle-orm'
+import { events, changes } from '@/lib/db/schema'
+import { eq, desc, and } from 'drizzle-orm'
 
 export async function getEvents() {
   const allEvents = await db
@@ -11,52 +11,30 @@ export async function getEvents() {
       title: events.title,
       description: events.description,
       type: events.type,
-      createdAt: events.createdAt,
-      administrationId: administrations.id,
-      administrationName: administrations.name,
-      entityId: entities.id,
-      entityName: entities.name,
-      entityType: entities.type,
+      date: events.date,
     })
     .from(events)
-    .leftJoin(administrations, eq(events.administrationId, administrations.id))
-    .leftJoin(entities, eq(administrations.entityId, entities.id))
-    .orderBy(desc(events.createdAt))
+    .orderBy(desc(events.date))
 
   return allEvents
 }
 
-export async function getEventsByAdministration(administrationId: string) {
-  const administrationEvents = await db
-    .select({
-      id: events.id,
-      title: events.title,
-      description: events.description,
-      type: events.type,
-      createdAt: events.createdAt,
-    })
-    .from(events)
-    .where(eq(events.administrationId, administrationId))
-    .orderBy(desc(events.createdAt))
-
-  return administrationEvents
-}
-
 export async function getEventsByEntity(entityId: string) {
   const entityEvents = await db
-    .select({
+    .selectDistinct({
       id: events.id,
       title: events.title,
       description: events.description,
       type: events.type,
-      createdAt: events.createdAt,
-      administrationId: administrations.id,
-      administrationName: administrations.name,
+      date: events.date,
     })
     .from(events)
-    .leftJoin(administrations, eq(events.administrationId, administrations.id))
-    .where(eq(administrations.entityId, entityId))
-    .orderBy(desc(events.createdAt))
+    .innerJoin(changes, eq(changes.eventId, events.id))
+    .where(and(
+      eq(changes.targetType, 'entity'),
+      eq(changes.targetId, entityId),
+    ))
+    .orderBy(desc(events.date))
 
   return entityEvents
 }

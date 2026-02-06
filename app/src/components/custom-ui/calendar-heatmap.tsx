@@ -32,7 +32,8 @@ export function CalendarHeatmap({ data, onDateClick, className }: CalendarHeatma
     }))
 
     const now = new Date()
-    const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
+    // Start from the first day of the month, one year ago
+    const startDate = new Date(now.getFullYear() - 1, now.getMonth(), 1)
 
     const cal = new CalHeatmap()
     calRef.current = cal
@@ -45,9 +46,10 @@ export function CalendarHeatmap({ data, onDateClick, className }: CalendarHeatma
         y: 'value',
       },
       date: {
-        start: oneYearAgo,
+        start: startDate,
       },
-      range: 12,
+      // 14 months: 12 past + current month + next month
+      range: 14,
       domain: {
         type: 'month',
         label: { text: 'MMM', position: 'top' },

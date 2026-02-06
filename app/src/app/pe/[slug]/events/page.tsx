@@ -2,8 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getEventsByEntity } from '@/lib/actions/events'
 import { db } from '@/lib/db/client'
-import { entities, administrations } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
+import { entities } from '@/lib/db/schema'
 import { EventsClient } from './events-client'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
@@ -30,15 +29,6 @@ export default async function EventsPage({ params }: EventsPageProps) {
   // Fetch events for this entity
   const events = await getEventsByEntity(entity.id)
 
-  // Fetch all administrations for this entity for the filter dropdown
-  const entityAdministrations = await db
-    .select({
-      id: administrations.id,
-      name: administrations.name,
-    })
-    .from(administrations)
-    .where(eq(administrations.entityId, entity.id))
-
   return (
     <div className="py-8">
       {/* Back button */}
@@ -57,7 +47,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
       </div>
 
       {/* Client component for filtering */}
-      <EventsClient events={events} administrations={entityAdministrations} />
+      <EventsClient events={events} />
     </div>
   )
 }

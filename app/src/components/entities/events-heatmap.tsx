@@ -9,9 +9,7 @@ interface Event {
   title: string
   description: string | null
   type: string
-  createdAt: Date
-  administrationId: string | null
-  administrationName: string | null
+  date: string
 }
 
 interface EventsHeatmapProps {
@@ -47,12 +45,11 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
     const byDate = new Map<string, { date: Date; value: number }>()
 
     filtered.forEach((event) => {
-      const dateStr = new Date(event.createdAt).toISOString().split('T')[0]
-      const existing = byDate.get(dateStr)
+      const existing = byDate.get(event.date)
       if (existing) {
         existing.value += 1
       } else {
-        byDate.set(dateStr, { date: new Date(event.createdAt), value: 1 })
+        byDate.set(event.date, { date: new Date(event.date), value: 1 })
       }
     })
 
@@ -62,10 +59,7 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
   // Get events for a specific date
   const getEventsForDate = (date: Date): Event[] => {
     const dateStr = date.toISOString().split('T')[0]
-    return events.filter((e) => {
-      const eventDateStr = new Date(e.createdAt).toISOString().split('T')[0]
-      return eventDateStr === dateStr && selectedTypes.has(e.type)
-    })
+    return events.filter((e) => e.date === dateStr && selectedTypes.has(e.type))
   }
 
   if (events.length === 0) {
@@ -75,7 +69,7 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
   return (
     <div>
       {/* Filters */}
-      {eventTypes.length > 1 && (
+      {eventTypes.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
           {eventTypes.map((type) => (
             <FilterButton

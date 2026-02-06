@@ -5,33 +5,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import { Search, Filter } from 'lucide-react'
-import Link from 'next/link'
 
 interface Event {
   id: string
   title: string
   description: string | null
   type: string
-  createdAt: Date
-  administrationId: string | null
-  administrationName: string | null
-}
-
-interface Administration {
-  id: string
-  name: string
+  date: string
 }
 
 interface EventsClientProps {
   events: Event[]
-  administrations: Administration[]
 }
 
-export function EventsClient({ events, administrations }: EventsClientProps) {
+export function EventsClient({ events }: EventsClientProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedType, setSelectedType] = useState<string>('all')
   const [selectedYear, setSelectedYear] = useState<string>('all')
-  const [selectedAdministration, setSelectedAdministration] = useState<string>('all')
   const [showFilters, setShowFilters] = useState(false)
 
   // Get unique event types
@@ -42,14 +32,13 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
 
   // Get unique years
   const years = useMemo(() => {
-    const yearSet = new Set(events.map(e => new Date(e.createdAt).getFullYear()))
-    return Array.from(yearSet).sort((a, b) => b - a) // Descending order
+    const yearSet = new Set(events.map(e => new Date(e.date).getFullYear()))
+    return Array.from(yearSet).sort((a, b) => b - a)
   }, [events])
 
   // Filter events
   const filteredEvents = useMemo(() => {
     return events.filter(event => {
-      // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase()
         const matchesTitle = event.title.toLowerCase().includes(query)
@@ -57,29 +46,18 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
         if (!matchesTitle && !matchesDescription) return false
       }
 
-      // Type filter
       if (selectedType !== 'all' && event.type !== selectedType) {
         return false
       }
 
-      // Year filter
       if (selectedYear !== 'all') {
-        const eventYear = new Date(event.createdAt).getFullYear()
+        const eventYear = new Date(event.date).getFullYear()
         if (eventYear !== parseInt(selectedYear)) return false
-      }
-
-      // Administration filter
-      if (selectedAdministration !== 'all') {
-        if (selectedAdministration === 'none') {
-          if (event.administrationId !== null) return false
-        } else {
-          if (event.administrationId !== selectedAdministration) return false
-        }
       }
 
       return true
     })
-  }, [events, searchQuery, selectedType, selectedYear, selectedAdministration])
+  }, [events, searchQuery, selectedType, selectedYear])
 
   return (
     <>
@@ -113,7 +91,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
           </div>
 
           {/* Filter controls */}
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             {/* Event Type Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -147,34 +125,15 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
                 ))}
               </select>
             </div>
-
-            {/* Administration Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Administration
-              </label>
-              <select
-                value={selectedAdministration}
-                onChange={(e) => setSelectedAdministration(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="all">All administrations</option>
-                <option value="none">No administration</option>
-                {administrations.map(admin => (
-                  <option key={admin.id} value={admin.id}>{admin.name}</option>
-                ))}
-              </select>
-            </div>
           </div>
 
           {/* Clear filters */}
-          {(searchQuery || selectedType !== 'all' || selectedYear !== 'all' || selectedAdministration !== 'all') && (
+          {(searchQuery || selectedType !== 'all' || selectedYear !== 'all') && (
             <button
               onClick={() => {
                 setSearchQuery('')
                 setSelectedType('all')
                 setSelectedYear('all')
-                setSelectedAdministration('all')
               }}
               className="text-sm text-gray-600 hover:text-gray-900 underline"
             >
@@ -184,7 +143,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
         </div>
       </div>
 
-      {/* Events List - Blog Style */}
+      {/* Events List */}
       {filteredEvents.length > 0 ? (
         <div className="space-y-6">
           {filteredEvents.map((event) => (
@@ -198,7 +157,7 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
                     </Badge>
                   </div>
                   <CardDescription className="text-sm whitespace-nowrap">
-                    {format(new Date(event.createdAt), 'PPP')}
+                    {format(new Date(event.date), 'PPP')}
                   </CardDescription>
                 </div>
                 <CardTitle className="text-2xl">{event.title}</CardTitle>
@@ -208,28 +167,6 @@ export function EventsClient({ events, administrations }: EventsClientProps) {
                   <p className="text-base text-gray-700 mb-4 leading-relaxed">
                     {event.description}
                   </p>
-                )}
-
-                {event.administrationName && event.administrationId && (
-                  <div className="pt-4 border-t border-gray-100">
-                    <div className="text-sm">
-                      <span className="text-gray-500">Administration: </span>
-                      <Link
-                        href={`/administrations/${event.administrationId}`}
-                        className="text-link hover:underline font-medium"
-                      >
-                        {event.administrationName}
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
-                {!event.administrationName && (
-                  <div className="pt-4 border-t border-gray-100">
-                    <div className="text-sm text-gray-500">
-                      Independent event (no administration)
-                    </div>
-                  </div>
                 )}
               </CardContent>
             </Card>
