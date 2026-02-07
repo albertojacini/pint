@@ -66,8 +66,8 @@ export const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProp
         className={cn(
           'px-2 py-0.5 rounded-sm text-xs font-medium transition-all',
           selected
-            ? 'text-foreground border border-black dark:border-white'
-            : 'text-muted-foreground hover:text-foreground border border-transparent',
+            ? 'text-foreground bg-muted border border-transparent'
+            : 'text-muted-foreground hover:text-foreground border border-border',
           className
         )}
         {...props}

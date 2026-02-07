@@ -215,7 +215,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </Section>
 
       <Section
-        title="Recent Events"
+        title="Events"
         action={
           <Link href={getEventsViewAllLink(entity)} className="text-sm text-link hover:underline">
             View all
