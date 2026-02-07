@@ -84,5 +84,5 @@ UI development and experimentation is done with Storybook.
 - **Component locations**:
   - `app/src/components/ui/` - shadcn/ui components (standard library)
   - `app/src/components/custom-ui/` - Custom Pint components (Box, Section, Tags, etc.)
-- **Story files**: Place `*.stories.tsx` alongside components in the same directory
-- **Storybook category**: Use `title: 'Custom-UI/ComponentName'` for custom components
+  - `app/src/components/<domain specific components>/` - Pages, Cards, Sections for political entities, ideas and so on
+- **Story files**: Place `*.stories.tsx` alongside components in the same directory. The general Storybook structure should precisely reflect /components directory. Some components may have a special experiment stories file. For example you can have: components/custom-ui/buttons.tsx, components/custom-ui/buttons.stories.tsx, components/custom-ui/buttons-experiments.stories.tsx. Please ALWAYS respect this format. When not possible please warn me.
