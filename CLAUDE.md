@@ -78,11 +78,16 @@ IMPORTANT: This is an early stage project:
 
 ## UI Development
 
-UI development and experimentation is done with Storybook.
+- **Storybook**: `cd app && pnpm storybook`
+- **Stories**: Place `*.stories.tsx` alongside components. Storybook structure mirrors `/components`. Experiment files use `*-experiments.stories.tsx` suffix (e.g. `event-cards.tsx`, `event-cards.stories.tsx`, `event-cards-experiments.stories.tsx`).
 
-- **Run Storybook**: `cd app && pnpm storybook`
-- **Component locations**:
-  - `app/src/components/ui/` - shadcn/ui components (standard library)
-  - `app/src/components/custom-ui/` - Custom Pint components (Box, Section, Tags, etc.)
-  - `app/src/components/<domain specific components>/` - Pages, Cards, Sections for political entities, ideas and so on
-- **Story files**: Place `*.stories.tsx` alongside components in the same directory. The general Storybook structure should precisely reflect /components directory. Some components may have a special experiment stories file. For example you can have: components/custom-ui/buttons.tsx, components/custom-ui/buttons.stories.tsx, components/custom-ui/buttons-experiments.stories.tsx. Please ALWAYS respect this format. When not possible please warn me.
+### Component Architecture
+
+Two layers — name components by their **role in the page**, not by technical pattern:
+
+- **Domain components** (`components/<domain>/`) — Pure presentation. Receive data via props, render UI. No data fetching, no filtering, no state logic. Examples: `components/events/event-cards.tsx`, `components/events/event-heatmaps.tsx`.
+- **Section components** (`components/entities/`) — Compose domain components into page sections. Own data fetching, filtering state, and other logic. Pass filtered/processed data down to domain components. Example: `components/entities/events-section.tsx` owns the type filter and passes `filteredEvents` to both `EventCardSmall` and `EventDaysOfTheYearHeatmap`.
+
+Other component directories:
+- `components/ui/` — shadcn/ui (standard library)
+- `components/custom-ui/` — Custom Pint primitives (Box, Section, Tags, etc.)
