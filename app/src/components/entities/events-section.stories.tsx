@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { EventsHeatmap } from './events-heatmap'
-import { EventsOverview } from './events-overview'
+import { EventsSection } from './events-section'
 
 interface Event {
   id: string
@@ -8,22 +7,6 @@ interface Event {
   description: string | null
   type: string
   date: string
-}
-
-interface EventsSectionProps {
-  entity: { id: string; slug: string }
-  events: Event[]
-}
-
-function EventsSection({ entity, events }: EventsSectionProps) {
-  return (
-    <div>
-      <EventsHeatmap events={events} />
-      <div className="mt-6">
-        <EventsOverview entity={entity} events={events} />
-      </div>
-    </div>
-  )
 }
 
 const meta = {
@@ -40,7 +23,6 @@ type Story = StoryObj<typeof meta>
 
 const mockEntity = { id: 'ent_milan_123', slug: 'milan' }
 
-// Generate events spread across the last year for realistic heatmap
 function generateYearOfEvents(): Event[] {
   const events: Event[] = []
   const types = [

@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 interface EventCardData {
   id: string
   title: string
-  descriptionShort: string | null
+  descriptionShort?: string | null
   type: string
   date: string
 }
@@ -31,24 +31,31 @@ interface EventCardSmallProps {
   className?: string
 }
 
+const dotColors: Record<string, string> = {
+  election: 'bg-blue-500',
+  legislation: 'bg-purple-500',
+  protest: 'bg-red-500',
+  policy: 'bg-green-500',
+  appointment: 'bg-amber-500',
+}
+
 export function EventCardSmall({ event, className }: EventCardSmallProps) {
-  const formattedDate = format(new Date(event.date), 'MMM d, yyyy')
+  const dot = dotColors[event.type] || 'bg-gray-400'
 
   return (
     <div
       className={cn(
-        'border border-border/50 rounded-lg p-3 bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200',
+        'flex flex-col py-0.5 px-1 hover:bg-muted/40 rounded-sm transition-colors',
         className
       )}
     >
-      {/* Row 1: Date + Type badge */}
-      <div className="flex items-center justify-between gap-2 mb-1.5">
-        <span className="text-xs text-muted-foreground">{formattedDate}</span>
-        <EventTypeBadge type={event.type} />
+      <div className="flex items-center gap-1.5">
+        <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', dot)} />
+        <span className="text-[11px] text-muted-foreground">
+          {format(new Date(event.date), 'MMM d, yyyy')}
+        </span>
       </div>
-
-      {/* Row 2: Title */}
-      <h4 className="text-sm font-semibold line-clamp-2">{event.title}</h4>
+      <span className="text-xs font-medium truncate">{event.title}</span>
     </div>
   )
 }

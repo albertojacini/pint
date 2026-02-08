@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from 'react'
 import CalHeatmap from 'cal-heatmap'
 import 'cal-heatmap/cal-heatmap.css'
 import { FilterButton } from '@/components/custom-ui/buttons'
+import { EventCardSmall } from '@/components/events/event-cards'
 
 interface Event {
   id: string
@@ -13,16 +14,15 @@ interface Event {
   date: string
 }
 
-interface EventsHeatmapProps {
+interface EventsSectionProps {
+  entity: { id: string; slug: string }
   events: Event[]
-  onDateClick?: (date: Date, events: Event[]) => void
 }
 
-export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
+function EventsHeatmapInline({ events }: { events: Event[] }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const calRef = useRef<CalHeatmap | null>(null)
 
-  // Extract unique event types
   const eventTypes = useMemo(() => {
     const types = new Set(events.map((e) => e.type))
     return Array.from(types).sort()
@@ -42,10 +42,8 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
     })
   }
 
-  // Filter events and aggregate by date
   const heatmapData = useMemo(() => {
     const filtered = events.filter((e) => selectedTypes.has(e.type))
-
     const byDate = new Map<string, { date: Date; value: number }>()
 
     filtered.forEach((event) => {
@@ -60,13 +58,11 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
     return Array.from(byDate.values())
   }, [events, selectedTypes])
 
-  // Get events for a specific date
   const getEventsForDate = (date: Date): Event[] => {
     const dateStr = date.toISOString().split('T')[0]
     return events.filter((e) => e.date === dateStr && selectedTypes.has(e.type))
   }
 
-  // Initialize and update cal-heatmap
   useEffect(() => {
     if (!containerRef.current) return
 
@@ -80,7 +76,6 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
     }))
 
     const now = new Date()
-    // Start from the first day of the month, one year ago
     const startDate = new Date(now.getFullYear() - 1, now.getMonth(), 1)
 
     const cal = new CalHeatmap()
@@ -96,7 +91,6 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
       date: {
         start: startDate,
       },
-      // 14 months: 12 past + current month + next month
       range: 14,
       domain: {
         type: 'month',
@@ -121,13 +115,9 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
     cal.on('click', (...args: unknown[]) => {
       const [, timestamp, value] = args as [unknown, number, number]
       const clickedDate = new Date(timestamp)
-      if (onDateClick) {
-        onDateClick(clickedDate, getEventsForDate(clickedDate))
-      } else {
-        const eventsOnDate = getEventsForDate(clickedDate)
-        const titles = eventsOnDate.map((e) => `• ${e.title}`).join('\n')
-        alert(`${clickedDate.toLocaleDateString()} - ${value || 0} event(s):\n\n${titles}`)
-      }
+      const eventsOnDate = getEventsForDate(clickedDate)
+      const titles = eventsOnDate.map((e) => `• ${e.title}`).join('\n')
+      alert(`${clickedDate.toLocaleDateString()} - ${value || 0} event(s):\n\n${titles}`)
     })
 
     return () => {
@@ -136,15 +126,10 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
         calRef.current = null
       }
     }
-  }, [heatmapData, onDateClick])
-
-  if (events.length === 0) {
-    return <p className="text-muted-foreground">No events to display.</p>
-  }
+  }, [heatmapData])
 
   return (
     <div>
-      {/* Filters */}
       {eventTypes.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-4">
           <FilterButton
@@ -172,8 +157,36 @@ export function EventsHeatmap({ events, onDateClick }: EventsHeatmapProps) {
         </div>
       )}
 
-      {/* Heatmap */}
       <div ref={containerRef} className="overflow-x-auto" />
+    </div>
+  )
+}
+
+function CompactEventList({ events }: { events: Event[] }) {
+  if (events.length === 0) return null
+
+  return (
+    <div className="overflow-x-auto">
+      <div className="grid grid-flow-col auto-cols-max grid-rows-6 gap-x-6 gap-y-0 w-max">
+        {events.slice(0, 30).map((event) => (
+          <EventCardSmall key={event.id} event={event} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function EventsSection({ events }: EventsSectionProps) {
+  if (events.length === 0) {
+    return <p className="text-muted-foreground">No events to display.</p>
+  }
+
+  return (
+    <div>
+      <EventsHeatmapInline events={events} />
+      <div className="mt-6">
+        <CompactEventList events={events} />
+      </div>
     </div>
   )
 }

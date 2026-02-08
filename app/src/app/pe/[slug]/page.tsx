@@ -16,9 +16,7 @@ import {
   PerformanceIndicators,
   CommunityMetrics,
   ProvisionsOverview,
-  EventsOverview,
-  EventsHeatmap,
-  getEventsViewAllLink,
+  EventsSection,
   EntityMetadata,
   RelatedEntitiesSection,
 } from '@/components/entities'
@@ -26,7 +24,7 @@ import { Section } from '@/components/custom-ui/section'
 import { Tags } from '@/components/custom-ui/tags'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
-import { parseUrlSlug, idStartsWith } from '@/lib/utils'
+import { parseUrlSlug, idStartsWith, entityPath } from '@/lib/utils'
 
 interface EntityPageProps {
   params: Promise<{
@@ -217,15 +215,12 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <Section
         title="Events"
         action={
-          <Link href={getEventsViewAllLink(entity)} className="text-sm text-link hover:underline">
+          <Link href={`${entityPath(entity)}/events`} className="text-sm text-link hover:underline">
             View all
           </Link>
         }
       >
-        <EventsHeatmap events={events} />
-        <div className="mt-6">
-          <EventsOverview entity={entity} events={events} />
-        </div>
+        <EventsSection entity={entity} events={events} />
       </Section>
 
       <Section title="Performance Indicators">
