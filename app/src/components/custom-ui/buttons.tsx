@@ -79,6 +79,38 @@ export const FilterButton = React.forwardRef<HTMLButtonElement, FilterButtonProp
 )
 FilterButton.displayName = 'FilterButton'
 
+// SpecialButton - Small solid dark action button with icon
+export interface SpecialButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  icon?: React.ReactNode
+  href?: string
+}
+
+export const SpecialButton = React.forwardRef<HTMLButtonElement, SpecialButtonProps>(
+  ({ icon, href, children, className, ...props }, ref) => {
+    const classes = cn(
+      'inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded bg-foreground text-background hover:bg-foreground/80 transition-colors',
+      className
+    )
+
+    if (href) {
+      return (
+        <a href={href} className={classes}>
+          {icon}
+          {children}
+        </a>
+      )
+    }
+
+    return (
+      <button ref={ref} type="button" className={classes} {...props}>
+        {icon}
+        {children}
+      </button>
+    )
+  }
+)
+SpecialButton.displayName = 'SpecialButton'
+
 // ButtonGroup - Group of related buttons
 export interface ButtonGroupProps {
   children: React.ReactNode

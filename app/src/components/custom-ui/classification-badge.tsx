@@ -25,7 +25,7 @@ const PROVISION_TYPE_COLORS: Record<string, string> = {
   infrastructure: 'hsl(var(--tag-cyan))',
 }
 
-function getProvisionTypeColor(type: string): string {
+export function getProvisionTypeColor(type: string): string {
   return PROVISION_TYPE_COLORS[type] || PROVISION_TYPE_COLORS.designation
 }
 

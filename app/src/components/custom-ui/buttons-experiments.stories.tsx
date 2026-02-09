@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Heart, Star, ThumbsUp, Bookmark, Grid, List, LayoutGrid } from 'lucide-react'
+import {
+  Heart, Star, ThumbsUp, Bookmark, Grid, List, LayoutGrid,
+  GitBranch, ArrowRight, ExternalLink, Sparkles, Telescope, Plus,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   LoadingButton,
@@ -789,4 +792,172 @@ function ButtonsPlayground() {
 
 export const Base: StoryObj = {
   render: () => <ButtonsPlayground />,
+}
+
+// ── Special Buttons ──────────────────────────────────────────────────
+
+const specialButtons = [
+  { label: 'View tree', icon: GitBranch },
+  { label: 'Explore', icon: Telescope },
+  { label: 'View all', icon: ArrowRight },
+  { label: 'Open source', icon: ExternalLink },
+  { label: 'New provision', icon: Plus },
+  { label: 'AI summary', icon: Sparkles },
+]
+
+function SpecialButtonsPlayground() {
+  return (
+    <div className="space-y-10">
+      {/* 1: Outlined — border + bg on hover */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Outlined</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded border border-border bg-background hover:bg-muted transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 2: Ghost — no border, bg on hover */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Ghost</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 3: Soft — muted bg, no border */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Soft</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded bg-muted/60 hover:bg-muted transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 4: Pill outlined */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Pill outlined</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border border-border bg-background hover:bg-muted transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 5: Pill soft */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Pill soft</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full bg-muted/60 hover:bg-muted transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 6: Solid dark */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Solid dark</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded bg-foreground text-background hover:bg-foreground/80 transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 7: Underline ghost — icon + text, underline on hover */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Underline ghost</p>
+        <div className="flex flex-wrap gap-3">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground hover:underline underline-offset-2 transition-colors"
+            >
+              <Icon className="w-3 h-3" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 8: Icon trailing — label first, icon after */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Icon trailing (outlined)</p>
+        <div className="flex flex-wrap gap-2">
+          {specialButtons.map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded border border-border bg-background hover:bg-muted transition-colors"
+            >
+              {label}
+              <Icon className="w-3 h-3 text-muted-foreground" />
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* Size comparison — same style, 3 sizes */}
+      <section>
+        <p className="text-sm text-muted-foreground mb-3">Size comparison (outlined)</p>
+        <div className="flex items-center gap-4">
+          <button className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-medium rounded border border-border bg-background hover:bg-muted transition-colors">
+            <GitBranch className="w-2.5 h-2.5" />
+            View tree
+          </button>
+          <button className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded border border-border bg-background hover:bg-muted transition-colors">
+            <GitBranch className="w-3 h-3" />
+            View tree
+          </button>
+          <button className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded border border-border bg-background hover:bg-muted transition-colors">
+            <GitBranch className="w-3.5 h-3.5" />
+            View tree
+          </button>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export const SpecialButtons: StoryObj = {
+  render: () => <SpecialButtonsPlayground />,
 }

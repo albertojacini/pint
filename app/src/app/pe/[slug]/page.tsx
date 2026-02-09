@@ -3,9 +3,7 @@ import { entities, administrations, members, people, taggables, tags } from '@/l
 import { eq, desc, and } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getProvisionAggregatesByEntity } from '@/lib/actions/provisions'
 import { getEventsByEntity } from '@/lib/actions/events'
-import { getChangesByEntity } from '@/lib/actions/changes'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
   EntityHeader,
@@ -15,7 +13,7 @@ import {
   getPoliticalLandscapeViewAllLink,
   PerformanceIndicators,
   CommunityMetrics,
-  ProvisionsOverview,
+  ProvisionsSection,
   EventsSection,
   EntityMetadata,
   RelatedEntitiesSection,
@@ -106,14 +104,8 @@ export default async function EntityPage({ params }: EntityPageProps) {
     })
   )
 
-  // Fetch provision aggregates for this entity
-  const provisionAggregates = await getProvisionAggregatesByEntity(entity.id)
-
   // Fetch events for this entity
   const events = await getEventsByEntity(entity.id)
-
-  // Fetch changes for this entity (for provisions activity timeline)
-  const provisionChanges = await getChangesByEntity(entity.id)
 
   // Fetch relationships for this entity
   const relationships = await getGroupedEntityRelationships(entity.id)
@@ -201,11 +193,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <ProvisionsOverview
-          entity={entity}
-          aggregates={provisionAggregates}
-          changes={provisionChanges}
-        />
+        <ProvisionsSection entity={entity} />
       </Section>
 
       <Section title="Financials">

@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { cn, provisionPath } from '@/lib/utils'
 import type { Tag, ProvisionType } from '@/lib/actions/provisions'
-import { provisionPath } from '@/lib/utils'
-import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
+import { getProvisionTypeColor, ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
 import { SubsectionTitle } from '@/components/custom-ui/typography'
 import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
@@ -204,6 +204,41 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── Extra Small ──────────────────────────────────────────────────────
+
+interface ProvisionCardExtraSmallProps {
+  provision: {
+    title: string
+    type: string // primary provision type code (e.g. 'taxation', 'regulation')
+    avatarUrl?: string | null
+  }
+  className?: string
+}
+
+export function ProvisionCardExtraSmall({ provision, className }: ProvisionCardExtraSmallProps) {
+  const dotColor = getProvisionTypeColor(provision.type)
+  const mediaUrl = getStorageUrl('avatars', provision.avatarUrl ?? null)
+
+  return (
+    <div className={cn('flex items-center gap-1.5 py-0.5', className)}>
+      <span
+        className="w-2 h-2 rounded-full shrink-0"
+        style={{ backgroundColor: dotColor }}
+      />
+      {mediaUrl ? (
+        <img
+          src={mediaUrl}
+          alt=""
+          className="w-4 h-4 rounded object-cover shrink-0"
+        />
+      ) : (
+        <div className="w-4 h-4 rounded bg-muted shrink-0" />
+      )}
+      <span className="text-xs truncate">{provision.title}</span>
     </div>
   )
 }
