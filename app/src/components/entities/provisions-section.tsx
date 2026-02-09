@@ -10,6 +10,7 @@ import {
   Tag,
 } from 'lucide-react'
 import { ProvisionLandscape } from '@/components/provisions/provision-landscape'
+import { ProvisionChangeLandscape } from '@/components/provisions/provision-change-landscape'
 
 interface ProvisionsSectionProps {
   entity: { id: string; slug: string }
@@ -39,10 +40,12 @@ const mockLandscape = {
 }
 
 const mockChanges = [
-  { id: '1', title: 'Aggiornamento Zone 30km/h', action: 'updated' as const, type: 'regulation', date: '2 days ago', relevance: 8 },
-  { id: '2', title: 'Nuova tariffa parcheggi Area C', action: 'created' as const, type: 'taxation', date: '5 days ago', relevance: 7 },
-  { id: '3', title: 'Piano Scuole 2025-2030', action: 'created' as const, type: 'allocation', date: '1 week ago', relevance: 6 },
-  { id: '4', title: 'Regolamento dehors', action: 'updated' as const, type: 'regulation', date: '2 weeks ago', relevance: 5 },
+  { date: '2 days ago', provisionTitle: 'Zone 30km/h', changeTitle: 'Aggiornamento limiti velocità' },
+  { date: '5 days ago', provisionTitle: 'Area C', changeTitle: 'Nuova tariffa parcheggi' },
+  { date: '1 week ago', provisionTitle: 'Piano Scuole', changeTitle: 'Piano 2025-2030 approvato' },
+  { date: '2 weeks ago', provisionTitle: 'Regolamento dehors', changeTitle: 'Aggiornamento requisiti' },
+  { date: '3 weeks ago', provisionTitle: 'TARI', changeTitle: 'Nuove tariffe 2025' },
+  { date: '1 month ago', provisionTitle: 'Bilancio Comunale', changeTitle: 'Variazione di bilancio Q1' },
 ]
 
 const mockCommunity = [
@@ -55,16 +58,6 @@ const mockHighlights = [
   { id: '1', title: 'Piano Aria e Clima', reason: 'Recently enriched with new impact data', type: 'regulation' },
   { id: '2', title: 'Regolamento Verde Pubblico', reason: 'New community proposals linked', type: 'regulation' },
 ]
-
-// ── Wireframe components ─────────────────────────────────────────────
-
-function WireframeBox({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`border border-dashed border-muted-foreground/30 rounded-lg p-4 ${className}`}>{children}</div>
-}
-
-function BlockLabel({ children }: { children: React.ReactNode }) {
-  return <div className="text-xs font-mono uppercase tracking-wider text-muted-foreground/60 mb-3">{children}</div>
-}
 
 // ── Section ──────────────────────────────────────────────────────────
 
@@ -81,61 +74,39 @@ export function ProvisionsSection({ entity }: ProvisionsSectionProps) {
       />
 
       {/* ─── Block 2: Recent Changes ─── */}
-      <WireframeBox>
-        <BlockLabel>2 · Changes — "What's happening?"</BlockLabel>
-
-        <div className="space-y-1">
-          {mockChanges.map((c) => (
-            <div key={c.id} className="flex items-center gap-3 py-1.5 px-2 rounded hover:bg-muted/40 transition-colors cursor-pointer">
-              <span className={`text-xs px-1.5 py-0.5 rounded font-medium ${
-                c.action === 'created' ? 'bg-green-100 text-green-700' :
-                c.action === 'updated' ? 'bg-blue-100 text-blue-700' :
-                'bg-red-100 text-red-700'
-              }`}>
-                {c.action}
-              </span>
-              <span className="text-sm">{c.title}</span>
-              <span className="text-xs text-muted-foreground ml-auto">{c.date}</span>
-            </div>
-          ))}
-        </div>
-      </WireframeBox>
+      <ProvisionChangeLandscape
+        total={mockChanges.length}
+        changes={mockChanges}
+      />
 
       {/* ─── Block 3: Community ─── */}
-      <WireframeBox>
-        <BlockLabel>3 · Community — "What are people discussing?"</BlockLabel>
-
-        <div className="space-y-1">
+      <div>
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1">Community</div>
+        <div className="flex items-center gap-3 overflow-x-auto">
           {mockCommunity.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 py-1.5 px-2 rounded hover:bg-muted/40 transition-colors cursor-pointer">
-              {p.trend === 'hot' && <span className="text-xs px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 font-medium">hot</span>}
-              {p.trend === 'rising' && <span className="text-xs px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-700 font-medium">rising</span>}
-              <span className="text-sm">{p.title}</span>
-              <div className="flex items-center gap-3 ml-auto text-xs text-muted-foreground">
-                <span>💬 {p.comments}</span>
-                <span>👍 {p.reactions}</span>
-              </div>
+            <div key={p.id} className="flex items-center gap-1.5 text-xs shrink-0">
+              {p.trend === 'hot' && <span className="px-1 py-0.5 rounded bg-orange-100 text-orange-700 font-medium text-[10px]">hot</span>}
+              {p.trend === 'rising' && <span className="px-1 py-0.5 rounded bg-yellow-100 text-yellow-700 font-medium text-[10px]">rising</span>}
+              <span className="truncate">{p.title}</span>
+              <span className="text-muted-foreground">{p.comments}c</span>
             </div>
           ))}
         </div>
-      </WireframeBox>
+      </div>
 
       {/* ─── Block 4: Highlights ─── */}
-      <WireframeBox>
-        <BlockLabel>4 · Highlights — "What's noteworthy?"</BlockLabel>
-
-        <div className="space-y-2">
+      <div>
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1">Highlights</div>
+        <div className="flex items-center gap-3 overflow-x-auto">
           {mockHighlights.map((h) => (
-            <div key={h.id} className="flex items-start gap-3 py-2 px-2 rounded hover:bg-muted/40 transition-colors cursor-pointer">
-              <div className="w-1 h-8 bg-amber-400 rounded-full shrink-0 mt-0.5" />
-              <div>
-                <div className="text-sm font-medium">{h.title}</div>
-                <div className="text-xs text-muted-foreground">{h.reason}</div>
-              </div>
+            <div key={h.id} className="flex items-center gap-1.5 text-xs shrink-0">
+              <div className="w-1 h-3 bg-amber-400 rounded-full shrink-0" />
+              <span>{h.title}</span>
+              <span className="text-muted-foreground truncate">{h.reason}</span>
             </div>
           ))}
         </div>
-      </WireframeBox>
+      </div>
 
     </div>
   )
