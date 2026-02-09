@@ -15,17 +15,13 @@ export function EntityHeader({ entity }: EntityHeaderProps) {
 
   return (
     <div className="mb-6">
-      <div className="flex items-center gap-4 mb-3">
+      <div className="flex items-center gap-2 mb-3">
         {/* Avatar */}
         <div className="flex-shrink-0">
           {avatarUrl ? (
-            <img
-              src={avatarUrl}
-              alt={entity.name}
-              className="w-12 h-12 rounded-full object-cover"
-            />
+            <img src={avatarUrl} alt={entity.name} className="w-8 h-8 rounded-full object-cover" />
           ) : (
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
               <span className="text-xl font-bold text-gray-400">{entity.name.charAt(0)}</span>
             </div>
           )}
