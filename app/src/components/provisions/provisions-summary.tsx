@@ -12,8 +12,8 @@ import {
 import { ProvisionLandscape } from '@/components/provisions/provision-landscape'
 import { ProvisionChangeLandscape } from '@/components/provisions/provision-change-landscape'
 
-interface ProvisionsSectionProps {
-  entity: { id: string; slug: string }
+interface ProvisionsSummaryProps {
+  entitySlug: string
 }
 
 // ── Mock data for wireframing ────────────────────────────────────────
@@ -59,9 +59,9 @@ const mockHighlights = [
   { id: '2', title: 'Regolamento Verde Pubblico', reason: 'New community proposals linked', type: 'regulation' },
 ]
 
-// ── Section ──────────────────────────────────────────────────────────
+// ── Component ────────────────────────────────────────────────────────
 
-export function ProvisionsSection({ entity }: ProvisionsSectionProps) {
+export function ProvisionsSummary({ entitySlug }: ProvisionsSummaryProps) {
   return (
     <div className="space-y-6">
 
@@ -70,7 +70,7 @@ export function ProvisionsSection({ entity }: ProvisionsSectionProps) {
         total={mockLandscape.total}
         types={mockLandscape.types}
         topProvisions={mockLandscape.topProvisions}
-        treeLink={`/pe/${entity.slug}/pr/tree`}
+        treeLink={`/pe/${entitySlug}/pr/tree`}
       />
 
       {/* ─── Block 2: Recent Changes ─── */}

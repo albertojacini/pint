@@ -13,8 +13,7 @@ interface Event {
   date: string
 }
 
-interface EventsSectionProps {
-  entity: { id: string; slug: string }
+interface EventFilteredListProps {
   events: Event[]
 }
 
@@ -32,11 +31,7 @@ function CompactEventList({ events }: { events: Event[] }) {
   )
 }
 
-export function EventsSection({ events }: EventsSectionProps) {
-  if (events.length === 0) {
-    return <p className="text-muted-foreground">No events to display.</p>
-  }
-
+export function EventFilteredList({ events }: EventFilteredListProps) {
   const eventTypes = useMemo(() => {
     const types = new Set(events.map((e) => e.type))
     return Array.from(types).sort()
@@ -60,6 +55,10 @@ export function EventsSection({ events }: EventsSectionProps) {
     () => events.filter((e) => selectedTypes.has(e.type)),
     [events, selectedTypes]
   )
+
+  if (events.length === 0) {
+    return <p className="text-muted-foreground">No events to display.</p>
+  }
 
   return (
     <div>
