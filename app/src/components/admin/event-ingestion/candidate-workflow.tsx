@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
+import { SubsectionTitle } from '@/components/custom-ui/typography'
 import {
   updateCandidate,
   deleteCandidate,
@@ -242,7 +243,7 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
       {/* AI Reasoning */}
       {candidate.aiReasoning && (
         <div className="bg-blue-50 p-4 rounded-lg">
-          <h3 className="font-medium text-sm text-blue-800 mb-2">AI Reasoning</h3>
+          <SubsectionTitle className="text-blue-800">AI Reasoning</SubsectionTitle>
           <p className="text-sm text-blue-700">{candidate.aiReasoning}</p>
           {candidate.confidenceScore && (
             <p className="text-xs text-blue-600 mt-2">
@@ -320,9 +321,9 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
       {/* Documents */}
       {candidate.documents && candidate.documents.length > 0 && (
         <div>
-          <h3 className="font-medium text-sm text-gray-700 mb-2">
+          <SubsectionTitle>
             Documents ({candidate.documents.length})
-          </h3>
+          </SubsectionTitle>
           <div className="space-y-2">
             {candidate.documents.map((doc) => (
               <div
@@ -339,9 +340,9 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
 
       {/* Proposed Changes */}
       <div>
-        <h3 className="font-medium text-sm text-gray-700 mb-2">
+        <SubsectionTitle>
           Proposed Changes ({candidate.changes?.length || 0})
-        </h3>
+        </SubsectionTitle>
         {candidate.changes && candidate.changes.length > 0 ? (
           <div className="space-y-2">
             {candidate.changes.map((change) => (
@@ -714,7 +715,7 @@ function AddManualChange({
 
   return (
     <div className="mt-3 p-4 border-2 border-dashed border-gray-300 rounded-lg space-y-3">
-      <h4 className="font-medium text-sm">Add Manual Change</h4>
+      <SubsectionTitle>Add Manual Change</SubsectionTitle>
 
       <div className="space-y-2">
         <Label>Target Provision *</Label>

@@ -2,8 +2,7 @@ import Link from 'next/link'
 import { db } from '@/lib/db/client'
 import { administrations, members, people } from '@/lib/db/schema'
 import { eq, desc, and } from 'drizzle-orm'
-import { Section } from '@/components/custom-ui/section'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { Section, Subsection } from '@/components/custom-ui/section'
 import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
@@ -94,19 +93,17 @@ export async function AdministrationsSection({ entity }: AdministrationsSectionP
       }
     >
       <div className="space-y-6">
-        {councilComposition && councilComposition.length > 0 && (
-          <div>
-            <SubsectionTitle>Consiglio comunale</SubsectionTitle>
+        <Subsection title="Consiglio comunale" className="mb-0">
+          {councilComposition && councilComposition.length > 0 && (
             <CouncilDots composition={councilComposition} />
-          </div>
-        )}
+          )}
+        </Subsection>
 
-        {mappedMembers.length > 0 && (
-          <div>
-            <SubsectionTitle>Giunta comunale</SubsectionTitle>
+        <Subsection title="Giunta comunale" className="mb-0">
+          {mappedMembers.length > 0 && (
             <ExecutiveMembers members={mappedMembers} variant="grid-minimal" />
-          </div>
-        )}
+          )}
+        </Subsection>
 
         <ElectionsSection nextElection={nextElection} history={electionHistory} />
       </div>

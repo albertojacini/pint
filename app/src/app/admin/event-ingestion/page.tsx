@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { getSources, getCandidates } from '@/lib/actions/event-ingestion'
-import { PageHeader } from '@/components/custom-ui/section'
+import { PageHeader, Subsection } from '@/components/custom-ui/section'
 import { Badge } from '@/components/ui/badge'
 
 export default async function EventIngestionPage() {
@@ -68,8 +68,7 @@ export default async function EventIngestionPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Quick Actions</h3>
+      <Subsection title="Quick Actions" className="mt-8">
         <div className="flex gap-3">
           <Link
             href="/admin/event-ingestion/sources/new"
@@ -78,11 +77,10 @@ export default async function EventIngestionPage() {
             + Add Source
           </Link>
         </div>
-      </div>
+      </Subsection>
 
       {/* Recent Activity */}
-      <div className="mt-8">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Recent Sources</h3>
+      <Subsection title="Recent Sources" className="mt-8">
         {sources.length === 0 ? (
           <p className="text-gray-500 text-sm">No sources yet</p>
         ) : (
@@ -120,7 +118,7 @@ export default async function EventIngestionPage() {
             ))}
           </div>
         )}
-      </div>
+      </Subsection>
     </div>
   )
 }
