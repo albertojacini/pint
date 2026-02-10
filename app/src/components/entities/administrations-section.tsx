@@ -3,16 +3,13 @@ import { db } from '@/lib/db/client'
 import { administrations, members, people } from '@/lib/db/schema'
 import { eq, desc, and } from 'drizzle-orm'
 import { Section } from '@/components/custom-ui/section'
+import { SubsectionTitle } from '@/components/custom-ui/typography'
 import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
 
 interface AdministrationsSectionProps {
   entity: { id: string; slug: string }
-}
-
-function SectionHeader({ children }: { children: React.ReactNode }) {
-  return <h4 className="text-sm font-medium text-muted-foreground mb-2">{children}</h4>
 }
 
 export async function AdministrationsSection({ entity }: AdministrationsSectionProps) {
@@ -99,14 +96,14 @@ export async function AdministrationsSection({ entity }: AdministrationsSectionP
       <div className="space-y-6">
         {councilComposition && councilComposition.length > 0 && (
           <div>
-            <SectionHeader>Consiglio comunale</SectionHeader>
+            <SubsectionTitle>Consiglio comunale</SubsectionTitle>
             <CouncilDots composition={councilComposition} />
           </div>
         )}
 
         {mappedMembers.length > 0 && (
           <div>
-            <SectionHeader>Giunta comunale</SectionHeader>
+            <SubsectionTitle>Giunta comunale</SubsectionTitle>
             <ExecutiveMembers members={mappedMembers} variant="grid-minimal" />
           </div>
         )}

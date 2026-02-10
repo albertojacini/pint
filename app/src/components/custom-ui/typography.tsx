@@ -17,7 +17,24 @@ export function SectionTitle({ children, className, as: Tag = 'h2' }: Typography
 }
 
 export function SubsectionTitle({ children, className, as: Tag = 'h3' }: TypographyProps) {
-  return <Tag className={cn('text-lg font-medium', className)}>{children}</Tag>
+  return (
+    <Tag className={cn('text-sm font-medium text-muted-foreground mb-2', className)}>
+      {children}
+    </Tag>
+  )
+}
+
+export function SubsubsectionTitle({ children, className, as: Tag = 'h4' }: TypographyProps) {
+  return (
+    <Tag
+      className={cn(
+        'text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1',
+        className
+      )}
+    >
+      {children}
+    </Tag>
+  )
 }
 
 export function Lead({ children, className, as: Tag = 'p' }: TypographyProps) {

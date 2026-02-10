@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react'
 import { GitBranch } from 'lucide-react'
 import { SpecialButton } from '@/components/custom-ui/buttons'
 import { ProvisionCardExtraSmall } from './provision-cards'
+import { SubsubsectionTitle } from '@/components/custom-ui/typography'
 
 interface ProvisionType {
   type: string
@@ -24,7 +25,12 @@ interface ProvisionLandscapeProps {
   treeLink?: string
 }
 
-export function ProvisionLandscape({ total, types, topProvisions, treeLink }: ProvisionLandscapeProps) {
+export function ProvisionLandscape({
+  total,
+  types,
+  topProvisions,
+  treeLink,
+}: ProvisionLandscapeProps) {
   return (
     <div>
       {/* Header: total + view tree + type chips */}
@@ -58,13 +64,13 @@ export function ProvisionLandscape({ total, types, topProvisions, treeLink }: Pr
       {/* Top provisions */}
       {topProvisions.length > 0 && (
         <div className="mt-3">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1">Relevant provisions</div>
+          <SubsubsectionTitle>Relevant provisions</SubsubsectionTitle>
           <div className="overflow-x-auto">
-          <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
-            {topProvisions.map((p) => (
-              <ProvisionCardExtraSmall key={p.title} provision={p} className="max-w-[180px]" />
-            ))}
-          </div>
+            <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
+              {topProvisions.map((p) => (
+                <ProvisionCardExtraSmall key={p.title} provision={p} className="max-w-[180px]" />
+              ))}
+            </div>
           </div>
         </div>
       )}
