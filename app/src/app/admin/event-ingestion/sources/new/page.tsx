@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { NewSourceForm } from '@/components/admin/event-ingestion/new-source-form'
 
 export default async function NewSourcePage() {
@@ -15,11 +15,11 @@ export default async function NewSourcePage() {
       </Link>
 
       <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <PageTitle>Add Source</PageTitle>
-        <p className="text-gray-500 mb-6">
-          Add a new source to the event ingestion pipeline. You can either provide a URL
-          to fetch, or paste content directly.
-        </p>
+        <PageHeader
+          title="Add Source"
+          description="Add a new source to the event ingestion pipeline. You can either provide a URL to fetch, or paste content directly."
+          className="mb-6"
+        />
 
         <NewSourceForm />
       </div>

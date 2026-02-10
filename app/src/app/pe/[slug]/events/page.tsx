@@ -4,6 +4,7 @@ import { getEventsByEntity } from '@/lib/actions/events'
 import { db } from '@/lib/db/client'
 import { entities } from '@/lib/db/schema'
 import { EventsClient } from './events-client'
+import { PageHeader } from '@/components/custom-ui/section'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface EventsPageProps {
@@ -38,13 +39,10 @@ export default async function EventsPage({ params }: EventsPageProps) {
         </Link>
       </div>
 
-      {/* Page header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Events</h1>
-        <p className="text-gray-600">
-          All events for {entity.name}
-        </p>
-      </div>
+      <PageHeader
+        title="Events"
+        description={`All events for ${entity.name}`}
+      />
 
       {/* Client component for filtering */}
       <EventsClient events={events} />

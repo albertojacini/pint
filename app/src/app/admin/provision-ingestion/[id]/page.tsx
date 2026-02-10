@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getDraft } from '@/lib/actions/provision-drafts'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { DraftWorkflow } from '@/components/admin/provision-ingestion/draft-workflow'
 import Link from 'next/link'
 
@@ -26,10 +26,11 @@ export default async function DraftPage({ params }: Props) {
       </Link>
 
       <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <div className="mb-6">
-          <PageTitle>{draft.title || draft.inputDescription}</PageTitle>
-          <p className="text-gray-500 text-sm mt-1">{draft.entityName}</p>
-        </div>
+        <PageHeader
+          title={draft.title || draft.inputDescription}
+          description={draft.entityName}
+          className="mb-6"
+        />
 
         <DraftWorkflow draft={draft} />
       </div>

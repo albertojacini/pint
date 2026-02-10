@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { getSources, getCandidates } from '@/lib/actions/event-ingestion'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Badge } from '@/components/ui/badge'
 
 export default async function EventIngestionPage() {
@@ -18,12 +18,10 @@ export default async function EventIngestionPage() {
 
   return (
     <div className="py-8">
-      <div className="mb-8">
-        <PageTitle>Event Ingestion</PageTitle>
-        <p className="text-gray-500 mt-2">
-          Pipeline for ingesting real-world events from external sources
-        </p>
-      </div>
+      <PageHeader
+        title="Event Ingestion"
+        description="Pipeline for ingesting real-world events from external sources"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Sources Card */}

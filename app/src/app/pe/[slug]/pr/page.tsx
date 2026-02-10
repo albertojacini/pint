@@ -5,6 +5,7 @@ import { entities } from '@/lib/db/schema'
 import { ProvisionCard } from '@/components/provisions/provision-cards'
 import { ProvisionsFilterBar } from '@/components/provisions/provisions-filter-bar'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
+import { PageHeader } from '@/components/custom-ui/section'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 
 interface ProvisionsPageProps {
@@ -54,13 +55,10 @@ export default async function ProvisionsPage({
         ]}
       />
 
-      {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Provisions</h1>
-        <p className="text-gray-600">
-          {entity.name} · {provisions.length} {provisions.length === 1 ? 'provision' : 'provisions'}
-        </p>
-      </div>
+      <PageHeader
+        title="Provisions"
+        description={`${entity.name} · ${provisions.length} ${provisions.length === 1 ? 'provision' : 'provisions'}`}
+      />
 
       {/* Filter bar */}
       <div className="mb-8">

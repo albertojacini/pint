@@ -4,19 +4,18 @@ import { getEvents } from '@/lib/actions/events'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
-import { PageTitle, SubsectionTitle } from '@/components/custom-ui/typography'
+import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 
 export default async function EventsPage() {
   const events = await getEvents()
 
   return (
     <div className="py-8">
-      <div className="mb-8">
-        <PageTitle className="mb-2">Events</PageTitle>
-        <p className="text-muted-foreground">
-          Temporal occurrences that shape provisions
-        </p>
-      </div>
+      <PageHeader
+        title="Events"
+        description="Temporal occurrences that shape provisions"
+      />
 
       {events.length === 0 ? (
         <div className="text-center py-12">

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getSource } from '@/lib/actions/event-ingestion'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Badge } from '@/components/ui/badge'
 import { SourceWorkflow } from '@/components/admin/event-ingestion/source-workflow'
 
@@ -27,26 +27,24 @@ export default async function SourceDetailPage({ params }: Props) {
       </Link>
 
       <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <div className="mb-6">
-          <div className="flex justify-between items-start">
-            <PageTitle>{source.title || source.url || 'Untitled Source'}</PageTitle>
-            <div className="flex gap-2">
-              <Badge
-                className={
-                  source.processingStatus === 'processed'
-                    ? 'bg-green-100 text-green-800'
-                    : source.processingStatus === 'discarded'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                }
-              >
-                {source.processingStatus}
-              </Badge>
-            </div>
-          </div>
-          {source.sourceName && (
-            <p className="text-gray-500 text-sm mt-1">{source.sourceName}</p>
-          )}
+        <PageHeader
+          title={source.title || source.url || 'Untitled Source'}
+          description={source.sourceName}
+          action={
+            <Badge
+              className={
+                source.processingStatus === 'processed'
+                  ? 'bg-green-100 text-green-800'
+                  : source.processingStatus === 'discarded'
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-yellow-100 text-yellow-800'
+              }
+            >
+              {source.processingStatus}
+            </Badge>
+          }
+          className="mb-6"
+        >
           {source.url && (
             <a
               href={source.url}
@@ -57,7 +55,7 @@ export default async function SourceDetailPage({ params }: Props) {
               {source.url}
             </a>
           )}
-        </div>
+        </PageHeader>
 
         <SourceWorkflow source={source} />
       </div>

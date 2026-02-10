@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { getSources } from '@/lib/actions/event-ingestion'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
@@ -41,12 +41,14 @@ export default async function SourcesPage() {
         &larr; Back to Event Ingestion
       </Link>
 
-      <div className="flex justify-between items-center mb-8">
-        <PageTitle>Sources</PageTitle>
-        <Link href="/admin/event-ingestion/sources/new">
-          <Button>+ Add Source</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="Sources"
+        action={
+          <Link href="/admin/event-ingestion/sources/new">
+            <Button>+ Add Source</Button>
+          </Link>
+        }
+      />
 
       {sources.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">

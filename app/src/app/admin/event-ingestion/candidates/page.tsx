@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { getCandidates } from '@/lib/actions/event-ingestion'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Badge } from '@/components/ui/badge'
 
 const statusColors: Record<string, string> = {
@@ -36,9 +36,7 @@ export default async function CandidatesPage() {
         &larr; Back to Event Ingestion
       </Link>
 
-      <div className="flex justify-between items-center mb-8">
-        <PageTitle>Event Candidates</PageTitle>
-      </div>
+      <PageHeader title="Event Candidates" />
 
       {candidates.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">

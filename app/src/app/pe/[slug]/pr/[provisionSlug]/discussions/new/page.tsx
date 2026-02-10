@@ -5,7 +5,7 @@ import { entities, provisions } from '@/lib/db/schema'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 import { getUser } from '@/lib/auth'
 import { PostForm } from '@/components/discussions/post-form'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 
 interface PageProps {
   params: Promise<{ slug: string; provisionSlug: string }>
@@ -32,15 +32,13 @@ export default async function NewPostPage({ params }: PageProps) {
 
   return (
     <div className="py-8">
-      <div className="mb-6">
-        <Link
-          href={basePath}
-          className="text-sm text-muted-foreground hover:text-primary"
-        >
-          ← Back to discussions
-        </Link>
-        <PageTitle className="mt-2">New Post</PageTitle>
-      </div>
+      <Link
+        href={basePath}
+        className="text-sm text-muted-foreground hover:text-primary mb-4 inline-block"
+      >
+        ← Back to discussions
+      </Link>
+      <PageHeader title="New Post" />
 
       <PostForm
         targetType="provision"

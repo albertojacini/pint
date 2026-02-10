@@ -6,7 +6,8 @@ import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
-import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
+import { SectionTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { getStorageUrl } from '@/lib/storage'
 
 export default async function EntitiesPage() {
@@ -18,12 +19,10 @@ export default async function EntitiesPage() {
 
   return (
     <div className="py-8">
-      <div className="mb-8">
-        <PageTitle className="mb-2">Political Entities</PageTitle>
-        <p className="text-gray-600">
-          Browse public administrations and their information
-        </p>
-      </div>
+      <PageHeader
+        title="Political Entities"
+        description="Browse public administrations and their information"
+      />
 
       {entities.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12">

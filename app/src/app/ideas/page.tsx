@@ -4,19 +4,18 @@ import { getIdeas } from '@/lib/actions/ideas'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { PageTitle, SubsectionTitle } from '@/components/custom-ui/typography'
+import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 
 export default async function IdeasPage() {
   const ideas = await getIdeas()
 
   return (
     <div className="py-8">
-      <div className="mb-8">
-        <PageTitle className="mb-2">Policy Ideas</PageTitle>
-        <p className="text-muted-foreground">
-          Explore abstract policy concepts and their evidence-based impacts
-        </p>
-      </div>
+      <PageHeader
+        title="Policy Ideas"
+        description="Explore abstract policy concepts and their evidence-based impacts"
+      />
 
       {ideas.length === 0 ? (
         <div className="text-center py-12">

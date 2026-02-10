@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { getEntities } from '@/lib/actions/provision-drafts'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { NewDraftForm } from '@/components/admin/provision-ingestion/new-draft-form'
 import Link from 'next/link'
 
@@ -18,11 +18,11 @@ export default async function NewProvisionDraftPage() {
       </Link>
 
       <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <PageTitle>New Provision Draft</PageTitle>
-        <p className="text-gray-500 mb-6">
-          Describe the provision you want to research. The AI will help classify
-          and gather information about it.
-        </p>
+        <PageHeader
+          title="New Provision Draft"
+          description="Describe the provision you want to research. The AI will help classify and gather information about it."
+          className="mb-6"
+        />
 
         <NewDraftForm entities={entities} />
       </div>

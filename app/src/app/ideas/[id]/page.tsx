@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { EffectsDiagram } from '@/components/ideas/effects-diagram'
-import { PageTitle, SectionTitle, SubsectionTitle } from '@/components/custom-ui/typography'
+import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { PageHeader, Section } from '@/components/custom-ui/section'
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -30,34 +31,29 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="py-8">
       {/* Header */}
-      <div className="mb-8">
-        <Link href="/ideas" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
-          <ArrowLeft className="w-4 h-4" />
-          Back to Ideas
-        </Link>
-        <div className="mb-2">
+      <Link href="/ideas" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
+        <ArrowLeft className="w-4 h-4" />
+        Back to Ideas
+      </Link>
+      <PageHeader
+        title={idea.title}
+        description={idea.description}
+      >
+        <div className="flex gap-2 mt-2">
           <Badge variant="outline" className="text-xs font-mono">IDEA</Badge>
+          {idea.categoryTitle && (
+            <Badge variant="secondary">{idea.categoryTitle}</Badge>
+          )}
         </div>
-        <PageTitle className="mb-2">{idea.title}</PageTitle>
-        {idea.categoryTitle && (
-          <Badge variant="secondary" className="mb-4">
-            {idea.categoryTitle}
-          </Badge>
-        )}
-        {idea.description && (
-          <p className="text-muted-foreground text-lg">{idea.description}</p>
-        )}
-      </div>
+      </PageHeader>
 
       {/* Effects Diagram Section */}
-      <section className="mb-12">
-        <SectionTitle className="mb-6">Stakeholder Effects</SectionTitle>
+      <Section title="Stakeholder Effects">
         <EffectsDiagram effectsDiagram={idea.effectsDiagram} stakeholderGroups={stakeholders} />
-      </section>
+      </Section>
 
       {/* Effects Chain Section */}
-      <section className="mb-12">
-        <SectionTitle className="mb-6">Impact Chain: Effects → Measurables → Goals</SectionTitle>
+      <Section title="Impact Chain: Effects → Measurables → Goals">
 
         {effects.length === 0 ? (
           <p className="text-muted-foreground">No effects defined for this idea yet.</p>
@@ -162,11 +158,10 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
             })}
           </div>
         )}
-      </section>
+      </Section>
 
       {/* Provisions Section */}
-      <section>
-        <SectionTitle className="mb-6">Inspired Provisions</SectionTitle>
+      <Section title="Inspired Provisions">
 
         {provisions.length === 0 ? (
           <p className="text-muted-foreground">No provisions inspired by this idea yet.</p>
@@ -218,7 +213,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
             ))}
           </div>
         )}
-      </section>
+      </Section>
     </div>
   )
 }

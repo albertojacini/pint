@@ -4,7 +4,7 @@ import { entities, provisions } from '@/lib/db/schema'
 import { parseUrlSlug, idStartsWith } from '@/lib/utils'
 import { getPosts } from '@/lib/actions/discussions'
 import { PostList } from '@/components/discussions/post-list'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 
 interface PageProps {
@@ -46,9 +46,7 @@ export default async function DiscussionsPage({ params, searchParams }: PageProp
         ]}
       />
 
-      <div className="mb-6">
-        <PageTitle>Discussions</PageTitle>
-      </div>
+      <PageHeader title="Discussions" />
 
       <PostList posts={posts} basePath={basePath} />
     </div>

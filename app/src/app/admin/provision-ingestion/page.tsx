@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { getDrafts } from '@/lib/actions/provision-drafts'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
@@ -31,12 +31,14 @@ export default async function ProvisionIngestionPage() {
 
   return (
     <div className="py-8">
-      <div className="flex justify-between items-center mb-8">
-        <PageTitle>Provision Ingestion</PageTitle>
-        <Link href="/admin/provision-ingestion/new">
-          <Button>+ New Draft</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="Provision Ingestion"
+        action={
+          <Link href="/admin/provision-ingestion/new">
+            <Button>+ New Draft</Button>
+          </Link>
+        }
+      />
 
       {drafts.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center">

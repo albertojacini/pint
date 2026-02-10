@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getCandidate, getEntities, getProvisions } from '@/lib/actions/event-ingestion'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 import { Badge } from '@/components/ui/badge'
 import { CandidateWorkflow } from '@/components/admin/event-ingestion/candidate-workflow'
 
@@ -39,19 +39,16 @@ export default async function CandidateDetailPage({ params }: Props) {
       </Link>
 
       <div className="bg-white border border-gray-200 rounded-lg p-8">
-        <div className="mb-6">
-          <div className="flex justify-between items-start">
-            <PageTitle>{candidate.title || 'Untitled Candidate'}</PageTitle>
+        <PageHeader
+          title={candidate.title || 'Untitled Candidate'}
+          description={candidate.detectedEntityName}
+          action={
             <Badge className={statusColors[candidate.status]}>
               {candidate.status}
             </Badge>
-          </div>
-          {candidate.detectedEntityName && (
-            <p className="text-gray-500 text-sm mt-1">
-              {candidate.detectedEntityName}
-            </p>
-          )}
-        </div>
+          }
+          className="mb-6"
+        />
 
         <CandidateWorkflow
           candidate={candidate}

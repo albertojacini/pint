@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PageTitle } from '@/components/custom-ui/typography'
+import { PageHeader } from '@/components/custom-ui/section'
 
 const adminPages = [
   {
@@ -17,7 +17,7 @@ const adminPages = [
 export default function AdminPage() {
   return (
     <div className="py-8">
-      <PageTitle className="mb-8">Admin</PageTitle>
+      <PageHeader title="Admin" />
 
       <div className="grid gap-4">
         {adminPages.map((page) => (
