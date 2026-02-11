@@ -83,10 +83,12 @@ IMPORTANT: This is an early stage project:
 
 ### Component Architecture
 
-Two layers — name components by their **role in the page**, not by technical pattern:
+Each domain (`provisions`, `events`, `administrations`, ...) lives in `components/<domain>/` with two layers:
 
-- **Domain components** (`components/<domain>/`) — Pure presentation. Receive data via props, render UI. No data fetching, no filtering, no state logic. Examples: `components/events/event-cards.tsx`, `components/events/event-heatmaps.tsx`.
-- **Section components** (`components/entities/`) — Compose domain components into page sections. Own data fetching, filtering state, and other logic. Pass filtered/processed data down to domain components. Example: `components/entities/events-section.tsx` owns the type filter and passes `filteredEvents` to both `EventCardSmall` and `EventDaysOfTheYearHeatmap`.
+- **Presentation components** (`components/<domain>/*.tsx`) — Pure UI. Receive plain serializable props, render markup. Own display concerns (icon maps, label maps, layout). Typically `'use client'`.
+- **Loaders** (`components/<domain>/loaders/*-loader.tsx`) — Async server components. Fetch data, transform it into plain props, render a presentation component. No UI logic, no non-serializable props (icons, React components). Pages import loaders directly: `<ProvisionsOverviewLoader entityId={...} entitySlug={...} />`.
+
+Naming: name components by their **role in the page** (e.g. `provisions-overview`, not `provision-landscape`). Loaders use the `-loader` suffix (e.g. `provisions-overview-loader.tsx` / `ProvisionsOverviewLoader`).
 
 Other component directories:
 - `components/ui/` — shadcn/ui (standard library)
