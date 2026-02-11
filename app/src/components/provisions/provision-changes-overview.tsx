@@ -9,12 +9,12 @@ interface ProvisionChange {
   changeTitle: string
 }
 
-interface ProvisionChangeLandscapeProps {
+interface ProvisionChangesOverviewProps {
   total: number
   changes: ProvisionChange[]
 }
 
-export function ProvisionChangeLandscape({ total, changes }: ProvisionChangeLandscapeProps) {
+export function ProvisionChangesOverview({ total, changes }: ProvisionChangesOverviewProps) {
   return (
     <div>
       {/* Header */}

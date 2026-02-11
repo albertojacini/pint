@@ -22,7 +22,7 @@ import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
 import { EventFilteredList } from '@/components/events/event-filtered-list'
-import { ProvisionsSummary } from '@/components/provisions/provisions-summary'
+import { ProvisionsOverviewLoader } from '@/components/provisions/loaders/provisions-overview-loader'
 
 // Priority order for relationship types (higher priority = shown first)
 const RELATIONSHIP_PRIORITY: Record<string, number> = {
@@ -225,7 +225,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <ProvisionsSummary entitySlug={entity.slug} />
+        <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
       </Section>
 
       <Section title="Financials">

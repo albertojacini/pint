@@ -1,17 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import {
-  Coins,
-  FileText,
-  Scale,
-  Landmark,
-  BarChart3,
-  HardHat,
-  Tag,
-} from 'lucide-react'
-import { ProvisionLandscape } from './provision-landscape'
+import { ProvisionsOverview } from './provisions-overview'
 
 const meta: Meta = {
-  title: 'Provisions/ProvisionLandscape/Experiments',
+  title: 'Provisions/ProvisionsOverview/Experiments',
   parameters: {
     layout: 'padded',
   },
@@ -20,13 +11,13 @@ const meta: Meta = {
 export default meta
 
 const allTypes = [
-  { type: 'taxation', icon: Coins, label: 'Taxation', count: 12 },
-  { type: 'contract', icon: FileText, label: 'Contracts', count: 8 },
-  { type: 'regulation', icon: Scale, label: 'Regulations', count: 15 },
-  { type: 'ownership', icon: Landmark, label: 'Ownership', count: 5 },
-  { type: 'allocation', icon: BarChart3, label: 'Allocations', count: 7 },
-  { type: 'infrastructure', icon: HardHat, label: 'Infrastructure', count: 3 },
-  { type: 'designation', icon: Tag, label: 'Designations', count: 4 },
+  { type: 'taxation', count: 12 },
+  { type: 'contract', count: 8 },
+  { type: 'regulation', count: 15 },
+  { type: 'ownership', count: 5 },
+  { type: 'allocation', count: 7 },
+  { type: 'infrastructure', count: 3 },
+  { type: 'designation', count: 4 },
 ]
 
 const topProvisions = [
@@ -41,7 +32,7 @@ const topProvisions = [
 export const Base: StoryObj = {
   render: () => (
     <div className="max-w-2xl">
-      <ProvisionLandscape
+      <ProvisionsOverview
         total={54}
         types={allTypes}
         topProvisions={topProvisions}
