@@ -3,7 +3,6 @@ import { entities, taggables, tags, administrations, members, people } from '@/l
 import { eq, and, desc } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getEventsByEntity } from '@/lib/actions/events'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
   EntityHeader,
@@ -21,8 +20,10 @@ import { parseUrlSlug, idStartsWith, entityPath } from '@/lib/utils'
 import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
-import { EventFilteredList } from '@/components/events/event-filtered-list'
-import { ProvisionsOverviewLoader } from '@/components/provisions/loaders/provisions-overview-loader'
+import { getEventsByEntity } from '@/lib/actions/events'
+import { EventDaysOfTheYearHeatmap } from '@/components/events/event-heatmaps'
+import { EventList } from '@/components/events/event-list'
+import { ProvisionsOverviewLoader } from '@/components/provisions/provisions-overview-loader'
 
 // Priority order for relationship types (higher priority = shown first)
 const RELATIONSHIP_PRIORITY: Record<string, number> = {
@@ -54,10 +55,8 @@ export default async function EntityPage({ params }: EntityPageProps) {
     notFound()
   }
 
-  // Fetch events for this entity
+  // Fetch events and relationships for this entity
   const events = await getEventsByEntity(entity.id)
-
-  // Fetch relationships for this entity
   const relationships = await getGroupedEntityRelationships(entity.id)
 
   // Fetch tags for this entity
@@ -240,7 +239,10 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <EventFilteredList events={events} />
+        <EventDaysOfTheYearHeatmap events={events} />
+        <div className="mt-6">
+          <EventList events={events} />
+        </div>
       </Section>
 
       <Section title="Performance Indicators">

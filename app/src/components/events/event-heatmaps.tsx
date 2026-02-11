@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import CalHeatmap from 'cal-heatmap'
 import 'cal-heatmap/cal-heatmap.css'
+import { FilterButton } from '@/components/custom-ui/buttons'
 
 interface EventHeatmapData {
   id: string
@@ -19,10 +20,34 @@ export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapP
   const containerRef = useRef<HTMLDivElement>(null)
   const calRef = useRef<CalHeatmap | null>(null)
 
+  const eventTypes = useMemo(() => {
+    const types = new Set(events.map((e) => e.type))
+    return Array.from(types).sort()
+  }, [events])
+
+  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(() => new Set(eventTypes))
+
+  const toggleType = (type: string) => {
+    setSelectedTypes((prev) => {
+      const next = new Set(prev)
+      if (next.has(type)) {
+        next.delete(type)
+      } else {
+        next.add(type)
+      }
+      return next
+    })
+  }
+
+  const filteredEvents = useMemo(
+    () => events.filter((e) => selectedTypes.has(e.type)),
+    [events, selectedTypes]
+  )
+
   const heatmapData = useMemo(() => {
     const byDate = new Map<string, { date: Date; value: number }>()
 
-    events.forEach((event) => {
+    filteredEvents.forEach((event) => {
       const existing = byDate.get(event.date)
       if (existing) {
         existing.value += 1
@@ -32,7 +57,7 @@ export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapP
     })
 
     return Array.from(byDate.values())
-  }, [events])
+  }, [filteredEvents])
 
   useEffect(() => {
     if (!containerRef.current) return
@@ -87,7 +112,7 @@ export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapP
       const [, timestamp, value] = args as [unknown, number, number]
       const clickedDate = new Date(timestamp)
       const dateStr = clickedDate.toISOString().split('T')[0]
-      const eventsOnDate = events.filter((e) => e.date === dateStr)
+      const eventsOnDate = filteredEvents.filter((e) => e.date === dateStr)
       const titles = eventsOnDate.map((e) => `• ${e.title}`).join('\n')
       alert(`${clickedDate.toLocaleDateString()} - ${value || 0} event(s):\n\n${titles}`)
     })
@@ -100,5 +125,35 @@ export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapP
     }
   }, [heatmapData])
 
-  return <div ref={containerRef} className="overflow-x-auto" />
+  return (
+    <div>
+      {eventTypes.length > 1 && (
+        <div className="flex flex-wrap gap-1 mb-4">
+          <FilterButton
+            selected={selectedTypes.size === eventTypes.length}
+            onSelectedChange={() => {
+              if (selectedTypes.size === eventTypes.length) {
+                setSelectedTypes(new Set())
+              } else {
+                setSelectedTypes(new Set(eventTypes))
+              }
+            }}
+          >
+            All
+          </FilterButton>
+          <div className="w-px bg-border mx-1" />
+          {eventTypes.map((type) => (
+            <FilterButton
+              key={type}
+              selected={selectedTypes.has(type)}
+              onSelectedChange={() => toggleType(type)}
+            >
+              {type}
+            </FilterButton>
+          ))}
+        </div>
+      )}
+      <div ref={containerRef} className="overflow-x-auto" />
+    </div>
+  )
 }
