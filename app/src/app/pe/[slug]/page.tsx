@@ -31,11 +31,11 @@ const RELATIONSHIP_PRIORITY: Record<string, number> = {
   'parent region': 90,
   'parent city': 80,
   'parent district': 70,
-  'contains': 60,
+  contains: 60,
   'member of': 50,
   'has member': 40,
   'sister city': 30,
-  'partner': 20,
+  partner: 20,
 }
 
 interface EntityPageProps {
@@ -142,7 +142,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   // Build related entities
   const allRelationships = Object.entries(relationships).flatMap(([type, ents]) =>
-    ents.map(e => ({ ...e, relationshipType: type }))
+    ents.map((e) => ({ ...e, relationshipType: type }))
   )
   const sortedRelationships = allRelationships.sort((a, b) => {
     const priorityA = RELATIONSHIP_PRIORITY[a.relationshipType] ?? 0
@@ -177,9 +177,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
               >
                 {rel.name}
               </Link>
-              {index < sortedRelationships.length - 1 && (
-                <span className="text-gray-400"> · </span>
-              )}
+              {index < sortedRelationships.length - 1 && <span className="text-gray-400"> · </span>}
             </span>
           ))}
         </div>
@@ -225,6 +223,12 @@ export default async function EntityPage({ params }: EntityPageProps) {
         }
       >
         <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
+
+        {/* ─── Block 3: Community ─── */}
+        <p className="text-xs text-muted-foreground italic">Community — work in progress</p>
+
+        {/* ─── Block 4: Highlights ─── */}
+        <p className="text-xs text-muted-foreground italic">Highlights — work in progress</p>
       </Section>
 
       <Section title="Financials">
