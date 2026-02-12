@@ -21,7 +21,10 @@ interface StatItem {
   value: string
 }
 
-function buildStatItems(population: number | null, stats: EssentialStatsProps['stats']): StatItem[] {
+function buildStatItems(
+  population: number | null,
+  stats: EssentialStatsProps['stats']
+): StatItem[] {
   const items: StatItem[] = []
 
   if (population) {
@@ -76,12 +79,12 @@ export function EssentialStats({ population, stats }: EssentialStatsProps) {
   if (items.length === 0) return null
 
   return (
-    <div className="py-1 mb-3">
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+    <div>
+      <div className="grid grid-cols-4 md:grid-cols-12 gap-3">
         {items.map((item) => (
           <div key={item.label}>
             <div className="text-[10px] text-gray-400">{item.label}</div>
-            <div className="text-sm font-medium text-gray-800">{item.value}</div>
+            <div className="text-xs font-medium text-gray-800">{item.value}</div>
           </div>
         ))}
       </div>

@@ -5,13 +5,14 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
 import {
-  EntityHeader,
   EntityActions,
   EssentialStats,
   PerformanceIndicators,
   CommunityMetrics,
   EntityMetadata,
 } from '@/components/entities'
+import { PageTitle } from '@/components/custom-ui/typography'
+import { getStorageUrl } from '@/lib/storage'
 import { Section, Subsection } from '@/components/custom-ui/section'
 import { Tags } from '@/components/custom-ui/tags'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -165,28 +166,43 @@ export default async function EntityPage({ params }: EntityPageProps) {
         </div>
       </div>
 
-      {/* Main entity card */}
-      <EntityHeader entity={entity} />
-
-      {/* Related entities */}
-      {sortedRelationships.length > 0 && (
-        <div className="text-sm text-gray-600 mb-6">
-          <span className="text-gray-500">Related: </span>
-          {sortedRelationships.map((rel, index) => (
-            <span key={rel.id}>
-              <Link
-                href={entityPath(rel)}
-                className="text-link hover:text-blue-800 hover:underline"
-              >
-                {rel.name}
-              </Link>
-              {index < sortedRelationships.length - 1 && <span className="text-gray-400"> · </span>}
-            </span>
-          ))}
+      {/* Entity Header */}
+      <div className="flex items-center gap-2 mb-4">
+        <div className="flex-shrink-0">
+          {getStorageUrl('avatars', entity.avatarUrl) ? (
+            <img
+              src={getStorageUrl('avatars', entity.avatarUrl)!}
+              alt={entity.name}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+              <span className="text-xl font-bold text-gray-400">{entity.name.charAt(0)}</span>
+            </div>
+          )}
         </div>
-      )}
+        <PageTitle>{entity.name}</PageTitle>
+      </div>
 
-      <EssentialStats population={entity.population} stats={entity.essentialStats} />
+      {/* Information block: stats + related entities */}
+      <div className="space-y-2 mb-10">
+        <EssentialStats population={entity.population} stats={entity.essentialStats} />
+        {sortedRelationships.length > 0 && (
+          <div className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground/60 mr-1.5">Related entities:</span>
+            {sortedRelationships.map((rel, index) => (
+              <span key={rel.id}>
+                <Link href={entityPath(rel)} className="text-link hover:underline">
+                  {rel.name}
+                </Link>
+                {index < sortedRelationships.length - 1 && (
+                  <span className="text-foreground/20"> · </span>
+                )}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Politics / Administrations */}
       {hasAdministrationContent && (

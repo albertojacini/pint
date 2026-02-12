@@ -1,4 +1,3 @@
-export { EntityHeader } from './entity-header'
 export { EntityActions } from './entity-actions'
 export { EssentialStats } from './essential-stats'
 export { PerformanceIndicators } from './performance-indicators'
