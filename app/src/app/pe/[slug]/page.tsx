@@ -156,10 +156,13 @@ export default async function EntityPage({ params }: EntityPageProps) {
       {/* Breadcrumbs */}
       <Breadcrumbs items={[{ label: 'Entities', href: '/pe' }, { label: entity.name }]} />
 
-      {/* Entity Type Badge + Tags */}
+      {/* Entity Type Badge + Tags + Quick Actions */}
       <div className="flex items-center gap-2 mb-6">
         <EntityClassificationBadge type={entity.type as any} />
         <Tags tags={entityTags} />
+        <div className="ml-auto">
+          <EntityActions entity={entity} />
+        </div>
       </div>
 
       {/* Main entity card */}
@@ -182,8 +185,6 @@ export default async function EntityPage({ params }: EntityPageProps) {
           ))}
         </div>
       )}
-
-      <EntityActions entity={entity} />
 
       <EssentialStats population={entity.population} stats={entity.essentialStats} />
 

@@ -115,20 +115,23 @@ SpecialButton.displayName = 'SpecialButton'
 export interface QuickActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: React.ReactNode
   href?: string
+  hideTextOnMobile?: boolean
 }
 
 export const QuickActionButton = React.forwardRef<HTMLButtonElement, QuickActionButtonProps>(
-  ({ icon, href, children, className, ...props }, ref) => {
+  ({ icon, href, hideTextOnMobile, children, className, ...props }, ref) => {
     const classes = cn(
-      'inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border border-border bg-background hover:bg-muted transition-colors',
+      'inline-flex items-center gap-1.5 text-xs font-medium rounded-full border border-border bg-background hover:bg-muted transition-colors',
+      hideTextOnMobile ? 'p-1.5 sm:px-3 sm:py-1' : 'px-3 py-1',
       className
     )
+    const textClasses = hideTextOnMobile ? 'hidden sm:inline' : undefined
 
     if (href) {
       return (
         <a href={href} className={classes}>
           {icon}
-          {children}
+          <span className={textClasses}>{children}</span>
         </a>
       )
     }
@@ -136,7 +139,7 @@ export const QuickActionButton = React.forwardRef<HTMLButtonElement, QuickAction
     return (
       <button ref={ref} type="button" className={classes} {...props}>
         {icon}
-        {children}
+        <span className={textClasses}>{children}</span>
       </button>
     )
   }
