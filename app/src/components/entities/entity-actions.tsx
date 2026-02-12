@@ -1,6 +1,6 @@
-import Link from 'next/link'
-import { Search, MessageCircle, Gamepad2 } from 'lucide-react'
+import { Search, MessageCircle, Gamepad2, GitCompareArrows } from 'lucide-react'
 import { entityPath } from '@/lib/utils'
+import { QuickActionButton } from '@/components/custom-ui/buttons'
 
 interface EntityActionsProps {
   entity: { id: string; slug: string }
@@ -8,35 +8,19 @@ interface EntityActionsProps {
 
 export function EntityActions({ entity }: EntityActionsProps) {
   return (
-    <div className="flex items-center gap-2 py-4 mb-4">
-      <button
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-        title="Search"
-      >
-        <Search className="w-4 h-4" />
-        <span>Search</span>
-      </button>
-      <button
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-        title="Chat"
-      >
-        <MessageCircle className="w-4 h-4" />
-        <span>Chat</span>
-      </button>
-      <Link
-        href={`${entityPath(entity)}/compare`}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-      >
-        <span>&ge;</span>
-        <span>Compare</span>
-      </Link>
-      <Link
-        href={`/games/voter-budget/${entity.id}`}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
-      >
-        <Gamepad2 className="w-4 h-4" />
-        <span>Games</span>
-      </Link>
+    <div className="flex items-center gap-1.5 py-4 mb-4">
+      <QuickActionButton icon={<Search className="w-3 h-3" />}>
+        Search
+      </QuickActionButton>
+      <QuickActionButton icon={<MessageCircle className="w-3 h-3" />}>
+        Chat
+      </QuickActionButton>
+      <QuickActionButton icon={<GitCompareArrows className="w-3 h-3" />} href={`${entityPath(entity)}/compare`}>
+        Compare
+      </QuickActionButton>
+      <QuickActionButton icon={<Gamepad2 className="w-3 h-3" />} href={`/games/voter-budget/${entity.id}`}>
+        Games
+      </QuickActionButton>
     </div>
   )
 }

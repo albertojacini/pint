@@ -183,8 +183,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
         </div>
       )}
 
-      <EssentialStats population={entity.population} stats={entity.essentialStats} />
       <EntityActions entity={entity} />
+
+      <EssentialStats population={entity.population} stats={entity.essentialStats} />
 
       {/* Politics / Administrations */}
       {hasAdministrationContent && (

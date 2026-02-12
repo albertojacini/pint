@@ -111,6 +111,38 @@ export const SpecialButton = React.forwardRef<HTMLButtonElement, SpecialButtonPr
 )
 SpecialButton.displayName = 'SpecialButton'
 
+// QuickActionButton - Compact pill-outlined button for contextual quick actions
+export interface QuickActionButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  icon?: React.ReactNode
+  href?: string
+}
+
+export const QuickActionButton = React.forwardRef<HTMLButtonElement, QuickActionButtonProps>(
+  ({ icon, href, children, className, ...props }, ref) => {
+    const classes = cn(
+      'inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full border border-border bg-background hover:bg-muted transition-colors',
+      className
+    )
+
+    if (href) {
+      return (
+        <a href={href} className={classes}>
+          {icon}
+          {children}
+        </a>
+      )
+    }
+
+    return (
+      <button ref={ref} type="button" className={classes} {...props}>
+        {icon}
+        {children}
+      </button>
+    )
+  }
+)
+QuickActionButton.displayName = 'QuickActionButton'
+
 // ButtonGroup - Group of related buttons
 export interface ButtonGroupProps {
   children: React.ReactNode
