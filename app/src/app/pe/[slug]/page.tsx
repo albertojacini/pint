@@ -13,6 +13,7 @@ import {
 } from '@/components/entities'
 import { PageTitle } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
+import { Box } from '@/components/custom-ui/box'
 import { Section, Subsection } from '@/components/custom-ui/section'
 import { Tags } from '@/components/custom-ui/tags'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
@@ -185,7 +186,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </div>
 
       {/* Information block: stats + related entities */}
-      <div className="space-y-2 mb-10">
+      <Box variant="muted" padding="md" className="space-y-2 mb-10">
         <EssentialStats population={entity.population} stats={entity.essentialStats} />
         {sortedRelationships.length > 0 && (
           <div className="text-xs text-muted-foreground">
@@ -202,7 +203,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
             ))}
           </div>
         )}
-      </div>
+      </Box>
 
       {/* Politics / Administrations */}
       {hasAdministrationContent && (
