@@ -20,12 +20,30 @@ export type CandidateProposedData = {
   [key: string]: unknown
 }
 
-export async function createSource(_input: unknown) {
-  throw new Error('Event ingestion has been removed')
-}
-export async function getSources() { return [] }
-export async function getSource(_id: string) { return null }
-export async function getCandidates() { return [] }
-export async function getCandidate(_id: string) { return null }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EiSource = Record<string, any>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EiCandidate = Record<string, any>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EiCandidateChange = Record<string, any>
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fail: { ok: boolean; error: string; data: any } = { ok: false, error: 'Event ingestion has been removed', data: null }
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export async function createSource(..._args: unknown[]) { return fail }
+export async function updateSource(..._args: unknown[]) { return fail }
+export async function deleteSource(..._args: unknown[]) { return fail }
+export async function getSources(): Promise<EiSource[]> { return [] }
+export async function getSource(_id: string): Promise<EiSource | null> { return null }
+export async function getCandidates(): Promise<EiCandidate[]> { return [] }
+export async function getCandidate(_id: string): Promise<EiCandidate | null> { return null }
+export async function createCandidate(..._args: unknown[]) { return fail }
+export async function updateCandidate(..._args: unknown[]) { return fail }
+export async function approveCandidate(..._args: unknown[]) { return fail }
+export async function deleteCandidate(..._args: unknown[]) { return fail }
+export async function updateCandidateChange(..._args: unknown[]) { return fail }
+export async function createCandidateChange(..._args: unknown[]) { return fail }
+export async function deleteCandidateChange(..._args: unknown[]) { return fail }
 export async function getEntities() { return [] }
 export async function getProvisions() { return [] }

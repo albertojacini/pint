@@ -282,7 +282,8 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
               <div>
                 <span className="text-xs text-gray-500">Topics:</span>
                 <div className="flex gap-1 flex-wrap mt-1">
-                  {source.aiExtractedData.topics.map((topic) => (
+                  { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {source.aiExtractedData.topics.map((topic: any) => (
                     <Badge key={topic} variant="secondary">
                       {topic}
                     </Badge>
@@ -294,7 +295,8 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
               <div>
                 <span className="text-xs text-gray-500">Entities Mentioned:</span>
                 <div className="flex gap-1 flex-wrap mt-1">
-                  {source.aiExtractedData.entitiesMentioned.map((entity) => (
+                  { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {source.aiExtractedData.entitiesMentioned.map((entity: any) => (
                     <Badge key={entity} variant="outline">
                       {entity}
                     </Badge>
@@ -306,7 +308,8 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
               <div>
                 <span className="text-xs text-gray-500">Dates Mentioned:</span>
                 <div className="flex gap-1 flex-wrap mt-1">
-                  {source.aiExtractedData.datesMentioned.map((date) => (
+                  { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {source.aiExtractedData.datesMentioned.map((date: any) => (
                     <Badge key={date} variant="outline">
                       {date}
                     </Badge>
@@ -318,7 +321,8 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
               <div>
                 <span className="text-xs text-gray-500">Event Type Hints:</span>
                 <div className="flex gap-1 flex-wrap mt-1">
-                  {source.aiExtractedData.eventTypeHints.map((hint) => (
+                  { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {source.aiExtractedData.eventTypeHints.map((hint: any) => (
                     <Badge key={hint} className="bg-purple-100 text-purple-800">
                       {hint}
                     </Badge>

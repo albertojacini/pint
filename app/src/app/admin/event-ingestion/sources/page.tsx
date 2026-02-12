@@ -83,7 +83,7 @@ export default async function SourcesPage() {
                     )}
                     {source.aiExtractedData?.topics && source.aiExtractedData.topics.length > 0 && (
                       <div className="flex gap-1 mt-2 flex-wrap">
-                        {source.aiExtractedData.topics.map((topic) => (
+                        {source.aiExtractedData.topics.map((topic: string) => (
                           <span
                             key={topic}
                             className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded"

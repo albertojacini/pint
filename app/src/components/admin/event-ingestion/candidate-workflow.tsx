@@ -325,7 +325,8 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
             Documents ({candidate.documents.length})
           </SubsectionTitle>
           <div className="space-y-2">
-            {candidate.documents.map((doc) => (
+            { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {candidate.documents.map((doc: any) => (
               <div
                 key={doc.id}
                 className="bg-gray-50 p-3 rounded-lg text-sm"
@@ -345,7 +346,8 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
         </SubsectionTitle>
         {candidate.changes && candidate.changes.length > 0 ? (
           <div className="space-y-2">
-            {candidate.changes.map((change) => (
+            { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {candidate.changes.map((change: any) => (
               <ChangeCard
                 key={change.id}
                 change={change}

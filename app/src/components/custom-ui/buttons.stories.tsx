@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Heart, Star, Share, Download, Grid, List } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -82,7 +83,6 @@ export const ButtonGroups: StoryObj<typeof ButtonGroup> = {
 // ToggleButtonGroup stories
 export const ToggleButtonGroups: StoryObj<typeof ToggleButtonGroup<string>> = {
   render: function Render() {
-    const { useState } = require('react')
     const [view, setView] = useState('grid')
 
     return (
