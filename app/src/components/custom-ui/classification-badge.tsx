@@ -7,8 +7,8 @@ interface ClassificationBadgeProps {
 export function ClassificationBadge({ type, color, className = '' }: ClassificationBadgeProps) {
   return (
     <span
-      className={`inline-flex items-center text-xs font-medium border-b-2 pb-0.5 font-mono-ui ${className}`}
-      style={{ color, borderBottomColor: color }}
+      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border-l-[3px] rounded-r bg-muted/50 text-foreground/70 ${className}`}
+      style={{ borderLeftColor: color }}
     >
       {type}
     </span>

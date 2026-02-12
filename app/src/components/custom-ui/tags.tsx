@@ -6,9 +6,9 @@ interface TagProps {
 export function Tag({ name, className = '' }: TagProps) {
   return (
     <span
-      className={`px-2 py-0.5 rounded-full text-xs font-medium bg-muted text-muted-foreground ${className}`}
+      className={`text-xs font-medium text-muted-foreground ${className}`}
     >
-      {name}
+      <span className="text-foreground/30">#</span>{name.toLowerCase()}
     </span>
   )
 }
@@ -26,12 +26,12 @@ export function Tags({ tags, maxTags = 3, className = '' }: TagsProps) {
   const extraTagsCount = Math.max(0, tags.length - maxTags)
 
   return (
-    <div className={`flex gap-1.5 ${className}`}>
+    <div className={`flex gap-2 ${className}`}>
       {displayedTags.map((tag) => (
         <Tag key={tag.id} name={tag.name} />
       ))}
       {extraTagsCount > 0 && (
-        <span className="px-2 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">
+        <span className="text-xs font-medium text-muted-foreground/60">
           +{extraTagsCount}
         </span>
       )}
