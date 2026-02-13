@@ -69,6 +69,19 @@ export const entities = pgTable('gov_entities', {
       responses: number
     }>
   }>(),
+  financialOverview: jsonb('financial_overview').$type<{
+    currency: string // e.g. "EUR"
+    unit: string // e.g. "millions"
+    years: Array<{
+      year: number
+      type: 'actual' | 'forecast'
+      items: Array<{
+        type: 'revenue' | 'expense'
+        amount: number
+        label: string
+      }>
+    }>
+  }>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

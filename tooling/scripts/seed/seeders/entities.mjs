@@ -4,10 +4,58 @@
  * Dependencies: None
  */
 
+import { readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 import { loadData } from '../utils/data-loader.mjs'
 import { logger } from '../utils/logger.mjs'
 import { generateUUID } from '../utils/uuid.mjs'
 import { hasData, insertQuery } from '../utils/db-helpers.mjs'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const BASE_DATA_DIR = join(__dirname, '..', 'data', 'base')
+
+const REVENUE_COLUMNS = {
+  entrate_tributarie: 'Tributi',
+  entrate_extra_tributarie: 'Extra-tributi',
+  trasferimenti_correnti: 'Trasferimenti',
+  entrate_conto_capitale: 'Conto capitale',
+  altre_entrate: 'Altre',
+}
+
+const EXPENSE_COLUMNS = {
+  spese_correnti: 'Correnti',
+  spese_conto_capitale: 'Conto capitale',
+  spese_conto_terzi: 'Conto terzi',
+  altre_spese: 'Altre',
+}
+
+function parseFinancialCsv(filename) {
+  const csv = readFileSync(join(BASE_DATA_DIR, filename), 'utf-8')
+  const [header, ...rows] = csv.trim().split('\n')
+  const cols = header.split(',')
+
+  const years = rows.filter(r => r.trim()).map(row => {
+    const vals = row.split(',')
+    const get = (col) => {
+      const idx = cols.indexOf(col)
+      return idx >= 0 ? parseFloat(vals[idx]) : 0
+    }
+
+    const items = []
+    for (const [col, label] of Object.entries(REVENUE_COLUMNS)) {
+      items.push({ type: 'revenue', amount: get(col), label })
+    }
+    for (const [col, label] of Object.entries(EXPENSE_COLUMNS)) {
+      items.push({ type: 'expense', amount: get(col), label })
+    }
+
+    return { year: parseInt(vals[0]), type: vals[cols.indexOf('type')] || 'actual', items }
+  })
+
+  return { currency: 'EUR', unit: 'millions', years }
+}
 
 /**
  * Generate a slug from text
@@ -47,6 +95,10 @@ export async function seedEntities(client, supabase, idMaps) {
       const avatarUrl = entity.avatar_url || null
       const slug = generateSlug(entity.name)
 
+      const financialOverview = entity.financial_overview_csv
+        ? parseFinancialCsv(entity.financial_overview_csv)
+        : null
+
       await insertQuery(client, {
         table: 'gov_entities',
         columns: [
@@ -64,7 +116,8 @@ export async function seedEntities(client, supabase, idMaps) {
           'score_impact',
           'essential_stats',
           'performance_indicators',
-          'community_metrics'
+          'community_metrics',
+          'financial_overview'
         ],
         values: [
           id,
@@ -81,7 +134,8 @@ export async function seedEntities(client, supabase, idMaps) {
           entity.score_impact || null,
           entity.essential_stats ? JSON.stringify(entity.essential_stats) : null,
           entity.performance_indicators ? JSON.stringify(entity.performance_indicators) : null,
-          entity.community_metrics ? JSON.stringify(entity.community_metrics) : null
+          entity.community_metrics ? JSON.stringify(entity.community_metrics) : null,
+          financialOverview ? JSON.stringify(financialOverview) : null
         ]
       })
 

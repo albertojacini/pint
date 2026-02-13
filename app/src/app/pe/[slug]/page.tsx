@@ -10,6 +10,8 @@ import {
   PerformanceIndicators,
   CommunityMetrics,
   EntityMetadata,
+  RevenueOverview,
+  ExpenseOverview,
 } from '@/components/entities'
 import { PageTitle } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
@@ -250,9 +252,14 @@ export default async function EntityPage({ params }: EntityPageProps) {
         <p className="text-xs text-muted-foreground italic">Highlights — work in progress</p>
       </Section>
 
-      <Section title="Financials">
-        <p className="text-muted-foreground">Coming soon...</p>
-      </Section>
+      {entity.financialOverview && (
+        <Section title="Financials">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <RevenueOverview data={entity.financialOverview} />
+            <ExpenseOverview data={entity.financialOverview} />
+          </div>
+        </Section>
+      )}
 
       <Section
         title="Events"

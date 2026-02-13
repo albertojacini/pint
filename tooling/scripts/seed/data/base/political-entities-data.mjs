@@ -49,6 +49,7 @@ export const politicalEntities = [
       activeProjects: 34,
       communityEngagement: { totalUsers: 8920, activeContributors: 156 },
     },
+    financial_overview_csv: 'milano-financial-overview.csv',
   },
   {
     name: 'Zona 1',
