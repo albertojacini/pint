@@ -1,17 +1,8 @@
 'use client'
 
 import type { Meta, StoryObj } from '@storybook/react'
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts'
-import { TrendChart } from '@/components/custom-ui/trend-chart'
+import { TrendChart, TrendChartInline } from '@/components/custom-ui/charts/trend-chart'
+import { StackedArea } from '@/components/custom-ui/charts/stacked-area'
 
 const meta: Meta = {
   title: 'Entities/FinancialOverviewExperiments',
@@ -166,8 +157,20 @@ const EXPENSE_COLORS = {
   altreSpese: '#fdba74',
 }
 
-const fmtM = (v: number) => `€${Math.round(v).toLocaleString()}M`
-const fmtAxis = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(1)}B` : `${Math.round(v)}M`)
+const REVENUE_SERIES = [
+  { dataKey: 'entrateTributarie', name: 'Tributarie' },
+  { dataKey: 'entrateExtraTributarie', name: 'Extra-tributarie' },
+  { dataKey: 'trasferimentiCorrenti', name: 'Trasferimenti' },
+  { dataKey: 'entrateContoCapitale', name: 'Conto capitale' },
+  { dataKey: 'altreEntrate', name: 'Altre entrate' },
+]
+
+const EXPENSE_SERIES = [
+  { dataKey: 'speseCorrenti', name: 'Correnti' },
+  { dataKey: 'speseContoCapitale', name: 'Conto capitale' },
+  { dataKey: 'speseContoTerzi', name: 'Conto terzi' },
+  { dataKey: 'altreSpese', name: 'Altre spese' },
+]
 
 // ─── Entrate (Revenue) — Stacked Area ───
 
@@ -180,60 +183,12 @@ function EntrateChart() {
           Stacked area, millions EUR. *2025 = forecast.
         </p>
       </div>
-      <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-          <XAxis dataKey="year" tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }} tickFormatter={fmtAxis} />
-          <Tooltip formatter={(v) => (typeof v === 'number' ? fmtM(v) : v)} />
-          <Legend />
-          <Area
-            type="linear"
-            dataKey="entrateTributarie"
-            name="Tributarie"
-            stackId="1"
-            fill="none"
-            stroke={REVENUE_COLORS.entrateTributarie}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="entrateExtraTributarie"
-            name="Extra-tributarie"
-            stackId="1"
-            fill="none"
-            stroke={REVENUE_COLORS.entrateExtraTributarie}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="trasferimentiCorrenti"
-            name="Trasferimenti"
-            stackId="1"
-            fill="none"
-            stroke={REVENUE_COLORS.trasferimentiCorrenti}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="entrateContoCapitale"
-            name="Conto capitale"
-            stackId="1"
-            fill="none"
-            stroke={REVENUE_COLORS.entrateContoCapitale}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="altreEntrate"
-            name="Altre entrate"
-            stackId="1"
-            fill="none"
-            stroke={REVENUE_COLORS.altreEntrate}
-            dot={{ r: 3 }}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+      <StackedArea
+        data={data}
+        series={REVENUE_SERIES}
+        colors={Object.values(REVENUE_COLORS)}
+        height={400}
+      />
     </div>
   )
 }
@@ -253,51 +208,12 @@ function UsciteChart() {
           Stacked area, millions EUR. *2025 = forecast.
         </p>
       </div>
-      <ResponsiveContainer width="100%" height={400}>
-        <AreaChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-          <XAxis dataKey="year" tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }} tickFormatter={fmtAxis} />
-          <Tooltip formatter={(v) => (typeof v === 'number' ? fmtM(v) : v)} />
-          <Legend />
-          <Area
-            type="linear"
-            dataKey="speseCorrenti"
-            name="Correnti"
-            stackId="1"
-            fill="none"
-            stroke={EXPENSE_COLORS.speseCorrenti}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="speseContoCapitale"
-            name="Conto capitale"
-            stackId="1"
-            fill="none"
-            stroke={EXPENSE_COLORS.speseContoCapitale}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="speseContoTerzi"
-            name="Conto terzi"
-            stackId="1"
-            fill="none"
-            stroke={EXPENSE_COLORS.speseContoTerzi}
-            dot={{ r: 3 }}
-          />
-          <Area
-            type="linear"
-            dataKey="altreSpese"
-            name="Altre spese"
-            stackId="1"
-            fill="none"
-            stroke={EXPENSE_COLORS.altreSpese}
-            dot={{ r: 3 }}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+      <StackedArea
+        data={data}
+        series={EXPENSE_SERIES}
+        colors={Object.values(EXPENSE_COLORS)}
+        height={400}
+      />
     </div>
   )
 }
@@ -349,6 +265,23 @@ function TrendsV2() {
 
 export const TrendsGreen: StoryObj = {
   render: () => <TrendsV2 />,
+}
+
+// ─── Inline rows ───
+
+function TrendsInlineRows() {
+  return (
+    <div className="max-w-lg rounded-lg bg-muted/50 px-4 py-1 divide-y divide-border/50">
+      <TrendChartInline label="Tax Revenue" values={taxRevenue} />
+      <TrendChartInline label="Current Expenses" values={currentExpenses} />
+      <TrendChartInline label="Total Revenue" values={totalRevenue} />
+      <TrendChartInline label="Total Expenses" values={totalExpenses} />
+    </div>
+  )
+}
+
+export const TrendsInline: StoryObj = {
+  render: () => <TrendsInlineRows />,
 }
 
 // ─── V5: 4-card grid, totals + breakdowns ───
