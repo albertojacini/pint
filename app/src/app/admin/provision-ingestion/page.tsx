@@ -30,7 +30,7 @@ export default async function ProvisionIngestionPage() {
   const drafts = await getDrafts()
 
   return (
-    <div className="py-8">
+    <div>
       <PageHeader
         title="Provision Ingestion"
         action={

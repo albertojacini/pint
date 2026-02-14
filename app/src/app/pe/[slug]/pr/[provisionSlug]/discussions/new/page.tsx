@@ -31,7 +31,7 @@ export default async function NewPostPage({ params }: PageProps) {
   const basePath = `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`
 
   return (
-    <div className="py-8">
+    <div>
       <Link
         href={basePath}
         className="text-sm text-muted-foreground hover:text-primary mb-4 inline-block"

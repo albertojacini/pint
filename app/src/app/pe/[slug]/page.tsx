@@ -7,9 +7,6 @@ import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationship
 import {
   EntityActions,
   EssentialStats,
-  PerformanceIndicators,
-  CommunityMetrics,
-  EntityMetadata,
   FinancialTrends,
 } from '@/components/entities'
 import { PageTitle } from '@/components/custom-ui/typography'
@@ -155,7 +152,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
   })
 
   return (
-    <div className="py-8">
+    <div>
       {/* Breadcrumbs */}
       <Breadcrumbs items={[{ label: 'Entities', href: '/pe' }, { label: entity.name }]} />
 
@@ -272,15 +269,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </Section>
 
       <Section title="Performance Indicators">
-        <PerformanceIndicators data={entity.performanceIndicators} />
+        <p className="text-sm text-muted-foreground">Coming soon</p>
       </Section>
 
       <Section title="Pint Community">
-        <CommunityMetrics data={entity.communityMetrics} />
-      </Section>
-
-      <Section title="Metadata">
-        <EntityMetadata id={entity.id} createdAt={entity.createdAt} updatedAt={entity.updatedAt} />
+        <p className="text-sm text-muted-foreground">Coming soon</p>
       </Section>
     </div>
   )

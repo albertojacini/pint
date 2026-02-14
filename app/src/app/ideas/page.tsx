@@ -11,7 +11,7 @@ export default async function IdeasPage() {
   const ideas = await getIdeas()
 
   return (
-    <div className="py-8">
+    <div>
       <PageHeader
         title="Policy Ideas"
         description="Explore abstract policy concepts and their evidence-based impacts"

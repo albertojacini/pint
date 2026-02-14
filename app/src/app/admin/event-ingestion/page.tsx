@@ -17,7 +17,7 @@ export default async function EventIngestionPage() {
   const approvedCandidates = candidates.filter(c => c.status === 'approved')
 
   return (
-    <div className="py-8">
+    <div>
       <PageHeader
         title="Event Ingestion"
         description="Pipeline for ingesting real-world events from external sources"

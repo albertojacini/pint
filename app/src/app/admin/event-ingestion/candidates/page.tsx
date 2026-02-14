@@ -28,7 +28,7 @@ export default async function CandidatesPage() {
   const candidates = await getCandidates()
 
   return (
-    <div className="py-8">
+    <div>
       <Link
         href="/admin/event-ingestion"
         className="text-link hover:underline text-sm mb-4 inline-block"

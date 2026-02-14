@@ -29,7 +29,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
   }, {} as Record<string, typeof goalContributions>)
 
   return (
-    <div className="py-8">
+    <div>
       {/* Header */}
       <Link href="/ideas" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
         <ArrowLeft className="w-4 h-4" />

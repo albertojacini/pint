@@ -18,7 +18,7 @@ export default async function EntitiesPage() {
     .orderBy(desc(entitiesTable.createdAt))
 
   return (
-    <div className="py-8">
+    <div>
       <PageHeader
         title="Political Entities"
         description="Browse public administrations and their information"

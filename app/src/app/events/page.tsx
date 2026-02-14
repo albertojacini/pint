@@ -11,7 +11,7 @@ export default async function EventsPage() {
   const events = await getEvents()
 
   return (
-    <div className="py-8">
+    <div>
       <PageHeader
         title="Events"
         description="Temporal occurrences that shape provisions"

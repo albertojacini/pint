@@ -18,7 +18,7 @@ export default async function SourceDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="py-8">
+    <div>
       <Link
         href="/admin/event-ingestion/sources"
         className="text-link hover:underline text-sm mb-4 inline-block"

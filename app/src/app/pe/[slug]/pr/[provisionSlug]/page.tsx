@@ -409,7 +409,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
   )
 
   return (
-    <div className="py-8">
+    <div>
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[

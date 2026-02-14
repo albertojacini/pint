@@ -17,7 +17,7 @@ export default async function DraftPage({ params }: Props) {
   }
 
   return (
-    <div className="py-8">
+    <div>
       <Link
         href="/admin/provision-ingestion"
         className="text-link hover:underline text-sm mb-4 inline-block"

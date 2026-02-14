@@ -77,7 +77,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
   const otherMembers = adminMembers.filter(m => m.roleType !== 'mayor')
 
   return (
-    <div className="py-8">
+    <div>
       {/* Back button */}
       <div className="mb-6">
         <Link href={`/entities/${administration.entity.id}`} className="text-link hover:underline">

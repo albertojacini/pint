@@ -16,7 +16,7 @@ const adminPages = [
 
 export default function AdminPage() {
   return (
-    <div className="py-8">
+    <div>
       <PageHeader title="Admin" />
 
       <div className="grid gap-4">

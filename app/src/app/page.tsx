@@ -19,7 +19,7 @@ export default async function Home() {
   const milanoAvatarUrl = milanoEntity ? getStorageUrl('avatars', milanoEntity.avatarUrl) : null
 
   return (
-    <div className="py-16">
+    <div>
       {/* Hero Section */}
       <div className="mb-12 text-center">
         <PageTitle className="mb-4">Pint - Public Interface</PageTitle>

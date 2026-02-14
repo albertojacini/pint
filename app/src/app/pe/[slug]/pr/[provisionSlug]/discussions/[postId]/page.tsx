@@ -33,7 +33,7 @@ export default async function PostDetailPage({ params }: PageProps) {
   const basePath = `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`
 
   return (
-    <div className="py-8">
+    <div>
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[

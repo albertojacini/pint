@@ -30,7 +30,7 @@ export default async function CandidateDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="py-8">
+    <div>
       <Link
         href="/admin/event-ingestion/candidates"
         className="text-link hover:underline text-sm mb-4 inline-block"
