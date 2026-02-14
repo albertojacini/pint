@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { EffectsDiagram } from '@/components/ideas/effects-diagram'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 import { PageHeader, Section } from '@/components/custom-ui/section'
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
@@ -74,7 +74,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                       {/* Effect Content */}
                       <div className="flex-1">
                         {/* Effect Title */}
-                        <SubsectionTitle className="mb-3">{effect.title}</SubsectionTitle>
+                        <SectionL2Title className="mb-3">{effect.title}</SectionL2Title>
 
                         {/* Effect Description */}
                         {effect.description && (
@@ -174,7 +174,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                     <Badge variant="outline" className="text-xs font-mono">PROVISION</Badge>
                   </div>
                   <div className="flex items-start justify-between gap-2">
-                    <SubsectionTitle>{provision.provisionTitle}</SubsectionTitle>
+                    <SectionL2Title>{provision.provisionTitle}</SectionL2Title>
                     <Badge variant={
                       provision.status === 'active' ? 'default' :
                       provision.status === 'repealed' ? 'destructive' :

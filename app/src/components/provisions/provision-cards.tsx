@@ -5,7 +5,7 @@ import { cn, provisionPath } from '@/lib/utils'
 import type { Tag, ProvisionType } from '@/lib/actions/provisions'
 import { getProvisionTypeColor, ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionChangesDensity } from './provision-changes-density'
@@ -58,7 +58,7 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
           href={provisionPath(entity, provision)}
           className="line-clamp-2 flex-1 hover:text-primary hover:underline transition-colors"
         >
-          <SubsectionTitle>{provision.title}</SubsectionTitle>
+          <SectionL2Title>{provision.title}</SectionL2Title>
         </Link>
 
         {/* Relevance indicator (5 dots) */}

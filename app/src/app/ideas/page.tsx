@@ -4,7 +4,7 @@ import { getIdeas } from '@/lib/actions/ideas'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 import { PageHeader } from '@/components/custom-ui/section'
 
 export default async function IdeasPage() {
@@ -28,7 +28,7 @@ export default async function IdeasPage() {
               <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <SubsectionTitle>{idea.title}</SubsectionTitle>
+                    <SectionL2Title>{idea.title}</SectionL2Title>
                   </div>
                   {idea.categoryTitle && (
                     <Badge variant="secondary" className="w-fit">

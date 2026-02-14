@@ -4,7 +4,7 @@ import { getEvents } from '@/lib/actions/events'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 import { PageHeader } from '@/components/custom-ui/section'
 
 export default async function EventsPage() {
@@ -32,7 +32,7 @@ export default async function EventsPage() {
                     {event.type}
                   </Badge>
                 </div>
-                <SubsectionTitle>{event.title}</SubsectionTitle>
+                <SectionL2Title>{event.title}</SectionL2Title>
                 <CardDescription className="text-sm">
                   {format(new Date(event.date), 'PPP')}
                 </CardDescription>

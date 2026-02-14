@@ -12,11 +12,11 @@ export function PageTitle({ children, className, as: Tag = 'h1' }: TypographyPro
   return <Tag className={cn('text-2xl font-semibold', className)}>{children}</Tag>
 }
 
-export function SectionTitle({ children, className, as: Tag = 'h2' }: TypographyProps) {
+export function SectionL1Title({ children, className, as: Tag = 'h2' }: TypographyProps) {
   return <Tag className={cn('text-xl font-medium', className)}>{children}</Tag>
 }
 
-export function SubsectionTitle({ children, className, as: Tag = 'h3' }: TypographyProps) {
+export function SectionL2Title({ children, className, as: Tag = 'h3' }: TypographyProps) {
   return (
     <Tag className={cn('text-sm font-medium text-muted-foreground mb-2', className)}>
       {children}
@@ -24,7 +24,7 @@ export function SubsectionTitle({ children, className, as: Tag = 'h3' }: Typogra
   )
 }
 
-export function SubsubsectionTitle({ children, className, as: Tag = 'h4' }: TypographyProps) {
+export function SectionL3Title({ children, className, as: Tag = 'h4' }: TypographyProps) {
   return (
     <Tag
       className={cn(

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 import {
   updateCandidate,
   deleteCandidate,
@@ -243,7 +243,7 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
       {/* AI Reasoning */}
       {candidate.aiReasoning && (
         <div className="bg-blue-50 p-4 rounded-lg">
-          <SubsectionTitle className="text-blue-800">AI Reasoning</SubsectionTitle>
+          <SectionL2Title className="text-blue-800">AI Reasoning</SectionL2Title>
           <p className="text-sm text-blue-700">{candidate.aiReasoning}</p>
           {candidate.confidenceScore && (
             <p className="text-xs text-blue-600 mt-2">
@@ -321,9 +321,9 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
       {/* Documents */}
       {candidate.documents && candidate.documents.length > 0 && (
         <div>
-          <SubsectionTitle>
+          <SectionL2Title>
             Documents ({candidate.documents.length})
-          </SubsectionTitle>
+          </SectionL2Title>
           <div className="space-y-2">
             { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {candidate.documents.map((doc: any) => (
@@ -341,9 +341,9 @@ export function CandidateWorkflow({ candidate, entities, provisions }: Candidate
 
       {/* Proposed Changes */}
       <div>
-        <SubsectionTitle>
+        <SectionL2Title>
           Proposed Changes ({candidate.changes?.length || 0})
-        </SubsectionTitle>
+        </SectionL2Title>
         {candidate.changes && candidate.changes.length > 0 ? (
           <div className="space-y-2">
             { /* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
@@ -717,7 +717,7 @@ function AddManualChange({
 
   return (
     <div className="mt-3 p-4 border-2 border-dashed border-gray-300 rounded-lg space-y-3">
-      <SubsectionTitle>Add Manual Change</SubsectionTitle>
+      <SectionL2Title>Add Manual Change</SectionL2Title>
 
       <div className="space-y-2">
         <Label>Target Provision *</Label>

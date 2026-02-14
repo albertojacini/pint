@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Lead, PageTitle, SectionTitle, SubsectionTitle } from './typography'
+import { Lead, PageTitle, SectionL1Title, SectionL2Title } from './typography'
 
 interface PageHeaderProps {
   children?: React.ReactNode
@@ -40,7 +40,7 @@ export function Section({ children, title, action, className }: SectionProps) {
     <section className={cn('mb-10', className)}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-3">
-          {title && <SectionTitle>{title}</SectionTitle>}
+          {title && <SectionL1Title>{title}</SectionL1Title>}
           {action}
         </div>
       )}
@@ -61,7 +61,7 @@ export function Subsection({ children, title, action, className }: SubsectionPro
     <div className={cn('mb-6', className)}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-2">
-          {title && <SubsectionTitle className="mb-0">{title}</SubsectionTitle>}
+          {title && <SectionL2Title className="mb-0">{title}</SectionL2Title>}
           {action}
         </div>
       )}

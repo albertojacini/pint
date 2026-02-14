@@ -6,7 +6,7 @@ import { desc } from 'drizzle-orm'
 import Link from 'next/link'
 import { entityPath } from '@/lib/utils'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
-import { SectionTitle } from '@/components/custom-ui/typography'
+import { SectionL1Title } from '@/components/custom-ui/typography'
 import { PageHeader } from '@/components/custom-ui/section'
 import { getStorageUrl } from '@/lib/storage'
 
@@ -47,7 +47,7 @@ export default async function EntitiesPage() {
                     />
                   )}
                   <div className="flex-1">
-                  <SectionTitle className="mb-1">{entity.name}</SectionTitle>
+                  <SectionL1Title className="mb-1">{entity.name}</SectionL1Title>
                   {entity.nativeName && (
                     <p className="text-sm text-gray-500 mb-2">{entity.nativeName}</p>
                   )}

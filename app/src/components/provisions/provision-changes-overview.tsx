@@ -1,7 +1,7 @@
 'use client'
 
 import { ProvisionChangeCardExtraSmall } from './provision-change-cards'
-import { SubsubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL3Title } from '@/components/custom-ui/typography'
 
 interface ProvisionChange {
   date: string
@@ -26,7 +26,7 @@ export function ProvisionChangesOverview({ total, changes }: ProvisionChangesOve
       {/* Changes grid */}
       {changes.length > 0 && (
         <div className="mt-3">
-          <SubsubsectionTitle>Latest changes</SubsubsectionTitle>
+          <SectionL3Title>Latest changes</SectionL3Title>
           <div className="overflow-x-auto">
             <div className="grid grid-flow-col auto-cols-[240px] grid-rows-3 gap-x-4 gap-y-0 w-max">
               {changes.map((c, i) => (

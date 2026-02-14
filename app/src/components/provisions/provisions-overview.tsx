@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { SpecialButton } from '@/components/custom-ui/buttons'
 import { ProvisionCardExtraSmall } from './provision-cards'
-import { SubsubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL3Title } from '@/components/custom-ui/typography'
 
 const typeConfig: Record<string, { icon: typeof Coins; label: string }> = {
   taxation: { icon: Coins, label: 'Taxation' },
@@ -82,7 +82,7 @@ export function ProvisionsOverview({
       {/* Top provisions */}
       {topProvisions.length > 0 && (
         <div className="mt-3">
-          <SubsubsectionTitle>Relevant provisions</SubsubsectionTitle>
+          <SectionL3Title>Relevant provisions</SectionL3Title>
           <div className="overflow-x-auto">
             <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
               {topProvisions.map((p) => (

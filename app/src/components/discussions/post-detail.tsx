@@ -5,7 +5,7 @@ import { CommentThread } from './comment-thread'
 import { CommentForm } from './comment-form'
 import { ProposalVotePanel } from './proposal-vote-panel'
 import { MarkdownContent } from '@/components/custom-ui/markdown-content'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 
 interface PostDetailProps {
   post: PostDetailType
@@ -54,9 +54,9 @@ export function PostDetail({ post, userId }: PostDetailProps) {
 
       {/* Comments section */}
       <div className="border-t border-border pt-6">
-        <SubsectionTitle>
+        <SectionL2Title>
           {post.commentCount} Comment{post.commentCount !== 1 ? 's' : ''}
-        </SubsectionTitle>
+        </SectionL2Title>
 
         {userId && (
           <div className="mb-6">

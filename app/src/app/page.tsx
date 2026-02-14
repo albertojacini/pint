@@ -5,7 +5,7 @@ import { entities } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { PageTitle, SectionTitle } from '@/components/custom-ui/typography'
+import { PageTitle, SectionL1Title } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
 import { entityPath } from '@/lib/utils'
 
@@ -44,7 +44,7 @@ export default async function Home() {
               <div className="w-20 h-20 bg-gray-300 rounded-full" />
             )}
             <div className="flex-1">
-              <SectionTitle className="mb-1">{milanoEntity.name}</SectionTitle>
+              <SectionL1Title className="mb-1">{milanoEntity.name}</SectionL1Title>
               {milanoEntity.population && (
                 <span className="inline-block px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
                   Population: {milanoEntity.population.toLocaleString()}

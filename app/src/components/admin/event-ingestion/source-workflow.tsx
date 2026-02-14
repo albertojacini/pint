@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
-import { SubsectionTitle } from '@/components/custom-ui/typography'
+import { SectionL2Title } from '@/components/custom-ui/typography'
 import {
   updateSource,
   deleteSource,
@@ -254,7 +254,7 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
       {/* Content Section */}
       {source.rawContent && (
         <div>
-          <SubsectionTitle>Raw Content</SubsectionTitle>
+          <SectionL2Title>Raw Content</SectionL2Title>
           <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
             <pre className="text-sm whitespace-pre-wrap text-gray-600">
               {source.rawContent}
@@ -266,7 +266,7 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
       {/* AI Summary Section */}
       {source.aiSummary && (
         <div>
-          <SubsectionTitle>AI Summary</SubsectionTitle>
+          <SectionL2Title>AI Summary</SectionL2Title>
           <div className="bg-blue-50 p-4 rounded-lg">
             <p className="text-sm text-gray-700">{source.aiSummary}</p>
           </div>
@@ -276,7 +276,7 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
       {/* Extracted Data Section */}
       {source.aiExtractedData && Object.keys(source.aiExtractedData).length > 0 && (
         <div>
-          <SubsectionTitle>Extracted Data</SubsectionTitle>
+          <SectionL2Title>Extracted Data</SectionL2Title>
           <div className="bg-gray-50 p-4 rounded-lg space-y-3">
             {source.aiExtractedData.topics && source.aiExtractedData.topics.length > 0 && (
               <div>
@@ -336,7 +336,7 @@ export function SourceWorkflow({ source }: SourceWorkflowProps) {
 
       {/* Actions */}
       <div className="border-t pt-6">
-        <SubsectionTitle>Actions</SubsectionTitle>
+        <SectionL2Title>Actions</SectionL2Title>
         <div className="flex gap-3 flex-wrap">
           {source.fetchStatus === 'pending' && source.url && (
             <Button

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { PageTitle, SectionTitle, SubsectionTitle, Lead, Muted } from './typography'
+import { PageTitle, SectionL1Title, SectionL2Title, Lead, Muted } from './typography'
 
 const meta = {
   title: 'Custom-UI/Typography',
@@ -20,12 +20,12 @@ export const AllLevels: Story = {
         <PageTitle>Public housing policy in Barcelona</PageTitle>
       </div>
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-muted-foreground">SectionTitle — text-xl font-medium</span>
-        <SectionTitle>Ownership regulations</SectionTitle>
+        <span className="text-[10px] font-mono text-muted-foreground">SectionL1Title — text-xl font-medium</span>
+        <SectionL1Title>Ownership regulations</SectionL1Title>
       </div>
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-muted-foreground">SubsectionTitle — text-lg font-medium</span>
-        <SubsectionTitle>Rental price limits</SubsectionTitle>
+        <span className="text-[10px] font-mono text-muted-foreground">SectionL2Title — text-lg font-medium</span>
+        <SectionL2Title>Rental price limits</SectionL2Title>
       </div>
       <div className="space-y-1">
         <span className="text-[10px] font-mono text-muted-foreground">Lead — text-lg text-muted-foreground</span>
@@ -44,14 +44,14 @@ export const PageTitleStory: Story = {
   render: () => <PageTitle>Public housing policy in Barcelona</PageTitle>,
 }
 
-export const SectionTitleStory: Story = {
-  name: 'SectionTitle',
-  render: () => <SectionTitle>Ownership regulations</SectionTitle>,
+export const SectionL1TitleStory: Story = {
+  name: 'SectionL1Title',
+  render: () => <SectionL1Title>Ownership regulations</SectionL1Title>,
 }
 
-export const SubsectionTitleStory: Story = {
-  name: 'SubsectionTitle',
-  render: () => <SubsectionTitle>Rental price limits</SubsectionTitle>,
+export const SectionL2TitleStory: Story = {
+  name: 'SectionL2Title',
+  render: () => <SectionL2Title>Rental price limits</SectionL2Title>,
 }
 
 export const LeadStory: Story = {
@@ -71,7 +71,7 @@ export const CustomTag: Story = {
   render: () => (
     <div className="space-y-4 max-w-2xl">
       <PageTitle as="div">PageTitle rendered as div</PageTitle>
-      <SectionTitle as="span">SectionTitle rendered as span</SectionTitle>
+      <SectionL1Title as="span">SectionL1Title rendered as span</SectionL1Title>
       <Lead as="div">Lead rendered as div</Lead>
     </div>
   ),
