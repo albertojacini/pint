@@ -10,8 +10,6 @@ import {
   PerformanceIndicators,
   CommunityMetrics,
   EntityMetadata,
-  RevenueOverview,
-  ExpenseOverview,
   FinancialTrends,
 } from '@/components/entities'
 import { PageTitle } from '@/components/custom-ui/typography'
@@ -256,10 +254,6 @@ export default async function EntityPage({ params }: EntityPageProps) {
       {entity.financialOverview && (
         <Section title="Financials">
           <FinancialTrends data={entity.financialOverview} />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <RevenueOverview data={entity.financialOverview} />
-            <ExpenseOverview data={entity.financialOverview} />
-          </div>
         </Section>
       )}
 
