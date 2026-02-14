@@ -20,22 +20,12 @@ const allTypes = [
   { type: 'designation', count: 4 },
 ]
 
-const topProvisions = [
-  { title: 'Piano Urbanistico Generale', type: 'regulation' },
-  { title: 'Bilancio Comunale 2025', type: 'allocation' },
-  { title: 'Regolamento Edilizio', type: 'regulation' },
-  { title: 'Contratto Servizio TPL', type: 'contract' },
-  { title: 'TARI - Tariffa Rifiuti', type: 'taxation' },
-  { title: 'Area C - Congestion Charge', type: 'taxation' },
-]
-
 export const Base: StoryObj = {
   render: () => (
     <div className="max-w-2xl">
       <ProvisionsOverview
         total={54}
         types={allTypes}
-        topProvisions={topProvisions}
         treeLink="/pe/milan/pr/tree"
       />
     </div>

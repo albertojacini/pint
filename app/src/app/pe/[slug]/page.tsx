@@ -24,6 +24,8 @@ import { getEventsByEntity } from '@/lib/actions/events'
 import { EventDaysOfTheYearHeatmap } from '@/components/events/event-heatmaps'
 import { EventList } from '@/components/events/event-list'
 import { ProvisionsOverviewLoader } from '@/components/provisions/provisions-overview-loader'
+import { ProvisionCardExtraSmall } from '@/components/provisions/provision-cards'
+import { getProvisionsByEntity } from '@/lib/actions/provisions'
 
 // Priority order for relationship types (higher priority = shown first)
 const RELATIONSHIP_PRIORITY: Record<string, number> = {
@@ -55,8 +57,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
     notFound()
   }
 
-  // Fetch events and relationships for this entity
+  // Fetch events, provisions, and relationships for this entity
   const events = await getEventsByEntity(entity.id)
+  const provisions = await getProvisionsByEntity(entity.id)
   const relationships = await getGroupedEntityRelationships(entity.id)
 
   // Fetch tags for this entity
@@ -239,13 +242,32 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
+        <Subsection>
+          <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
+        </Subsection>
+        {provisions.length > 0 && (
+          <Subsection title="Relevant provisions">
+            <div className="overflow-x-auto">
+              <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
+                {provisions.slice(0, 6).map((p) => (
+                  <ProvisionCardExtraSmall
+                    key={p.title}
+                    provision={{ title: p.title, type: p.types[0]?.code ?? 'regulation' }}
+                    className="max-w-[180px]"
+                  />
+                ))}
+              </div>
+            </div>
+          </Subsection>
+        )}
 
-        {/* ─── Block 3: Community ─── */}
-        <p className="text-xs text-muted-foreground italic">Community — work in progress</p>
+        <Subsection title="Community">
+          <p className="text-xs text-muted-foreground italic">Work in progress</p>
+        </Subsection>
 
-        {/* ─── Block 4: Highlights ─── */}
-        <p className="text-xs text-muted-foreground italic">Highlights — work in progress</p>
+        <Subsection title="Highlights">
+          <p className="text-xs text-muted-foreground italic">Work in progress</p>
+        </Subsection>
       </Section>
 
       {entity.financialOverview && (
