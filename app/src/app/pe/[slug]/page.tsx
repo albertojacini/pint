@@ -12,7 +12,7 @@ import {
 import { PageTitle } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
 import { Box } from '@/components/custom-ui/box'
-import { Section, Subsection } from '@/components/custom-ui/section'
+import { SectionL1, SectionL2 } from '@/components/custom-ui/section'
 import { Tags } from '@/components/custom-ui/tags'
 import { EntityClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
@@ -208,7 +208,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
       {/* Politics / Administrations */}
       {hasAdministrationContent && (
-        <Section
+        <SectionL1
           title="Politics"
           action={
             <Link href={`/pe/${entity.slug}/ad`} className="text-sm text-link hover:underline">
@@ -217,24 +217,24 @@ export default async function EntityPage({ params }: EntityPageProps) {
           }
         >
           <div className="space-y-6">
-            <Subsection title="Consiglio comunale" className="mb-0">
+            <SectionL2 title="Consiglio comunale" className="mb-0">
               {councilComposition && councilComposition.length > 0 && (
                 <CouncilDots composition={councilComposition} />
               )}
-            </Subsection>
+            </SectionL2>
 
-            <Subsection title="Giunta comunale" className="mb-0">
+            <SectionL2 title="Giunta comunale" className="mb-0">
               {mappedMembers.length > 0 && (
                 <ExecutiveMembers members={mappedMembers} variant="grid-minimal" />
               )}
-            </Subsection>
+            </SectionL2>
 
             <ElectionsSection nextElection={nextElection} history={electionHistory} />
           </div>
-        </Section>
+        </SectionL1>
       )}
 
-      <Section
+      <SectionL1
         title="Administration"
         action={
           <Link href={`/pe/${urlSlug}/pr`} className="text-sm text-link hover:underline">
@@ -242,11 +242,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        <Subsection>
+        <SectionL2>
           <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
-        </Subsection>
+        </SectionL2>
         {provisions.length > 0 && (
-          <Subsection title="Relevant provisions">
+          <SectionL2 title="Relevant provisions">
             <div className="overflow-x-auto">
               <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
                 {provisions.slice(0, 6).map((p) => (
@@ -258,25 +258,25 @@ export default async function EntityPage({ params }: EntityPageProps) {
                 ))}
               </div>
             </div>
-          </Subsection>
+          </SectionL2>
         )}
 
-        <Subsection title="Community">
+        <SectionL2 title="Community">
           <p className="text-xs text-muted-foreground italic">Work in progress</p>
-        </Subsection>
+        </SectionL2>
 
-        <Subsection title="Highlights">
+        <SectionL2 title="Highlights">
           <p className="text-xs text-muted-foreground italic">Work in progress</p>
-        </Subsection>
-      </Section>
+        </SectionL2>
+      </SectionL1>
 
       {entity.financialOverview && (
-        <Section title="Financials">
+        <SectionL1 title="Financials">
           <FinancialTrends data={entity.financialOverview} />
-        </Section>
+        </SectionL1>
       )}
 
-      <Section
+      <SectionL1
         title="Events"
         action={
           <Link href={`${entityPath(entity)}/events`} className="text-sm text-link hover:underline">
@@ -288,15 +288,15 @@ export default async function EntityPage({ params }: EntityPageProps) {
         <div className="mt-6">
           <EventList events={events} />
         </div>
-      </Section>
+      </SectionL1>
 
-      <Section title="Performance Indicators">
+      <SectionL1 title="Performance Indicators">
         <p className="text-sm text-muted-foreground">Coming soon</p>
-      </Section>
+      </SectionL1>
 
-      <Section title="Pint Community">
+      <SectionL1 title="Pint Community">
         <p className="text-sm text-muted-foreground">Coming soon</p>
-      </Section>
+      </SectionL1>
     </div>
   )
 }

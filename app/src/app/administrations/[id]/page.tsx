@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { getStorageUrl } from '@/lib/storage'
-import { PageHeader, Section, Subsection } from '@/components/custom-ui/section'
+import { PageHeader, SectionL1, SectionL2 } from '@/components/custom-ui/section'
 
 interface AdministrationPageProps {
   params: Promise<{
@@ -106,18 +106,18 @@ export default async function AdministrationPage({ params }: AdministrationPageP
         </PageHeader>
 
         {administration.description && (
-          <Section title="Description" className="mb-0">
+          <SectionL1 title="Description" className="mb-0">
             <p className="text-gray-700">{administration.description}</p>
-          </Section>
+          </SectionL1>
         )}
       </div>
 
       {/* Members */}
       {adminMembers.length > 0 && (
         <div className="bg-white border border-gray-200 rounded-lg p-8 mb-6">
-          <Section title="Administration Members" className="mb-0">
+          <SectionL1 title="Administration Members" className="mb-0">
             {mayor && (
-              <Subsection title="Mayor">
+              <SectionL2 title="Mayor">
                 <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
                   {getStorageUrl('avatars', mayor.person.avatarUrl) && (
                     <img
@@ -140,11 +140,11 @@ export default async function AdministrationPage({ params }: AdministrationPageP
                     {mayor.status}
                   </span>
                 </div>
-              </Subsection>
+              </SectionL2>
             )}
 
             {otherMembers.length > 0 && (
-              <Subsection title="Council Members" className="mb-0">
+              <SectionL2 title="Council Members" className="mb-0">
                 <div className="grid gap-4 md:grid-cols-2">
                   {otherMembers.map((member) => (
                     <div key={member.id} className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg">
@@ -171,15 +171,15 @@ export default async function AdministrationPage({ params }: AdministrationPageP
                     </div>
                   ))}
                 </div>
-              </Subsection>
+              </SectionL2>
             )}
-          </Section>
+          </SectionL1>
         </div>
       )}
 
       {/* Metadata */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <Section title="Metadata" className="mb-0">
+        <SectionL1 title="Metadata" className="mb-0">
           <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-gray-500">Created:</span>{' '}
@@ -198,7 +198,7 @@ export default async function AdministrationPage({ params }: AdministrationPageP
               <span className="font-mono text-xs">{administration.id}</span>
             </div>
           </div>
-        </Section>
+        </SectionL1>
       </div>
     </div>
   )

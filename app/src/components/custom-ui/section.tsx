@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Lead, PageTitle, SectionL1Title, SectionL2Title } from './typography'
+import { Lead, PageTitle, SectionL1Title, SectionL2Title, SectionL3Title } from './typography'
 
 interface PageHeaderProps {
   children?: React.ReactNode
@@ -28,14 +28,14 @@ export function PageHeader({
   )
 }
 
-interface SectionProps {
+interface SectionL1Props {
   children: React.ReactNode
   title?: React.ReactNode
   action?: React.ReactNode
   className?: string
 }
 
-export function Section({ children, title, action, className }: SectionProps) {
+export function SectionL1({ children, title, action, className }: SectionL1Props) {
   return (
     <section className={cn('mb-10', className)}>
       {(title || action) && (
@@ -49,19 +49,40 @@ export function Section({ children, title, action, className }: SectionProps) {
   )
 }
 
-interface SubsectionProps {
+interface SectionL2Props {
   children: React.ReactNode
   title?: React.ReactNode
   action?: React.ReactNode
   className?: string
 }
 
-export function Subsection({ children, title, action, className }: SubsectionProps) {
+export function SectionL2({ children, title, action, className }: SectionL2Props) {
   return (
     <div className={cn('mb-6', className)}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-2">
           {title && <SectionL2Title className="mb-0">{title}</SectionL2Title>}
+          {action}
+        </div>
+      )}
+      {children}
+    </div>
+  )
+}
+
+interface SectionL3Props {
+  children: React.ReactNode
+  title?: React.ReactNode
+  action?: React.ReactNode
+  className?: string
+}
+
+export function SectionL3({ children, title, action, className }: SectionL3Props) {
+  return (
+    <div className={cn('mb-4', className)}>
+      {(title || action) && (
+        <div className="flex items-center justify-between mb-1">
+          {title && <SectionL3Title className="mb-0">{title}</SectionL3Title>}
           {action}
         </div>
       )}

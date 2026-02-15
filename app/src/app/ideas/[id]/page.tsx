@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { EffectsDiagram } from '@/components/ideas/effects-diagram'
 import { SectionL2Title } from '@/components/custom-ui/typography'
-import { PageHeader, Section } from '@/components/custom-ui/section'
+import { PageHeader, SectionL1 } from '@/components/custom-ui/section'
 
 export default async function IdeaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -48,12 +48,12 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
       </PageHeader>
 
       {/* Effects Diagram Section */}
-      <Section title="Stakeholder Effects">
+      <SectionL1 title="Stakeholder Effects">
         <EffectsDiagram effectsDiagram={idea.effectsDiagram} stakeholderGroups={stakeholders} />
-      </Section>
+      </SectionL1>
 
       {/* Effects Chain Section */}
-      <Section title="Impact Chain: Effects → Measurables → Goals">
+      <SectionL1 title="Impact Chain: Effects → Measurables → Goals">
 
         {effects.length === 0 ? (
           <p className="text-muted-foreground">No effects defined for this idea yet.</p>
@@ -158,10 +158,10 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
             })}
           </div>
         )}
-      </Section>
+      </SectionL1>
 
       {/* Provisions Section */}
-      <Section title="Inspired Provisions">
+      <SectionL1 title="Inspired Provisions">
 
         {provisions.length === 0 ? (
           <p className="text-muted-foreground">No provisions inspired by this idea yet.</p>
@@ -213,7 +213,7 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
             ))}
           </div>
         )}
-      </Section>
+      </SectionL1>
     </div>
   )
 }

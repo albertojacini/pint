@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { PageTitle, SectionL1Title, SectionL2Title, Lead, Muted } from './typography'
+import { PageTitle, SectionL1Title, SectionL2Title, SectionL3Title, Lead, Muted } from './typography'
 
 const meta = {
   title: 'Custom-UI/Typography',
@@ -24,8 +24,12 @@ export const AllLevels: Story = {
         <SectionL1Title>Ownership regulations</SectionL1Title>
       </div>
       <div className="space-y-1">
-        <span className="text-[10px] font-mono text-muted-foreground">SectionL2Title — text-lg font-medium</span>
+        <span className="text-[10px] font-mono text-muted-foreground">SectionL2Title — text-sm font-medium text-muted-foreground</span>
         <SectionL2Title>Rental price limits</SectionL2Title>
+      </div>
+      <div className="space-y-1">
+        <span className="text-[10px] font-mono text-muted-foreground">SectionL3Title — text-[10px] uppercase tracking-wider text-muted-foreground/60</span>
+        <SectionL3Title>Maximum monthly rent</SectionL3Title>
       </div>
       <div className="space-y-1">
         <span className="text-[10px] font-mono text-muted-foreground">Lead — text-lg text-muted-foreground</span>
@@ -52,6 +56,11 @@ export const SectionL1TitleStory: Story = {
 export const SectionL2TitleStory: Story = {
   name: 'SectionL2Title',
   render: () => <SectionL2Title>Rental price limits</SectionL2Title>,
+}
+
+export const SectionL3TitleStory: Story = {
+  name: 'SectionL3Title',
+  render: () => <SectionL3Title>Maximum monthly rent</SectionL3Title>,
 }
 
 export const LeadStory: Story = {

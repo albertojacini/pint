@@ -16,7 +16,7 @@ import {
 import { eq, and, inArray } from 'drizzle-orm'
 import { ProvisionClassificationBadge } from '@/components/custom-ui/classification-badge'
 import { Tags } from '@/components/custom-ui/tags'
-import { Section } from '@/components/custom-ui/section'
+import { SectionL1 } from '@/components/custom-ui/section'
 import { PageTitle } from '@/components/custom-ui/typography'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
@@ -463,7 +463,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
 
       {/* Key Data */}
       {provision.highlights?.items && provision.highlights.items.length > 0 && (
-        <Section title="Key Data">
+        <SectionL1 title="Key Data">
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {provision.highlights.items.map((item, index) => (
               <div key={index}>
@@ -472,34 +472,34 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
               </div>
             ))}
           </div>
-        </Section>
+        </SectionL1>
       )}
 
       {/* Description */}
       {provision.description && (
-        <Section title="Description">
+        <SectionL1 title="Description">
           <MarkdownContent content={provision.description} />
-        </Section>
+        </SectionL1>
       )}
 
       {/* Analysis */}
       {provision.analysis && (
-        <Section title="Analysis">
+        <SectionL1 title="Analysis">
           <MarkdownContent content={provision.analysis} />
-        </Section>
+        </SectionL1>
       )}
 
       {/* Change Proposals */}
       {provision.console?.proposals &&
         provision.console.proposals.items.length > 0 && (
-          <Section title="Proposte di Modifica">
+          <SectionL1 title="Proposte di Modifica">
             <ChangeProposals data={provision.console.proposals} />
-          </Section>
+          </SectionL1>
         )}
 
       {/* Changes Heatmap + Timeline */}
       {provisionChanges.length > 0 && (
-        <Section title="Calendario">
+        <SectionL1 title="Calendario">
           <div className="flex gap-6">
             <div className="flex-shrink-0">
               <ProvisionChangesHeatmap changes={provisionChanges} />
@@ -508,22 +508,22 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
               <ProvisionTimeline changes={provisionChanges} />
             </div>
           </div>
-        </Section>
+        </SectionL1>
       )}
 
       {/* Artifacts */}
       {linkedArtifacts.length > 0 && (
-        <Section title="Data & Artifacts">
+        <SectionL1 title="Data & Artifacts">
           <div className="space-y-4">
             {linkedArtifacts.map((artifact) => (
               <ArtifactCard key={artifact.id} artifact={artifact} />
             ))}
           </div>
-        </Section>
+        </SectionL1>
       )}
 
       {/* Performance & Comparison - Coming Soon */}
-      <Section title="Performance & Comparison">
+      <SectionL1 title="Performance & Comparison">
         <div className="space-y-6">
           {/* Goals & Achievements */}
           <div className="border border-dashed border-border rounded-lg p-4 bg-muted/20">
@@ -653,10 +653,10 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-      </Section>
+      </SectionL1>
 
       {/* Community Discussions */}
-      <Section
+      <SectionL1
         title="Discussions"
         action={
           <Link
@@ -703,7 +703,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
             ))}
           </div>
         )}
-      </Section>
+      </SectionL1>
 
     </div>
   )
