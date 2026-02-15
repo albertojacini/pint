@@ -50,6 +50,14 @@ export const politicalEntities = [
       communityEngagement: { totalUsers: 8920, activeContributors: 156 },
     },
     financial_overview_csv: 'milano-financial-overview.csv',
+    section_insights: {
+      politics: 'Milano è governata da una **coalizione di centrosinistra** dal 2011. L\'attuale sindaco *Giuseppe Sala* è al secondo mandato (2021-2026), con una maggioranza solida in consiglio comunale di **32 seggi su 48**.',
+      administration: 'L\'amministrazione gestisce oltre **160 provvedimenti attivi** che coprono mobilità, urbanistica, fiscalità locale e servizi sociali. Il focus principale del mandato è su *transizione ecologica* e *digitalizzazione dei servizi*.',
+      financials: 'Il bilancio 2024 ha raggiunto **€7,2 miliardi** di entrate, in crescita del *+4,3%* rispetto al 2023. Le entrate tributarie rappresentano il 38% del totale. La città mantiene un avanzo di bilancio positivo dal 2015.',
+      events: 'Nel 2024 Milano ha registrato oltre **85 eventi** normativi e istituzionali significativi, tra cui l\'approvazione del nuovo *PGT* e l\'aggiornamento delle tariffe di *Area C*.',
+      performanceIndicators: 'Milano si conferma al **1° posto in Italia** per innovazione e attrattività economica (ICity Rank 2024). Punti critici: qualità dell\'aria (*PM10* ancora sopra i limiti UE) e costo della vita in crescita del *+8%* in 3 anni.',
+      community: 'La community di Pint per Milano conta **8.920 utenti** registrati e *156 contributori attivi*. Il gradimento medio delle politiche cittadine è di **7,8/10** su 1.247 risposte raccolte.',
+    },
   },
   {
     name: 'Zona 1',

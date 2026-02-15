@@ -82,6 +82,14 @@ export const entities = pgTable('gov_entities', {
       }>
     }>
   }>(),
+  sectionInsights: jsonb('section_insights').$type<{
+    politics?: string
+    administration?: string
+    financials?: string
+    events?: string
+    performanceIndicators?: string
+    community?: string
+  }>(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 })

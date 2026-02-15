@@ -26,6 +26,7 @@ import { EventList } from '@/components/events/event-list'
 import { ProvisionsOverviewLoader } from '@/components/provisions/provisions-overview-loader'
 import { ProvisionCardExtraSmall } from '@/components/provisions/provision-cards'
 import { getProvisionsByEntity } from '@/lib/actions/provisions'
+import { SectionInsight } from '@/components/custom-ui/section-insight'
 
 // Priority order for relationship types (higher priority = shown first)
 const RELATIONSHIP_PRIORITY: Record<string, number> = {
@@ -154,6 +155,8 @@ export default async function EntityPage({ params }: EntityPageProps) {
     return a.name.localeCompare(b.name)
   })
 
+  const insights = entity.sectionInsights
+
   return (
     <div>
       {/* Breadcrumbs */}
@@ -216,6 +219,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
             </Link>
           }
         >
+          {insights?.politics && <SectionInsight content={insights.politics} className="mb-4" />}
           <div className="space-y-6">
             <SectionL2 title="Consiglio comunale" className="mb-0">
               {councilComposition && councilComposition.length > 0 && (
@@ -242,6 +246,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
+        {insights?.administration && <SectionInsight content={insights.administration} className="mb-4" />}
         <SectionL2>
           <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
         </SectionL2>
@@ -264,14 +269,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
         <SectionL2 title="Community">
           <p className="text-xs text-muted-foreground italic">Work in progress</p>
         </SectionL2>
-
-        <SectionL2 title="Highlights">
-          <p className="text-xs text-muted-foreground italic">Work in progress</p>
-        </SectionL2>
       </SectionL1>
 
       {entity.financialOverview && (
         <SectionL1 title="Financials">
+          {insights?.financials && <SectionInsight content={insights.financials} className="mb-4" />}
           <FinancialTrends data={entity.financialOverview} />
         </SectionL1>
       )}
@@ -284,6 +286,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
+        {insights?.events && <SectionInsight content={insights.events} className="mb-4" />}
         <EventDaysOfTheYearHeatmap events={events} />
         <div className="mt-6">
           <EventList events={events} />
@@ -291,10 +294,12 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </SectionL1>
 
       <SectionL1 title="Performance Indicators">
+        {insights?.performanceIndicators && <SectionInsight content={insights.performanceIndicators} className="mb-4" />}
         <p className="text-sm text-muted-foreground">Coming soon</p>
       </SectionL1>
 
       <SectionL1 title="Pint Community">
+        {insights?.community && <SectionInsight content={insights.community} className="mb-4" />}
         <p className="text-sm text-muted-foreground">Coming soon</p>
       </SectionL1>
     </div>

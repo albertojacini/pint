@@ -117,7 +117,8 @@ export async function seedEntities(client, supabase, idMaps) {
           'essential_stats',
           'performance_indicators',
           'community_metrics',
-          'financial_overview'
+          'financial_overview',
+          'section_insights'
         ],
         values: [
           id,
@@ -135,7 +136,8 @@ export async function seedEntities(client, supabase, idMaps) {
           entity.essential_stats ? JSON.stringify(entity.essential_stats) : null,
           entity.performance_indicators ? JSON.stringify(entity.performance_indicators) : null,
           entity.community_metrics ? JSON.stringify(entity.community_metrics) : null,
-          financialOverview ? JSON.stringify(financialOverview) : null
+          financialOverview ? JSON.stringify(financialOverview) : null,
+          entity.section_insights ? JSON.stringify(entity.section_insights) : null
         ]
       })
 
