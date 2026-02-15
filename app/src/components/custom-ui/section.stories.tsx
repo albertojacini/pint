@@ -47,6 +47,7 @@ export const NoTitle: Story = {
 }
 
 export const AllLevels: Story = {
+  args: { children: null },
   render: () => (
     <div className="max-w-2xl">
       <SectionL1 title="Politics">
@@ -68,6 +69,7 @@ export const AllLevels: Story = {
 
 export const SectionL2Story: Story = {
   name: 'SectionL2',
+  args: { children: null },
   render: () => (
     <SectionL2 title="Rental price limits">
       <div className="rounded-lg border bg-card p-6">Subsection content</div>
@@ -77,6 +79,7 @@ export const SectionL2Story: Story = {
 
 export const SectionL3Story: Story = {
   name: 'SectionL3',
+  args: { children: null },
   render: () => (
     <SectionL3 title="Maximum monthly rent">
       <div className="rounded-lg border bg-card p-4 text-sm">Detail content</div>
