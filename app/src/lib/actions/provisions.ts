@@ -289,6 +289,56 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
   }
 }
 
+// Tree node for hierarchical provision display
+export type ProvisionTreeNode = {
+  id: string
+  slug: string
+  title: string
+  parentId: string | null
+  status: string
+  relevance: number | null
+  types: ProvisionType[]
+  children: ProvisionTreeNode[]
+}
+
+export async function getProvisionTreeByEntity(entityId: string): Promise<ProvisionTreeNode[]> {
+  const rows = await db
+    .select({
+      id: provisions.id,
+      slug: provisions.slug,
+      title: provisions.title,
+      parentId: provisions.parentId,
+      status: provisions.status,
+      relevance: provisions.relevance,
+    })
+    .from(provisions)
+    .where(eq(provisions.entityId, entityId))
+    .orderBy(asc(provisions.title))
+
+  const provisionIds = rows.map(r => r.id)
+  const typesByProvision = await getProvisionTypes(provisionIds)
+
+  const nodes: ProvisionTreeNode[] = rows.map(r => ({
+    ...r,
+    types: typesByProvision[r.id] || [],
+    children: [],
+  }))
+
+  // Build tree: index by id, then attach children
+  const byId = new Map(nodes.map(n => [n.id, n]))
+  const roots: ProvisionTreeNode[] = []
+
+  for (const node of nodes) {
+    if (node.parentId && byId.has(node.parentId)) {
+      byId.get(node.parentId)!.children.push(node)
+    } else {
+      roots.push(node)
+    }
+  }
+
+  return roots
+}
+
 export async function getFilteredProvisions(
   entityId: string,
   filters: {

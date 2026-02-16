@@ -26,7 +26,7 @@ export const Base: StoryObj = {
       <ProvisionsOverview
         total={54}
         types={allTypes}
-        treeLink="/pe/milan/pr/tree"
+        onViewTree={() => alert('View tree clicked')}
       />
     </div>
   ),

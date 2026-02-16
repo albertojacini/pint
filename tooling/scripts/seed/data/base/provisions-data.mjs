@@ -6,6 +6,23 @@
 export const provisions = [
   {
     entity: 'Comune di Milano',
+    title: 'Partecipazioni',
+    tagline: 'Partecipazioni azionarie del Comune in società ed enti',
+    description:
+      'Il Comune di Milano detiene partecipazioni azionarie in diverse società che operano in settori strategici per la città, tra cui trasporto pubblico, energia, aeroporti e servizi idrici. Le partecipazioni rappresentano uno strumento di governance attraverso cui il Comune esercita controllo diretto o influenza significativa sulla fornitura di servizi pubblici essenziali.',
+    types: ['ownership'],
+    status: 'active',
+    relevance: 7,
+    highlights: {
+      items: [
+        { label: 'Società partecipate', value: '25+' },
+        { label: 'Valore stimato', value: '€3,5B' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
     title: 'Partecipazione ATM',
     tagline: 'Partecipazione azionaria al 100% in ATM, azienda trasporti pubblici',
     description:
@@ -243,6 +260,7 @@ export const provisions = [
   {
     entity: 'Comune di Milano',
     title: 'Pedaggi urbani',
+    parent: 'Partecipazioni',
     tagline:
       'Zone a traffico limitato per ridurre inquinamento e congestione con pedaggi e restrizioni.',
     description:

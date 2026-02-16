@@ -30,13 +30,13 @@ interface ProvisionType {
 interface ProvisionsOverviewProps {
   total: number
   types: ProvisionType[]
-  treeLink?: string
+  onViewTree?: () => void
 }
 
 export function ProvisionsOverview({
   total,
   types,
-  treeLink,
+  onViewTree,
 }: ProvisionsOverviewProps) {
   return (
     <div>
@@ -44,9 +44,9 @@ export function ProvisionsOverview({
       <div className="flex items-center gap-2">
         <span className="text-lg font-bold shrink-0">{total}</span>
         <span className="text-sm text-muted-foreground shrink-0 mr-1">provisions</span>
-        {treeLink && (
+        {onViewTree && (
           <div className="shrink-0">
-            <SpecialButton href={treeLink} icon={<GitBranch className="w-3 h-3" />}>
+            <SpecialButton onClick={onViewTree} icon={<GitBranch className="w-3 h-3" />}>
               View tree
             </SpecialButton>
           </div>

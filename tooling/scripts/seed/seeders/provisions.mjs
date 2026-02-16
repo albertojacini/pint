@@ -127,6 +127,21 @@ export async function seedProvisions(client, supabase, idMaps) {
       idMaps.provisions.set(provision.title, id)
     }
 
+    // Second pass: set parent_id for provisions with a parent reference
+    for (const provision of provisions) {
+      if (!provision.parent) continue
+      const provisionId = idMaps.provisions.get(provision.title)
+      const parentId = idMaps.provisions.get(provision.parent)
+      if (provisionId && parentId) {
+        await client.query(
+          'UPDATE gov_provisions SET parent_id = $1 WHERE id = $2',
+          [parentId, provisionId]
+        )
+      } else {
+        logger.warning(`Could not set parent for "${provision.title}" - parent "${provision.parent}" not found`)
+      }
+    }
+
     if (skipCount > 0) {
       logger.warning(`Skipped ${skipCount} provisions due to missing dependencies`)
     }
