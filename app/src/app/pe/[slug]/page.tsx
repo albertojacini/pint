@@ -4,11 +4,7 @@ import { eq, and, desc } from 'drizzle-orm'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getGroupedEntityRelationships } from '@/lib/actions/entity-relationships'
-import {
-  EntityActions,
-  EssentialStats,
-  FinancialTrends,
-} from '@/components/entities'
+import { EntityActions, EssentialStats, FinancialTrends } from '@/components/entities'
 import { PageTitle } from '@/components/custom-ui/typography'
 import { getStorageUrl } from '@/lib/storage'
 import { Box } from '@/components/custom-ui/box'
@@ -246,7 +242,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
           </Link>
         }
       >
-        {insights?.administration && <SectionInsight content={insights.administration} className="mb-4" />}
+        {insights?.administration && (
+          <SectionInsight content={insights.administration} className="mb-4" />
+        )}
         <SectionL2>
           <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
         </SectionL2>
@@ -267,13 +265,15 @@ export default async function EntityPage({ params }: EntityPageProps) {
         )}
 
         <SectionL2 title="Community">
-          <p className="text-xs text-muted-foreground italic">Work in progress</p>
+          <p className="text-xs text-muted-foreground italic">Coming soon</p>
         </SectionL2>
       </SectionL1>
 
       {entity.financialOverview && (
         <SectionL1 title="Financials">
-          {insights?.financials && <SectionInsight content={insights.financials} className="mb-4" />}
+          {insights?.financials && (
+            <SectionInsight content={insights.financials} className="mb-4" />
+          )}
           <FinancialTrends data={entity.financialOverview} />
         </SectionL1>
       )}
@@ -294,7 +294,9 @@ export default async function EntityPage({ params }: EntityPageProps) {
       </SectionL1>
 
       <SectionL1 title="Performance Indicators">
-        {insights?.performanceIndicators && <SectionInsight content={insights.performanceIndicators} className="mb-4" />}
+        {insights?.performanceIndicators && (
+          <SectionInsight content={insights.performanceIndicators} className="mb-4" />
+        )}
         <p className="text-sm text-muted-foreground">Coming soon</p>
       </SectionL1>
 
