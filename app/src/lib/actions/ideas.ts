@@ -98,8 +98,6 @@ export async function getIdea(id: string) {
       provisionTitle: provisions.title,
       provisionDescription: provisions.description,
       status: provisions.status,
-      effectiveFrom: provisions.effectiveFrom,
-      effectiveUntil: provisions.effectiveUntil,
       entityId: entities.id,
       entityName: entities.name,
       entityType: entities.type,
@@ -107,7 +105,7 @@ export async function getIdea(id: string) {
     .from(provisions)
     .innerJoin(entities, eq(provisions.entityId, entities.id))
     .where(eq(provisions.ideaId, id))
-    .orderBy(provisions.status, provisions.effectiveFrom)
+    .orderBy(provisions.status, provisions.title)
 
   // Get stakeholder groups referenced in the effects diagram
   const stakeholderGroupIds = idea.effectsDiagram?.stakeholderGroups?.map((sg: StakeholderGroupEffects) => sg.stakeholderGroupId) || []

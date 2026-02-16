@@ -25,8 +25,6 @@ const sampleProvision = {
   ],
   status: 'active',
   relevance: 8,
-  effectiveFrom: '2012-01-16',
-  effectiveUntil: null,
   ideaId: null,
   ideaTitle: null,
   highlights: {
@@ -62,8 +60,6 @@ const minimalProvision = {
   ],
   status: 'active',
   relevance: 4,
-  effectiveFrom: null,
-  effectiveUntil: null,
   ideaId: null,
   ideaTitle: null,
   highlights: null,

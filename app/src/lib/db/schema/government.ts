@@ -353,8 +353,6 @@ export const provisions = pgTable('gov_provisions', {
   avatarUrl: text('avatar_url'),
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   relevance: integer('relevance'),
-  effectiveFrom: text('effective_from'), // date as text (YYYY-MM-DD)
-  effectiveUntil: text('effective_until'), // date as text (YYYY-MM-DD)
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
   // ============================================================================
   // DERIVED DISPLAY FIELDS

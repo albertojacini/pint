@@ -33,8 +33,6 @@ export type ProvisionWithTags = {
   types: ProvisionType[]
   status: string
   relevance: number | null
-  effectiveFrom: string | null
-  effectiveUntil: string | null
   ideaId: string | null
   ideaTitle: string | null
   highlights: { items: Array<{ label: string; value: string }> } | null
@@ -87,8 +85,6 @@ export async function getProvisionsByEntity(entityId: string) {
       tagline: provisions.tagline,
       status: provisions.status,
       relevance: provisions.relevance,
-      effectiveFrom: provisions.effectiveFrom,
-      effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
       highlights: provisions.highlights,
@@ -97,7 +93,7 @@ export async function getProvisionsByEntity(entityId: string) {
     .from(provisions)
     .leftJoin(ideas, eq(provisions.ideaId, ideas.id))
     .where(eq(provisions.entityId, entityId))
-    .orderBy(desc(provisions.effectiveFrom))
+    .orderBy(desc(provisions.title))
 
   // Fetch types for all provisions
   const provisionIds = entityProvisions.map(p => p.id)
@@ -235,8 +231,6 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
       relevance: provisions.relevance,
-      effectiveFrom: provisions.effectiveFrom,
-      effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
       highlights: provisions.highlights,
@@ -281,8 +275,6 @@ export async function getProvisionById(provisionId: string): Promise<ProvisionWi
     types: typesByProvision[provisionId] || [],
     status: provision.status,
     relevance: provision.relevance,
-    effectiveFrom: provision.effectiveFrom,
-    effectiveUntil: provision.effectiveUntil,
     ideaId: provision.ideaId,
     ideaTitle: provision.ideaTitle,
     highlights: provision.highlights as { items: Array<{ label: string; value: string }> } | null,
@@ -332,8 +324,6 @@ export async function getFilteredProvisions(
       avatarUrl: provisions.avatarUrl,
       status: provisions.status,
       relevance: provisions.relevance,
-      effectiveFrom: provisions.effectiveFrom,
-      effectiveUntil: provisions.effectiveUntil,
       ideaId: ideas.id,
       ideaTitle: ideas.title,
       highlights: provisions.highlights,
@@ -356,17 +346,14 @@ export async function getFilteredProvisions(
   // Apply sorting and execute
   let provisionResults: any[]
   switch (filters.sort) {
-    case 'date-asc':
-      provisionResults = await baseQuery.orderBy(asc(provisions.effectiveFrom))
-      break
     case 'title-asc':
       provisionResults = await baseQuery.orderBy(asc(provisions.title))
       break
     case 'title-desc':
       provisionResults = await baseQuery.orderBy(desc(provisions.title))
       break
-    default: // 'date-desc'
-      provisionResults = await baseQuery.orderBy(desc(provisions.effectiveFrom))
+    default:
+      provisionResults = await baseQuery.orderBy(asc(provisions.title))
       break
   }
 
@@ -421,8 +408,6 @@ export async function getFilteredProvisions(
     types: typesByProvision[p.id] || [],
     status: p.status,
     relevance: p.relevance,
-    effectiveFrom: p.effectiveFrom,
-    effectiveUntil: p.effectiveUntil,
     ideaId: p.ideaId,
     ideaTitle: p.ideaTitle,
     highlights: p.highlights as { items: Array<{ label: string; value: string }> } | null,

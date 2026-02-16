@@ -20,8 +20,6 @@ interface ProvisionCardProps {
     types: ProvisionType[]
     status: string
     relevance: number | null
-    effectiveFrom: string | null
-    effectiveUntil: string | null
     ideaId: string | null
     ideaTitle: string | null
     highlights: { items: Array<{ label: string; value: string }> } | null

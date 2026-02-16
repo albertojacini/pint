@@ -309,8 +309,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       analysis: provisions.analysis,
       avatarUrl: provisions.avatarUrl,
       relevance: provisions.relevance,
-      effectiveFrom: provisions.effectiveFrom,
-      effectiveUntil: provisions.effectiveUntil,
       highlights: provisions.highlights,
       console: provisions.console,
     })
@@ -451,11 +449,6 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        {provision.effectiveFrom && (
-          <div className="text-sm text-muted-foreground">
-            Since {new Date(provision.effectiveFrom).getFullYear()}
-          </div>
-        )}
       </div>
 
       {/* Evaluation Console */}

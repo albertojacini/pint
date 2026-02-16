@@ -31,8 +31,6 @@ export $(grep DATABASE_URL /Users/albertojacini/Projects/pint/.env.prod | xargs)
 - `avatarUrl` (text): Icon/image URL
 - `status` (text): 'active', 'repealed', or 'suspended'
 - `relevance` (integer): Importance score
-- `effectiveFrom` (text): Start date as YYYY-MM-DD
-- `effectiveUntil` (text): End date as YYYY-MM-DD
 - `ideaId` (uuid): FK to pol_ideas if linked to a policy idea
 
 ### Derived Display Fields

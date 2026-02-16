@@ -194,20 +194,6 @@ export default async function IdeaPage({ params }: { params: Promise<{ id: strin
                   {provision.provisionDescription && (
                     <p className="text-sm mb-3">{provision.provisionDescription}</p>
                   )}
-                  <div className="space-y-1 text-sm">
-                    {provision.effectiveFrom && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Effective From:</span>
-                        <span>{provision.effectiveFrom}</span>
-                      </div>
-                    )}
-                    {provision.effectiveUntil && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Effective Until:</span>
-                        <span>{provision.effectiveUntil}</span>
-                      </div>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
             ))}

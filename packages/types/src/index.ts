@@ -183,8 +183,6 @@ export const ProvisionSchema = z.object({
   analysis: z.string().max(20000, 'Analysis must be at most 20000 characters').optional(),
   type: z.enum(['ownership', 'contract', 'regulation', 'taxation', 'allocation', 'designation']),
   status: z.enum(['active', 'repealed', 'suspended']).default('active'),
-  effectiveFrom: z.string().optional(), // YYYY-MM-DD
-  effectiveUntil: z.string().optional(), // YYYY-MM-DD
   ideaId: z.string().uuid().optional(),
   extraData: ProvisionExtraDataSchema.optional(),
   createdAt: z.date(),

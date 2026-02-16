@@ -41,7 +41,7 @@ export default async function ProvisionsPage({
     search: filters.search,
     type: filters.type,
     status: filters.status,
-    sort: filters.sort || 'date-desc',
+    sort: filters.sort || 'title-asc',
   })
 
   return (

@@ -24,9 +24,8 @@ const PROVISION_STATUSES = [
 ]
 
 const SORT_OPTIONS = [
-  { value: 'date-desc', label: 'Newest first' },
-  { value: 'date-asc', label: 'Oldest first' },
   { value: 'title-asc', label: 'A-Z' },
+  { value: 'title-desc', label: 'Z-A' },
 ]
 
 export function ProvisionsFilterBar() {
@@ -37,7 +36,7 @@ export function ProvisionsFilterBar() {
 
   const currentType = searchParams.get('type')
   const currentStatus = searchParams.get('status')
-  const currentSort = searchParams.get('sort') || 'date-desc'
+  const currentSort = searchParams.get('sort') || 'title-asc'
 
   // Debounced search update
   useEffect(() => {
@@ -70,7 +69,7 @@ export function ProvisionsFilterBar() {
   }
 
   const hasActiveFilters = currentType || currentStatus || search
-  const hasExpandedFilters = currentStatus || currentSort !== 'date-desc'
+  const hasExpandedFilters = currentStatus || currentSort !== 'title-asc'
 
   return (
     <div className="space-y-3">
