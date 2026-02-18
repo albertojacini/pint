@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "pillow>=10.0.0",
+# ]
+# ///
 """Crop and resize an image to a square icon.
 
 Trims transparent/low-alpha padding around the actual content,
 then resizes and centers it on a square transparent canvas.
 
 Usage:
-    python crop-icon.py <input> [output] [--size 64] [--alpha-threshold 128]
+    uv run .claude/skills/crop-icon/scripts/crop_icon.py <input> [output] [--size 64] [--alpha-threshold 128]
 
 Examples:
-    python crop-icon.py trolleybus.png
-    python crop-icon.py trolleybus.png icon-64.png --size 64
-    python crop-icon.py trolleybus.png icon-128.png --size 128
+    uv run .claude/skills/crop-icon/scripts/crop_icon.py trolleybus.png
+    uv run .claude/skills/crop-icon/scripts/crop_icon.py trolleybus.png icon-64.png --size 64
+    uv run .claude/skills/crop-icon/scripts/crop_icon.py trolleybus.png icon-128.png --size 128
 """
 
 import argparse

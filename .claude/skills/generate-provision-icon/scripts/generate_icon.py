@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "google-genai>=1.0.0",
+#     "pillow>=10.0.0",
+#     "numpy>=1.24.0",
+# ]
+# ///
 """Generate a flat-style icon for a provision using Gemini image generation.
 
 Takes a reference photo and generates an "avatarized" flat-design icon matching
 a consistent style (defined by an example image).
 
 Usage:
-    python generate-provision-icon.py <prompt> <reference-image> [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image]
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> <reference-image> [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image]
 
 Examples:
-    python generate-provision-icon.py "a green city bus" bus-photo.jpg
-    python generate-provision-icon.py "a bicycle lane" lane-photo.png bike-lane.png
-    python generate-provision-icon.py "a metro train" metro.jpg --size 256
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a green city bus" bus-photo.jpg
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a bicycle lane" lane-photo.png bike-lane.png
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a metro train" metro.jpg --size 256
 
 Requires: google-genai, Pillow
 API key: set GEMINI_API_KEY environment variable
@@ -28,8 +36,11 @@ from google import genai
 from google.genai import types
 from PIL import Image
 
+# Resolve project root (4 levels up from this script)
+_PROJECT_ROOT = Path(__file__).resolve().parents[4]
+
 # Load .env from project root
-_env_path = Path(__file__).resolve().parents[2] / ".env"
+_env_path = _PROJECT_ROOT / ".env"
 if _env_path.exists():
     for line in _env_path.read_text().splitlines():
         line = line.strip()
@@ -38,7 +49,7 @@ if _env_path.exists():
             os.environ.setdefault(key.strip(), value.strip())
 
 STYLE_EXAMPLE_PATH = (
-    Path(__file__).resolve().parents[2]
+    _PROJECT_ROOT
     / ".claude/skills/generate-provision-icon/example-images/trolleybus-64.png"
 )
 

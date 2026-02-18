@@ -2,15 +2,15 @@
 name: generate-provision-icon
 description: Generate a flat-style icon for a provision using Gemini image generation (Nano Banana). Takes a reference photo and creates an avatarized flat-design icon matching a consistent style. Use when the user wants to generate an icon or avatar for a provision.
 argument-hint: <subject-description> <reference-image-path> [output-path] [--size 128]
-allowed-tools: Bash(python3 *), Read
+allowed-tools: Bash(uv run *), Read
 ---
 
-Run the generate-provision-icon script at `tooling/scripts/generate-provision-icon.py` to generate and crop an icon.
+Run the generate-provision-icon script to generate and crop an icon.
 
 ## Usage
 
 ```bash
-python3 tooling/scripts/generate-provision-icon.py <prompt> <reference-image> [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image] [--raw]
+uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> <reference-image> [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image] [--raw]
 ```
 
 ## Behavior
@@ -44,5 +44,5 @@ Since Gemini cannot generate truly transparent backgrounds, the script uses a **
 
 ## Requirements
 
-- `GEMINI_API_KEY` environment variable must be set
-- Requires `google-genai` and `Pillow`. If not installed: `uv pip install google-genai Pillow`
+- `GEMINI_API_KEY` environment variable must be set (auto-loaded from project root `.env`)
+- Dependencies (`google-genai`, `Pillow`, `numpy`) are declared inline via PEP 723 — `uv run` installs them automatically
