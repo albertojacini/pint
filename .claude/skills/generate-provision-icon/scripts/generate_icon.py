@@ -5,23 +5,27 @@
 #     "google-genai>=1.0.0",
 #     "pillow>=10.0.0",
 #     "numpy>=1.24.0",
+#     "supabase>=2.0.0",
 # ]
 # ///
 """Generate a flat-style icon for a provision using Gemini image generation.
 
-Takes a reference photo and generates an "avatarized" flat-design icon matching
-a consistent style (defined by an example image).
+Takes an optional reference photo and generates an "avatarized" flat-design icon
+matching a consistent style (defined by an example image).
 
 Usage:
-    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> <reference-image> [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image]
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> [reference-image] [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image]
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> [reference-image] [output] --upload <storage-path>
 
 Examples:
     uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a green city bus" bus-photo.jpg
-    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a bicycle lane" lane-photo.png bike-lane.png
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a bicycle lane"
     uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a metro train" metro.jpg --size 256
+    uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a metro train" metro.jpg --upload provisions/metro-train.png
 
 Requires: google-genai, Pillow
 API key: set GEMINI_API_KEY environment variable
+Upload: set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables
 """
 
 import argparse
@@ -66,7 +70,7 @@ STYLE_PREFIX = (
 
 def generate_image(
     prompt: str,
-    reference_image_path: str,
+    reference_image_path: str | None = None,
     model: str = "gemini-2.5-flash-image",
 ) -> Image.Image:
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -76,18 +80,26 @@ def generate_image(
 
     client = genai.Client(api_key=api_key)
 
-    reference_image = Image.open(reference_image_path)
     style_image = Image.open(STYLE_EXAMPLE_PATH)
 
-    full_prompt = (
-        f"{STYLE_PREFIX}{prompt}. "
-        f"Use the first image as the reference for the subject. "
-        f"Use the second image as the style reference — match its flat icon aesthetic exactly."
-    )
+    if reference_image_path:
+        reference_image = Image.open(reference_image_path)
+        full_prompt = (
+            f"{STYLE_PREFIX}{prompt}. "
+            f"Use the first image as the reference for the subject. "
+            f"Use the second image as the style reference — match its flat icon aesthetic exactly."
+        )
+        contents = [full_prompt, reference_image, style_image]
+    else:
+        full_prompt = (
+            f"{STYLE_PREFIX}{prompt}. "
+            f"Use the provided image as the style reference — match its flat icon aesthetic exactly."
+        )
+        contents = [full_prompt, style_image]
 
     response = client.models.generate_content(
         model=model,
-        contents=[full_prompt, reference_image, style_image],
+        contents=contents,
         config=types.GenerateContentConfig(
             response_modalities=["TEXT", "IMAGE"],
         ),
@@ -167,6 +179,31 @@ def crop_to_icon(img: Image.Image, size: int = 128, alpha_threshold: int = 128) 
     return canvas
 
 
+def upload_to_supabase(local_path: str, storage_path: str) -> str:
+    """Upload a file to Supabase Storage (avatars bucket) and return the public URL."""
+    from supabase import create_client
+
+    supabase_url = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    if not supabase_url or not service_key:
+        print("Error: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set", file=sys.stderr)
+        sys.exit(1)
+
+    client = create_client(supabase_url, service_key)
+
+    with open(local_path, "rb") as f:
+        file_bytes = f.read()
+
+    client.storage.from_("avatars").upload(
+        storage_path,
+        file_bytes,
+        file_options={"content-type": "image/png", "upsert": "true"},
+    )
+
+    public_url = client.storage.from_("avatars").get_public_url(storage_path)
+    return public_url
+
+
 def slugify(text: str) -> str:
     text = text.lower().strip()
     text = re.sub(r"[^\w\s-]", "", text)
@@ -177,15 +214,16 @@ def slugify(text: str) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a flat-style provision icon.")
     parser.add_argument("prompt", help="Description of the icon subject")
-    parser.add_argument("reference_image", help="Path to reference photo for the subject")
+    parser.add_argument("reference_image", nargs="?", default=None, help="Path to reference photo (optional)")
     parser.add_argument("output", nargs="?", help="Output path (default: <slugified-prompt>-<size>.png)")
     parser.add_argument("--size", type=int, default=128, help="Output square size in px (default: 128)")
     parser.add_argument("--alpha-threshold", type=int, default=128, help="Min alpha to count as content (default: 128)")
     parser.add_argument("--model", default="gemini-2.5-flash-image", help="Gemini model (default: gemini-2.5-flash-image)")
     parser.add_argument("--raw", action="store_true", help="Save raw generated image (skip crop)")
+    parser.add_argument("--upload", metavar="STORAGE_PATH", help="Upload to Supabase avatars bucket at this path (e.g. provisions/my-icon.png)")
     args = parser.parse_args()
 
-    if not Path(args.reference_image).exists():
+    if args.reference_image and not Path(args.reference_image).exists():
         print(f"Error: Reference image not found: {args.reference_image}", file=sys.stderr)
         sys.exit(1)
 
@@ -195,7 +233,10 @@ if __name__ == "__main__":
         output = f"{slug}-{args.size}.png"
 
     print(f"Generating: {args.prompt}", flush=True)
-    print(f"Reference: {args.reference_image}", flush=True)
+    if args.reference_image:
+        print(f"Reference: {args.reference_image}", flush=True)
+    else:
+        print("No reference image — using prompt-only mode", flush=True)
     raw_image = generate_image(args.prompt, args.reference_image, model=args.model)
 
     raw_path = output.replace(".png", "-raw.png")
@@ -209,3 +250,10 @@ if __name__ == "__main__":
         icon = crop_to_icon(keyed, size=args.size, alpha_threshold=args.alpha_threshold)
         icon.save(output)
         print(f"Icon saved: {output} ({args.size}x{args.size})")
+
+    if args.upload:
+        upload_path = output if not args.raw else raw_path
+        print(f"Uploading to Supabase: avatars/{args.upload}", flush=True)
+        public_url = upload_to_supabase(upload_path, args.upload)
+        print(f"Uploaded: {public_url}")
+        print(f"Storage path: {args.upload}")
