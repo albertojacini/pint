@@ -50,7 +50,7 @@ uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a metro 
 
 The printed `Storage path` value (e.g. `provisions/metro-train.png`) is what should be stored in the provision's `avatar_url` database column.
 
-Requires `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the project `.env`.
+Reads `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from `.env.prod` (always uploads to production).
 
 ## Defaults
 
@@ -64,4 +64,4 @@ Requires `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the proje
 
 - `GEMINI_API_KEY` environment variable must be set (auto-loaded from project root `.env`)
 - Dependencies (`google-genai`, `Pillow`, `numpy`, `supabase`) are declared inline via PEP 723 — `uv run` installs them automatically
-- For upload: `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in `.env`
+- For upload: `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in `.env.prod`

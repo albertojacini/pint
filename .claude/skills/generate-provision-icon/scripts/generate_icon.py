@@ -62,8 +62,9 @@ CHROMA_TOLERANCE = 60  # how far a pixel can be from detected bg color and still
 STYLE_PREFIX = (
     "A flat-design icon illustration on a solid bright green background (#00C800). "
     "This will be used as a SMALL SQUARE THUMBNAIL (128x128 pixels or smaller). "
-    "The subject must be CENTERED, filling most of the square frame. "
-    "Use a single, compact composition — avoid wide/panoramic layouts. "
+    "Show ONE single object or element — do NOT try to be comprehensive. "
+    "Pick one interesting, iconic, or recognizable detail about the subject. "
+    "The single object must be CENTERED, filling most of the square frame. "
     "Bold, simple shapes with minimal detail. No text, no labels, no shadows. "
     "Clean vector-art style with vivid colors. "
     "The background MUST be a uniform, solid bright green (#00C800) with no gradients or patterns. "
@@ -182,14 +183,27 @@ def crop_to_icon(img: Image.Image, size: int = 128, alpha_threshold: int = 128) 
     return canvas
 
 
+def _load_env_file(path: Path) -> dict[str, str]:
+    """Load key=value pairs from an env file."""
+    env = {}
+    if path.exists():
+        for line in path.read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, _, value = line.partition("=")
+                env[key.strip()] = value.strip()
+    return env
+
+
 def upload_to_supabase(local_path: str, storage_path: str) -> str:
-    """Upload a file to Supabase Storage (avatars bucket) and return the public URL."""
+    """Upload a file to prod Supabase Storage (avatars bucket) using .env.prod credentials."""
     from supabase import create_client
 
-    supabase_url = os.environ.get("NEXT_PUBLIC_SUPABASE_URL")
-    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
+    prod_env = _load_env_file(_PROJECT_ROOT / ".env.prod")
+    supabase_url = prod_env.get("NEXT_PUBLIC_SUPABASE_URL")
+    service_key = prod_env.get("SUPABASE_SERVICE_ROLE_KEY")
     if not supabase_url or not service_key:
-        print("Error: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set", file=sys.stderr)
+        print("Error: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in .env.prod", file=sys.stderr)
         sys.exit(1)
 
     client = create_client(supabase_url, service_key)
