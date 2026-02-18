@@ -50,7 +50,7 @@ if _env_path.exists():
 
 STYLE_EXAMPLE_PATH = (
     _PROJECT_ROOT
-    / ".claude/skills/generate-provision-icon/example-images/trolleybus-64.png"
+    / ".claude/skills/generate-provision-icon/assets/trolleybus-64.png"
 )
 
 CHROMA_TOLERANCE = 60  # how far a pixel can be from detected bg color and still count as background

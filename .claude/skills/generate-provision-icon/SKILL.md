@@ -16,7 +16,7 @@ uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> 
 ## Behavior
 
 1. Parse the user's request for: subject description, reference image path, output path (optional), size (default 128)
-2. Read the example style image at `.claude/skills/generate-provision-icon/example-images/trolleybus-64.png` to understand the target style
+2. Read the example style image at `.claude/skills/generate-provision-icon/assets/trolleybus-64.png` to understand the target style
 3. Run the script — it sends the prompt, the reference photo, AND the style example image to Gemini, then auto-crops and resizes the result
 4. Read **both** the raw image (`*-raw.png`) and the cropped icon to show results to the user
 5. If the user is not satisfied:
@@ -30,7 +30,7 @@ uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> 
 The script sends **three inputs** to Gemini:
 1. **Text prompt** — style instructions + subject description
 2. **Reference image** — a real photo of the subject (e.g., a bus photograph) used as the visual basis
-3. **Style example** — always the trolleybus icon at `.claude/skills/generate-provision-icon/example-images/trolleybus-64.png`, used to enforce consistent flat-icon style
+3. **Style example** — always the trolleybus icon at `.claude/skills/generate-provision-icon/assets/trolleybus-64.png`, used to enforce consistent flat-icon style
 
 Since Gemini cannot generate truly transparent backgrounds, the script uses a **green-screen approach**: it prompts Gemini for a solid green background, then auto-detects and removes it via chroma-keying. The final output is a PNG with a fully transparent background, tight-cropped and centered on a square canvas.
 
