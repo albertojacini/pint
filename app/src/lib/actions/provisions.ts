@@ -83,6 +83,7 @@ export async function getProvisionsByEntity(entityId: string) {
       id: provisions.id,
       title: provisions.title,
       tagline: provisions.tagline,
+      avatarUrl: provisions.avatarUrl,
       status: provisions.status,
       relevance: provisions.relevance,
       ideaId: ideas.id,

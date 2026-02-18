@@ -255,7 +255,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
                 {provisions.slice(0, 6).map((p) => (
                   <ProvisionCardExtraSmall
                     key={p.title}
-                    provision={{ title: p.title, type: p.types[0]?.code ?? 'regulation' }}
+                    provision={{ title: p.title, type: p.types[0]?.code ?? 'regulation', avatarUrl: p.avatarUrl }}
                     className="max-w-[180px]"
                   />
                 ))}
