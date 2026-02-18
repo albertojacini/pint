@@ -10,7 +10,7 @@ Run the generate-provision-icon script to generate and crop an icon.
 ## Usage
 
 ```bash
-uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> [reference-image] [output] [--size 128] [--alpha-threshold 128] [--model gemini-2.5-flash-image] [--raw] [--upload STORAGE_PATH]
+uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> [reference-image] [output] [--size 128] [--alpha-threshold 128] [--model gemini-3-pro-image-preview] [--raw] [--upload STORAGE_PATH]
 ```
 
 ## Behavior
@@ -54,11 +54,11 @@ Requires `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` in the proje
 
 ## Defaults
 
-- Output path: `<slugified-prompt>-<size>.png` in the current directory
-- Raw image: always saved alongside as `<slugified-prompt>-<size>-raw.png`
+- Output path: `TEMP/provision-icons/<slugified-prompt>-<size>.png` (project TEMP directory, not versioned)
+- Raw image: always saved alongside as `*-raw.png`
 - Size: 128px
 - Alpha threshold: 128
-- Model: gemini-2.5-flash-image (Nano Banana)
+- Model: gemini-3-pro-image-preview (Nano Banana Pro)
 
 ## Requirements
 

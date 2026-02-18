@@ -61,6 +61,9 @@ CHROMA_TOLERANCE = 60  # how far a pixel can be from detected bg color and still
 
 STYLE_PREFIX = (
     "A flat-design icon illustration on a solid bright green background (#00C800). "
+    "This will be used as a SMALL SQUARE THUMBNAIL (128x128 pixels or smaller). "
+    "The subject must be CENTERED, filling most of the square frame. "
+    "Use a single, compact composition — avoid wide/panoramic layouts. "
     "Bold, simple shapes with minimal detail. No text, no labels, no shadows. "
     "Clean vector-art style with vivid colors. "
     "The background MUST be a uniform, solid bright green (#00C800) with no gradients or patterns. "
@@ -71,7 +74,7 @@ STYLE_PREFIX = (
 def generate_image(
     prompt: str,
     reference_image_path: str | None = None,
-    model: str = "gemini-2.5-flash-image",
+    model: str = "gemini-3-pro-image-preview",
 ) -> Image.Image:
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
@@ -218,7 +221,7 @@ if __name__ == "__main__":
     parser.add_argument("output", nargs="?", help="Output path (default: <slugified-prompt>-<size>.png)")
     parser.add_argument("--size", type=int, default=128, help="Output square size in px (default: 128)")
     parser.add_argument("--alpha-threshold", type=int, default=128, help="Min alpha to count as content (default: 128)")
-    parser.add_argument("--model", default="gemini-2.5-flash-image", help="Gemini model (default: gemini-2.5-flash-image)")
+    parser.add_argument("--model", default="gemini-3-pro-image-preview", help="Gemini model (default: gemini-3-pro-image-preview)")
     parser.add_argument("--raw", action="store_true", help="Save raw generated image (skip crop)")
     parser.add_argument("--upload", metavar="STORAGE_PATH", help="Upload to Supabase avatars bucket at this path (e.g. provisions/my-icon.png)")
     args = parser.parse_args()
@@ -227,10 +230,14 @@ if __name__ == "__main__":
         print(f"Error: Reference image not found: {args.reference_image}", file=sys.stderr)
         sys.exit(1)
 
+    # Use project TEMP directory for outputs unless explicit path given
+    _tmp_dir = _PROJECT_ROOT / "TEMP" / "provision-icons"
+    _tmp_dir.mkdir(parents=True, exist_ok=True)
+
     output = args.output
     if not output:
         slug = slugify(args.prompt)
-        output = f"{slug}-{args.size}.png"
+        output = str(_tmp_dir / f"{slug}-{args.size}.png")
 
     print(f"Generating: {args.prompt}", flush=True)
     if args.reference_image:
