@@ -4,7 +4,7 @@
  *
  * A "change" is a manually tracked record of a modification to a target.
  * - type: 'actual' = already happened, 'planned' = announced future modification
- * - effectiveDate: when the change takes/took effect (ISO date string)
+ * - date: when the change takes/took effect (ISO date string)
  * - relevance: 1-10 scale indicating significance of the change
  *
  * Every event has at least one change targeting the entity "Comune di Milano".
@@ -18,7 +18,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-01-15",
+    date: "2025-01-15",
     relevance: 8,
     description: "Bilancio 2025 approvato con focus su trasporto pubblico e verde"
   },
@@ -27,7 +27,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Partecipazione ATM",
     type: "actual",
-    effectiveDate: "2025-01-15",
+    date: "2025-01-15",
     relevance: 6,
     description: "Aumento fondi trasporto pubblico nel bilancio 2025"
   },
@@ -37,7 +37,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-01-22",
+    date: "2025-01-22",
     relevance: 4,
     description: "Aggiornamento regolamento dehors invernali"
   },
@@ -46,7 +46,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Public Space Occupation Permits (Dehors)",
     type: "actual",
-    effectiveDate: "2025-01-22",
+    date: "2025-01-22",
     relevance: 6,
     description: "Estensione orari consentiti per dehors invernali"
   },
@@ -56,7 +56,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-02-03",
+    date: "2025-02-03",
     relevance: 5,
     description: "Piano manutenzione straordinaria 120km strade"
   },
@@ -66,7 +66,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-02-18",
+    date: "2025-02-18",
     relevance: 6,
     description: "Aperta consultazione sul Piano Traffico 2025-2030"
   },
@@ -75,7 +75,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Pedaggi urbani",
     type: "actual",
-    effectiveDate: "2025-02-18",
+    date: "2025-02-18",
     relevance: 5,
     description: "Piano traffico include revisione sistema pedaggi"
   },
@@ -85,7 +85,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-03-05",
+    date: "2025-03-05",
     relevance: 5,
     description: "Nominato nuovo assessore mobilità e lavori pubblici"
   },
@@ -95,7 +95,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-03-12",
+    date: "2025-03-12",
     relevance: 7,
     description: "TAR conferma legittimità restrizioni Area B"
   },
@@ -104,7 +104,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Pedaggi urbani",
     type: "actual",
-    effectiveDate: "2025-03-12",
+    date: "2025-03-12",
     relevance: 8,
     description: "Confermata legittimità limiti diesel Euro 5 in Area B"
   },
@@ -114,7 +114,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-04-08",
+    date: "2025-04-08",
     relevance: 6,
     description: "Nuovo regolamento rete ciclabile con corsie protette"
   },
@@ -124,7 +124,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-04-22",
+    date: "2025-04-22",
     relevance: 9,
     description: "Apertura cantiere Metro M6 Baggio-Porta Romana"
   },
@@ -133,7 +133,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Partecipazione ATM",
     type: "actual",
-    effectiveDate: "2025-04-22",
+    date: "2025-04-22",
     relevance: 8,
     description: "ATM gestirà la nuova linea M6"
   },
@@ -143,7 +143,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-05-05",
+    date: "2025-05-05",
     relevance: 5,
     description: "Incremento frequenze tram e bus nelle fasce di punta"
   },
@@ -152,7 +152,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Partecipazione ATM",
     type: "actual",
-    effectiveDate: "2025-05-05",
+    date: "2025-05-05",
     relevance: 7,
     description: "Miglioramento servizio su linee tram 1, 3, 15 e bus 54, 61, 95"
   },
@@ -162,7 +162,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-05-20",
+    date: "2025-05-20",
     relevance: 6,
     description: "15.000 firme per zona 30 km/h entro i Navigli"
   },
@@ -172,7 +172,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-06-02",
+    date: "2025-06-02",
     relevance: 7,
     description: "Bando per 200 bus elettrici per flotta ATM"
   },
@@ -181,7 +181,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Partecipazione ATM",
     type: "actual",
-    effectiveDate: "2025-06-02",
+    date: "2025-06-02",
     relevance: 8,
     description: "Rinnovo flotta con 200 bus elettrici"
   },
@@ -191,7 +191,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-06-28",
+    date: "2025-06-28",
     relevance: 7,
     description: "Emergenza caldo: attivati centri di raffreddamento"
   },
@@ -201,7 +201,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-07-10",
+    date: "2025-07-10",
     relevance: 8,
     description: "Appalto da 85M per riqualificazione Darsena-Navigli"
   },
@@ -211,7 +211,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-07-25",
+    date: "2025-07-25",
     relevance: 5,
     description: "Tariffe sosta +20% in centro, invariate in periferia"
   },
@@ -220,7 +220,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Pedaggi urbani",
     type: "actual",
-    effectiveDate: "2025-07-25",
+    date: "2025-07-25",
     relevance: 6,
     description: "Aumento tariffe strisce blu in zona centrale"
   },
@@ -230,7 +230,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-08-14",
+    date: "2025-08-14",
     relevance: 7,
     description: "Protocollo Regione-Comune per misure anti-inquinamento"
   },
@@ -240,7 +240,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-09-08",
+    date: "2025-09-08",
     relevance: 5,
     description: "Inaugurata ciclabile protetta Loreto-Sesto, 7.5 km"
   },
@@ -250,7 +250,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-09-22",
+    date: "2025-09-22",
     relevance: 5,
     description: "Piano triennale dehors con nuovi criteri estetici"
   },
@@ -259,7 +259,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Public Space Occupation Permits (Dehors)",
     type: "actual",
-    effectiveDate: "2025-09-22",
+    date: "2025-09-22",
     relevance: 8,
     description: "Criteri accessibilità e design aggiornati per permessi dehors"
   },
@@ -269,7 +269,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-10-01",
+    date: "2025-10-01",
     relevance: 7,
     description: "Divieto Euro 3 benzina esteso ad Area B"
   },
@@ -278,7 +278,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Pedaggi urbani",
     type: "actual",
-    effectiveDate: "2025-10-01",
+    date: "2025-10-01",
     relevance: 9,
     description: "Stop benzina Euro 3 in Area B con 50 ingressi gratuiti"
   },
@@ -288,7 +288,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-10-15",
+    date: "2025-10-15",
     relevance: 6,
     description: "2.000 trasportatori protestano contro restrizioni Area B"
   },
@@ -298,7 +298,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-11-03",
+    date: "2025-11-03",
     relevance: 7,
     description: "12M euro per ForestaMi: 50.000 alberi entro 2027"
   },
@@ -308,7 +308,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-11-18",
+    date: "2025-11-18",
     relevance: 6,
     description: "Piano rigenerazione ex-Triennale Bovisa adottato"
   },
@@ -318,7 +318,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-12-05",
+    date: "2025-12-05",
     relevance: 5,
     description: "Aggiornamento protocolli protezione civile"
   },
@@ -328,7 +328,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2025-12-18",
+    date: "2025-12-18",
     relevance: 8,
     description: "Bilancio 2026: 3.2 miliardi, +8% trasporto, +15% verde"
   },
@@ -337,7 +337,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Partecipazione ATM",
     type: "actual",
-    effectiveDate: "2025-12-18",
+    date: "2025-12-18",
     relevance: 7,
     description: "Aumento 8% fondi trasporto pubblico nel bilancio 2026"
   },
@@ -347,7 +347,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-01-01",
+    date: "2026-01-01",
     relevance: 9,
     description: "Area C attiva 7 giorni su 7"
   },
@@ -356,7 +356,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Pedaggi urbani",
     type: "actual",
-    effectiveDate: "2026-01-01",
+    date: "2026-01-01",
     relevance: 10,
     description: "Area C estesa a sabato e domenica, tariffa weekend €5"
   },
@@ -366,7 +366,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-01-15",
+    date: "2026-01-15",
     relevance: 7,
     description: "Municipi con più autonomia su verde e viabilità"
   },
@@ -376,7 +376,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-02-10",
+    date: "2026-02-10",
     relevance: 6,
     description: "Piattaforma online per partecipazione su bilancio e urbanistica"
   },
@@ -386,7 +386,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-02-20",
+    date: "2026-02-20",
     relevance: 6,
     description: "Proposta legge per armonizzare ZTL area metropolitana"
   },
@@ -395,7 +395,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Pedaggi urbani",
     type: "planned",
-    effectiveDate: "2026-02-20",
+    date: "2026-02-20",
     relevance: 7,
     description: "Possibile armonizzazione pedaggi a livello metropolitano"
   },
@@ -405,7 +405,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-03-03",
+    date: "2026-03-03",
     relevance: 9,
     description: "Stazione M4 Linate aperta, collegamento centro-aeroporto completo"
   },
@@ -414,7 +414,7 @@ export const changes = [
     targetType: "provision",
     targetName: "Partecipazione ATM",
     type: "actual",
-    effectiveDate: "2026-03-03",
+    date: "2026-03-03",
     relevance: 9,
     description: "ATM gestisce collegamento diretto centro-Linate su M4"
   },
@@ -424,7 +424,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-03-15",
+    date: "2026-03-15",
     relevance: 8,
     description: "Consultazione pubblica Piano Clima: -55% emissioni entro 2030"
   },
@@ -434,7 +434,7 @@ export const changes = [
     targetType: "entity",
     targetName: "Comune di Milano",
     type: "actual",
-    effectiveDate: "2026-03-28",
+    date: "2026-03-28",
     relevance: 7,
     description: "18M euro per interventi urgenti post-alluvione Niguarda"
   },

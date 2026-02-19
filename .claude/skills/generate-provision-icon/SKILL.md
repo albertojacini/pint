@@ -10,7 +10,11 @@ Run the generate-provision-icon script to generate and crop an icon.
 ## Usage
 
 ```bash
+# Generate an icon
 uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> [reference-image] [output] [--size 128] [--alpha-threshold 128] [--model gemini-3-pro-image-preview] [--raw] [--upload STORAGE_PATH]
+
+# Clean an existing logo (no generation, just bg removal + crop)
+uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py --clean <image-path> [output] [--size 128] [--alpha-threshold 128] [--upload STORAGE_PATH]
 ```
 
 ## Behavior
@@ -42,7 +46,14 @@ Show the **democratic tool or action**: a ballot box, raised hands, coins flowin
 ### Planning / regulation
 Depict the **thing being regulated**, made iconic: a building with a ruler, a cloud with a leaf (air quality), a city grid.
 
-### Institutional / corporate entities
+### Branded entities (companies, agencies with existing logos)
+When a provision refers to a specific company or organization that already has a logo (e.g. ATM S.p.A., MM S.p.A., AMAT), **do NOT generate** — ask the user to provide the existing logo image. Then use `--clean <image-path>` to remove the background, crop, and resize. This ensures brand accuracy.
+
+```bash
+uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py --clean logo.png --size 128
+```
+
+### Institutional / civic entities
 Use a **symbolic building or emblem**: a civic building silhouette, a recognizable local landmark detail.
 
 ### Transport / infrastructure / physical
@@ -73,6 +84,15 @@ uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py "a metro 
 The printed `Storage path` value (e.g. `provisions/metro-train.png`) is what should be stored in the provision's `avatar_url` database column.
 
 Reads `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` from `.env.prod` (always uploads to production).
+
+## Updating the database `avatar_url`
+
+**CRITICAL: Always confirm the target provision before updating.** When the user asks to upload/set an icon for a provision:
+
+1. Query `gov_provisions` by title to find the exact provision: `SELECT id, title, slug, avatar_url FROM gov_provisions WHERE title ILIKE '%...%'`
+2. If multiple provisions match, or if there's any ambiguity between the icon subject and the provision name (e.g. icon is for "ATM" but user said "Partecipazione ATM"), **ask the user to confirm** which provision to update before writing
+3. Show the user the provision title and current `avatar_url` before updating
+4. Only then run the UPDATE
 
 ## Defaults
 

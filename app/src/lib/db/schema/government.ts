@@ -434,9 +434,9 @@ export const provisionArtifacts = pgTable(
 // - Planned changes: announced future modifications (e.g., "Metro Line 4 extension scheduled for 2028")
 //
 // Changes are linked to events that document them, providing
-// traceability to source documents. The effective_date indicates when the
-// change takes/took effect (distinct from created_at which tracks when
-// the record was created in the system).
+// traceability to source documents. The date indicates when the change
+// takes/took effect (distinct from created_at which tracks when the
+// record was created in the system).
 export const changes = pgTable('gov_changes', {
   id: uuid('id').primaryKey().defaultRandom(),
   eventId: uuid('event_id').references(() => events.id, { onDelete: 'cascade' }),
@@ -449,7 +449,7 @@ export const changes = pgTable('gov_changes', {
   })
     .notNull()
     .default('actual'),
-  effectiveDate: timestamp('effective_date', { withTimezone: true }),
+  date: timestamp('date', { withTimezone: true }),
   relevance: integer('relevance'), // 1-10 scale, how significant is this change
   description: text('description'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

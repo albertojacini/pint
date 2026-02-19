@@ -237,47 +237,70 @@ def slugify(text: str) -> str:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate a flat-style provision icon.")
-    parser.add_argument("prompt", help="Description of the icon subject")
+    parser.add_argument("prompt", nargs="?", default=None, help="Description of the icon subject (not needed with --clean)")
     parser.add_argument("reference_image", nargs="?", default=None, help="Path to reference photo (optional)")
     parser.add_argument("output", nargs="?", help="Output path (default: <slugified-prompt>-<size>.png)")
     parser.add_argument("--size", type=int, default=128, help="Output square size in px (default: 128)")
     parser.add_argument("--alpha-threshold", type=int, default=128, help="Min alpha to count as content (default: 128)")
     parser.add_argument("--model", default="gemini-3-pro-image-preview", help="Gemini model (default: gemini-3-pro-image-preview)")
     parser.add_argument("--raw", action="store_true", help="Save raw generated image (skip crop)")
+    parser.add_argument("--clean", metavar="IMAGE_PATH", help="Clean mode: skip generation, just remove background and crop an existing image (e.g. a logo)")
     parser.add_argument("--upload", metavar="STORAGE_PATH", help="Upload to Supabase avatars bucket at this path (e.g. provisions/my-icon.png)")
     args = parser.parse_args()
-
-    if args.reference_image and not Path(args.reference_image).exists():
-        print(f"Error: Reference image not found: {args.reference_image}", file=sys.stderr)
-        sys.exit(1)
 
     # Use project TEMP directory for outputs unless explicit path given
     _tmp_dir = _PROJECT_ROOT / "TEMP" / "provision-icons"
     _tmp_dir.mkdir(parents=True, exist_ok=True)
 
-    output = args.output
-    if not output:
-        slug = slugify(args.prompt)
-        output = str(_tmp_dir / f"{slug}-{args.size}.png")
+    if args.clean:
+        # Clean mode: no generation, just bg removal + crop
+        if not Path(args.clean).exists():
+            print(f"Error: Image not found: {args.clean}", file=sys.stderr)
+            sys.exit(1)
 
-    print(f"Generating: {args.prompt}", flush=True)
-    if args.reference_image:
-        print(f"Reference: {args.reference_image}", flush=True)
-    else:
-        print("No reference image — using prompt-only mode", flush=True)
-    raw_image = generate_image(args.prompt, args.reference_image, model=args.model)
+        output = args.output
+        if not output:
+            slug = slugify(Path(args.clean).stem)
+            output = str(_tmp_dir / f"{slug}-clean-{args.size}.png")
 
-    raw_path = output.replace(".png", "-raw.png")
-    raw_image.save(raw_path)
-    print(f"Raw image saved: {raw_path} ({raw_image.size[0]}x{raw_image.size[1]})")
-
-    if args.raw:
-        print("Done (raw mode, no crop)")
-    else:
-        keyed = remove_background(raw_image)
+        print(f"Clean mode: {args.clean}", flush=True)
+        source = Image.open(args.clean).convert("RGBA")
+        keyed = remove_background(source)
         icon = crop_to_icon(keyed, size=args.size, alpha_threshold=args.alpha_threshold)
         icon.save(output)
         print(f"Icon saved: {output} ({args.size}x{args.size})")
+    else:
+        if not args.prompt:
+            print("Error: prompt is required (unless using --clean)", file=sys.stderr)
+            sys.exit(1)
+
+        if args.reference_image and not Path(args.reference_image).exists():
+            print(f"Error: Reference image not found: {args.reference_image}", file=sys.stderr)
+            sys.exit(1)
+
+        output = args.output
+        if not output:
+            slug = slugify(args.prompt)
+            output = str(_tmp_dir / f"{slug}-{args.size}.png")
+
+        print(f"Generating: {args.prompt}", flush=True)
+        if args.reference_image:
+            print(f"Reference: {args.reference_image}", flush=True)
+        else:
+            print("No reference image — using prompt-only mode", flush=True)
+        raw_image = generate_image(args.prompt, args.reference_image, model=args.model)
+
+        raw_path = output.replace(".png", "-raw.png")
+        raw_image.save(raw_path)
+        print(f"Raw image saved: {raw_path} ({raw_image.size[0]}x{raw_image.size[1]})")
+
+        if args.raw:
+            print("Done (raw mode, no crop)")
+        else:
+            keyed = remove_background(raw_image)
+            icon = crop_to_icon(keyed, size=args.size, alpha_threshold=args.alpha_threshold)
+            icon.save(output)
+            print(f"Icon saved: {output} ({args.size}x{args.size})")
 
     if args.upload:
         upload_path = output if not args.raw else raw_path

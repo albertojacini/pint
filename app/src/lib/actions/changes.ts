@@ -8,7 +8,7 @@ export interface ChangeWithContext {
   id: string
   description: string | null
   createdAt: Date
-  effectiveDate: Date | null
+  date: Date | null
   relevance: number | null
   type: string // 'actual' | 'planned'
   targetType: string
@@ -73,7 +73,7 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
       id: changes.id,
       description: changes.description,
       createdAt: changes.createdAt,
-      effectiveDate: changes.effectiveDate,
+      date: changes.date,
       relevance: changes.relevance,
       type: changes.type,
       targetType: changes.targetType,
@@ -85,7 +85,7 @@ export async function getChangesByEntity(entityId: string): Promise<ChangeWithCo
     .from(changes)
     .leftJoin(events, eq(changes.eventId, events.id))
     .where(or(...conditions))
-    .orderBy(desc(changes.effectiveDate))
+    .orderBy(desc(changes.date))
 
   // Enrich with target titles and provision types
   const enrichedChanges: ChangeWithContext[] = await Promise.all(
@@ -131,7 +131,7 @@ export async function getChangesByProvision(provisionId: string): Promise<Change
       id: changes.id,
       description: changes.description,
       createdAt: changes.createdAt,
-      effectiveDate: changes.effectiveDate,
+      date: changes.date,
       relevance: changes.relevance,
       type: changes.type,
       targetType: changes.targetType,
@@ -148,7 +148,7 @@ export async function getChangesByProvision(provisionId: string): Promise<Change
         eq(changes.targetId, provisionId)
       )
     )
-    .orderBy(desc(changes.effectiveDate))
+    .orderBy(desc(changes.date))
 
   // Enrich with provision title and types
   const enrichedChanges: ChangeWithContext[] = await Promise.all(

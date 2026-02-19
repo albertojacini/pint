@@ -25,7 +25,7 @@ export function ProvisionTimeline({ changes }: ProvisionTimelineProps) {
           className="flex items-baseline gap-2 px-2 py-1 rounded hover:bg-muted/50 transition-colors"
         >
           <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0">
-            {formatDateCompact(change.effectiveDate || change.createdAt)}
+            {formatDateCompact(change.date || change.createdAt)}
           </span>
           <span className="text-xs truncate">
             {change.eventTitle || change.description || 'Modifica'}

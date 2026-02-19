@@ -27,7 +27,7 @@ export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProp
     const cellChanges = new Map<string, ChangeWithContext[]>() // "YYYY-MM" -> changes
 
     changes.forEach((change) => {
-      const date = change.effectiveDate || change.createdAt
+      const date = change.date || change.createdAt
       if (!date) return
 
       const d = new Date(date)
@@ -49,7 +49,7 @@ export function ProvisionChangesHeatmap({ changes }: ProvisionChangesHeatmapProp
 
     // Find year range
     const dates = changes
-      .map((c) => c.effectiveDate || c.createdAt)
+      .map((c) => c.date || c.createdAt)
       .filter((d): d is Date => d !== null)
       .map((d) => new Date(d))
 

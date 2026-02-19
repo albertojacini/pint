@@ -253,14 +253,14 @@ export async function seedProvisions(client, supabase, idMaps) {
 
       await insertQuery(client, {
         table: 'gov_changes',
-        columns: ['id', 'event_id', 'target_type', 'target_id', 'type', 'effective_date', 'relevance', 'description'],
+        columns: ['id', 'event_id', 'target_type', 'target_id', 'type', 'date', 'relevance', 'description'],
         values: [
           id,
           eventId,
           change.targetType,
           targetId,
           change.type || 'actual',
-          change.effectiveDate ? new Date(change.effectiveDate).toISOString() : null,
+          change.date ? new Date(change.date).toISOString() : null,
           change.relevance || null,
           change.description || null
         ],
