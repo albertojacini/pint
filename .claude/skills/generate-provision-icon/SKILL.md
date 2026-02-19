@@ -15,7 +15,7 @@ uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> 
 
 ## Behavior
 
-1. Parse the user's request for: subject description, reference image path (optional), output path (optional), size (default 128)
+1. Parse the user's request for: subject description, reference image path (optional), output path (optional), size (default 128). **Always include the political entity** (city, region, country) in the prompt so the icon gets a subtle local flavor (e.g. "Milan public transport — a trolleybus" rather than just "a trolleybus")
 2. Read the example style image at `.claude/skills/generate-provision-icon/assets/trolleybus-64.png` to understand the target style
 3. Run the script — it sends the prompt, the style example, and optionally the reference photo to Gemini, then auto-crops and resizes the result
 4. Read **both** the raw image (`*-raw.png`) and the cropped icon to show results to the user
