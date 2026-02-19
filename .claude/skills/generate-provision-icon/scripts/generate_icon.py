@@ -71,6 +71,9 @@ STYLE_PREFIX = (
     "The single object must be CENTERED, filling most of the square frame. "
     "Bold, simple shapes with minimal detail. No text, no labels, no shadows. "
     "Clean vector-art style with vivid colors. "
+    "IMPORTANT: The icon will be displayed on white or black website backgrounds, so "
+    "avoid pure white (#FFF) and pure black (#000) at the edges of the subject. "
+    "Use off-white, cream, or light gray instead of white; use dark gray or charcoal instead of black. "
     "The background MUST be a uniform, solid bright green (#00C800) with no gradients or patterns. "
     "Subject: "
 )

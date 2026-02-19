@@ -26,6 +26,28 @@ uv run .claude/skills/generate-provision-icon/scripts/generate_icon.py <prompt> 
    - **Want raw only**: Use `--raw` flag to skip cropping
    - **Different model**: Use `--model gemini-3-pro-image-preview` for higher quality
 
+## Visual language by category
+
+When crafting the prompt, follow these guidelines based on the provision's category:
+
+### Taxes / fiscal provisions
+Display the **tax name as prominent text** (e.g. "IMU", "TARI"). When the tax has a clear topic, include a **visual hint** about it behind or around the text (e.g. IMU → house silhouette, TARI → recycling bin, Imposta di soggiorno → suitcase/bed). Keep it simple: bold text + subtle topic illustration. Use the reference example at `assets/imu-tax-example.png` — a simple 2-storey Italian house with "IMU" on the facade and a % coin. Always pass this image as the reference when generating tax icons.
+
+### Welfare / social services
+Depict the **person being helped** or the **support gesture** — never the abstraction. Examples: elderly person's walking cane, a child's hand held by an adult, helping hand with coins.
+
+### Governance / civic participation
+Show the **democratic tool or action**: a ballot box, raised hands, coins flowing together, a megaphone.
+
+### Planning / regulation
+Depict the **thing being regulated**, made iconic: a building with a ruler, a cloud with a leaf (air quality), a city grid.
+
+### Institutional / corporate entities
+Use a **symbolic building or emblem**: a civic building silhouette, a recognizable local landmark detail.
+
+### Transport / infrastructure / physical
+Depict the **obvious physical object**: the vehicle, the road, the pipe, the lamp, the tree.
+
 ## How it works
 
 The script sends inputs to Gemini:
