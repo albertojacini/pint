@@ -182,7 +182,10 @@
     "title": "Eventi",
     "description": "Occorrenze temporali che modellano le disposizioni",
     "noEvents": "Nessun evento trovato. Esegui lo script di seed per popolare i dati.",
-    "event": "EVENTO"
+    "event": "EVENTO",
+    "breadcrumb": "Eventi",
+    "eventCount": "{name} · {count, plural, one {# evento} other {# eventi}}",
+    "noEventsFound": "Nessun evento trovato."
   },
   "administrations": {
     "backTo": "Torna a {name}",

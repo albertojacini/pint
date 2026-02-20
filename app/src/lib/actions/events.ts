@@ -25,6 +25,7 @@ export async function getEventsByEntity(entityId: string) {
       id: events.id,
       title: events.title,
       description: events.description,
+      descriptionShort: events.descriptionShort,
       type: events.type,
       date: events.date,
     })

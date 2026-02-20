@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import CalHeatmap from 'cal-heatmap'
 import 'cal-heatmap/cal-heatmap.css'
-import { FilterButton } from '@/components/custom-ui/buttons'
+import { FilterBarSmall } from '@/components/custom-ui/filter-bars'
 
 interface EventHeatmapData {
   id: string
@@ -14,9 +14,10 @@ interface EventHeatmapData {
 
 interface EventDaysOfTheYearHeatmapProps {
   events: EventHeatmapData[]
+  showFilters?: boolean
 }
 
-export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapProps) {
+export function EventDaysOfTheYearHeatmap({ events, showFilters = true }: EventDaysOfTheYearHeatmapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const calRef = useRef<CalHeatmap | null>(null)
 
@@ -26,18 +27,6 @@ export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapP
   }, [events])
 
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(() => new Set(eventTypes))
-
-  const toggleType = (type: string) => {
-    setSelectedTypes((prev) => {
-      const next = new Set(prev)
-      if (next.has(type)) {
-        next.delete(type)
-      } else {
-        next.add(type)
-      }
-      return next
-    })
-  }
 
   const filteredEvents = useMemo(
     () => events.filter((e) => selectedTypes.has(e.type)),
@@ -127,31 +116,13 @@ export function EventDaysOfTheYearHeatmap({ events }: EventDaysOfTheYearHeatmapP
 
   return (
     <div>
-      {eventTypes.length > 1 && (
-        <div className="flex flex-wrap gap-1 mb-4">
-          <FilterButton
-            selected={selectedTypes.size === eventTypes.length}
-            onSelectedChange={() => {
-              if (selectedTypes.size === eventTypes.length) {
-                setSelectedTypes(new Set())
-              } else {
-                setSelectedTypes(new Set(eventTypes))
-              }
-            }}
-          >
-            All
-          </FilterButton>
-          <div className="w-px bg-border mx-1" />
-          {eventTypes.map((type) => (
-            <FilterButton
-              key={type}
-              selected={selectedTypes.has(type)}
-              onSelectedChange={() => toggleType(type)}
-            >
-              {type}
-            </FilterButton>
-          ))}
-        </div>
+      {showFilters && (
+        <FilterBarSmall
+          items={eventTypes}
+          selected={selectedTypes}
+          onSelectedChange={setSelectedTypes}
+          className="mb-4"
+        />
       )}
       <div ref={containerRef} className="overflow-x-auto" />
     </div>

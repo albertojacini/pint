@@ -182,7 +182,10 @@
     "title": "Events",
     "description": "Temporal occurrences that shape provisions",
     "noEvents": "No events found. Run the seed script to populate data.",
-    "event": "EVENT"
+    "event": "EVENT",
+    "breadcrumb": "Events",
+    "eventCount": "{name} · {count, plural, one {# event} other {# events}}",
+    "noEventsFound": "No events found."
   },
   "administrations": {
     "backTo": "Back to {name}",
