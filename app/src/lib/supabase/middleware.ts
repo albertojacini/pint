@@ -1,10 +1,17 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+// Public paths that don't require authentication (without locale prefix)
+const PUBLIC_PATHS = ['/login', '/signup', '/auth']
+
+function stripLocalePrefix(pathname: string): string {
+  // Remove /it/ prefix (en has no prefix with 'as-needed')
+  const match = pathname.match(/^\/(it)(\/.*)$/)
+  return match ? match[2] : pathname
+}
+
+export async function updateSession(request: NextRequest, existingResponse?: NextResponse) {
+  let supabaseResponse = existingResponse ?? NextResponse.next({ request })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,9 +23,9 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
+          if (!existingResponse) {
+            supabaseResponse = NextResponse.next({ request })
+          }
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           )
@@ -35,12 +42,13 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // Strip locale prefix before checking auth
+  const pathWithoutLocale = stripLocalePrefix(request.nextUrl.pathname)
+
   // Protect authenticated routes
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/signup') &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !PUBLIC_PATHS.some((path) => pathWithoutLocale.startsWith(path))
   ) {
     // No user, redirect to login
     const url = request.nextUrl.clone()

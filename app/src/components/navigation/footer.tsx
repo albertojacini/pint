@@ -1,13 +1,16 @@
-import Link from "next/link";
-
-const footerLinks = [
-  { label: "About", href: "/about" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Contact", href: "/contact" },
-  { label: "GitHub", href: "https://github.com/pint-platform/pint" },
-];
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export function Footer() {
+  const t = useTranslations("footer");
+
+  const footerLinks = [
+    { label: t("about"), href: "/about" },
+    { label: t("howItWorks"), href: "/how-it-works" },
+    { label: t("contact"), href: "/contact" },
+    { label: t("github"), href: "https://github.com/pint-platform/pint" },
+  ];
+
   return (
     <footer className="bg-white border-t border-gray-200 mb-16 md:mb-0">
       <div className="container py-8">

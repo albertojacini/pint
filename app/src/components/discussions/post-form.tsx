@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import { createPost } from '@/lib/actions/discussions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,15 +16,16 @@ interface PostFormProps {
   basePath: string
 }
 
-const postTypes = [
-  { value: 'discussion', label: 'Discussion' },
-  { value: 'question', label: 'Question' },
-  { value: 'proposal', label: 'Proposal' },
-  { value: 'analysis', label: 'Analysis' },
-] as const
-
 export function PostForm({ targetType, targetId, authorId, basePath }: PostFormProps) {
   const router = useRouter()
+  const t = useTranslations('discussions')
+
+  const postTypes = [
+    { value: 'discussion', label: t('discussion') },
+    { value: 'question', label: t('question') },
+    { value: 'proposal', label: t('proposal') },
+    { value: 'analysis', label: t('analysisType') },
+  ] as const
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [postType, setPostType] = useState<'discussion' | 'question' | 'proposal' | 'analysis'>('discussion')
@@ -41,7 +43,7 @@ export function PostForm({ targetType, targetId, authorId, basePath }: PostFormP
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="post-type" className="text-sm">Type</Label>
+        <Label htmlFor="post-type" className="text-sm">{t('type')}</Label>
         <div className="flex gap-2 mt-1">
           {postTypes.map((pt) => (
             <Button
@@ -58,23 +60,23 @@ export function PostForm({ targetType, targetId, authorId, basePath }: PostFormP
       </div>
 
       <div>
-        <Label htmlFor="title" className="text-sm">Title</Label>
+        <Label htmlFor="title" className="text-sm">{t('postTitle')}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Post title"
+          placeholder={t('postTitlePlaceholder')}
           className="mt-1"
         />
       </div>
 
       <div>
-        <Label htmlFor="body" className="text-sm">Body (Markdown)</Label>
+        <Label htmlFor="body" className="text-sm">{t('bodyMarkdown')}</Label>
         <Textarea
           id="body"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="Write your post..."
+          placeholder={t('bodyPlaceholder')}
           rows={8}
           className="mt-1"
         />
@@ -82,10 +84,10 @@ export function PostForm({ targetType, targetId, authorId, basePath }: PostFormP
 
       <div className="flex gap-2">
         <Button type="submit" disabled={!title.trim() || isPending}>
-          {isPending ? 'Creating...' : 'Create Post'}
+          {isPending ? t('creating') : t('createPost')}
         </Button>
         <Button type="button" variant="ghost" onClick={() => router.back()}>
-          Cancel
+          {t('cancel')}
         </Button>
       </div>
     </form>

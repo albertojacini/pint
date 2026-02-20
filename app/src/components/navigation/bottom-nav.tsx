@@ -1,35 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Home, Search, Layers, MoreHorizontal } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  {
-    label: "Home",
-    href: "/",
-    icon: Home,
-  },
-  {
-    label: "Search",
-    href: "/search",
-    icon: Search,
-  },
-  {
-    label: "Projects",
-    href: "/projects",
-    icon: Layers,
-  },
-  {
-    label: "More",
-    href: "/more",
-    icon: MoreHorizontal,
-  },
-];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+
+  const navItems = [
+    { label: t("home"), href: "/" as const, icon: Home },
+    { label: t("search"), href: "/search" as const, icon: Search },
+    { label: t("projects"), href: "/projects" as const, icon: Layers },
+    { label: t("more"), href: "/more" as const, icon: MoreHorizontal },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 md:hidden">

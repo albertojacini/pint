@@ -1,36 +1,39 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useCallback, useEffect, useState } from 'react'
 import { SlidersHorizontal, Search, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const PROVISION_TYPES = [
-  { value: 'ownership', label: 'Ownership' },
-  { value: 'contract', label: 'Contract' },
-  { value: 'regulation', label: 'Regulation' },
-  { value: 'taxation', label: 'Taxation' },
-  { value: 'allocation', label: 'Allocation' },
-  { value: 'designation', label: 'Designation' },
-  { value: 'infrastructure', label: 'Infrastructure' },
-]
-
-const PROVISION_STATUSES = [
-  { value: 'active', label: 'Active' },
-  { value: 'repealed', label: 'Repealed' },
-  { value: 'suspended', label: 'Suspended' },
-]
-
-const SORT_OPTIONS = [
-  { value: 'title-asc', label: 'A-Z' },
-  { value: 'title-desc', label: 'Z-A' },
-]
-
 export function ProvisionsFilterBar() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const t = useTranslations('common')
+
+  const PROVISION_TYPES = [
+    { value: 'ownership', label: t('ownership') },
+    { value: 'contract', label: t('contract') },
+    { value: 'regulation', label: t('regulation') },
+    { value: 'taxation', label: t('taxation') },
+    { value: 'allocation', label: t('allocation') },
+    { value: 'designation', label: t('designation') },
+    { value: 'infrastructure', label: t('infrastructure') },
+  ]
+
+  const PROVISION_STATUSES = [
+    { value: 'active', label: t('active') },
+    { value: 'repealed', label: t('repealed') },
+    { value: 'suspended', label: t('suspended') },
+  ]
+
+  const SORT_OPTIONS = [
+    { value: 'title-asc', label: t('az') },
+    { value: 'title-desc', label: t('za') },
+  ]
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [filtersExpanded, setFiltersExpanded] = useState(false)
 
@@ -80,7 +83,7 @@ export function ProvisionsFilterBar() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
             type="text"
-            placeholder="Search"
+            placeholder={t('search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9 pr-8"
@@ -122,7 +125,7 @@ export function ProvisionsFilterBar() {
               !currentType ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'hover:bg-gray-100'
             )}
           >
-            All
+            {t('all')}
           </Button>
           {PROVISION_TYPES.map((type) => (
             <Button
@@ -153,7 +156,7 @@ export function ProvisionsFilterBar() {
         <div className="flex flex-wrap items-center gap-4 pt-2">
           {/* Sort */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Sort by:</span>
+            <span className="text-sm text-gray-500">{t('sortBy')}</span>
             <div className="flex gap-1">
               {SORT_OPTIONS.map((option) => (
                 <Button
@@ -171,7 +174,7 @@ export function ProvisionsFilterBar() {
 
           {/* Status */}
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Status:</span>
+            <span className="text-sm text-gray-500">{t('status')}</span>
             <div className="flex gap-1">
               <Button
                 variant={!currentStatus ? 'default' : 'outline'}
@@ -179,7 +182,7 @@ export function ProvisionsFilterBar() {
                 onClick={() => updateFilters({ status: undefined })}
                 className="text-xs"
               >
-                All
+                {t('all')}
               </Button>
               {PROVISION_STATUSES.map((status) => (
                 <Button
@@ -203,7 +206,7 @@ export function ProvisionsFilterBar() {
               onClick={clearFilters}
               className="text-xs text-gray-500 hover:text-gray-700"
             >
-              Clear all
+              {t('clearAll')}
             </Button>
           )}
         </div>

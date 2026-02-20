@@ -1,4 +1,5 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import type { PostSummary } from '@/lib/actions/discussions'
 import { Badge } from '@/components/ui/badge'
 
@@ -7,14 +8,16 @@ interface PostCardProps {
   basePath: string
 }
 
-const postTypeBadge: Record<string, { label: string; className: string }> = {
-  discussion: { label: 'Discussion', className: 'bg-blue-100 text-blue-800 border-blue-200' },
-  question: { label: 'Question', className: 'bg-purple-100 text-purple-800 border-purple-200' },
-  proposal: { label: 'Proposal', className: 'bg-amber-100 text-amber-800 border-amber-200' },
-  analysis: { label: 'Analysis', className: 'bg-green-100 text-green-800 border-green-200' },
-}
-
 export function PostCard({ post, basePath }: PostCardProps) {
+  const t = useTranslations('discussions')
+
+  const postTypeBadge: Record<string, { label: string; className: string }> = {
+    discussion: { label: t('discussion'), className: 'bg-blue-100 text-blue-800 border-blue-200' },
+    question: { label: t('question'), className: 'bg-purple-100 text-purple-800 border-purple-200' },
+    proposal: { label: t('proposal'), className: 'bg-amber-100 text-amber-800 border-amber-200' },
+    analysis: { label: t('analysisType'), className: 'bg-green-100 text-green-800 border-green-200' },
+  }
+
   const badge = postTypeBadge[post.postType] || postTypeBadge.discussion
 
   return (
@@ -34,14 +37,14 @@ export function PostCard({ post, basePath }: PostCardProps) {
           <div className="flex items-center gap-2 mb-1">
             <Badge className={badge.className}>{badge.label}</Badge>
             {post.isPinned && (
-              <span className="text-xs text-muted-foreground">Pinned</span>
+              <span className="text-xs text-muted-foreground">{t('pinned')}</span>
             )}
           </div>
           <h3 className="font-medium text-sm leading-snug">{post.title}</h3>
           <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-            <span>{post.authorName || 'Anonymous'}</span>
+            <span>{post.authorName || t('anonymous')}</span>
             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-            <span>{post.commentCount} comment{post.commentCount !== 1 ? 's' : ''}</span>
+            <span>{t('comments', { count: post.commentCount })}</span>
           </div>
         </div>
       </div>

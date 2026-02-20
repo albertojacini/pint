@@ -1,4 +1,5 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import type { PostSummary } from '@/lib/actions/discussions'
 import { PostCard } from './post-card'
 import { SortControls } from './sort-controls'
@@ -10,17 +11,18 @@ interface PostListProps {
 }
 
 export function PostList({ posts, basePath }: PostListProps) {
+  const t = useTranslations('discussions')
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <SortControls />
         <Link href={`${basePath}/new`}>
-          <Button size="sm">New Post</Button>
+          <Button size="sm">{t('newPost')}</Button>
         </Link>
       </div>
       {posts.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
-          <p className="text-sm">No discussions yet. Start the conversation!</p>
+          <p className="text-sm">{t('noDiscussionsYet')}</p>
         </div>
       ) : (
         <div className="space-y-2">

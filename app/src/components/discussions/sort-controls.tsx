@@ -1,26 +1,29 @@
 'use client'
 
-import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useRouter, usePathname } from '@/i18n/navigation'
+import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
-
-const sortOptions = [
-  { value: 'recent', label: 'Recent' },
-  { value: 'score', label: 'Top' },
-  { value: 'active', label: 'Active' },
-]
-
-const typeOptions = [
-  { value: '', label: 'All' },
-  { value: 'discussion', label: 'Discussion' },
-  { value: 'question', label: 'Question' },
-  { value: 'proposal', label: 'Proposal' },
-  { value: 'analysis', label: 'Analysis' },
-]
 
 export function SortControls() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const t = useTranslations('discussions')
+
+  const sortOptions = [
+    { value: 'recent', label: t('recent') },
+    { value: 'score', label: t('top') },
+    { value: 'active', label: t('active') },
+  ]
+
+  const typeOptions = [
+    { value: '', label: t('all') },
+    { value: 'discussion', label: t('discussion') },
+    { value: 'question', label: t('question') },
+    { value: 'proposal', label: t('proposal') },
+    { value: 'analysis', label: t('analysisType') },
+  ]
   const currentSort = searchParams.get('sort') || 'recent'
   const currentType = searchParams.get('type') || ''
 

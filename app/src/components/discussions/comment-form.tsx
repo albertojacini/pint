@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useTranslations } from 'next-intl'
 import { createComment } from '@/lib/actions/discussions'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -13,6 +14,7 @@ interface CommentFormProps {
 }
 
 export function CommentForm({ postId, parentId, authorId, onCancel }: CommentFormProps) {
+  const t = useTranslations('discussions')
   const [body, setBody] = useState('')
   const [isPending, startTransition] = useTransition()
 
@@ -31,17 +33,17 @@ export function CommentForm({ postId, parentId, authorId, onCancel }: CommentFor
       <Textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder={parentId ? 'Write a reply...' : 'Write a comment...'}
+        placeholder={parentId ? t('writeReply') : t('writeComment')}
         rows={3}
         className="text-sm"
       />
       <div className="flex gap-2">
         <Button type="submit" size="sm" disabled={!body.trim() || isPending}>
-          {isPending ? 'Posting...' : 'Post'}
+          {isPending ? t('posting') : t('post')}
         </Button>
         {onCancel && (
           <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
-            Cancel
+            {t('cancel')}
           </Button>
         )}
       </div>

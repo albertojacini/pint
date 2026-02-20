@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { provisionPath } from '@/lib/utils'
 import type { ProvisionTreeNode } from '@/lib/actions/provisions'
 import { getProvisionTypeColor } from '@/components/custom-ui/classification-badge'
