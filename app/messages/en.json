@@ -76,6 +76,9 @@
     "events": "Events",
     "performanceIndicators": "Performance Indicators",
     "pintCommunity": "Pint Community",
+    "mostRelevant": "Most relevant",
+    "latest": "Latest",
+    "noEventsFound": "No events found.",
     "breadcrumb": "Entities"
   },
   "provisions": {

@@ -16,7 +16,7 @@ import { parseUrlSlug, idStartsWith, entityPath } from '@/lib/utils'
 import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
-import { getEventsByEntity } from '@/lib/actions/events'
+import { getEventsByEntity, getMostRelevantEventsByEntity } from '@/lib/actions/events'
 import { EventHeatmapLoader } from '@/components/events/loaders'
 import { EventList } from '@/components/events/event-list'
 import { ProvisionsOverviewLoader } from '@/components/provisions/loaders'
@@ -57,7 +57,10 @@ export default async function EntityPage({ params }: EntityPageProps) {
   }
 
   // Fetch events, provisions, and relationships for this entity
-  const events = await getEventsByEntity(entity.id)
+  const [latestEvents, mostRelevantEvents] = await Promise.all([
+    getEventsByEntity(entity.id, { limit: 10 }),
+    getMostRelevantEventsByEntity(entity.id, 10),
+  ])
 
   const provisions = await getProvisionsByEntity(entity.id)
   const relationships = await getGroupedEntityRelationships(entity.id)
@@ -291,8 +294,15 @@ export default async function EntityPage({ params }: EntityPageProps) {
       >
         {insights?.events && <SectionInsight content={insights.events} className="mb-4" />}
         <EventHeatmapLoader entityId={entity.id} showFilters={false} />
-        <div className="mt-6">
-          <EventList events={events} />
+
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SectionL2 title={t('mostRelevant')}>
+            <EventList events={mostRelevantEvents} />
+          </SectionL2>
+
+          <SectionL2 title={t('latest')}>
+            <EventList events={latestEvents} />
+          </SectionL2>
         </div>
       </SectionL1>
 
