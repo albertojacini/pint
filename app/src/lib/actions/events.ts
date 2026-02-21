@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db/client'
 import { events, changes } from '@/lib/db/schema'
-import { eq, desc, and } from 'drizzle-orm'
+import { eq, desc, and, gte, lte } from 'drizzle-orm'
 
 export async function getEvents() {
   const allEvents = await db
@@ -19,7 +19,20 @@ export async function getEvents() {
   return allEvents
 }
 
-export async function getEventsByEntity(entityId: string) {
+interface GetEventsByEntityOptions {
+  startDate?: string
+  endDate?: string
+}
+
+export async function getEventsByEntity(entityId: string, options?: GetEventsByEntityOptions) {
+  const conditions = [
+    eq(changes.targetType, 'entity'),
+    eq(changes.targetId, entityId),
+  ]
+
+  if (options?.startDate) conditions.push(gte(events.date, options.startDate))
+  if (options?.endDate) conditions.push(lte(events.date, options.endDate))
+
   const entityEvents = await db
     .selectDistinct({
       id: events.id,
@@ -31,10 +44,7 @@ export async function getEventsByEntity(entityId: string) {
     })
     .from(events)
     .innerJoin(changes, eq(changes.eventId, events.id))
-    .where(and(
-      eq(changes.targetType, 'entity'),
-      eq(changes.targetId, entityId),
-    ))
+    .where(and(...conditions))
     .orderBy(desc(events.date))
 
   return entityEvents

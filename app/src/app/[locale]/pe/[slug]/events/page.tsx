@@ -4,7 +4,7 @@ import { db } from '@/lib/db/client'
 import { entities } from '@/lib/db/schema'
 import { getEventsByEntity } from '@/lib/actions/events'
 import { EventCardMedium } from '@/components/events/event-cards'
-import { EventHeatmap } from '@/components/events/event-heatmap'
+import { EventHeatmapLoader } from '@/components/events/loaders'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 import { PageHeader } from '@/components/custom-ui/section'
 import { parseUrlSlug, entityPath, idStartsWith } from '@/lib/utils'
@@ -30,17 +30,6 @@ export default async function EventsPage({ params }: EventsPageProps) {
 
   const events = await getEventsByEntity(entity.id)
 
-  const heatmapData = Object.values(
-    events.reduce<Record<string, { date: Date; value: number }>>((acc, event) => {
-      if (acc[event.date]) {
-        acc[event.date].value += 1
-      } else {
-        acc[event.date] = { date: new Date(event.date), value: 1 }
-      }
-      return acc
-    }, {})
-  )
-
   return (
     <div>
       <Breadcrumbs
@@ -57,7 +46,7 @@ export default async function EventsPage({ params }: EventsPageProps) {
       />
 
       <div className="mb-8">
-        <EventHeatmap data={heatmapData} />
+        <EventHeatmapLoader entityId={entity.id} showFilters={false} />
       </div>
 
       {events.length > 0 ? (

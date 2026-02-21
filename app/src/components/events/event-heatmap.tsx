@@ -11,10 +11,12 @@ export interface HeatmapDayData {
 
 interface EventHeatmapProps {
   data: HeatmapDayData[]
+  startDate?: Date
+  range?: number
   onDayClick?: (date: Date, value: number) => void
 }
 
-export function EventHeatmap({ data, onDayClick }: EventHeatmapProps) {
+export function EventHeatmap({ data, startDate: startDateProp, range: rangeProp, onDayClick }: EventHeatmapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const calRef = useRef<CalHeatmap | null>(null)
 
@@ -31,7 +33,8 @@ export function EventHeatmap({ data, onDayClick }: EventHeatmapProps) {
     }))
 
     const now = new Date()
-    const startDate = new Date(now.getFullYear() - 1, now.getMonth(), 1)
+    const startDate = startDateProp ?? new Date(now.getFullYear() - 1, now.getMonth(), 1)
+    const range = rangeProp ?? 14
 
     const cal = new CalHeatmap()
     calRef.current = cal
@@ -46,7 +49,7 @@ export function EventHeatmap({ data, onDayClick }: EventHeatmapProps) {
       date: {
         start: startDate,
       },
-      range: 14,
+      range,
       domain: {
         type: 'month',
         label: { text: 'MMM', position: 'top' },

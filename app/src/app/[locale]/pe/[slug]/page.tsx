@@ -17,7 +17,7 @@ import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
 import { getEventsByEntity } from '@/lib/actions/events'
-import { EventHeatmapFiltered } from '@/components/events/event-heatmap-filtered'
+import { EventHeatmapLoader } from '@/components/events/loaders'
 import { EventList } from '@/components/events/event-list'
 import { ProvisionsOverviewLoader } from '@/components/provisions/loaders'
 import { ProvisionCardExtraSmall } from '@/components/provisions/provision-cards'
@@ -58,6 +58,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   // Fetch events, provisions, and relationships for this entity
   const events = await getEventsByEntity(entity.id)
+
   const provisions = await getProvisionsByEntity(entity.id)
   const relationships = await getGroupedEntityRelationships(entity.id)
 
@@ -289,7 +290,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
         }
       >
         {insights?.events && <SectionInsight content={insights.events} className="mb-4" />}
-        <EventHeatmapFiltered events={events} />
+        <EventHeatmapLoader entityId={entity.id} showFilters={false} />
         <div className="mt-6">
           <EventList events={events} />
         </div>

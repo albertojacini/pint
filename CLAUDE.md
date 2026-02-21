@@ -86,9 +86,9 @@ IMPORTANT: This is an early stage project:
 Each domain (`provisions`, `events`, `administrations`, ...) lives in `components/<domain>/` — all files flat, no subdirectories.
 
 - **Presentation components** — Receive plain serializable props, render UI. Own display concerns (icon maps, label maps, layout). All can be displayed as Storybook stories.
-- **Loaders** (`*-loader.tsx`) — Optional. Async server components that fetch data, transform it, and render a presentation component. Only create a loader when there's real transformation or multi-query orchestration. For simple `getData() → <Component data={data} />`, just fetch in the page and pass props directly.
+- **Loaders** (`loaders.tsx`) — Optional. A single `loaders.tsx` file per domain containing all async server components that fetch data, transform it, and render presentation components. Only create a loader when there's real transformation or multi-query orchestration. For simple `getData() → <Component data={data} />`, just fetch in the page and pass props directly.
 
-Naming: name components by their **role in the page** (e.g. `provisions-overview`, not `provision-landscape`). Loaders use the `-loader` suffix (e.g. `provisions-overview-loader.tsx`).
+Naming: name components by their **role in the page** (e.g. `provisions-overview`, not `provision-landscape`).
 
 Other component directories:
 - `components/ui/` — shadcn/ui (standard library)
