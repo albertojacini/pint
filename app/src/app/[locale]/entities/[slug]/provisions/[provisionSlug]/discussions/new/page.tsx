@@ -30,7 +30,7 @@ export default async function NewPostPage({ params }: PageProps) {
     .where(idStartsWith(provisions.id, provisionIdPrefix))
   if (!provision) notFound()
 
-  const basePath = `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`
+  const basePath = `/entities/${entityUrlSlug}/provisions/${provisionUrlSlug}/discussions`
 
   return (
     <div>

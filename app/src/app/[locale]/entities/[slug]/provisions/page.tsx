@@ -52,7 +52,7 @@ export default async function ProvisionsPage({
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { label: te('breadcrumb'), href: '/pe' },
+          { label: te('breadcrumb'), href: '/entities' },
           { label: entity.name, href: entityPath(entity) },
           { label: t('breadcrumb') },
         ]}

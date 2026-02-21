@@ -71,7 +71,7 @@ export function Navbar() {
         <div className="border-t border-gray-200 bg-white">
           <div className="container py-4 space-y-2">
             <Link
-              href="/pe"
+              href="/entities"
               onClick={() => setIsMenuOpen(false)}
               className="block px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
             >

@@ -415,9 +415,9 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { label: te('breadcrumb'), href: '/pe' },
+          { label: te('breadcrumb'), href: '/entities' },
           { label: entity.name, href: entityPath(entity) },
-          { label: t('breadcrumb'), href: `${entityPath(entity)}/pr` },
+          { label: t('breadcrumb'), href: `${entityPath(entity)}/provisions` },
           { label: provision.title },
         ]}
       />
@@ -657,7 +657,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
         title={td('title')}
         action={
           <Link
-            href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`}
+            href={`/entities/${entityUrlSlug}/provisions/${provisionUrlSlug}/discussions`}
             className="text-sm text-primary hover:underline"
           >
             {td('viewAll')}
@@ -670,7 +670,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
               {td('noDiscussions')}
             </p>
             <Link
-              href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions/new`}
+              href={`/entities/${entityUrlSlug}/provisions/${provisionUrlSlug}/discussions/new`}
               className="text-sm text-primary hover:underline"
             >
               {td('startDiscussion')}
@@ -681,7 +681,7 @@ export default async function ProvisionDetailPage({ params }: PageProps) {
             {recentPosts.slice(0, 5).map((post) => (
               <Link
                 key={post.id}
-                href={`/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions/${post.id}`}
+                href={`/entities/${entityUrlSlug}/provisions/${provisionUrlSlug}/discussions/${post.id}`}
                 className="block border border-border/50 rounded-lg p-3 hover:bg-muted/30 transition-colors"
               >
                 <div className="flex items-center gap-2 mb-1">

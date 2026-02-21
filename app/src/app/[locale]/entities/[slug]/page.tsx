@@ -162,7 +162,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
   return (
     <div>
       {/* Breadcrumbs */}
-      <Breadcrumbs items={[{ label: t('breadcrumb'), href: '/pe' }, { label: entity.name }]} />
+      <Breadcrumbs items={[{ label: t('breadcrumb'), href: '/entities' }, { label: entity.name }]} />
 
       {/* Entity Type Badge + Tags + Quick Actions */}
       <div className="flex items-center gap-3 mb-6">
@@ -216,7 +216,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
         <SectionL1
           title={t('politics')}
           action={
-            <Link href={`/pe/${entity.slug}/ad`} className="text-sm text-link hover:underline">
+            <Link href={`/entities/${entity.slug}/ad`} className="text-sm text-link hover:underline">
               {t('viewAll')}
             </Link>
           }
@@ -243,7 +243,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
       <SectionL1
         title={t('administration')}
         action={
-          <Link href={`/pe/${urlSlug}/pr`} className="text-sm text-link hover:underline">
+          <Link href={`/entities/${urlSlug}/provisions`} className="text-sm text-link hover:underline">
             {t('viewAll')}
           </Link>
         }

@@ -49,7 +49,7 @@ export function parseUrlSlug(urlSlug: string): { idPrefix: string; slug: string 
  * Build entity URL path
  */
 export function entityPath(entity: { id: string; slug: string }): string {
-  return `/pe/${entity.id.substring(0, 4)}-${entity.slug}`
+  return `/entities/${entity.id.substring(0, 4)}-${entity.slug}`
 }
 
 /**
@@ -59,5 +59,5 @@ export function provisionPath(
   entity: { id: string; slug: string },
   provision: { id: string; slug: string }
 ): string {
-  return `/pe/${entity.id.substring(0, 4)}-${entity.slug}/pr/${provision.id.substring(0, 4)}-${provision.slug}`
+  return `/entities/${entity.id.substring(0, 4)}-${entity.slug}/provisions/${provision.id.substring(0, 4)}-${provision.slug}`
 }

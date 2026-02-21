@@ -95,7 +95,7 @@ export default async function Home() {
       <div className="mt-12 text-center">
         <p className="text-gray-600 mb-4">{t('exploreOtherCities')}</p>
         <Button asChild variant="outline">
-          <Link href="/pe">{t('browseAllEntities')}</Link>
+          <Link href="/entities">{t('browseAllEntities')}</Link>
         </Button>
       </div>
     </div>

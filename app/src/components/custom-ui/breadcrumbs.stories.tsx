@@ -16,7 +16,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     items: [
-      { label: 'Entities', href: '/pe' },
+      { label: 'Entities', href: '/entities' },
       { label: 'Milan' },
     ],
   },
@@ -25,8 +25,8 @@ export const Default: Story = {
 export const ThreeLevels: Story = {
   args: {
     items: [
-      { label: 'Entities', href: '/pe' },
-      { label: 'Milan', href: '/pe/milan' },
+      { label: 'Entities', href: '/entities' },
+      { label: 'Milan', href: '/entities/milan' },
       { label: 'Provisions' },
     ],
   },
@@ -35,9 +35,9 @@ export const ThreeLevels: Story = {
 export const FourLevels: Story = {
   args: {
     items: [
-      { label: 'Entities', href: '/pe' },
-      { label: 'Italy', href: '/pe/italy' },
-      { label: 'Lombardia', href: '/pe/lombardia' },
+      { label: 'Entities', href: '/entities' },
+      { label: 'Italy', href: '/entities/italy' },
+      { label: 'Lombardia', href: '/entities/lombardia' },
       { label: 'Milan' },
     ],
   },
@@ -54,8 +54,8 @@ export const SingleItem: Story = {
 export const LongLabels: Story = {
   args: {
     items: [
-      { label: 'Political Entities', href: '/pe' },
-      { label: 'San Giovanni in Persiceto', href: '/pe/san-giovanni-in-persiceto' },
+      { label: 'Political Entities', href: '/entities' },
+      { label: 'San Giovanni in Persiceto', href: '/entities/san-giovanni-in-persiceto' },
       { label: 'Administrative Provisions' },
     ],
   },

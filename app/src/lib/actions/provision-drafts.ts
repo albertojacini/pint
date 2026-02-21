@@ -166,7 +166,7 @@ export async function saveDraftToProduction(draftId: string): Promise<ApiRespons
   await db.delete(provisionDrafts).where(eq(provisionDrafts.id, draftId))
 
   revalidatePath('/admin/provision-ingestion')
-  revalidatePath('/pe')
+  revalidatePath('/entities')
   return { ok: true, data: { id: provision.id } }
 }
 

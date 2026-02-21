@@ -35,16 +35,16 @@ export default async function DiscussionsPage({ params, searchParams }: PageProp
 
   const posts = await getPosts('provision', provision.id, sortBy, filterType)
 
-  const basePath = `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}/discussions`
+  const basePath = `/entities/${entityUrlSlug}/provisions/${provisionUrlSlug}/discussions`
 
   return (
     <div>
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { label: te('breadcrumb'), href: '/pe' },
-          { label: entity.name, href: `/pe/${entityUrlSlug}` },
-          { label: provision.title, href: `/pe/${entityUrlSlug}/pr/${provisionUrlSlug}` },
+          { label: te('breadcrumb'), href: '/entities' },
+          { label: entity.name, href: `/entities/${entityUrlSlug}` },
+          { label: provision.title, href: `/entities/${entityUrlSlug}/provisions/${provisionUrlSlug}` },
           { label: t('title') },
         ]}
       />
