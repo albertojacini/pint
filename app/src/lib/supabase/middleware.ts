@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// Public paths that don't require authentication (without locale prefix)
-const PUBLIC_PATHS = ['/login', '/signup', '/auth']
+// Paths that require authentication (without locale prefix)
+const PROTECTED_PATHS = ['/admin']
 
 function stripLocalePrefix(pathname: string): string {
   // Remove /it/ prefix (en has no prefix with 'as-needed')
@@ -45,12 +45,11 @@ export async function updateSession(request: NextRequest, existingResponse?: Nex
   // Strip locale prefix before checking auth
   const pathWithoutLocale = stripLocalePrefix(request.nextUrl.pathname)
 
-  // Protect authenticated routes
+  // Protect admin routes
   if (
     !user &&
-    !PUBLIC_PATHS.some((path) => pathWithoutLocale.startsWith(path))
+    PROTECTED_PATHS.some((path) => pathWithoutLocale.startsWith(path))
   ) {
-    // No user, redirect to login
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
