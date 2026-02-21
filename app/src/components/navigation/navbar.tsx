@@ -27,6 +27,7 @@ export function Navbar() {
     });
 
     return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogout = async () => {
@@ -47,9 +48,9 @@ export function Navbar() {
             <LocaleSwitcher />
 
             {/* Search Icon */}
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <Link href="/search" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <Search className="w-5 h-5 text-gray-600" />
-            </button>
+            </Link>
 
             {/* Hamburger Menu */}
             <button
@@ -117,18 +118,11 @@ export function Navbar() {
               ) : (
                 <>
                   <Link
-                    href="/login"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block px-4 py-3 text-link hover:bg-gray-50 rounded-lg transition-colors font-medium"
-                  >
-                    {t("logIn")}
-                  </Link>
-                  <Link
                     href="/signup"
                     onClick={() => setIsMenuOpen(false)}
                     className="block px-4 py-3 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-colors font-medium text-center"
                   >
-                    {t("signUp")}
+                    {t("requestAccess")}
                   </Link>
                 </>
               )}

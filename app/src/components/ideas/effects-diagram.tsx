@@ -29,7 +29,7 @@ export function EffectsDiagram({ effectsDiagram, stakeholderGroups }: EffectsDia
     <div className="border rounded-lg overflow-hidden">
       <table className="w-full">
         <tbody>
-          {effectsDiagram.stakeholderGroups.map((stakeholderGroupEffects: StakeholderGroupEffects, index: number) => {
+          {effectsDiagram.stakeholderGroups.map((stakeholderGroupEffects: StakeholderGroupEffects, _index: number) => {
             const stakeholderGroup = stakeholderGroupMap.get(stakeholderGroupEffects.stakeholderGroupId)
 
             if (!stakeholderGroup) {

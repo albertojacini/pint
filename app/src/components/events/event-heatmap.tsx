@@ -83,7 +83,7 @@ export function EventHeatmap({ data, startDate: startDateProp, range: rangeProp,
         calRef.current = null
       }
     }
-  }, [data, onDayClick])
+  }, [data, onDayClick, rangeProp, startDateProp])
 
   return <div ref={containerRef} className="overflow-x-auto" />
 }

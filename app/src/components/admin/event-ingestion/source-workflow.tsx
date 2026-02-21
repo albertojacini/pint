@@ -9,7 +9,6 @@ import { SectionL2Title } from '@/components/custom-ui/typography'
 import {
   updateSource,
   deleteSource,
-  createCandidate,
   type EiSource,
 } from '@/lib/actions/event-ingestion'
 

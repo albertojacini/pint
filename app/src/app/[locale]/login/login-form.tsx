@@ -42,7 +42,7 @@ export function LoginForm() {
         router.push('/')
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: t('error'),

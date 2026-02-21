@@ -63,7 +63,7 @@ export function ProvisionChangesDensity({ changes, maxMonths = 12 }: ProvisionCh
     <div className="mb-3 relative">
       {/* Compact density chart - 120px wide, 12 vertical bars with 1px gaps */}
       <div className="flex items-end gap-[1px]" style={{ width: '120px', height: maxHeight }}>
-        {monthGroups.map((month, monthIndex) => {
+        {monthGroups.map((month, _monthIndex) => {
           // Calculate bar height proportional to item count
           const barHeight = (month.items.length / maxItemCount) * maxHeight
 

@@ -4,7 +4,7 @@
 // ============================================================================
 
 // accounts
-export { profiles } from './accounts'
+export { profiles, accessRequests } from './accounts'
 
 // government
 export {

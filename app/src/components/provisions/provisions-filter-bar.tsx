@@ -41,14 +41,6 @@ export function ProvisionsFilterBar() {
   const currentStatus = searchParams.get('status')
   const currentSort = searchParams.get('sort') || 'title-asc'
 
-  // Debounced search update
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updateFilters({ search: search || undefined })
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [search])
-
   const updateFilters = useCallback(
     (updates: Record<string, string | undefined>) => {
       const params = new URLSearchParams(searchParams.toString())
@@ -65,6 +57,14 @@ export function ProvisionsFilterBar() {
     },
     [searchParams, router]
   )
+
+  // Debounced search update
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateFilters({ search: search || undefined })
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [search, updateFilters])
 
   const clearFilters = () => {
     setSearch('')

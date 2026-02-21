@@ -12,6 +12,7 @@
     "logOut": "Esci",
     "logIn": "Accedi",
     "signUp": "Registrati",
+    "requestAccess": "Richiedi Accesso",
     "home": "Home",
     "search": "Cerca",
     "more": "Altro"
@@ -281,6 +282,29 @@
     "narrative": "Narrativa",
     "az": "A → Z",
     "za": "Z → A"
+  },
+  "requestAccess": {
+    "title": "Richiedi Accesso",
+    "description": "Pint è in anteprima iniziale. Richiedi l'accesso e ti contatteremo presto.",
+    "name": "Nome",
+    "namePlaceholder": "Il tuo nome",
+    "email": "Email",
+    "emailPlaceholder": "tu@esempio.com",
+    "message": "Messaggio (opzionale)",
+    "messagePlaceholder": "Dicci perché sei interessato a Pint...",
+    "requestAccess": "Richiedi Accesso",
+    "submitting": "Invio in corso...",
+    "success": "Richiesta inviata!",
+    "successDescription": "Ti contatteremo presto.",
+    "alreadyRequested": "Già richiesto",
+    "alreadyRequestedDescription": "Hai già inviato una richiesta con questa email.",
+    "error": "Errore",
+    "unexpectedError": "Si è verificato un errore imprevisto",
+    "thankYou": "Grazie!",
+    "weWillBeInTouch": "Abbiamo ricevuto la tua richiesta e ti contatteremo presto."
+  },
+  "banner": {
+    "earlyPreview": "Anteprima iniziale — i dati potrebbero essere imprecisi o incompleti. Non utilizzare per nulla di serio."
   },
   "projects": {
     "title": "Progetti",

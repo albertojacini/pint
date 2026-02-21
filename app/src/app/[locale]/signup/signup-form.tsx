@@ -2,52 +2,54 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from '@/i18n/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
+import { createClient } from '@/lib/supabase/client'
 
 export function SignupForm() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
+  const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [submitted, setSubmitted] = useState(false)
   const { toast } = useToast()
   const supabase = createClient()
-  const t = useTranslations('auth')
+  const t = useTranslations('requestAccess')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-          },
-        },
-      })
+      const { error } = await supabase
+        .from('acc_access_requests')
+        .insert({ name, email, message: message || null })
 
       if (error) {
-        toast({
-          variant: 'destructive',
-          title: t('error'),
-          description: error.message,
-        })
+        if (error.code === '23505') {
+          toast({
+            title: t('alreadyRequested'),
+            description: t('alreadyRequestedDescription'),
+          })
+          setSubmitted(true)
+        } else {
+          toast({
+            variant: 'destructive',
+            title: t('error'),
+            description: error.message,
+          })
+        }
       } else {
+        setSubmitted(true)
         toast({
           title: t('success'),
-          description: t('accountCreatedSuccess'),
+          description: t('successDescription'),
         })
-        router.push('/login')
       }
-    } catch (error) {
+    } catch {
       toast({
         variant: 'destructive',
         title: t('error'),
@@ -58,16 +60,25 @@ export function SignupForm() {
     }
   }
 
+  if (submitted) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-lg font-medium">{t('thankYou')}</p>
+        <p className="text-muted-foreground mt-2">{t('weWillBeInTouch')}</p>
+      </div>
+    )
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="fullName">{t('fullName')}</Label>
+        <Label htmlFor="name">{t('name')}</Label>
         <Input
-          id="fullName"
+          id="name"
           type="text"
-          placeholder={t('fullNamePlaceholder')}
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          placeholder={t('namePlaceholder')}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
         />
       </div>
@@ -83,19 +94,17 @@ export function SignupForm() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password">{t('password')}</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={6}
+        <Label htmlFor="message">{t('message')}</Label>
+        <Textarea
+          id="message"
+          placeholder={t('messagePlaceholder')}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          rows={3}
         />
-        <p className="text-xs text-muted-foreground">{t('passwordMinLength')}</p>
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? t('creatingAccount') : t('createAccountButton')}
+        {loading ? t('submitting') : t('requestAccess')}
       </Button>
     </form>
   )

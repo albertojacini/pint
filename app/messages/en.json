@@ -12,6 +12,7 @@
     "logOut": "Log Out",
     "logIn": "Log In",
     "signUp": "Sign Up",
+    "requestAccess": "Request Access",
     "home": "Home",
     "search": "Search",
     "more": "More"
@@ -281,6 +282,29 @@
     "narrative": "Narrative",
     "az": "A → Z",
     "za": "Z → A"
+  },
+  "requestAccess": {
+    "title": "Request Access",
+    "description": "Pint is in early preview. Request access and we'll get back to you soon.",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "message": "Message (optional)",
+    "messagePlaceholder": "Tell us why you're interested in Pint...",
+    "requestAccess": "Request Access",
+    "submitting": "Submitting...",
+    "success": "Request sent!",
+    "successDescription": "We'll get back to you soon.",
+    "alreadyRequested": "Already requested",
+    "alreadyRequestedDescription": "You've already submitted a request with this email.",
+    "error": "Error",
+    "unexpectedError": "An unexpected error occurred",
+    "thankYou": "Thank you!",
+    "weWillBeInTouch": "We received your request and will be in touch soon."
+  },
+  "banner": {
+    "earlyPreview": "Early preview — data may be inaccurate or incomplete. Do not use for anything meaningful."
   },
   "projects": {
     "title": "Projects",
