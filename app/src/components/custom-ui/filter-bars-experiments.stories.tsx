@@ -30,7 +30,7 @@ function FilterBarPlayground() {
       <section>
         <h3 className="text-lg font-semibold mb-2">All selected</h3>
         <p className="text-sm text-muted-foreground mb-3">
-          All items selected, "All" button appears active.
+          All items selected, &quot;All&quot; button appears active.
         </p>
         <FilterBarSmall
           items={eventTypes}
@@ -56,9 +56,9 @@ function FilterBarPlayground() {
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold mb-2">Without "All" button</h3>
+        <h3 className="text-lg font-semibold mb-2">Without &quot;All&quot; button</h3>
         <p className="text-sm text-muted-foreground mb-3">
-          No "All" toggle, just individual filters.
+          No &quot;All&quot; toggle, just individual filters.
         </p>
         <FilterBarSmall
           items={eventTypes}

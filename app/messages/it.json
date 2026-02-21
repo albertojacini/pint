@@ -282,6 +282,36 @@
     "az": "A → Z",
     "za": "Z → A"
   },
+  "projects": {
+    "title": "Progetti",
+    "description": "Progetti politici collaborativi e sviluppo di politiche",
+    "comingSoon": "Questa sezione sarà disponibile a breve. Stiamo lavorando su strumenti per lo sviluppo collaborativo delle politiche."
+  },
+  "howItWorks": {
+    "title": "Come funziona",
+    "description": "Scopri come Pint ti aiuta a esplorare e comprendere le politiche pubbliche",
+    "comingSoon": "Stiamo scrivendo come funziona Pint. Torna presto!"
+  },
+  "searchPage": {
+    "title": "Cerca",
+    "description": "Cerca tra enti, disposizioni, eventi e altro",
+    "comingSoon": "La ricerca sarà disponibile a breve. Per ora, esplora gli enti dalla home page."
+  },
+  "morePage": {
+    "title": "Altro",
+    "description": "Risorse aggiuntive e impostazioni",
+    "comingSoon": "Altre opzioni in arrivo."
+  },
+  "about": {
+    "title": "Chi siamo",
+    "description": "Una piattaforma di politiche pubbliche che fornisce informazioni aggiornate sulle amministrazioni pubbliche e consente la collaborazione su progetti politici",
+    "comingSoon": "Stiamo preparando la storia completa. Resta sintonizzato!"
+  },
+  "contact": {
+    "title": "Contatti",
+    "description": "Contatta il team di Pint",
+    "comingSoon": "Informazioni di contatto in arrivo. Nel frattempo, trovaci su GitHub."
+  },
   "localeSwitcher": {
     "en": "English",
     "it": "Italiano"

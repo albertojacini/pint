@@ -282,6 +282,36 @@
     "az": "A → Z",
     "za": "Z → A"
   },
+  "projects": {
+    "title": "Projects",
+    "description": "Collaborative political projects and policy development",
+    "comingSoon": "This section is coming soon. We're working on tools for collaborative policy development."
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "description": "Learn how Pint helps you explore and understand public policies",
+    "comingSoon": "We're writing up how Pint works. Check back soon!"
+  },
+  "searchPage": {
+    "title": "Search",
+    "description": "Search across entities, provisions, events, and more",
+    "comingSoon": "Search is coming soon. For now, browse entities from the home page."
+  },
+  "morePage": {
+    "title": "More",
+    "description": "Additional resources and settings",
+    "comingSoon": "More options coming soon."
+  },
+  "about": {
+    "title": "About Pint",
+    "description": "A public policies platform providing up-to-date information about public administrations and enabling collaboration on political projects",
+    "comingSoon": "We're preparing the full story. Stay tuned!"
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Get in touch with the Pint team",
+    "comingSoon": "Contact information coming soon. In the meantime, find us on GitHub."
+  },
   "localeSwitcher": {
     "en": "English",
     "it": "Italiano"
