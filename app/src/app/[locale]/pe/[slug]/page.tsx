@@ -17,7 +17,7 @@ import { CouncilDots } from '@/components/administrations/council-dots'
 import { ExecutiveMembers } from '@/components/administrations/executive-members'
 import { ElectionsSection } from '@/components/administrations/election-cards'
 import { getEventsByEntity } from '@/lib/actions/events'
-import { EventDaysOfTheYearHeatmap } from '@/components/events/event-heatmaps'
+import { EventHeatmapFiltered } from '@/components/events/event-heatmap-filtered'
 import { EventList } from '@/components/events/event-list'
 import { ProvisionsOverviewLoader } from '@/components/provisions/loaders'
 import { ProvisionCardExtraSmall } from '@/components/provisions/provision-cards'
@@ -289,7 +289,7 @@ export default async function EntityPage({ params }: EntityPageProps) {
         }
       >
         {insights?.events && <SectionInsight content={insights.events} className="mb-4" />}
-        <EventDaysOfTheYearHeatmap events={events} />
+        <EventHeatmapFiltered events={events} />
         <div className="mt-6">
           <EventList events={events} />
         </div>
