@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referendum Costituzionale: Separazione delle Carriere — 22-23 Marzo 2026</title>
+  <meta name="description" content="Guida completa al referendum costituzionale confermativo sulla separazione delle carriere dei magistrati. Testo della legge, confronto articoli, analisi ragionata.">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --color-bg: #fafaf9;
+      --color-surface: #ffffff;
+      --color-text: #1c1917;
+      --color-text-secondary: #57534e;
+      --color-border: #d6d3d1;
+      --color-accent: #1e3a5f;
+      --color-accent-light: #e8eef4;
+      --color-added-bg: #dcfce7;
+      --color-added-text: #166534;
+      --color-added-border: #86efac;
+      --color-removed-bg: #fef2f2;
+      --color-removed-text: #991b1b;
+      --color-removed-border: #fca5a5;
+      --color-warning-bg: #fffbeb;
+      --color-warning-border: #fbbf24;
+      --color-warning-text: #92400e;
+      --color-info-bg: #eff6ff;
+      --color-info-border: #60a5fa;
+      --color-info-text: #1e40af;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-serif: Georgia, "Times New Roman", serif;
+      --max-width: 860px;
+      --section-gap: 4rem;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 18px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--color-text);
+      background: var(--color-bg);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOC / Navigation */
+    .toc {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0;
+    }
+
+    .toc-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .toc details {
+      padding: 0.6rem 0;
+    }
+
+    .toc summary {
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-text-secondary);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .toc summary::-webkit-details-marker { display: none; }
+
+    .toc summary::before {
+      content: "\2630";
+      font-size: 1rem;
+    }
+
+    .toc-links {
+      padding: 0.5rem 0 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .toc-links a {
+      color: var(--color-accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.2rem 0;
+      border-bottom: none;
+    }
+
+    .toc-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Main container */
+    main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    /* Sections */
+    section {
+      margin-top: var(--section-gap);
+    }
+
+    section:first-of-type {
+      margin-top: 2rem;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 3rem 0 2rem;
+      margin-top: 0;
+    }
+
+    .hero-date {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      line-height: 1.2;
+      color: var(--color-text);
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    /* Callout boxes */
+    .callout {
+      border-left: 4px solid var(--color-border);
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 0 6px 6px 0;
+      background: var(--color-surface);
+    }
+
+    .callout-ballot {
+      border-left-color: var(--color-accent);
+      background: var(--color-accent-light);
+    }
+
+    .callout-ballot .callout-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .callout-ballot blockquote {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--color-accent);
+      margin: 0;
+      padding: 0;
+      border: none;
+      line-height: 1.6;
+    }
+
+    .callout-warning {
+      border-left-color: var(--color-warning-border);
+      background: var(--color-warning-bg);
+      color: var(--color-warning-text);
+    }
+
+    .callout-info {
+      border-left-color: var(--color-info-border);
+      background: var(--color-info-bg);
+      color: var(--color-info-text);
+    }
+
+    /* Headings */
+    h2 {
+      font-family: var(--font-serif);
+      font-size: 1.6rem;
+      line-height: 1.3;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--color-border);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-top: 1.8rem;
+      margin-bottom: 0.6rem;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Body text */
+    p {
+      margin-bottom: 1rem;
+    }
+
+    strong {
+      font-weight: 700;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    li::marker {
+      color: var(--color-text-secondary);
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--color-border);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.2rem;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -2rem;
+      top: 0.55rem;
+      width: 10px;
+      height: 10px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      border: 2px solid var(--color-bg);
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .timeline-text {
+      font-size: 0.95rem;
+      color: var(--color-text);
+    }
+
+    /* Law articles table */
+    .law-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .law-table th,
+    .law-table td {
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .law-table th {
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .law-table tr:nth-child(even) td {
+      background: #f5f5f4;
+    }
+
+    .law-table td:first-child {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Diff sections */
+    .diff-article {
+      margin: 2rem 0;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--color-surface);
+    }
+
+    .diff-header {
+      background: var(--color-accent);
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .diff-header small {
+      display: block;
+      font-weight: 400;
+      font-size: 0.8rem;
+      opacity: 0.85;
+      margin-top: 0.2rem;
+    }
+
+    .diff-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .diff-side {
+      padding: 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .diff-side-old {
+      background: var(--color-removed-bg);
+      border-right: 1px solid var(--color-border);
+    }
+
+    .diff-side-new {
+      background: var(--color-added-bg);
+    }
+
+    .diff-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.6rem;
+    }
+
+    .diff-side-old .diff-label {
+      color: var(--color-removed-text);
+    }
+
+    .diff-side-new .diff-label {
+      color: var(--color-added-text);
+    }
+
+    .diff-text {
+      font-family: var(--font-serif);
+    }
+
+    .diff-text .removed {
+      background: #fecaca;
+      text-decoration: line-through;
+      color: var(--color-removed-text);
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .diff-text .added {
+      background: #bbf7d0;
+      color: var(--color-added-text);
+      font-weight: 600;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    .diff-note {
+      padding: 0.8rem 1.2rem;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      border-top: 1px solid var(--color-border);
+      background: #f5f5f4;
+    }
+
+    /* Responsive diff */
+    @media (max-width: 680px) {
+      .diff-container {
+        grid-template-columns: 1fr;
+      }
+
+      .diff-side-old {
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+      }
+    }
+
+    /* Details / collapsible */
+    details.framework-layer {
+      margin: 1rem 0;
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      background: var(--color-surface);
+    }
+
+    details.framework-layer[open] {
+      border-color: var(--color-accent);
+    }
+
+    details.framework-layer summary {
+      cursor: pointer;
+      padding: 1rem 1.2rem;
+      font-weight: 700;
+      font-size: 1.05rem;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    details.framework-layer summary::-webkit-details-marker { display: none; }
+
+    details.framework-layer summary::before {
+      content: "\25B6";
+      font-size: 0.65rem;
+      color: var(--color-accent);
+      transition: transform 0.2s;
+    }
+
+    details.framework-layer[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    details.framework-layer .layer-content {
+      padding: 0 1.2rem 1.2rem;
+      border-top: 1px solid var(--color-border);
+    }
+
+    details.framework-layer .layer-content ul {
+      margin-top: 0.8rem;
+    }
+
+    .layer-applied {
+      margin-top: 1rem;
+      padding: 0.8rem 1rem;
+      background: var(--color-accent-light);
+      border-radius: 4px;
+      font-size: 0.92rem;
+    }
+
+    .layer-applied-label {
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-accent);
+      margin-bottom: 0.3rem;
+    }
+
+    /* Comparison table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+      text-align: left;
+      padding: 0.7rem 0.8rem;
+      border: 1px solid var(--color-border);
+    }
+
+    .comparison-table th {
+      background: var(--color-accent);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .comparison-table tr:nth-child(even) td {
+      background: #f5f5f4;
+    }
+
+    /* Quick facts box */
+    .quick-facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .quick-fact {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 1rem;
+    }
+
+    .quick-fact-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.3rem;
+    }
+
+    .quick-fact-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 500px) {
+      .quick-facts {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* SI/NO summary */
+    .vote-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .vote-option {
+      border-radius: 6px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .vote-si {
+      background: var(--color-added-bg);
+      border: 2px solid var(--color-added-border);
+    }
+
+    .vote-no {
+      background: var(--color-removed-bg);
+      border: 2px solid var(--color-removed-border);
+    }
+
+    .vote-label {
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 0.3rem;
+    }
+
+    .vote-si .vote-label { color: var(--color-added-text); }
+    .vote-no .vote-label { color: var(--color-removed-text); }
+
+    .vote-desc {
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 500px) {
+      .vote-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Footer */
+    footer {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid var(--color-border);
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      text-align: center;
+    }
+
+    /* General responsive */
+    @media (max-width: 680px) {
+      html { font-size: 16px; }
+      .hero h1 { font-size: 1.7rem; }
+      h2 { font-size: 1.35rem; }
+      .law-table { font-size: 0.8rem; }
+      .law-table th, .law-table td { padding: 0.5rem 0.5rem; }
+    }
+
+    /* Print styles */
+    @media print {
+      .toc { display: none; }
+      body { background: #fff; }
+      details.framework-layer { border: 1px solid #ccc; }
+      details.framework-layer[open] summary + .layer-content { display: block; }
+    }
+
+    /* Comma/article separator */
+    .comma-separator {
+      border-top: 1px dashed var(--color-border);
+      margin: 0.8rem 0;
+    }
+
+    /* Cronologia timeline */
+    .crono {
+      position: relative;
+      padding-left: 2.4rem;
+      margin: 1.5rem 0;
+    }
+
+    .crono::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--color-border);
+    }
+
+    .crono-step {
+      position: relative;
+      margin-bottom: 1.6rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.8rem;
+      align-items: start;
+    }
+
+    .crono-step::before {
+      content: "";
+      position: absolute;
+      left: -2.4rem;
+      top: 0.45rem;
+      width: 12px;
+      height: 12px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      border: 2px solid var(--color-bg);
+      z-index: 1;
+    }
+
+    .crono-step:last-child::before {
+      background: var(--color-added-text);
+      width: 14px;
+      height: 14px;
+      left: calc(-2.4rem - 1px);
+    }
+
+    .crono-body {}
+
+    .crono-date {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-accent);
+    }
+
+    .crono-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .crono-sub {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.15rem;
+    }
+
+    .crono-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-self: center;
+    }
+
+    .crono-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      background: var(--color-accent-light);
+      border: 1px solid transparent;
+      border-radius: 100px;
+      padding: 0.2rem 0.6rem;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .crono-chip:hover {
+      border-color: var(--color-accent);
+      background: #dce6f0;
+    }
+
+    .crono-chip::before {
+      content: "?";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      background: var(--color-accent);
+      color: #fff;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 600px) {
+      .crono-step {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+      }
+
+      .crono-chips {
+        align-self: start;
+      }
+    }
+
+    /* Modal (dialog) */
+    dialog.modal {
+      border: none;
+      border-radius: 10px;
+      padding: 0;
+      max-width: 520px;
+      width: calc(100% - 2rem);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      background: var(--color-surface);
+    }
+
+    dialog.modal::backdrop {
+      background: rgba(0,0,0,0.4);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      padding: 0.2rem;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--color-text);
+    }
+
+    .modal-body {
+      padding: 1.2rem;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .modal-body p {
+      margin-bottom: 0.8rem;
+    }
+
+    .modal-body p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="toc" aria-label="Indice dei contenuti">
+  <div class="toc-inner">
+    <details>
+      <summary>Indice</summary>
+      <div class="toc-links">
+        <a href="#quesito">Il Quesito</a>
+        <a href="#cronologia">Cronologia</a>
+        <a href="#referendum-confermativo">Cos'è un Referendum Confermativo</a>
+        <a href="#chi-ha-chiesto">Chi Ha Chiesto Questo Referendum</a>
+        <a href="#legge-costituzionale">La Legge Costituzionale</a>
+        <a href="#articoli-confronto">Gli Articoli: Prima e Dopo</a>
+        <a href="#trasparenza">Nota sulla Trasparenza Democratica</a>
+        <a href="#come-ragionare">Come Ragionare: 7 Domande</a>
+        <a href="#altri-paesi">Cosa Fanno gli Altri Paesi</a>
+        <a href="#informazioni-pratiche">Informazioni Pratiche</a>
+      </div>
+    </details>
+  </div>
+</nav>
+
+<main>
+
+  <!-- SECTION 1: Hero -->
+  <section class="hero" id="quesito">
+    <div class="hero-date">22-23 Marzo 2026</div>
+    <h1>Referendum Costituzionale:<br>Separazione delle Carriere</h1>
+    <p class="hero-subtitle">Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di giudici e pubblici ministeri.</p>
+
+    <div class="callout callout-ballot" style="text-align: left;">
+      <div class="callout-label">Quesito sulla scheda elettorale</div>
+      <blockquote>
+        Approvate il testo della legge costituzionale concernente &laquo;Norme in materia di ordinamento giurisdizionale e di istituzione della Corte disciplinare&raquo; approvato dal Parlamento e pubblicato nella Gazzetta Ufficiale n.&nbsp;253 del 30&nbsp;ottobre&nbsp;2025?
+      </blockquote>
+    </div>
+
+    <div class="vote-summary">
+      <div class="vote-option vote-si">
+        <div class="vote-label">SI</div>
+        <div class="vote-desc">La riforma entra in vigore</div>
+      </div>
+      <div class="vote-option vote-no">
+        <div class="vote-label">NO</div>
+        <div class="vote-desc">Si torna alla situazione attuale</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Cronologia -->
+  <section id="cronologia">
+    <h2>Cronologia</h2>
+    <p>Come si arriva dal Parlamento alla scheda elettorale.</p>
+
+    <div class="crono">
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">2024</div>
+          <div class="crono-title">Proposta di legge costituzionale</div>
+          <div class="crono-sub">Il governo presenta un disegno di legge per modificare gli articoli della Costituzione sulla magistratura.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-legge-cost">Cos'è una legge costituzionale?</a>
+          <a class="crono-chip" data-modal="m-chi-proposto">Chi l'ha proposta?</a>
+        </div>
+      </div>
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Gen &ndash; Mar 2025</div>
+          <div class="crono-title">1a votazione: Camera e Senato</div>
+          <div class="crono-sub">Entrambe le Camere approvano il testo in prima lettura.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-doppia-votazione">Perché due votazioni?</a>
+          <a class="crono-chip" data-modal="m-art138">Cos'è l'Art. 138?</a>
+        </div>
+      </div>
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Set &ndash; Ott 2025</div>
+          <div class="crono-title">2a votazione: maggioranza assoluta (non 2/3)</div>
+          <div class="crono-sub">Camera (18 set) e Senato (29 ott) approvano con maggioranza assoluta, ma senza i 2/3 dei voti.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-due-terzi">Perché conta non avere i 2/3?</a>
+          <a class="crono-chip" data-modal="m-magg-assoluta">Cos'è la maggioranza assoluta?</a>
+        </div>
+      </div>
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">30 Ottobre 2025</div>
+          <div class="crono-title">Pubblicazione in Gazzetta Ufficiale</div>
+          <div class="crono-sub">GU Serie Generale n. 253. Parte la finestra di 3 mesi per chiedere il referendum.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-gu">Cos'è la Gazzetta Ufficiale?</a>
+          <a class="crono-chip" data-modal="m-tre-mesi">Perché 3 mesi?</a>
+        </div>
+      </div>
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Nov &ndash; Dic 2025</div>
+          <div class="crono-title">Richieste di referendum</div>
+          <div class="crono-sub">Parlamentari di maggioranza e opposizione depositano le firme. 15 cittadini avviano la raccolta firme.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-chi-chiede">Chi può chiedere il referendum?</a>
+          <a class="crono-chip" data-modal="m-entrambi">Perché maggioranza e opposizione?</a>
+        </div>
+      </div>
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">18 Novembre 2025</div>
+          <div class="crono-title">L'Ufficio Centrale ammette 4 richieste</div>
+          <div class="crono-sub">L'Ufficio Centrale per il Referendum presso la Corte di Cassazione dichiara ammissibili le richieste.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-ucr">Cos'è l'UCR?</a>
+        </div>
+      </div>
+
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">22-23 Marzo 2026</div>
+          <div class="crono-title">Si vota</div>
+          <div class="crono-sub">Referendum confermativo. Nessun quorum: vince la maggioranza semplice dei voti validi.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-quorum">C'è un quorum?</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Cronologia modals -->
+  <dialog class="modal" id="m-legge-cost">
+    <div class="modal-header"><h3>Cos'è una legge costituzionale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Una legge costituzionale è una legge che <strong>modifica la Costituzione</strong>. Non è una legge ordinaria: richiede un procedimento speciale (Art. 138) con due votazioni in ciascuna Camera a distanza di almeno tre mesi.</p>
+      <p>Serve una maggioranza più alta del normale, e se non si raggiungono i 2/3 dei voti, i cittadini possono chiedere un referendum per confermarla o respingerla.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-chi-proposto">
+    <div class="modal-header"><h3>Chi ha proposto la riforma?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il disegno di legge costituzionale è stato presentato dal <strong>governo</strong> di centrodestra (coalizione FdI, Lega, FI). La separazione delle carriere dei magistrati è un tema storicamente caro al centrodestra italiano, in particolare a Forza Italia fin dai tempi di Berlusconi.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-doppia-votazione">
+    <div class="modal-header"><h3>Perché servono due votazioni?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'Art. 138 richiede che ogni Camera voti <strong>due volte</strong> sullo stesso testo, a distanza di almeno tre mesi. Questo serve a garantire che la decisione di modificare la Costituzione sia ponderata e non frettolosa.</p>
+      <p>In pratica: Camera vota (1a), Senato vota (1a), passano almeno 3 mesi, Camera vota di nuovo (2a), Senato vota di nuovo (2a). Solo la seconda votazione determina le soglie di maggioranza rilevanti.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-art138">
+    <div class="modal-header"><h3>Art. 138 della Costituzione</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'articolo 138 regola il <strong>procedimento di revisione costituzionale</strong>. È il "lucchetto" della Costituzione: rende le modifiche possibili ma difficili, proteggendo i principi fondamentali da cambiamenti affrettati.</p>
+      <p>Prevede: doppia votazione, intervallo minimo di 3 mesi, e &mdash; se non si raggiungono i 2/3 &mdash; la possibilità per i cittadini di avere l'ultima parola tramite referendum.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-due-terzi">
+    <div class="modal-header"><h3>Perché conta non avere i 2/3?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Se la seconda votazione raggiunge i <strong>2/3 dei voti</strong> in entrambe le Camere, la revisione costituzionale entra in vigore automaticamente. Nessun referendum è possibile.</p>
+      <p>Se invece passa con la sola <strong>maggioranza assoluta</strong> (metà + 1 dei componenti), si apre la finestra per il referendum confermativo. Questo è il caso della riforma sulla separazione delle carriere.</p>
+      <p>La logica: se c'è un consenso larghissimo (2/3), la modifica si considera sufficientemente condivisa. Altrimenti, la decisione finale spetta ai cittadini.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-magg-assoluta">
+    <div class="modal-header"><h3>Cos'è la maggioranza assoluta?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p><strong>Maggioranza assoluta</strong> = metà + 1 dei <em>componenti</em> della Camera (non dei presenti). Alla Camera sono 201 su 400, al Senato 101 su 200.</p>
+      <p>È diversa dalla maggioranza semplice (metà + 1 dei presenti) e dalla maggioranza qualificata dei 2/3 (267 alla Camera, 134 al Senato).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-gu">
+    <div class="modal-header"><h3>Cos'è la Gazzetta Ufficiale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La <strong>Gazzetta Ufficiale</strong> (GU) è il giornale ufficiale dello Stato italiano. Tutte le leggi, i decreti e gli atti normativi vengono pubblicati qui per diventare ufficialmente conoscibili dai cittadini.</p>
+      <p>La pubblicazione in GU è il momento da cui partono i termini legali &mdash; in questo caso, i 3 mesi per richiedere il referendum.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-tre-mesi">
+    <div class="modal-header"><h3>Perché 3 mesi?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'Art. 138 concede <strong>tre mesi dalla pubblicazione</strong> per presentare la richiesta di referendum. È un periodo pensato per dare tempo sufficiente a raccogliere le firme necessarie (500.000 elettori) o a organizzare la richiesta parlamentare (1/5 dei membri di una Camera).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-chi-chiede">
+    <div class="modal-header"><h3>Chi può chiedere il referendum confermativo?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Tre soggetti possono farlo:</p>
+      <ul>
+        <li><strong>1/5 dei membri</strong> di una Camera (80 deputati o 40 senatori)</li>
+        <li><strong>500.000 elettori</strong></li>
+        <li><strong>5 Consigli regionali</strong></li>
+      </ul>
+      <p>Basta che uno di questi presenti la richiesta entro 3 mesi dalla pubblicazione in GU.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-entrambi">
+    <div class="modal-header"><h3>Perché sia maggioranza che opposizione?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Strategia diversa, stesso strumento:</p>
+      <ul>
+        <li>La <strong>maggioranza</strong> vuole il referendum per due ragioni:
+          <ul>
+            <li>Ottenere una legittimazione popolare alla riforma ("il popolo l'ha confermata").</li>
+            <li>Controllare i tempi: depositando per prima le firme, la maggioranza determina la finestra in cui si vota, evitando che l'opposizione scelga un momento più favorevole.</li>
+          </ul>
+        </li>
+        <li>L'<strong>opposizione</strong> vuole il referendum per dare ai cittadini la possibilità di bocciarla.</li>
+      </ul>
+      <p>Entrambi hanno depositato le firme perché entrambi ritengono vantaggioso che si voti &mdash; per ragioni opposte.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-ucr">
+    <div class="modal-header"><h3>Cos'è l'Ufficio Centrale per il Referendum?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'<strong>Ufficio Centrale per il Referendum</strong> (UCR) è un organo della Corte di Cassazione. Ha il compito di verificare che le richieste di referendum siano formalmente valide: firme autentiche, termini rispettati, requisiti soddisfatti.</p>
+      <p>In questo caso ha ammesso 4 richieste distinte (da parlamentari di maggioranza, opposizione e cittadini).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-quorum">
+    <div class="modal-header"><h3>C'è un quorum?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p><strong>No.</strong> A differenza del referendum abrogativo (dove serve che voti il 50%+1 degli aventi diritto), il referendum costituzionale confermativo <strong>non ha quorum</strong>.</p>
+      <p>Vince la maggioranza semplice dei voti validi, indipendentemente da quante persone vanno a votare. Questo significa che l'astensione non è una strategia: equivale semplicemente a lasciare che decidano gli altri.</p>
+    </div>
+  </dialog>
+
+  <script>
+    document.querySelectorAll('.crono-chip').forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var id = this.getAttribute('data-modal');
+        var d = document.getElementById(id);
+        if (d) d.showModal();
+      });
+    });
+    document.querySelectorAll('.modal-close').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        this.closest('dialog').close();
+      });
+    });
+    document.querySelectorAll('dialog.modal').forEach(function(d) {
+      d.addEventListener('click', function(e) {
+        if (e.target === d) d.close();
+      });
+    });
+  </script>
+
+  <!-- SECTION 2: Cos'è un Referendum Confermativo -->
+  <section id="referendum-confermativo">
+    <h2>Cos'è un Referendum Confermativo</h2>
+
+    <p>Questo non è un referendum abrogativo (quelli in cui si chiede di cancellare una legge). È un <strong>referendum costituzionale confermativo</strong>, previsto dall'articolo 138 della Costituzione.</p>
+
+    <p>Funziona così:</p>
+    <ol>
+      <li>Il Parlamento approva una <strong>legge di revisione costituzionale</strong> con due votazioni successive in ciascuna Camera, a distanza di almeno tre mesi.</li>
+      <li>Se nella seconda votazione la legge ottiene la <strong>maggioranza dei 2/3</strong> in entrambe le Camere, entra direttamente in vigore. Nessun referendum possibile.</li>
+      <li>Se nella seconda votazione la legge ottiene solo la <strong>maggioranza assoluta</strong> (ma non i 2/3), la Costituzione prevede una finestra di tre mesi in cui possono richiedere un referendum:
+        <ul>
+          <li>1/5 dei membri di una Camera</li>
+          <li>500.000 elettori</li>
+          <li>5 Consigli regionali</li>
+        </ul>
+      </li>
+      <li>Se la richiesta viene presentata, si va al voto popolare.</li>
+    </ol>
+
+    <div class="callout callout-info">
+      <strong>Non c'è quorum.</strong> Vince la maggioranza semplice dei voti validi, indipendentemente da quante persone votano. L'astensione non ha alcun valore strategico: significa solo lasciare che decidano gli altri.
+    </div>
+  </section>
+
+  <!-- SECTION 3: Chi Ha Chiesto Questo Referendum -->
+  <section id="chi-ha-chiesto">
+    <h2>Chi Ha Chiesto Questo Referendum</h2>
+
+    <p>La riforma è stata approvata dal Parlamento con la sola <strong>maggioranza assoluta</strong>, non con i 2/3 dei voti. Questo ha aperto la finestra per il referendum confermativo previsto dall'Art. 138.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">30 Ottobre 2025</div>
+        <div class="timeline-text">La legge costituzionale viene pubblicata in Gazzetta Ufficiale (GU n. 253, Serie Generale)</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">4-5 Novembre 2025</div>
+        <div class="timeline-text">Deputati e senatori della <strong>maggioranza</strong> (centrodestra) depositano le firme presso la Corte di Cassazione per richiedere il referendum</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">Giorni successivi</div>
+        <div class="timeline-text">Anche parlamentari dell'<strong>opposizione</strong> (PD, M5S, Alleanza Verdi-Sinistra) depositano richieste di referendum</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">19 Dicembre 2025</div>
+        <div class="timeline-text">15 cittadini presentano richiesta per la raccolta di 500.000 firme (Art. 138 c.2)</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">18 Novembre 2025</div>
+        <div class="timeline-text">L'Ufficio Centrale per il Referendum ammette 4 richieste</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-date">22-23 Marzo 2026</div>
+        <div class="timeline-text">Si vota</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Fatto chiave:</strong> sia la maggioranza che l'opposizione hanno chiesto il referendum &mdash; la maggioranza per validare la propria riforma con il voto popolare, l'opposizione per dare ai cittadini la possibilità di respingerla.
+    </div>
+  </section>
+
+  <!-- SECTION 4: La Legge Costituzionale -->
+  <section id="legge-costituzionale">
+    <h2>La Legge Costituzionale</h2>
+
+    <p><strong>Legge costituzionale &laquo;Norme in materia di ordinamento giurisdizionale e di istituzione della Corte disciplinare&raquo;</strong></p>
+    <p>Pubblicata nella Gazzetta Ufficiale, Serie Generale n. 253, 30 ottobre 2025 (ID: 25A05968)</p>
+
+    <h3>Approvazione parlamentare</h3>
+    <div class="quick-facts">
+      <div class="quick-fact">
+        <div class="quick-fact-label">Camera dei Deputati (2a votazione)</div>
+        <div class="quick-fact-value">18 Settembre 2025</div>
+        <div style="font-size: 0.85rem; color: var(--color-text-secondary);">Maggioranza assoluta</div>
+      </div>
+      <div class="quick-fact">
+        <div class="quick-fact-label">Senato della Repubblica (2a votazione)</div>
+        <div class="quick-fact-value">30 Ottobre 2025</div>
+        <div style="font-size: 0.85rem; color: var(--color-text-secondary);">Maggioranza assoluta</div>
+      </div>
+    </div>
+
+    <h3>Contenuto: 8 articoli</h3>
+    <p>La legge modifica 7 articoli della Costituzione e aggiunge disposizioni transitorie:</p>
+
+    <table class="law-table">
+      <thead>
+        <tr>
+          <th>Articolo della legge</th>
+          <th>Articolo Cost. modificato</th>
+          <th>Oggetto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Art. 1</td>
+          <td>Art. 87 c.10</td>
+          <td>Poteri del Presidente della Repubblica</td>
+        </tr>
+        <tr>
+          <td>Art. 2</td>
+          <td>Art. 102 c.1</td>
+          <td>Funzione giurisdizionale</td>
+        </tr>
+        <tr>
+          <td>Art. 3</td>
+          <td>Art. 104</td>
+          <td>Struttura della magistratura e CSM (sostituzione integrale)</td>
+        </tr>
+        <tr>
+          <td>Art. 4</td>
+          <td>Art. 105</td>
+          <td>Competenze dei CSM + Alta Corte disciplinare (sostituzione integrale)</td>
+        </tr>
+        <tr>
+          <td>Art. 5</td>
+          <td>Art. 106 c.3</td>
+          <td>Nomina consiglieri di cassazione</td>
+        </tr>
+        <tr>
+          <td>Art. 6</td>
+          <td>Art. 107 c.1</td>
+          <td>Inamovibilità dei magistrati</td>
+        </tr>
+        <tr>
+          <td>Art. 7</td>
+          <td>Art. 110 c.1</td>
+          <td>Servizi del Ministero della Giustizia</td>
+        </tr>
+        <tr>
+          <td>Art. 8</td>
+          <td>&mdash;</td>
+          <td>Disposizioni transitorie (attuazione entro 1 anno)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECTION 5: Visual Diff -->
+  <section id="articoli-confronto">
+    <h2>Gli Articoli della Costituzione &mdash; Prima e Dopo</h2>
+    <p>Per ogni articolo modificato, il testo attuale a sinistra e il nuovo testo a destra. Le <span class="added">parti aggiunte</span> sono evidenziate in verde, le <span class="removed" style="background: #fecaca; text-decoration: line-through; color: #991b1b; padding: 0 2px; border-radius: 2px;">parti rimosse</span> in rosso.</p>
+
+    <!-- Art. 87 c.10 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 87, comma 10
+        <small>Poteri del Presidente della Repubblica</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            Presiede il Consiglio superiore della magistratura.
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            Presiede il Consiglio superiore della magistratura <span class="added">giudicante e il Consiglio superiore della magistratura requirente</span>.
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Il Presidente della Repubblica presiederà due organi separati invece di uno.</div>
+    </div>
+
+    <!-- Art. 102 c.1 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 102, comma 1
+        <small>La funzione giurisdizionale</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            La funzione giurisdizionale è esercitata da magistrati ordinari istituiti e regolati dalle norme sull'ordinamento giudiziario.
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            La funzione giurisdizionale è esercitata da magistrati ordinari istituiti e regolati dalle norme sull'ordinamento giudiziario<span class="added">, le quali disciplinano altresì le distinte carriere dei magistrati giudicanti e dei magistrati requirenti</span>.
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Si introduce in Costituzione il principio delle carriere distinte tra giudici (giudicanti) e pubblici ministeri (requirenti).</div>
+    </div>
+
+    <!-- Art. 104 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 104
+        <small>Struttura della magistratura e Consiglio Superiore &mdash; sostituzione integrale</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            <p>La magistratura costituisce un ordine autonomo e indipendente da ogni altro potere.</p>
+            <div class="comma-separator"></div>
+            <p>Il Consiglio superiore della magistratura è presieduto dal Presidente della Repubblica.</p>
+            <div class="comma-separator"></div>
+            <p>Ne fanno parte di diritto il primo presidente e il procuratore generale della Corte di cassazione.</p>
+            <div class="comma-separator"></div>
+            <p>Gli altri componenti sono <span class="removed">eletti per due terzi da tutti i magistrati ordinari</span> tra gli appartenenti alle varie categorie, e <span class="removed">per un terzo dal Parlamento in seduta comune</span> tra professori ordinari di università in materie giuridiche ed avvocati dopo quindici anni di esercizio.</p>
+            <div class="comma-separator"></div>
+            <p>Il Consiglio elegge un vicepresidente fra i componenti designati dal Parlamento.</p>
+            <div class="comma-separator"></div>
+            <p>I membri elettivi del Consiglio durano in carica quattro anni e non sono immediatamente rieleggibili.</p>
+            <div class="comma-separator"></div>
+            <p>Non possono, finché sono in carica, essere iscritti negli albi professionali, né far parte del Parlamento o di un Consiglio regionale.</p>
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            <p>La magistratura <span class="added">è composta dai magistrati della carriera giudicante e della carriera requirente e</span> costituisce un ordine autonomo e indipendente da ogni altro potere.</p>
+            <div class="comma-separator"></div>
+            <p>Il Consiglio superiore della magistratura giudicante è presieduto dal Presidente della Repubblica. Ne fa parte di diritto il primo presidente della Corte di cassazione.</p>
+            <div class="comma-separator"></div>
+            <p>Il Consiglio superiore della magistratura requirente è presieduto dal Presidente della Repubblica. Ne fa parte di diritto il procuratore generale della Corte di cassazione.</p>
+            <div class="comma-separator"></div>
+            <p>I componenti di <span class="added">ciascun</span> Consiglio superiore della magistratura sono <span class="added">sorteggiati, per un terzo, fra i magistrati</span> appartenenti alla rispettiva carriera, e, <span class="added">per due terzi, dal Parlamento in seduta comune, tra professori ordinari</span> di università in materie giuridiche ed avvocati dopo quindici anni di esercizio, <span class="added">nell'ambito di un elenco compilato, mediante sorteggio, dal Parlamento</span>.</p>
+            <div class="comma-separator"></div>
+            <p>I componenti di ciascun Consiglio superiore della magistratura durano in carica quattro anni. L'incarico non può essere rinnovato.</p>
+            <div class="comma-separator"></div>
+            <p>Non possono, finché sono in carica, essere iscritti negli albi professionali, né far parte del Parlamento o di un Consiglio regionale.</p>
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">
+        <strong>Cambiamenti chiave:</strong> (1) Due CSM separati invece di uno; (2) I membri togati non vengono più <em>eletti</em> dai colleghi ma <em>sorteggiati</em>; (3) La quota si inverte: 1/3 magistrati sorteggiati, 2/3 designazione parlamentare (prima era 2/3 magistrati, 1/3 Parlamento); (4) I componenti laici sono scelti per sorteggio da una lista compilata dal Parlamento.
+      </div>
+    </div>
+
+    <!-- Art. 105 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 105
+        <small>Competenze del CSM e Alta Corte disciplinare &mdash; sostituzione integrale</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            <p>Spettano al Consiglio superiore della magistratura, secondo le norme dell'ordinamento giudiziario, le assunzioni, le assegnazioni ed i trasferimenti, le promozioni e i <span class="removed">provvedimenti disciplinari nei riguardi dei magistrati</span>.</p>
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            <p>Spettano a ciascun Consiglio superiore della magistratura, secondo le norme dell'ordinamento giudiziario, le assunzioni, le assegnazioni ed i trasferimenti, le promozioni nei riguardi dei magistrati appartenenti alla rispettiva carriera.</p>
+            <div class="comma-separator"></div>
+            <p><span class="added">La giurisdizione disciplinare nei riguardi dei magistrati ordinari, giudicanti e requirenti, è attribuita all'Alta Corte disciplinare.</span></p>
+            <div class="comma-separator"></div>
+            <p><span class="added">L'Alta Corte disciplinare è composta da quindici giudici: tre nominati dal Presidente della Repubblica tra professori ordinari di università in materie giuridiche e avvocati con almeno venti anni di esercizio; tre estratti a sorte da un elenco di soggetti in possesso dei medesimi requisiti, compilato dal Parlamento in seduta comune; sei magistrati giudicanti e tre magistrati requirenti, estratti a sorte tra gli appartenenti alla rispettiva carriera, con almeno venti anni di esercizio delle funzioni giudiziarie e che svolgano o abbiano svolto funzioni di legittimità.</span></p>
+            <div class="comma-separator"></div>
+            <p><span class="added">L'Alta Corte elegge il proprio presidente tra i componenti nominati dal Presidente della Repubblica e quelli sorteggiati dall'elenco compilato dal Parlamento.</span></p>
+            <div class="comma-separator"></div>
+            <p><span class="added">I componenti dell'Alta Corte disciplinare durano in carica quattro anni. L'incarico non può essere rinnovato.</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">
+        <strong>Cambiamenti chiave:</strong> (1) Ogni CSM gestisce la carriera dei propri magistrati; (2) La disciplina viene sottratta ai CSM e affidata a un nuovo organo: l'Alta Corte disciplinare; (3) L'Alta Corte è composta da 15 membri: 3 nominati dal Presidente della Repubblica, 3 sorteggiati da lista parlamentare, 6 giudici e 3 PM sorteggiati.
+      </div>
+    </div>
+
+    <!-- Art. 106 c.3 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 106, comma 3
+        <small>Nomina di consiglieri di cassazione per meriti insigni</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            Su designazione del Consiglio superiore della magistratura possono essere chiamati all'ufficio di consiglieri di cassazione, per meriti insigni, professori ordinari di università in materie giuridiche e avvocati che abbiano quindici anni d'esercizio e siano iscritti negli albi speciali per le giurisdizioni superiori.
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            Su designazione del <span class="added">rispettivo</span> Consiglio superiore della magistratura possono essere chiamati all'ufficio di consiglieri di cassazione<span class="added"> o all'ufficio di sostituto procuratore generale presso la Corte di cassazione</span>, per meriti insigni, professori ordinari di università in materie giuridiche e avvocati che abbiano quindici anni d'esercizio e siano iscritti negli albi speciali per le giurisdizioni superiori.
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Si aggiunge la possibilità di nomina anche come sostituti procuratori generali, e si specifica che la designazione proviene dal CSM competente.</div>
+    </div>
+
+    <!-- Art. 107 c.1 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 107, comma 1
+        <small>Inamovibilità dei magistrati</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            I magistrati sono inamovibili. Non possono essere dispensati o sospesi dal servizio né destinati ad altre sedi o funzioni se non in seguito a decisione del Consiglio superiore della magistratura, adottata o per i motivi e con le garanzie di difesa stabilite dall'ordinamento giudiziario o con il loro consenso.
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            I magistrati sono inamovibili. Non possono essere dispensati o sospesi dal servizio né destinati ad altre sedi o funzioni se non in seguito a decisione del <span class="added">rispettivo</span> Consiglio superiore della magistratura, adottata o per i motivi e con le garanzie di difesa stabilite dall'ordinamento giudiziario o con il loro consenso.
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Modifica tecnica: l'inamovibilità resta, ma il provvedimento spetta al CSM competente per carriera.</div>
+    </div>
+
+    <!-- Art. 110 c.1 -->
+    <div class="diff-article">
+      <div class="diff-header">
+        Art. 110, comma 1
+        <small>Servizi del Ministero della Giustizia</small>
+      </div>
+      <div class="diff-container">
+        <div class="diff-side diff-side-old">
+          <div class="diff-label">Testo attuale</div>
+          <div class="diff-text">
+            Ferme le competenze del Consiglio superiore della magistratura, spettano al Ministro della giustizia l'organizzazione e il funzionamento dei servizi relativi alla giustizia.
+          </div>
+        </div>
+        <div class="diff-side diff-side-new">
+          <div class="diff-label">Testo proposto</div>
+          <div class="diff-text">
+            Ferme le competenze <span class="added">di ciascun</span> Consiglio superiore della magistratura, spettano al Ministro della giustizia l'organizzazione e il funzionamento dei servizi relativi alla giustizia.
+          </div>
+        </div>
+      </div>
+      <div class="diff-note">Modifica tecnica: si adegua il riferimento alla nuova struttura con due CSM.</div>
+    </div>
+
+  </section>
+
+  <!-- SECTION 6: Trasparenza Democratica -->
+  <section id="trasparenza">
+    <h2>Nota sulla Trasparenza Democratica</h2>
+
+    <div class="callout callout-warning">
+      <p><strong>Il quesito che troverai sulla scheda</strong> chiede se approvi una legge pubblicata sulla Gazzetta Ufficiale n. 253. Non descrive i cambiamenti. Non spiega cosa modificherà nella Costituzione. Fa riferimento a un numero di Gazzetta Ufficiale.</p>
+    </div>
+
+    <p>Questa è la realtà del referendum confermativo: il cittadino deve rispondere SI o NO a un testo giuridico che modifica <strong>7 articoli della Costituzione</strong>, ma il quesito sulla scheda non li elenca, non li riassume, non li spiega.</p>
+
+    <p>I problemi:</p>
+    <ul>
+      <li><strong>Reperibilità:</strong> non esiste una pagina istituzionale facilmente accessibile che spieghi in linguaggio chiaro cosa si sta votando. Cercando online si trovano opinioni, non il testo.</li>
+      <li><strong>Linguaggio:</strong> il quesito ufficiale è in linguaggio tecnico-giuridico, inaccessibile alla maggior parte dei cittadini.</li>
+      <li><strong>Non-organicità:</strong> la riforma raggruppa cambiamenti distinti (separazione carriere, doppio CSM, sorteggio, Alta Corte disciplinare) in un'unica domanda SI/NO. Un elettore che è favorevole alla separazione delle carriere ma contrario al sorteggio non ha modo di esprimerlo.</li>
+    </ul>
+
+    <p>Il senso di questa pagina è colmare quel vuoto informativo: mettere i testi a disposizione, in forma leggibile, prima di tutto il resto.</p>
+  </section>
+
+  <!-- SECTION 7-11: Reasoning Framework -->
+  <section id="come-ragionare">
+    <h2>Come Ragionare: 7 Domande</h2>
+    <p>Ogni referendum è una decisione a strati. Ogni strato costruisce sul precedente. Un elettore che riesce a rispondere a tutti e sette ha una posizione solida &mdash; indipendentemente da cosa vota.</p>
+
+    <!-- Layer 1 -->
+    <details class="framework-layer">
+      <summary>1. Comprensione &mdash; "Cosa mi viene chiesto davvero?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Qual è la domanda in parole semplici?</strong> Tagliare il linguaggio giuridico e arrivare alla scelta reale.</li>
+          <li><strong>Qual è la situazione attuale?</strong> Non si può valutare un cambiamento senza capire il punto di partenza.</li>
+          <li><strong>Cosa cambierebbe concretamente se vince il SI?</strong> Cambiamenti strutturali specifici, non promesse astratte.</li>
+          <li><strong>Cosa resta uguale in ogni caso?</strong> Restringere il perimetro &mdash; la maggior parte delle cose non cambia.</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Applicato a questo referendum</div>
+          <p>I magistrati continuano ad entrare per concorso. L'indipendenza della magistratura resta un principio costituzionale. Ciò che cambia è l'organizzazione interna: carriere separate, due organi di autogoverno, un nuovo tribunale disciplinare.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Layer 2 -->
+    <details class="framework-layer">
+      <summary>2. Diagnosi del Problema &mdash; "C'è davvero un problema da risolvere?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Quale problema vuole risolvere questa riforma?</strong> Ogni riforma dichiara di risolvere qualcosa &mdash; cosa esattamente?</li>
+          <li><strong>Il problema è reale e documentato, oppure percepito/politico?</strong> Distinguere le evidenze dalla narrazione.</li>
+          <li><strong>Quanto è grave? Chi ne è colpito?</strong> La scala conta &mdash; è un problema sistemico o sono casi isolati?</li>
+          <li><strong>Come funziona effettivamente il sistema attuale?</strong> Dati sui risultati, non solo critiche strutturali.</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Applicato a questo referendum</div>
+          <p>Il problema dichiarato è che condividere la carriera creerebbe uno squilibrio a favore dell'accusa &mdash; il giudice sarebbe troppo vicino al PM. Tuttavia, il tasso di assoluzione in Italia è circa il 45% (tra i più alti d'Europa), il che complica la narrativa del "giudice che sta dalla parte del PM".</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Layer 3 -->
+    <details class="framework-layer">
+      <summary>3. Adeguatezza della Soluzione &mdash; "Questa riforma risolve quel problema?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Il cambiamento proposto affronta logicamente il problema identificato?</strong> Una riforma può puntare a un problema reale ma essere lo strumento sbagliato.</li>
+          <li><strong>Esistono alternative più semplici che non richiedano una modifica costituzionale?</strong> La revisione costituzionale è lo strumento più pesante disponibile.</li>
+          <li><strong>Cosa mostrano le esperienze di altri paesi?</strong> Qualcun altro ci ha provato? Com'è andata?</li>
+          <li><strong>La riforma fa più di quanto necessario?</strong> Attenzione al "bundling" &mdash; cambiamenti non correlati confezionati insieme.</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Applicato a questo referendum</div>
+          <p>La Francia ha separato le carriere ma ha ottenuto controllo politico sui PM. La Germania ha separazione completa ma i PM non sono considerati "autorità giudiziaria" dalla Corte di Giustizia UE. La Spagna nel 2025 ha appena trasferito i poteri investigativi ai PM (direzione diversa). Le evidenze comparative sono miste &mdash; la separazione da sola non garantisce i benefici dichiarati.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Layer 4 -->
+    <details class="framework-layer">
+      <summary>4. Valutazione dei Rischi &mdash; "Cosa potrebbe andare storto?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Quali sono le conseguenze indesiderate plausibili?</strong> I cambiamenti strutturali hanno sempre effetti di secondo ordine.</li>
+          <li><strong>Questo cambiamento è reversibile?</strong> Le modifiche costituzionali sono estremamente difficili da annullare.</li>
+          <li><strong>Questo apre la porta a ulteriori cambiamenti in una direzione preoccupante?</strong> Nel design istituzionale, il piano inclinato è un rischio reale.</li>
+          <li><strong>Chi controlla le nuove strutture?</strong> Seguire la governance &mdash; chi nomina, chi disciplina, chi sorveglia?</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Applicato a questo referendum</div>
+          <p>Rischio che i PM separati perdano le garanzie di autogoverno giudiziario. La nuova Alta Corte disciplinare è composta in parte per sorteggio &mdash; meccanismo nuovo e non testato. Polonia e Ungheria dimostrano che i meccanismi disciplinari possono diventare strumenti di controllo politico. Una modifica costituzionale è praticamente irreversibile.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Layer 5 -->
+    <details class="framework-layer">
+      <summary>5. Interessi e Legittimità &mdash; "Chi vuole questa riforma e perché?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Chi promuove questa riforma e con quali motivazioni dichiarate?</strong> Mappare il panorama politico onestamente.</li>
+          <li><strong>Chi si oppone e con quali motivazioni dichiarate?</strong> Stesso esercizio per l'altra parte.</li>
+          <li><strong>Ci sono interessi non dichiarati da entrambe le parti?</strong> Gli attori politici hanno raramente motivazioni puramente di principio.</li>
+          <li><strong>Come è stata elaborata la riforma?</strong> Ampia consultazione vs. maggioranza parlamentare che forza il passaggio.</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Applicato a questo referendum</div>
+          <p>Promossa dalla coalizione di centrodestra (storicamente in tensione con la magistratura). Avversata dalla maggior parte delle associazioni dei magistrati e da parte dell'opposizione. La riforma è passata senza la maggioranza dei 2/3 &mdash; ed è proprio per questo che i cittadini hanno diritto a un voto confermativo.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Layer 6 -->
+    <details class="framework-layer">
+      <summary>6. La Meccanica del Voto &mdash; "Come funziona il mio voto?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Che tipo di referendum è?</strong> Abrogativo vs. confermativo &mdash; meccaniche diverse.</li>
+          <li><strong>C'è un quorum?</strong> Determina se l'astensione è un'opzione strategica.</li>
+          <li><strong>Cosa succede se non voto?</strong> Cruciale per decidere se andare o no ai seggi.</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Applicato a questo referendum</div>
+          <p>Referendum costituzionale confermativo. <strong>Non c'è quorum.</strong> Vince la maggioranza semplice dei voti validi. Ogni voto conta allo stesso modo &mdash; l'astensione non ha alcun valore strategico, significa solo lasciare che decidano gli altri.</p>
+        </div>
+      </div>
+    </details>
+
+    <!-- Layer 7 -->
+    <details class="framework-layer">
+      <summary>7. Pesatura Personale &mdash; "Cosa conta di più per me?"</summary>
+      <div class="layer-content">
+        <ul>
+          <li><strong>Quale dei livelli precedenti pesa di più per me?</strong> Alcune persone privilegiano il rischio, altre privilegiano la soluzione del problema.</li>
+          <li><strong>Sono a mio agio con l'incertezza?</strong> Se le evidenze sono miste, come decido?</li>
+          <li><strong>Qual è il mio default: cambiare o mantenere lo status quo?</strong> Essere onesti con il proprio bias.</li>
+        </ul>
+        <div class="layer-applied">
+          <div class="layer-applied-label">Nessuno può rispondere a queste domande al posto tuo.</div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <!-- SECTION: International Parallels -->
+  <section id="altri-paesi">
+    <h2>Cosa Fanno gli Altri Paesi</h2>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Modello</th>
+          <th>Paesi</th>
+          <th>PM governati da</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Magistratura unificata</strong></td>
+          <td>Italia (oggi)</td>
+          <td>Autogoverno giudiziario (CSM)</td>
+        </tr>
+        <tr>
+          <td><strong>Separati ma giudiziari</strong></td>
+          <td>Francia (dal 2013)</td>
+          <td>In parte giudiziario, in parte esecutivo</td>
+        </tr>
+        <tr>
+          <td><strong>Separati ed esecutivi</strong></td>
+          <td>Germania, Paesi Bassi</td>
+          <td>Esecutivo (Ministero della Giustizia)</td>
+        </tr>
+        <tr>
+          <td><strong>Pienamente politici</strong></td>
+          <td>USA, Regno Unito</td>
+          <td>Eletti o nominati dal governo</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <details class="framework-layer">
+      <summary>Francia</summary>
+      <div class="layer-content">
+        <p>Separazione storica tra <em>magistrats du siège</em> e <em>magistrats du parquet</em>. Ma i PM sono rimasti sotto l'autorità del Ministro della Giustizia. Risultato: separazione formale, ma <strong>influenza politica sull'azione penale</strong>. Solo nel 2013 una legge ha vietato al Ministro di dare istruzioni sui singoli casi.</p>
+      </div>
+    </details>
+
+    <details class="framework-layer">
+      <summary>Germania</summary>
+      <div class="layer-content">
+        <p>PM (<em>Staatsanwaltschaft</em>) completamente separati dai giudici &mdash; sono funzionari pubblici soggetti a istruzioni dei superiori e in ultima istanza del Ministro della Giustizia. Nel 2019 la CGUE ha stabilito che i PM tedeschi <strong>non possono essere considerati "autorità giudiziaria"</strong> proprio per la mancanza di indipendenza dall'esecutivo.</p>
+      </div>
+    </details>
+
+    <details class="framework-layer">
+      <summary>Spagna</summary>
+      <div class="layer-content">
+        <p>Nel 2025 ha approvato una grande riforma che trasferisce le indagini penali dai giudici istruttori ai PM &mdash; <strong>rafforzando</strong> il ruolo dei PM, non separandolo per indebolirlo. Direzione opposta al dibattito italiano.</p>
+      </div>
+    </details>
+
+    <details class="framework-layer">
+      <summary>Polonia e Ungheria</summary>
+      <div class="layer-content">
+        <p>La riforma giudiziaria polacca è diventata il veicolo per il controllo politico della magistratura: nomine allineate, camera disciplinare usata per rimuovere giudici dissidenti. L'UE ha sanzionato la Polonia per violazione dell'indipendenza giudiziaria. <strong>Non direttamente comparabile</strong> (scopi diversi), ma dimostra che chi controlla il processo disciplinare ha un potere enorme.</p>
+      </div>
+    </details>
+
+    <div class="callout">
+      <p>L'esperienza europea suggerisce che <em>"la separazione delle carriere non è di per sé una garanzia di maggiore indipendenza o imparzialità: deve essere accompagnata da meccanismi di tutela dei diritti, controllo ed equilibrio istituzionale."</em></p>
+    </div>
+  </section>
+
+  <!-- SECTION: Informazioni Pratiche -->
+  <section id="informazioni-pratiche">
+    <h2>Informazioni Pratiche</h2>
+
+    <div class="quick-facts">
+      <div class="quick-fact">
+        <div class="quick-fact-label">Quando</div>
+        <div class="quick-fact-value">22-23 Marzo 2026</div>
+      </div>
+      <div class="quick-fact">
+        <div class="quick-fact-label">Tipo</div>
+        <div class="quick-fact-value">Referendum costituzionale confermativo</div>
+      </div>
+      <div class="quick-fact">
+        <div class="quick-fact-label">Quorum</div>
+        <div class="quick-fact-value">Nessuno</div>
+        <div style="font-size: 0.85rem; color: var(--color-text-secondary);">Vince la maggioranza semplice dei votanti</div>
+      </div>
+      <div class="quick-fact">
+        <div class="quick-fact-label">Perché si vota</div>
+        <div class="quick-fact-value" style="font-size: 0.9rem; font-weight: 400;">Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i cittadini possano confermare o respingere la modifica.</div>
+      </div>
+    </div>
+
+    <div class="vote-summary">
+      <div class="vote-option vote-si">
+        <div class="vote-label">SI</div>
+        <div class="vote-desc">La riforma entra in vigore</div>
+      </div>
+      <div class="vote-option vote-no">
+        <div class="vote-label">NO</div>
+        <div class="vote-desc">Si torna alla situazione attuale</div>
+      </div>
+    </div>
+
+    <!-- Oggi vs Se vince il SÌ -->
+    <h3>Oggi vs Se vince il SI</h3>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Oggi</th>
+          <th>Se vince il SI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Un'unica magistratura (giudici e PM insieme)</td>
+          <td>Carriere separate fin dall'ingresso</td>
+        </tr>
+        <tr>
+          <td>Un solo CSM governa tutti i magistrati</td>
+          <td>Due CSM distinti (uno per giudici, uno per PM)</td>
+        </tr>
+        <tr>
+          <td>La disciplina è gestita dal CSM</td>
+          <td>Nuova Alta Corte disciplinare costituzionale</td>
+        </tr>
+        <tr>
+          <td>Passaggio libero tra funzioni (giudicare / accusare)</td>
+          <td>Scelta definitiva al momento del concorso</td>
+        </tr>
+        <tr>
+          <td>Membri CSM eletti dai colleghi (2/3 togati)</td>
+          <td>Membri CSM sorteggiati (1/3 togati)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  <p>Questa pagina è un progetto informativo indipendente. Non rappresenta una posizione politica.<br>I testi costituzionali sono tratti dalla Gazzetta Ufficiale della Repubblica Italiana.</p>
+</footer>
+
+</body>
+</html>
