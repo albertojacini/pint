@@ -978,9 +978,25 @@ export default function ItaliaReferendum2026Page() {
             <dt className="text-muted-foreground shrink-0 w-28">Perché si vota</dt>
             <dd>Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i cittadini possano confermare o respingere la modifica.</dd>
           </div>
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Se vince il NO</dt>
+            <dd>Si torna alla situazione attuale. Nessun cambiamento alla Costituzione.</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Se vince il SI</dt>
+            <dd>
+              <ul className="space-y-0.5">
+                <li>Carriere separate fin dall&apos;ingresso <ExplainerLink label="Carriere separate" content={<p>Oggi un magistrato può passare dalla funzione giudicante a quella requirente. Con le carriere distinte la scelta è <strong>definitiva al momento del concorso</strong>. Due concorsi separati, due percorsi di carriera separati.</p>}><span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">dettagli</span></ExplainerLink></li>
+                <li>Due CSM distinti (uno per giudici, uno per PM) <ExplainerLink label="Due CSM" content={<p>Se le carriere sono separate, anche l&apos;organo di autogoverno deve essere separato. I favorevoli dicono che evita conflitti di interesse. I critici temono CSM più piccoli e più esposti a influenze esterne.</p>}><span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">dettagli</span></ExplainerLink></li>
+                <li>Nuova Alta Corte disciplinare costituzionale <ExplainerLink label="Alta Corte disciplinare" content={<p>Un organo completamente nuovo. Si occuperà esclusivamente della disciplina dei magistrati. Oggi questa funzione è del CSM (sezione disciplinare). La riforma la trasferisce a questo nuovo organo separato.</p>}><span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">dettagli</span></ExplainerLink></li>
+                <li>Scelta definitiva al momento del concorso <ExplainerLink label="Concorso" content={<p>Oggi c&apos;è un unico concorso per entrare in magistratura. Con la riforma ci saranno due concorsi separati: uno per la carriera giudicante, uno per la carriera requirente. Non sarà più possibile cambiare funzione.</p>}><span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">dettagli</span></ExplainerLink></li>
+                <li>Membri CSM sorteggiati (1/3 togati) <ExplainerLink label="Sorteggio" content={<p>Oggi i membri togati del CSM sono <strong>eletti</strong> dai colleghi. La riforma introduce il <strong>sorteggio</strong>: i nomi vengono estratti a caso. La quota si inverte: da 2/3 togati a 1/3 togati.</p>}><span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">dettagli</span></ExplainerLink></li>
+              </ul>
+            </dd>
+          </div>
         </dl>
 
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-3 mb-10">
           <Box variant="default" padding="md" className="text-center">
             <p className="text-lg font-bold text-positive">SI</p>
             <p className="text-xs text-muted-foreground">La riforma entra in vigore</p>
@@ -989,52 +1005,6 @@ export default function ItaliaReferendum2026Page() {
             <p className="text-lg font-bold text-negative">NO</p>
             <p className="text-xs text-muted-foreground">Si torna alla situazione attuale</p>
           </Box>
-        </div>
-
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-2">
-          Oggi vs Se vince il SI
-        </p>
-        <div className="overflow-x-auto mb-10">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-2 pr-4 font-medium text-muted-foreground">Oggi</th>
-                <th className="text-left py-2 font-medium text-muted-foreground">Se vince il SI</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              <tr>
-                <td className="py-2 pr-4 text-muted-foreground">
-                  Un&apos;unica magistratura (giudici e PM insieme)
-                </td>
-                <td className="py-2">Carriere separate fin dall&apos;ingresso</td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-4 text-muted-foreground">
-                  Un solo CSM governa tutti i magistrati
-                </td>
-                <td className="py-2">Due CSM distinti (uno per giudici, uno per PM)</td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-4 text-muted-foreground">
-                  La disciplina è gestita dal CSM
-                </td>
-                <td className="py-2">Nuova Alta Corte disciplinare costituzionale</td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-4 text-muted-foreground">
-                  Passaggio libero tra funzioni (giudicare / accusare)
-                </td>
-                <td className="py-2">Scelta definitiva al momento del concorso</td>
-              </tr>
-              <tr>
-                <td className="py-2 pr-4 text-muted-foreground">
-                  Membri CSM eletti dai colleghi (2/3 togati)
-                </td>
-                <td className="py-2">Membri CSM sorteggiati (1/3 togati)</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </section>
 
