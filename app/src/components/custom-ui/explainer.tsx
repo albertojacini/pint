@@ -18,6 +18,7 @@ import { useState } from 'react'
 export interface ExplainerChip {
   label: string
   content: React.ReactNode
+  variant?: 'default' | 'accent'
 }
 
 export interface ExplainerItem {
@@ -74,17 +75,23 @@ export function ExplainerLink({ label, title, content, children }: ExplainerLink
 
 function ChipWithDialog({ chip }: { chip: ExplainerChip }) {
   const [open, setOpen] = useState(false)
+  const isAccent = chip.variant === 'accent'
   return (
     <>
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        className={cn(
+          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium transition-colors',
+          isAccent
+            ? 'border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10'
+            : 'border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground'
+        )}
       >
         <CircleHelp className="h-3 w-3 opacity-50" />
         {chip.label}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className={isAccent ? 'max-w-4xl' : 'max-w-lg'}>
           <DialogHeader>
             <DialogTitle>{chip.label}</DialogTitle>
           </DialogHeader>

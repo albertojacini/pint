@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const pageNavSections: PageNavSection[] = [
   { id: 'intro', label: 'Introduzione' },
   { id: 'cronologia', label: 'Cronologia' },
-  { id: 'articoli', label: 'Articoli modificati' },
+  { id: 'articoli', label: 'Contenuto' },
   { id: 'come-ragionare', label: '7 Domande' },
   { id: 'altri-paesi', label: 'Altri paesi' },
 ]
@@ -327,6 +327,22 @@ const articoli: ExplainerItem[] = [
       'Oggi presiede un unico Consiglio Superiore della Magistratura. Con la riforma presiederà sia il CSM giudicante che il CSM requirente.',
     chips: [
       {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <p className="text-sm text-red-900 dark:text-red-200">Presiede il Consiglio superiore della magistratura.</p>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <p className="text-sm text-green-900 dark:text-green-200">Presiede il Consiglio superiore della magistratura <strong>giudicante e il Consiglio superiore della magistratura requirente</strong>.</p>
+            </div>
+          </div>
+        ),
+      },
+      {
         label: 'Due CSM?',
         content: (
           <p>
@@ -358,6 +374,22 @@ const articoli: ExplainerItem[] = [
     description:
       'La separazione tra magistrati giudicanti (giudici) e requirenti (PM) diventa un principio costituzionale. Oggi la Costituzione non distingue.',
     chips: [
+      {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <p className="text-sm text-red-900 dark:text-red-200">La funzione giurisdizionale è esercitata da magistrati ordinari istituiti e regolati dalle norme sull&apos;ordinamento giudiziario.</p>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <p className="text-sm text-green-900 dark:text-green-200">La funzione giurisdizionale è esercitata da magistrati ordinari istituiti e regolati dalle norme sull&apos;ordinamento giudiziario, <strong>le quali disciplinano altresì le distinte carriere dei magistrati giudicanti e dei magistrati requirenti</strong>.</p>
+            </div>
+          </div>
+        ),
+      },
       {
         label: 'Carriere distinte?',
         content: (
@@ -398,6 +430,36 @@ const articoli: ExplainerItem[] = [
       </>
     ),
     chips: [
+      {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <div className="text-sm text-red-900 dark:text-red-200 space-y-1.5">
+                <p>La magistratura costituisce un ordine autonomo e indipendente da ogni altro potere.</p>
+                <p><del className="decoration-red-500 decoration-2">Il Consiglio superiore della magistratura è presieduto dal Presidente della Repubblica.</del></p>
+                <p><del className="decoration-red-500 decoration-2">Ne fanno parte di diritto il primo presidente e il procuratore generale della Corte di cassazione.</del></p>
+                <p>Gli altri componenti sono <del className="decoration-red-500 decoration-2">eletti per due terzi da tutti i magistrati ordinari tra gli appartenenti alle varie categorie, e per un terzo dal Parlamento in seduta comune tra</del> professori ordinari di università in materie giuridiche ed avvocati dopo quindici anni di esercizio.</p>
+                <p>I <del className="decoration-red-500 decoration-2">membri elettivi</del> del Consiglio durano in carica quattro anni e non sono immediatamente <del className="decoration-red-500 decoration-2">rieleggibili</del>.</p>
+                <p>Non possono, finché sono in carica, essere iscritti negli albi professionali, né far parte del Parlamento o di un Consiglio regionale.</p>
+              </div>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <div className="text-sm text-green-900 dark:text-green-200 space-y-1.5">
+                <p>La magistratura costituisce un ordine autonomo e indipendente da ogni altro potere <strong>ed è composta dai magistrati della carriera giudicante e della carriera requirente</strong>.</p>
+                <p><strong>Il Consiglio superiore della magistratura giudicante e il Consiglio superiore della magistratura requirente sono presieduti dal Presidente della Repubblica.</strong></p>
+                <p><strong>Del Consiglio superiore della magistratura giudicante fanno parte di diritto il primo presidente della Corte di cassazione; del Consiglio superiore della magistratura requirente fa parte di diritto il procuratore generale della Corte di cassazione.</strong></p>
+                <p><strong>Gli altri componenti sono sorteggiati, per un terzo, tra i magistrati appartenenti alla rispettiva carriera, e per due terzi, da un elenco compilato dal Parlamento in seduta comune, mediante elezione tra professori ordinari di università in materie giuridiche ed avvocati dopo quindici anni di esercizio.</strong></p>
+                <p>I componenti <strong>sorteggiati</strong> dei Consigli durano in carica quattro anni e non sono immediatamente <strong>selezionabili</strong>.</p>
+                <p>Non possono, finché sono in carica, essere iscritti negli albi professionali, né far parte del Parlamento o di un Consiglio regionale.</p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
       {
         label: 'La quota si inverte?',
         content: (
@@ -455,6 +517,25 @@ const articoli: ExplainerItem[] = [
     ),
     chips: [
       {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <p className="text-sm text-red-900 dark:text-red-200">Spettano al Consiglio superiore della magistratura, secondo le norme dell&apos;ordinamento giudiziario, le assunzioni, le assegnazioni ed i trasferimenti, le promozioni e <del className="decoration-red-500 decoration-2">i provvedimenti disciplinari</del> nei riguardi dei magistrati.</p>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <div className="text-sm text-green-900 dark:text-green-200 space-y-1.5">
+                <p>Spettano a <strong>ciascun</strong> Consiglio superiore della magistratura, secondo le norme dell&apos;ordinamento giudiziario, le assunzioni, le assegnazioni ed i trasferimenti, le promozioni e <strong>gli altri</strong> provvedimenti <strong>riguardanti lo stato</strong> dei magistrati <strong>della rispettiva carriera</strong>.</p>
+                <p><strong>La giurisdizione disciplinare nei riguardi dei magistrati ordinari spetta all&apos;Alta Corte disciplinare, composta da quindici giudici: tre nominati dal Presidente della Repubblica, anche al di fuori dei ruoli della magistratura ordinaria; tre estratti a sorte da un elenco compilato dal Parlamento in seduta comune; sei estratti a sorte tra i magistrati giudicanti, con almeno venti anni di esercizio delle funzioni giudiziarie; tre estratti a sorte tra i magistrati requirenti, con almeno venti anni di esercizio delle funzioni giudiziarie. Non possono partecipare al sorteggio e alla compilazione dell&apos;elenco, per ciascuna componente, il Presidente della Repubblica, i componenti e i membri di diritto dei Consigli superiori della magistratura.</strong></p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
         label: 'Sottratta ai CSM?',
         content: (
           <>
@@ -474,6 +555,22 @@ const articoli: ExplainerItem[] = [
     description:
       'Oggi professori e avvocati illustri possono diventare consiglieri di cassazione. La riforma aggiunge la possibilità di diventare sostituti procuratori generali.',
     chips: [
+      {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <p className="text-sm text-red-900 dark:text-red-200">Su designazione del Consiglio superiore della magistratura possono essere chiamati all&apos;ufficio di consiglieri di cassazione<del className="decoration-red-500 decoration-2">,</del> per meriti insigni, professori ordinari di università in materie giuridiche e avvocati che abbiano quindici anni d&apos;esercizio e siano iscritti negli albi speciali per le giurisdizioni superiori.</p>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <p className="text-sm text-green-900 dark:text-green-200">Su designazione del <strong>rispettivo</strong> Consiglio superiore della magistratura possono essere chiamati all&apos;ufficio di consiglieri di cassazione <strong>e a quello di sostituti procuratori generali presso la Corte di cassazione</strong>, per meriti insigni, professori ordinari di università in materie giuridiche e avvocati che abbiano quindici anni d&apos;esercizio e siano iscritti negli albi speciali per le giurisdizioni superiori.</p>
+            </div>
+          </div>
+        ),
+      },
       {
         label: 'Meriti insigni?',
         content: (
@@ -498,6 +595,24 @@ const articoli: ExplainerItem[] = [
         L&apos;unica modifica: trasferimento e sospensione sono decisi dal rispettivo CSM, non più da un CSM unico.
       </>
     ),
+    chips: [
+      {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <p className="text-sm text-red-900 dark:text-red-200">I magistrati sono inamovibili. Non possono essere dispensati o sospesi dal servizio né destinati ad altre sedi o funzioni se non in seguito a decisione del Consiglio superiore della magistratura, adottata o per i motivi e con le garanzie di difesa stabilite dall&apos;ordinamento giudiziario o con il loro consenso.</p>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <p className="text-sm text-green-900 dark:text-green-200">I magistrati sono inamovibili. Non possono essere dispensati o sospesi dal servizio né destinati ad altre sedi o funzioni se non in seguito a decisione del <strong>rispettivo</strong> Consiglio superiore della magistratura, adottata o per i motivi e con le garanzie di difesa stabilite dall&apos;ordinamento giudiziario o con il loro consenso.</p>
+            </div>
+          </div>
+        ),
+      },
+    ],
   },
   {
     label: 'Art. 110, comma 1',
@@ -510,6 +625,24 @@ const articoli: ExplainerItem[] = [
         mantiene le competenze sui servizi della giustizia. Il riferimento passa da &quot;il CSM&quot; a &quot;ciascun CSM&quot;.
       </>
     ),
+    chips: [
+      {
+        label: 'Dettagli',
+        variant: 'accent' as const,
+        content: (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="rounded-md border border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-red-400 mb-1">Testo vigente</p>
+              <p className="text-sm text-red-900 dark:text-red-200">Ferme le competenze <del className="decoration-red-500 decoration-2">del</del> Consiglio superiore della magistratura, il Ministro della giustizia ha facoltà di promuovere l&apos;azione disciplinare.</p>
+            </div>
+            <div className="rounded-md border border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30 p-3">
+              <p className="text-[10px] uppercase tracking-wider text-green-400 mb-1">Testo proposto</p>
+              <p className="text-sm text-green-900 dark:text-green-200">Ferme le competenze <strong>di ciascun</strong> Consiglio superiore della magistratura, il Ministro della giustizia ha facoltà di promuovere l&apos;azione disciplinare.</p>
+            </div>
+          </div>
+        ),
+      },
+    ],
   },
 ]
 
@@ -909,7 +1042,10 @@ export default function ItaliaReferendum2026Page() {
         <Explainer type="timeline" items={cronologia} />
       </SectionL1>
 
-      <SectionL1 id="articoli" title="Cosa cambia nella Costituzione">
+      <SectionL1 id="articoli" title="Contenuto">
+        <Muted className="mb-4">
+          La legge modifica 7 articoli della Costituzione. Questi sono i cambiamenti proposti, articolo per articolo.
+        </Muted>
         <Explainer items={articoli} />
       </SectionL1>
 
