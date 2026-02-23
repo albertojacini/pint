@@ -22,7 +22,6 @@ const pageNavSections: PageNavSection[] = [
   { id: 'articoli', label: 'Articoli modificati' },
   { id: 'come-ragionare', label: '7 Domande' },
   { id: 'altri-paesi', label: 'Altri paesi' },
-  { id: 'info-pratiche', label: 'Info pratiche' },
 ]
 
 // ============================================================================
@@ -809,7 +808,7 @@ export default function ItaliaReferendum2026Page() {
   return (
     <PageNavLayout sections={pageNavSections}>
       <Breadcrumbs items={[
-        { label: 'Specials' },
+        { label: 'Guide' },
         { label: 'Guida super compatta referendum 2026' },
       ]} />
       <PageHeader
@@ -818,89 +817,35 @@ export default function ItaliaReferendum2026Page() {
       />
 
       <section id="intro" className="scroll-mt-32 lg:scroll-mt-20">
-        <Muted className="mb-6">
-          Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di
-          giudici e pubblici ministeri.
-        </Muted>
+        <dl className="text-sm space-y-1 mb-6">
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">In breve</dt>
+            <dd>Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di giudici e pubblici ministeri.</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Quesito ufficiale</dt>
+            <dd className="italic text-muted-foreground">Approvate il testo della legge costituzionale concernente &laquo;Norme in materia di ordinamento giurisdizionale e di istituzione della Corte disciplinare&raquo; approvato dal Parlamento e pubblicato nella Gazzetta Ufficiale n.&nbsp;253 del 30&nbsp;ottobre&nbsp;2025?</dd>
+          </div>
+        </dl>
 
-        <Box variant="muted" padding="md" className="mb-6">
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1">
-            Quesito sulla scheda elettorale
-          </p>
-          <p className="text-sm italic text-muted-foreground leading-relaxed">
-            Approvate il testo della legge costituzionale concernente &laquo;Norme in materia di
-            ordinamento giurisdizionale e di istituzione della Corte disciplinare&raquo; approvato
-            dal Parlamento e pubblicato nella Gazzetta Ufficiale n.&nbsp;253 del
-            30&nbsp;ottobre&nbsp;2025?
-          </p>
-        </Box>
-
-        <div className="grid grid-cols-2 gap-3 mb-10">
-          <Box variant="default" padding="md" className="text-center">
-            <p className="text-lg font-bold text-positive">SI</p>
-            <p className="text-xs text-muted-foreground">La riforma entra in vigore</p>
-          </Box>
-          <Box variant="default" padding="md" className="text-center">
-            <p className="text-lg font-bold text-negative">NO</p>
-            <p className="text-xs text-muted-foreground">Si torna alla situazione attuale</p>
-          </Box>
-        </div>
-      </section>
-
-      <SectionL1 id="cronologia" title="Cronologia">
-        <Explainer type="timeline" items={cronologia} />
-      </SectionL1>
-
-      <SectionL1 id="articoli" title="Cosa cambia nella Costituzione">
-        <Explainer items={articoli} />
-      </SectionL1>
-
-      <SectionL1 id="come-ragionare" title="Come Ragionare: 7 Domande">
-        <Muted className="mb-4">
-          Ogni referendum è una decisione a strati. Ogni strato costruisce sul precedente. Un
-          elettore che riesce a rispondere a tutti e sette ha una posizione solida —
-          indipendentemente da cosa vota.
-        </Muted>
-        <Explainer items={setteDomande} />
-      </SectionL1>
-
-      <SectionL1 id="altri-paesi" title="Cosa Fanno gli Altri Paesi">
-        <Explainer items={altriPaesi} />
-      </SectionL1>
-
-      <SectionL1 id="info-pratiche" title="Informazioni Pratiche">
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <Box variant="muted" padding="md">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
-              Quando
-            </p>
-            <p className="text-sm font-medium">22-23 Marzo 2026</p>
-          </Box>
-          <Box variant="muted" padding="md">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
-              Tipo
-            </p>
-            <p className="text-sm font-medium">Referendum costituzionale confermativo</p>
-          </Box>
-          <Box variant="muted" padding="md">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
-              Quorum
-            </p>
-            <p className="text-sm font-medium">Nessuno</p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Vince la maggioranza semplice dei votanti
-            </p>
-          </Box>
-          <Box variant="muted" padding="md">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
-              Perché si vota
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i
-              cittadini possano confermare o respingere la modifica.
-            </p>
-          </Box>
-        </div>
+        <dl className="text-sm space-y-1 mb-6">
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Quando</dt>
+            <dd className="font-medium">22-23 Marzo 2026</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Tipo</dt>
+            <dd className="font-medium">Referendum costituzionale confermativo</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Quorum</dt>
+            <dd><span className="font-medium">Nessuno</span> — vince la maggioranza semplice dei votanti</dd>
+          </div>
+          <div className="flex gap-2">
+            <dt className="text-muted-foreground shrink-0 w-28">Perché si vota</dt>
+            <dd>Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i cittadini possano confermare o respingere la modifica.</dd>
+          </div>
+        </dl>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
           <Box variant="default" padding="md" className="text-center">
@@ -916,7 +861,7 @@ export default function ItaliaReferendum2026Page() {
         <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-2">
           Oggi vs Se vince il SI
         </p>
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mb-10">
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b border-border">
@@ -958,6 +903,27 @@ export default function ItaliaReferendum2026Page() {
             </tbody>
           </table>
         </div>
+      </section>
+
+      <SectionL1 id="cronologia" title="Cronologia">
+        <Explainer type="timeline" items={cronologia} />
+      </SectionL1>
+
+      <SectionL1 id="articoli" title="Cosa cambia nella Costituzione">
+        <Explainer items={articoli} />
+      </SectionL1>
+
+      <SectionL1 id="come-ragionare" title="Come Ragionare: 7 Domande">
+        <Muted className="mb-4">
+          Ogni referendum è una decisione a strati. Ogni strato costruisce sul precedente. Un
+          elettore che riesce a rispondere a tutti e sette ha una posizione solida —
+          indipendentemente da cosa vota.
+        </Muted>
+        <Explainer items={setteDomande} />
+      </SectionL1>
+
+      <SectionL1 id="altri-paesi" title="Cosa Fanno gli Altri Paesi">
+        <Explainer items={altriPaesi} />
       </SectionL1>
     </PageNavLayout>
   )

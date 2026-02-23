@@ -91,6 +91,17 @@ export default async function Home() {
         </div>
       ) : null}
 
+      {/* Guide */}
+      <div className="mt-12 border border-border rounded-lg p-6">
+        <SectionL1Title className="mb-1">Guide</SectionL1Title>
+        <Link
+          href="/guides/italia-referendum-2026"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+        >
+          Guida super compatta al referendum 2026 sulla separazione delle carriere
+        </Link>
+      </div>
+
       {/* Browse All Entities */}
       <div className="mt-12 text-center">
         <p className="text-gray-600 mb-4">{t('exploreOtherCities')}</p>
