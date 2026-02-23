@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@next/third-parties": "^16.1.6",
     "@pint/types": "workspace:*",
     "@pint/ui": "workspace:*",
     "@radix-ui/react-dialog": "^1.0.5",

@@ -814,6 +814,57 @@
     .modal-body p:last-child {
       margin-bottom: 0;
     }
+
+    /* Wide modal for diffs */
+    dialog.modal-wide {
+      border: none;
+      border-radius: 10px;
+      padding: 0;
+      max-width: 780px;
+      width: calc(100% - 2rem);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      background: var(--color-surface);
+    }
+
+    dialog.modal-wide::backdrop {
+      background: rgba(0,0,0,0.4);
+    }
+
+    dialog.modal-wide .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    dialog.modal-wide .modal-header h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    dialog.modal-wide .diff-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    dialog.modal-wide .diff-side {
+      padding: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 600px) {
+      dialog.modal-wide .diff-container {
+        grid-template-columns: 1fr;
+      }
+      dialog.modal-wide .diff-side-old {
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+      }
+    }
   </style>
 </head>
 <body>
@@ -830,6 +881,7 @@
         <a href="#chi-ha-chiesto">Chi Ha Chiesto Questo Referendum</a>
         <a href="#legge-costituzionale">La Legge Costituzionale</a>
         <a href="#articoli-confronto">Gli Articoli: Prima e Dopo</a>
+        <a href="#articoli-sintesi">Gli Articoli: Sintesi</a>
         <a href="#trasparenza">Nota sulla Trasparenza Democratica</a>
         <a href="#come-ragionare">Come Ragionare: 7 Domande</a>
         <a href="#altri-paesi">Cosa Fanno gli Altri Paesi</a>
@@ -876,82 +928,106 @@
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">2024</div>
-          <div class="crono-title">Proposta di legge costituzionale</div>
-          <div class="crono-sub">Il governo presenta un disegno di legge per modificare gli articoli della Costituzione sulla magistratura.</div>
+          <div class="crono-title">Il governo presenta un disegno di legge costituzionale</div>
+          <div class="crono-sub">La proposta modifica 7 articoli della Costituzione relativi alla magistratura, al CSM e al sistema disciplinare.</div>
         </div>
         <div class="crono-chips">
-          <a class="crono-chip" data-modal="m-legge-cost">Cos'è una legge costituzionale?</a>
-          <a class="crono-chip" data-modal="m-chi-proposto">Chi l'ha proposta?</a>
+          <a class="crono-chip" data-modal="m-governo">Il governo?</a>
+          <a class="crono-chip" data-modal="m-ddl">Disegno di legge?</a>
+          <a class="crono-chip" data-modal="m-legge-cost">Legge costituzionale?</a>
+          <a class="crono-chip" data-modal="m-7-articoli">7 articoli?</a>
+          <a class="crono-chip" data-modal="m-magistratura">Magistratura?</a>
+          <a class="crono-chip" data-modal="m-csm-intro">CSM?</a>
+          <a class="crono-chip" data-modal="m-disciplinare">Sistema disciplinare?</a>
         </div>
       </div>
 
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">Gen &ndash; Mar 2025</div>
-          <div class="crono-title">1a votazione: Camera e Senato</div>
-          <div class="crono-sub">Entrambe le Camere approvano il testo in prima lettura.</div>
+          <div class="crono-title">1a votazione: Camera e Senato approvano in prima lettura</div>
+          <div class="crono-sub">L'Art. 138 della Costituzione richiede una doppia deliberazione per ogni revisione costituzionale.</div>
         </div>
         <div class="crono-chips">
-          <a class="crono-chip" data-modal="m-doppia-votazione">Perché due votazioni?</a>
-          <a class="crono-chip" data-modal="m-art138">Cos'è l'Art. 138?</a>
+          <a class="crono-chip" data-modal="m-camere">Camera e Senato?</a>
+          <a class="crono-chip" data-modal="m-prima-lettura">Prima lettura?</a>
+          <a class="crono-chip" data-modal="m-art138">Art. 138?</a>
+          <a class="crono-chip" data-modal="m-doppia-votazione">Doppia deliberazione?</a>
+          <a class="crono-chip" data-modal="m-revisione-cost">Revisione costituzionale?</a>
         </div>
       </div>
 
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">Set &ndash; Ott 2025</div>
-          <div class="crono-title">2a votazione: maggioranza assoluta (non 2/3)</div>
-          <div class="crono-sub">Camera (18 set) e Senato (29 ott) approvano con maggioranza assoluta, ma senza i 2/3 dei voti.</div>
+          <div class="crono-title">2a votazione: approvata con maggioranza assoluta, non con i 2/3</div>
+          <div class="crono-sub">Camera (18 set) e Senato (29 ott) approvano. Senza i 2/3 si attiva la possibilità del referendum confermativo.</div>
         </div>
         <div class="crono-chips">
-          <a class="crono-chip" data-modal="m-due-terzi">Perché conta non avere i 2/3?</a>
-          <a class="crono-chip" data-modal="m-magg-assoluta">Cos'è la maggioranza assoluta?</a>
+          <a class="crono-chip" data-modal="m-magg-assoluta">Maggioranza assoluta?</a>
+          <a class="crono-chip" data-modal="m-due-terzi">Perché contano i 2/3?</a>
+          <a class="crono-chip" data-modal="m-ref-confermativo">Referendum confermativo?</a>
+          <a class="crono-chip" data-modal="m-chi-favore">Chi ha votato a favore?</a>
+          <a class="crono-chip" data-modal="m-chi-contro">Chi ha votato contro?</a>
         </div>
       </div>
 
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">30 Ottobre 2025</div>
-          <div class="crono-title">Pubblicazione in Gazzetta Ufficiale</div>
-          <div class="crono-sub">GU Serie Generale n. 253. Parte la finestra di 3 mesi per chiedere il referendum.</div>
+          <div class="crono-title">Pubblicazione nella Gazzetta Ufficiale</div>
+          <div class="crono-sub">La legge appare nella GU Serie Generale n. 253. Da questa data partono i 3 mesi per chiedere il referendum.</div>
         </div>
         <div class="crono-chips">
-          <a class="crono-chip" data-modal="m-gu">Cos'è la Gazzetta Ufficiale?</a>
-          <a class="crono-chip" data-modal="m-tre-mesi">Perché 3 mesi?</a>
+          <a class="crono-chip" data-modal="m-gu">Gazzetta Ufficiale?</a>
+          <a class="crono-chip" data-modal="m-serie-generale">Serie Generale?</a>
+          <a class="crono-chip" data-modal="m-tre-mesi">3 mesi?</a>
+          <a class="crono-chip" data-modal="m-dove-testo">Dove trovo il testo completo?</a>
         </div>
       </div>
 
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">Nov &ndash; Dic 2025</div>
-          <div class="crono-title">Richieste di referendum</div>
-          <div class="crono-sub">Parlamentari di maggioranza e opposizione depositano le firme. 15 cittadini avviano la raccolta firme.</div>
+          <div class="crono-title">Richieste di referendum da maggioranza, opposizione e cittadini</div>
+          <div class="crono-sub">I parlamentari depositano le firme presso la Corte di Cassazione. 15 cittadini avviano la raccolta di 500.000 firme.</div>
         </div>
         <div class="crono-chips">
+          <a class="crono-chip" data-modal="m-entrambi">Maggioranza e opposizione?</a>
+          <a class="crono-chip" data-modal="m-deposito-firme">Depositano le firme?</a>
+          <a class="crono-chip" data-modal="m-cassazione">Corte di Cassazione?</a>
+          <a class="crono-chip" data-modal="m-500k">500.000 firme?</a>
           <a class="crono-chip" data-modal="m-chi-chiede">Chi può chiedere il referendum?</a>
-          <a class="crono-chip" data-modal="m-entrambi">Perché maggioranza e opposizione?</a>
         </div>
       </div>
 
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">18 Novembre 2025</div>
-          <div class="crono-title">L'Ufficio Centrale ammette 4 richieste</div>
-          <div class="crono-sub">L'Ufficio Centrale per il Referendum presso la Corte di Cassazione dichiara ammissibili le richieste.</div>
+          <div class="crono-title">L'Ufficio Centrale dichiara ammissibili 4 richieste</div>
+          <div class="crono-sub">L'UCR presso la Corte di Cassazione verifica la regolarità formale delle richieste presentate.</div>
         </div>
         <div class="crono-chips">
-          <a class="crono-chip" data-modal="m-ucr">Cos'è l'UCR?</a>
+          <a class="crono-chip" data-modal="m-ucr">Ufficio Centrale?</a>
+          <a class="crono-chip" data-modal="m-ammissibili">Ammissibili?</a>
+          <a class="crono-chip" data-modal="m-4-richieste">Perché 4 richieste?</a>
+          <a class="crono-chip" data-modal="m-regolarita">Regolarità formale?</a>
         </div>
       </div>
 
       <div class="crono-step">
         <div class="crono-body">
           <div class="crono-date">22-23 Marzo 2026</div>
-          <div class="crono-title">Si vota</div>
-          <div class="crono-sub">Referendum confermativo. Nessun quorum: vince la maggioranza semplice dei voti validi.</div>
+          <div class="crono-title">Si vota: SI o NO</div>
+          <div class="crono-sub">Nessun quorum. Vince la maggioranza semplice dei voti validi. L'astensione non ha valore strategico.</div>
         </div>
         <div class="crono-chips">
-          <a class="crono-chip" data-modal="m-quorum">C'è un quorum?</a>
+          <a class="crono-chip" data-modal="m-quorum">Nessun quorum?</a>
+          <a class="crono-chip" data-modal="m-magg-semplice">Maggioranza semplice?</a>
+          <a class="crono-chip" data-modal="m-voti-validi">Voti validi?</a>
+          <a class="crono-chip" data-modal="m-vince-si">Cosa succede se vince il SI?</a>
+          <a class="crono-chip" data-modal="m-vince-no">Cosa succede se vince il NO?</a>
+          <a class="crono-chip" data-modal="m-astensione">L'astensione?</a>
         </div>
       </div>
 
@@ -959,59 +1035,177 @@
   </section>
 
   <!-- Cronologia modals -->
+
+  <!-- Step 1 modals -->
+  <dialog class="modal" id="m-governo">
+    <div class="modal-header"><h3>Quale governo?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il governo di centrodestra guidato da Giorgia Meloni (coalizione Fratelli d'Italia, Lega, Forza Italia). La separazione delle carriere dei magistrati è un tema storicamente caro al centrodestra italiano, in particolare a Forza Italia fin dai tempi di Berlusconi.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-ddl">
+    <div class="modal-header"><h3>Cos'è un disegno di legge?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Un <strong>disegno di legge</strong> (DDL) è una proposta di legge presentata dal governo al Parlamento. A differenza della "proposta di legge" (che può venire da singoli parlamentari), il DDL è un'iniziativa del Consiglio dei Ministri.</p>
+      <p>Il Parlamento può approvarlo, modificarlo o respingerlo. Non diventa legge finché entrambe le Camere non votano lo stesso testo identico.</p>
+    </div>
+  </dialog>
+
   <dialog class="modal" id="m-legge-cost">
     <div class="modal-header"><h3>Cos'è una legge costituzionale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p>Una legge costituzionale è una legge che <strong>modifica la Costituzione</strong>. Non è una legge ordinaria: richiede un procedimento speciale (Art. 138) con due votazioni in ciascuna Camera a distanza di almeno tre mesi.</p>
+      <p>Una legge che <strong>modifica la Costituzione</strong>. Non è una legge ordinaria: richiede un procedimento speciale (Art. 138) con due votazioni in ciascuna Camera a distanza di almeno tre mesi.</p>
       <p>Serve una maggioranza più alta del normale, e se non si raggiungono i 2/3 dei voti, i cittadini possono chiedere un referendum per confermarla o respingerla.</p>
     </div>
   </dialog>
 
-  <dialog class="modal" id="m-chi-proposto">
-    <div class="modal-header"><h3>Chi ha proposto la riforma?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+  <dialog class="modal" id="m-7-articoli">
+    <div class="modal-header"><h3>Quali 7 articoli vengono modificati?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p>Il disegno di legge costituzionale è stato presentato dal <strong>governo</strong> di centrodestra (coalizione FdI, Lega, FI). La separazione delle carriere dei magistrati è un tema storicamente caro al centrodestra italiano, in particolare a Forza Italia fin dai tempi di Berlusconi.</p>
+      <p>La legge modifica:</p>
+      <ul>
+        <li><strong>Art. 87</strong> c.10 &mdash; Poteri del Presidente della Repubblica (presiederà due CSM)</li>
+        <li><strong>Art. 102</strong> c.1 &mdash; Introduce le "distinte carriere" in Costituzione</li>
+        <li><strong>Art. 104</strong> &mdash; Due CSM separati, membri sorteggiati (non più eletti)</li>
+        <li><strong>Art. 105</strong> &mdash; Competenze dei CSM + nuova Alta Corte disciplinare</li>
+        <li><strong>Art. 106</strong> c.3 &mdash; Nomina consiglieri di cassazione</li>
+        <li><strong>Art. 107</strong> c.1 &mdash; Inamovibilità dei magistrati</li>
+        <li><strong>Art. 110</strong> c.1 &mdash; Servizi del Ministero della Giustizia</li>
+      </ul>
+      <p>Più un art. 8 con disposizioni transitorie (attuazione entro 1 anno).</p>
     </div>
   </dialog>
 
-  <dialog class="modal" id="m-doppia-votazione">
-    <div class="modal-header"><h3>Perché servono due votazioni?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+  <dialog class="modal" id="m-magistratura">
+    <div class="modal-header"><h3>Cos'è la magistratura?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p>L'Art. 138 richiede che ogni Camera voti <strong>due volte</strong> sullo stesso testo, a distanza di almeno tre mesi. Questo serve a garantire che la decisione di modificare la Costituzione sia ponderata e non frettolosa.</p>
-      <p>In pratica: Camera vota (1a), Senato vota (1a), passano almeno 3 mesi, Camera vota di nuovo (2a), Senato vota di nuovo (2a). Solo la seconda votazione determina le soglie di maggioranza rilevanti.</p>
+      <p>La magistratura è il corpo dei <strong>magistrati</strong>: le persone che esercitano il potere giudiziario. In Italia comprende due figure:</p>
+      <ul>
+        <li><strong>Giudici</strong> (magistrati giudicanti) &mdash; decidono le cause, emettono sentenze</li>
+        <li><strong>Pubblici Ministeri</strong> (magistrati requirenti) &mdash; conducono le indagini, sostengono l'accusa nei processi penali</li>
+      </ul>
+      <p>Oggi appartengono tutti allo stesso "ordine" e possono passare da una funzione all'altra. La riforma vuole separarli definitivamente.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-csm-intro">
+    <div class="modal-header"><h3>Cos'è il CSM?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il <strong>Consiglio Superiore della Magistratura</strong> è l'organo di autogoverno dei magistrati. Gestisce le loro carriere: assunzioni, assegnazioni, trasferimenti, promozioni e provvedimenti disciplinari.</p>
+      <p>È presieduto dal Presidente della Repubblica. Oggi è uno solo per tutti i magistrati. La riforma lo sdoppia in due: uno per i giudici, uno per i PM.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-disciplinare">
+    <div class="modal-header"><h3>Cos'è il sistema disciplinare?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il meccanismo con cui i magistrati vengono sanzionati se commettono illeciti professionali (ritardi gravi, comportamenti scorretti, violazioni dei doveri).</p>
+      <p>Oggi la disciplina è gestita dal CSM. La riforma la trasferisce a un nuovo organo: l'<strong>Alta Corte disciplinare</strong>, composta da 15 membri scelti in parte per sorteggio.</p>
+    </div>
+  </dialog>
+
+  <!-- Step 2 modals -->
+  <dialog class="modal" id="m-camere">
+    <div class="modal-header"><h3>Camera e Senato</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il Parlamento italiano è composto da due Camere:</p>
+      <ul>
+        <li><strong>Camera dei Deputati</strong> &mdash; 400 membri</li>
+        <li><strong>Senato della Repubblica</strong> &mdash; 200 membri eletti + senatori a vita</li>
+      </ul>
+      <p>Per approvare una legge, entrambe le Camere devono votare lo stesso testo identico (sistema del "bicameralismo perfetto").</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-prima-lettura">
+    <div class="modal-header"><h3>Cos'è la prima lettura?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Per le leggi costituzionali, ogni Camera vota <strong>due volte</strong>. La "prima lettura" è la prima di queste votazioni. Tra la prima e la seconda devono passare almeno 3 mesi.</p>
+      <p>Nella prima lettura basta la maggioranza semplice (metà + 1 dei presenti). È nella seconda votazione che si gioca la partita: servono almeno la maggioranza assoluta, e se non si arriva ai 2/3 si apre la strada al referendum.</p>
     </div>
   </dialog>
 
   <dialog class="modal" id="m-art138">
     <div class="modal-header"><h3>Art. 138 della Costituzione</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p>L'articolo 138 regola il <strong>procedimento di revisione costituzionale</strong>. È il "lucchetto" della Costituzione: rende le modifiche possibili ma difficili, proteggendo i principi fondamentali da cambiamenti affrettati.</p>
-      <p>Prevede: doppia votazione, intervallo minimo di 3 mesi, e &mdash; se non si raggiungono i 2/3 &mdash; la possibilità per i cittadini di avere l'ultima parola tramite referendum.</p>
+      <p>L'articolo 138 regola il <strong>procedimento di revisione costituzionale</strong>. È il "lucchetto" della Costituzione: rende le modifiche possibili ma difficili.</p>
+      <p>Prevede: doppia votazione in ogni Camera, intervallo minimo di 3 mesi, e &mdash; se non si raggiungono i 2/3 &mdash; la possibilità per i cittadini di avere l'ultima parola tramite referendum.</p>
     </div>
   </dialog>
 
-  <dialog class="modal" id="m-due-terzi">
-    <div class="modal-header"><h3>Perché conta non avere i 2/3?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+  <dialog class="modal" id="m-doppia-votazione">
+    <div class="modal-header"><h3>Perché servono due deliberazioni?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p>Se la seconda votazione raggiunge i <strong>2/3 dei voti</strong> in entrambe le Camere, la revisione costituzionale entra in vigore automaticamente. Nessun referendum è possibile.</p>
-      <p>Se invece passa con la sola <strong>maggioranza assoluta</strong> (metà + 1 dei componenti), si apre la finestra per il referendum confermativo. Questo è il caso della riforma sulla separazione delle carriere.</p>
-      <p>La logica: se c'è un consenso larghissimo (2/3), la modifica si considera sufficientemente condivisa. Altrimenti, la decisione finale spetta ai cittadini.</p>
+      <p>L'Art. 138 richiede che ogni Camera voti <strong>due volte</strong> sullo stesso testo, a distanza di almeno tre mesi. Questo serve a garantire che la decisione di modificare la Costituzione sia ponderata e non frettolosa &mdash; un "periodo di riflessione" obbligatorio.</p>
+      <p>In pratica: Camera vota (1a), Senato vota (1a), passano almeno 3 mesi, Camera vota di nuovo (2a), Senato vota di nuovo (2a).</p>
     </div>
   </dialog>
 
+  <dialog class="modal" id="m-revisione-cost">
+    <div class="modal-header"><h3>Cos'è una revisione costituzionale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Una modifica al testo della Costituzione. La Costituzione italiana non è "intoccabile" ma è <strong>rigida</strong>: cambiarla richiede un procedimento più lungo e più consensuale di una legge ordinaria.</p>
+      <p>Attenzione: l'Art. 139 stabilisce che la "forma repubblicana" non può essere oggetto di revisione &mdash; è l'unico limite assoluto.</p>
+    </div>
+  </dialog>
+
+  <!-- Step 3 modals -->
   <dialog class="modal" id="m-magg-assoluta">
     <div class="modal-header"><h3>Cos'è la maggioranza assoluta?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p><strong>Maggioranza assoluta</strong> = metà + 1 dei <em>componenti</em> della Camera (non dei presenti). Alla Camera sono 201 su 400, al Senato 101 su 200.</p>
+      <p><strong>Maggioranza assoluta</strong> = metà + 1 dei <em>componenti</em> totali della Camera (non dei presenti). Alla Camera sono 201 su 400, al Senato 101 su 200.</p>
       <p>È diversa dalla maggioranza semplice (metà + 1 dei presenti) e dalla maggioranza qualificata dei 2/3 (267 alla Camera, 134 al Senato).</p>
     </div>
   </dialog>
 
+  <dialog class="modal" id="m-due-terzi">
+    <div class="modal-header"><h3>Perché contano i 2/3?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Se la seconda votazione raggiunge i <strong>2/3 dei voti</strong> in entrambe le Camere, la revisione costituzionale entra in vigore automaticamente. Nessun referendum è possibile.</p>
+      <p>Se invece passa con la sola maggioranza assoluta (ma non i 2/3), si apre la finestra per il referendum confermativo.</p>
+      <p>La logica: se c'è un consenso larghissimo (2/3), la modifica si considera sufficientemente condivisa. Altrimenti, la decisione finale spetta ai cittadini.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-ref-confermativo">
+    <div class="modal-header"><h3>Cos'è un referendum confermativo?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Un referendum in cui si chiede ai cittadini di <strong>confermare o respingere</strong> una legge costituzionale già approvata dal Parlamento. Non è un referendum abrogativo (quelli che cancellano leggi ordinarie).</p>
+      <p>Differenza chiave: il referendum abrogativo richiede un quorum (50%+1 degli aventi diritto devono votare). Il referendum confermativo <strong>non ha quorum</strong> &mdash; vince la maggioranza semplice dei voti validi.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-chi-favore">
+    <div class="modal-header"><h3>Chi ha votato a favore?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La coalizione di <strong>centrodestra</strong>: Fratelli d'Italia, Lega, Forza Italia, Noi Moderati. La riforma è un'iniziativa del governo Meloni.</p>
+      <p>Anche Italia Viva e Azione hanno sostenuto la riforma.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-chi-contro">
+    <div class="modal-header"><h3>Chi ha votato contro?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'<strong>opposizione di centrosinistra</strong>: PD, Movimento 5 Stelle, Alleanza Verdi-Sinistra.</p>
+      <p>Si oppone anche la maggior parte delle associazioni dei magistrati (ANM in testa), che considerano la riforma un rischio per l'indipendenza della magistratura.</p>
+    </div>
+  </dialog>
+
+  <!-- Step 4 modals -->
   <dialog class="modal" id="m-gu">
     <div class="modal-header"><h3>Cos'è la Gazzetta Ufficiale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
       <p>La <strong>Gazzetta Ufficiale</strong> (GU) è il giornale ufficiale dello Stato italiano. Tutte le leggi, i decreti e gli atti normativi vengono pubblicati qui per diventare ufficialmente conoscibili dai cittadini.</p>
       <p>La pubblicazione in GU è il momento da cui partono i termini legali &mdash; in questo caso, i 3 mesi per richiedere il referendum.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-serie-generale">
+    <div class="modal-header"><h3>Cos'è la Serie Generale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La Gazzetta Ufficiale ha diverse serie. La <strong>Serie Generale</strong> è quella principale, dove vengono pubblicati le leggi, i decreti-legge, i decreti del Presidente della Repubblica e le leggi costituzionali.</p>
+      <p>Altre serie riguardano i concorsi (Serie Concorsi), le normative europee (Serie UE), ecc.</p>
     </div>
   </dialog>
 
@@ -1022,19 +1216,15 @@
     </div>
   </dialog>
 
-  <dialog class="modal" id="m-chi-chiede">
-    <div class="modal-header"><h3>Chi può chiedere il referendum confermativo?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+  <dialog class="modal" id="m-dove-testo">
+    <div class="modal-header"><h3>Dove si trova il testo completo?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p>Tre soggetti possono farlo:</p>
-      <ul>
-        <li><strong>1/5 dei membri</strong> di una Camera (80 deputati o 40 senatori)</li>
-        <li><strong>500.000 elettori</strong></li>
-        <li><strong>5 Consigli regionali</strong></li>
-      </ul>
-      <p>Basta che uno di questi presenti la richiesta entro 3 mesi dalla pubblicazione in GU.</p>
+      <p>Il testo ufficiale è nella Gazzetta Ufficiale n. 253 del 30 ottobre 2025 (ID: 25A05968), consultabile sul sito <strong>gazzettaufficiale.it</strong>.</p>
+      <p>Questa pagina contiene il confronto articolo per articolo tra il testo attuale e quello proposto, nella sezione "Gli Articoli: Prima e Dopo".</p>
     </div>
   </dialog>
 
+  <!-- Step 5 modals -->
   <dialog class="modal" id="m-entrambi">
     <div class="modal-header"><h3>Perché sia maggioranza che opposizione?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
@@ -1052,41 +1242,133 @@
     </div>
   </dialog>
 
+  <dialog class="modal" id="m-deposito-firme">
+    <div class="modal-header"><h3>Cosa significa "depositare le firme"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>I parlamentari che chiedono il referendum devono <strong>firmare formalmente</strong> la richiesta e consegnarla (depositarla) alla cancelleria della Corte di Cassazione.</p>
+      <p>Servono le firme di almeno 1/5 dei membri di una Camera (80 deputati o 40 senatori). La cancelleria verifica l'autenticità e trasmette all'Ufficio Centrale per il Referendum.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-cassazione">
+    <div class="modal-header"><h3>Cos'è la Corte di Cassazione?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La <strong>Corte Suprema di Cassazione</strong> è il vertice della magistratura ordinaria italiana. È l'ultimo grado di giudizio: decide sui ricorsi contro le sentenze di appello.</p>
+      <p>Ospita anche l'Ufficio Centrale per il Referendum, che verifica la regolarità delle richieste referendarie.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-500k">
+    <div class="modal-header"><h3>Perché 500.000 firme?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'Art. 138 prevede che, oltre ai parlamentari, anche <strong>500.000 elettori</strong> possano richiedere il referendum confermativo. È un numero alto, pensato per garantire che la richiesta abbia un sostegno popolare significativo.</p>
+      <p>In questo caso un gruppo di 15 cittadini ha avviato la procedura di raccolta. Poiché i parlamentari avevano già depositato le firme, il referendum era comunque garantito.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-chi-chiede">
+    <div class="modal-header"><h3>Chi può chiedere il referendum confermativo?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Tre soggetti possono farlo:</p>
+      <ul>
+        <li><strong>1/5 dei membri</strong> di una Camera (80 deputati o 40 senatori)</li>
+        <li><strong>500.000 elettori</strong></li>
+        <li><strong>5 Consigli regionali</strong></li>
+      </ul>
+      <p>Basta che uno di questi presenti la richiesta entro 3 mesi dalla pubblicazione in GU.</p>
+    </div>
+  </dialog>
+
+  <!-- Step 6 modals -->
   <dialog class="modal" id="m-ucr">
     <div class="modal-header"><h3>Cos'è l'Ufficio Centrale per il Referendum?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
       <p>L'<strong>Ufficio Centrale per il Referendum</strong> (UCR) è un organo della Corte di Cassazione. Ha il compito di verificare che le richieste di referendum siano formalmente valide: firme autentiche, termini rispettati, requisiti soddisfatti.</p>
-      <p>In questo caso ha ammesso 4 richieste distinte (da parlamentari di maggioranza, opposizione e cittadini).</p>
     </div>
   </dialog>
 
-  <dialog class="modal" id="m-quorum">
-    <div class="modal-header"><h3>C'è un quorum?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+  <dialog class="modal" id="m-ammissibili">
+    <div class="modal-header"><h3>Cosa significa "ammissibili"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
     <div class="modal-body">
-      <p><strong>No.</strong> A differenza del referendum abrogativo (dove serve che voti il 50%+1 degli aventi diritto), il referendum costituzionale confermativo <strong>non ha quorum</strong>.</p>
-      <p>Vince la maggioranza semplice dei voti validi, indipendentemente da quante persone vanno a votare. Questo significa che l'astensione non è una strategia: equivale semplicemente a lasciare che decidano gli altri.</p>
+      <p>L'UCR verifica che le richieste rispettino tutti i requisiti formali: numero sufficiente di firme, termini rispettati, autenticità delle sottoscrizioni. Se tutto è in regola, le dichiara <strong>ammissibili</strong>, cioè valide per procedere al referendum.</p>
+      <p>Nota: per i referendum confermativi non c'è un giudizio di ammissibilità della Corte Costituzionale (a differenza dei referendum abrogativi). Il controllo è solo formale.</p>
     </div>
   </dialog>
 
-  <script>
-    document.querySelectorAll('.crono-chip').forEach(function(chip) {
-      chip.addEventListener('click', function() {
-        var id = this.getAttribute('data-modal');
-        var d = document.getElementById(id);
-        if (d) d.showModal();
-      });
-    });
-    document.querySelectorAll('.modal-close').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        this.closest('dialog').close();
-      });
-    });
-    document.querySelectorAll('dialog.modal').forEach(function(d) {
-      d.addEventListener('click', function(e) {
-        if (e.target === d) d.close();
-      });
-    });
-  </script>
+  <dialog class="modal" id="m-4-richieste">
+    <div class="modal-header"><h3>Perché 4 richieste?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Più soggetti hanno presentato richieste indipendenti:</p>
+      <ul>
+        <li>Parlamentari della <strong>maggioranza</strong> (centrodestra)</li>
+        <li>Parlamentari dell'<strong>opposizione</strong> (PD, M5S, AVS)</li>
+        <li>Raccolta firme da parte di <strong>cittadini</strong></li>
+      </ul>
+      <p>Ne bastava una sola per attivare il referendum. Le 4 richieste riflettono il fatto che schieramenti opposti volevano entrambi il voto popolare, per ragioni diverse.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-regolarita">
+    <div class="modal-header"><h3>Cos'è la verifica di regolarità formale?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'UCR controlla che le richieste rispettino le <strong>regole procedurali</strong>: che le firme siano autentiche, che siano in numero sufficiente, che la richiesta sia stata depositata entro i 3 mesi dalla pubblicazione in GU.</p>
+      <p>Non entra nel merito del contenuto della riforma &mdash; verifica solo che la procedura sia stata seguita correttamente.</p>
+    </div>
+  </dialog>
+
+  <!-- Step 7 modals -->
+  <dialog class="modal" id="m-quorum">
+    <div class="modal-header"><h3>Nessun quorum?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p><strong>Esatto.</strong> A differenza del referendum abrogativo (dove serve che voti il 50%+1 degli aventi diritto), il referendum confermativo <strong>non ha quorum</strong>.</p>
+      <p>Anche se andasse a votare solo il 10% degli elettori, il risultato sarebbe comunque valido.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-magg-semplice">
+    <div class="modal-header"><h3>Cos'è la maggioranza semplice?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p><strong>Maggioranza semplice</strong> = metà + 1 dei <em>voti validi</em> espressi. Non dei componenti, non degli aventi diritto: dei voti effettivamente validi.</p>
+      <p>Esempio: se votano 20 milioni di persone e i voti validi sono 19,5 milioni, servono almeno 9.750.001 voti per vincere.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-voti-validi">
+    <div class="modal-header"><h3>Cosa sono i "voti validi"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>I voti espressi correttamente: schede con un chiaro SI o NO. Vengono esclusi dal conteggio:</p>
+      <ul>
+        <li><strong>Schede bianche</strong> &mdash; consegnate senza alcun segno</li>
+        <li><strong>Schede nulle</strong> &mdash; con segni non interpretabili, scritte aggiuntive, o voto non chiaro</li>
+      </ul>
+      <p>Solo i voti validi determinano il risultato.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-vince-si">
+    <div class="modal-header"><h3>Cosa succede se vince il SI?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La legge costituzionale viene <strong>confermata</strong> ed entra in vigore. Le modifiche agli articoli 87, 102, 104, 105, 106, 107 e 110 della Costituzione diventano effettive.</p>
+      <p>Il Parlamento ha poi 1 anno per approvare le leggi attuative (disposizioni transitorie dell'art. 8 della riforma).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-vince-no">
+    <div class="modal-header"><h3>Cosa succede se vince il NO?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La legge costituzionale viene <strong>respinta</strong>. Non entra in vigore. La Costituzione resta com'è oggi: magistratura unificata, un solo CSM, nessuna Alta Corte disciplinare.</p>
+      <p>Il Parlamento potrebbe in futuro riproporre una riforma simile, ma dovrebbe ripartire dall'inizio dell'iter legislativo.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="m-astensione">
+    <div class="modal-header"><h3>Cosa significa astenersi?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Poiché <strong>non c'è quorum</strong>, l'astensione non è una strategia di voto. Non stai "facendo pesare" la tua assenza &mdash; il referendum è valido a prescindere da quanti votano.</p>
+      <p>Astenersi significa semplicemente lasciare che il risultato venga deciso da chi si presenta alle urne.</p>
+    </div>
+  </dialog>
+
 
   <!-- SECTION 2: Cos'è un Referendum Confermativo -->
   <section id="referendum-confermativo">
@@ -1430,6 +1712,462 @@
 
   </section>
 
+  <!-- SECTION: Articoli Sintesi (BIS) -->
+  <section id="articoli-sintesi">
+    <h2>Gli Articoli della Costituzione &mdash; Sintesi</h2>
+    <p>Cosa cambia, articolo per articolo. Clicca "Dettagli" per vedere il confronto testuale tra vecchio e nuovo.</p>
+
+    <div class="crono">
+
+      <!-- Art. 87 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 87, comma 10</div>
+          <div class="crono-title">Il Presidente della Repubblica presiederà due CSM separati invece di uno</div>
+          <div class="crono-sub">Oggi presiede un unico Consiglio Superiore della Magistratura. Con la riforma presiederà sia il CSM giudicante che il CSM requirente.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-87">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-pdr">Presidente della Repubblica?</a>
+          <a class="crono-chip" data-modal="ms-due-csm">Due CSM?</a>
+          <a class="crono-chip" data-modal="ms-giudicante-requirente">Giudicante e requirente?</a>
+        </div>
+      </div>
+
+      <!-- Art. 102 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 102, comma 1</div>
+          <div class="crono-title">Si introduce in Costituzione il principio delle carriere distinte</div>
+          <div class="crono-sub">La separazione tra magistrati giudicanti (giudici) e magistrati requirenti (PM) diventa un principio costituzionale. Oggi la Costituzione non distingue.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-102">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-carriere-distinte">Carriere distinte?</a>
+          <a class="crono-chip" data-modal="ms-giudicanti">Magistrati giudicanti?</a>
+          <a class="crono-chip" data-modal="ms-requirenti">Magistrati requirenti?</a>
+          <a class="crono-chip" data-modal="ms-ordinamento">Ordinamento giudiziario?</a>
+        </div>
+      </div>
+
+      <!-- Art. 104 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 104 &mdash; sostituzione integrale</div>
+          <div class="crono-title">Due CSM separati. Membri sorteggiati, non più eletti. La quota togati/laici si inverte</div>
+          <div class="crono-sub">Oggi: un CSM, componenti eletti (2/3 magistrati, 1/3 Parlamento). Domani: due CSM, componenti sorteggiati (1/3 magistrati, 2/3 da lista parlamentare).</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-104">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-sorteggio">Sorteggiati?</a>
+          <a class="crono-chip" data-modal="ms-quota-inverte">La quota si inverte?</a>
+          <a class="crono-chip" data-modal="ms-lista-parlamento">Lista parlamentare?</a>
+          <a class="crono-chip" data-modal="ms-togati-laici">Togati e laici?</a>
+          <a class="crono-chip" data-modal="ms-perche-sorteggio">Perché il sorteggio?</a>
+        </div>
+      </div>
+
+      <!-- Art. 105 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 105 &mdash; sostituzione integrale</div>
+          <div class="crono-title">La disciplina viene sottratta ai CSM e affidata alla nuova Alta Corte disciplinare</div>
+          <div class="crono-sub">Ogni CSM gestisce la carriera dei propri magistrati. La giurisdizione disciplinare passa a un nuovo organo: l'Alta Corte disciplinare, composta da 15 membri.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-105">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-alta-corte">Alta Corte disciplinare?</a>
+          <a class="crono-chip" data-modal="ms-15-membri">15 membri?</a>
+          <a class="crono-chip" data-modal="ms-giurisdizione-disc">Giurisdizione disciplinare?</a>
+          <a class="crono-chip" data-modal="ms-sottratta-csm">Sottratta ai CSM?</a>
+        </div>
+      </div>
+
+      <!-- Art. 106 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 106, comma 3</div>
+          <div class="crono-title">Nomina per meriti insigni estesa anche ai sostituti procuratori generali</div>
+          <div class="crono-sub">Oggi professori e avvocati illustri possono diventare consiglieri di cassazione. La riforma aggiunge la possibilità di diventare sostituti procuratori generali. La designazione passa al CSM competente.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-106">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-meriti-insigni">Meriti insigni?</a>
+          <a class="crono-chip" data-modal="ms-sost-proc-gen">Sostituti procuratori generali?</a>
+          <a class="crono-chip" data-modal="ms-csm-competente">CSM competente?</a>
+        </div>
+      </div>
+
+      <!-- Art. 107 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 107, comma 1</div>
+          <div class="crono-title">L'inamovibilità resta, ma il provvedimento spetta al CSM competente per carriera</div>
+          <div class="crono-sub">I magistrati restano inamovibili. L'unica modifica: il trasferimento o la sospensione sono decisi dal rispettivo CSM (giudicante o requirente), non più da un CSM unico.</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-107">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-inamovibilita">Inamovibilità?</a>
+          <a class="crono-chip" data-modal="ms-rispettivo">Rispettivo CSM?</a>
+        </div>
+      </div>
+
+      <!-- Art. 110 -->
+      <div class="crono-step">
+        <div class="crono-body">
+          <div class="crono-date">Art. 110, comma 1</div>
+          <div class="crono-title">Adeguamento tecnico: il Ministro della Giustizia opera nel rispetto di ciascun CSM</div>
+          <div class="crono-sub">Il Ministro mantiene le competenze sull'organizzazione dei servizi della giustizia. Il riferimento passa da "il CSM" a "ciascun CSM".</div>
+        </div>
+        <div class="crono-chips">
+          <a class="crono-chip" data-modal="md-110">Dettagli</a>
+          <a class="crono-chip" data-modal="ms-ministro">Ministro della Giustizia?</a>
+          <a class="crono-chip" data-modal="ms-servizi-giustizia">Servizi della giustizia?</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Articoli Sintesi: Dettagli modals (diffs) -->
+
+  <dialog class="modal-wide" id="md-87">
+    <div class="modal-header"><h3>Art. 87, comma 10 &mdash; Confronto testuale</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">Presiede il Consiglio superiore della magistratura.</div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">Presiede il Consiglio superiore della magistratura <span class="added">giudicante e il Consiglio superiore della magistratura requirente</span>.</div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-wide" id="md-102">
+    <div class="modal-header"><h3>Art. 102, comma 1 &mdash; Confronto testuale</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">La funzione giurisdizionale è esercitata da magistrati ordinari istituiti e regolati dalle norme sull'ordinamento giudiziario.</div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">La funzione giurisdizionale è esercitata da magistrati ordinari istituiti e regolati dalle norme sull'ordinamento giudiziario<span class="added">, le quali disciplinano altresì le distinte carriere dei magistrati giudicanti e dei magistrati requirenti</span>.</div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-wide" id="md-104">
+    <div class="modal-header"><h3>Art. 104 &mdash; Confronto testuale (sostituzione integrale)</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">
+          <p>La magistratura costituisce un ordine autonomo e indipendente da ogni altro potere.</p>
+          <div class="comma-separator"></div>
+          <p>Il Consiglio superiore della magistratura è presieduto dal Presidente della Repubblica.</p>
+          <div class="comma-separator"></div>
+          <p>Ne fanno parte di diritto il primo presidente e il procuratore generale della Corte di cassazione.</p>
+          <div class="comma-separator"></div>
+          <p>Gli altri componenti sono <span class="removed">eletti per due terzi da tutti i magistrati ordinari</span> tra gli appartenenti alle varie categorie, e <span class="removed">per un terzo dal Parlamento in seduta comune</span> tra professori ordinari di università in materie giuridiche ed avvocati dopo quindici anni di esercizio.</p>
+          <div class="comma-separator"></div>
+          <p>Il Consiglio elegge un vicepresidente fra i componenti designati dal Parlamento.</p>
+          <div class="comma-separator"></div>
+          <p>I membri elettivi del Consiglio durano in carica quattro anni e non sono immediatamente rieleggibili.</p>
+          <div class="comma-separator"></div>
+          <p>Non possono, finché sono in carica, essere iscritti negli albi professionali, né far parte del Parlamento o di un Consiglio regionale.</p>
+        </div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">
+          <p>La magistratura <span class="added">è composta dai magistrati della carriera giudicante e della carriera requirente e</span> costituisce un ordine autonomo e indipendente da ogni altro potere.</p>
+          <div class="comma-separator"></div>
+          <p>Il Consiglio superiore della magistratura giudicante è presieduto dal Presidente della Repubblica. Ne fa parte di diritto il primo presidente della Corte di cassazione.</p>
+          <div class="comma-separator"></div>
+          <p>Il Consiglio superiore della magistratura requirente è presieduto dal Presidente della Repubblica. Ne fa parte di diritto il procuratore generale della Corte di cassazione.</p>
+          <div class="comma-separator"></div>
+          <p>I componenti di <span class="added">ciascun</span> Consiglio superiore della magistratura sono <span class="added">sorteggiati, per un terzo, fra i magistrati</span> appartenenti alla rispettiva carriera, e, <span class="added">per due terzi, dal Parlamento in seduta comune, tra professori ordinari</span> di università in materie giuridiche ed avvocati dopo quindici anni di esercizio, <span class="added">nell'ambito di un elenco compilato, mediante sorteggio, dal Parlamento</span>.</p>
+          <div class="comma-separator"></div>
+          <p>I componenti di ciascun Consiglio superiore della magistratura durano in carica quattro anni. L'incarico non può essere rinnovato.</p>
+          <div class="comma-separator"></div>
+          <p>Non possono, finché sono in carica, essere iscritti negli albi professionali, né far parte del Parlamento o di un Consiglio regionale.</p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-wide" id="md-105">
+    <div class="modal-header"><h3>Art. 105 &mdash; Confronto testuale (sostituzione integrale)</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">
+          <p>Spettano al Consiglio superiore della magistratura, secondo le norme dell'ordinamento giudiziario, le assunzioni, le assegnazioni ed i trasferimenti, le promozioni e i <span class="removed">provvedimenti disciplinari nei riguardi dei magistrati</span>.</p>
+        </div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">
+          <p>Spettano a ciascun Consiglio superiore della magistratura, secondo le norme dell'ordinamento giudiziario, le assunzioni, le assegnazioni ed i trasferimenti, le promozioni nei riguardi dei magistrati appartenenti alla rispettiva carriera.</p>
+          <div class="comma-separator"></div>
+          <p><span class="added">La giurisdizione disciplinare nei riguardi dei magistrati ordinari, giudicanti e requirenti, è attribuita all'Alta Corte disciplinare.</span></p>
+          <div class="comma-separator"></div>
+          <p><span class="added">L'Alta Corte disciplinare è composta da quindici giudici: tre nominati dal Presidente della Repubblica tra professori ordinari di università in materie giuridiche e avvocati con almeno venti anni di esercizio; tre estratti a sorte da un elenco di soggetti in possesso dei medesimi requisiti, compilato dal Parlamento in seduta comune; sei magistrati giudicanti e tre magistrati requirenti, estratti a sorte tra gli appartenenti alla rispettiva carriera, con almeno venti anni di esercizio delle funzioni giudiziarie e che svolgano o abbiano svolto funzioni di legittimità.</span></p>
+          <div class="comma-separator"></div>
+          <p><span class="added">L'Alta Corte elegge il proprio presidente tra i componenti nominati dal Presidente della Repubblica e quelli sorteggiati dall'elenco compilato dal Parlamento.</span></p>
+          <div class="comma-separator"></div>
+          <p><span class="added">I componenti dell'Alta Corte disciplinare durano in carica quattro anni. L'incarico non può essere rinnovato.</span></p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-wide" id="md-106">
+    <div class="modal-header"><h3>Art. 106, comma 3 &mdash; Confronto testuale</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">Su designazione del Consiglio superiore della magistratura possono essere chiamati all'ufficio di consiglieri di cassazione, per meriti insigni, professori ordinari di università in materie giuridiche e avvocati che abbiano quindici anni d'esercizio e siano iscritti negli albi speciali per le giurisdizioni superiori.</div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">Su designazione del <span class="added">rispettivo</span> Consiglio superiore della magistratura possono essere chiamati all'ufficio di consiglieri di cassazione<span class="added"> o all'ufficio di sostituto procuratore generale presso la Corte di cassazione</span>, per meriti insigni, professori ordinari di università in materie giuridiche e avvocati che abbiano quindici anni d'esercizio e siano iscritti negli albi speciali per le giurisdizioni superiori.</div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-wide" id="md-107">
+    <div class="modal-header"><h3>Art. 107, comma 1 &mdash; Confronto testuale</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">I magistrati sono inamovibili. Non possono essere dispensati o sospesi dal servizio né destinati ad altre sedi o funzioni se non in seguito a decisione del Consiglio superiore della magistratura, adottata o per i motivi e con le garanzie di difesa stabilite dall'ordinamento giudiziario o con il loro consenso.</div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">I magistrati sono inamovibili. Non possono essere dispensati o sospesi dal servizio né destinati ad altre sedi o funzioni se non in seguito a decisione del <span class="added">rispettivo</span> Consiglio superiore della magistratura, adottata o per i motivi e con le garanzie di difesa stabilite dall'ordinamento giudiziario o con il loro consenso.</div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal-wide" id="md-110">
+    <div class="modal-header"><h3>Art. 110, comma 1 &mdash; Confronto testuale</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="diff-container">
+      <div class="diff-side diff-side-old">
+        <div class="diff-label">Testo attuale</div>
+        <div class="diff-text">Ferme le competenze del Consiglio superiore della magistratura, spettano al Ministro della giustizia l'organizzazione e il funzionamento dei servizi relativi alla giustizia.</div>
+      </div>
+      <div class="diff-side diff-side-new">
+        <div class="diff-label">Testo proposto</div>
+        <div class="diff-text">Ferme le competenze <span class="added">di ciascun</span> Consiglio superiore della magistratura, spettano al Ministro della giustizia l'organizzazione e il funzionamento dei servizi relativi alla giustizia.</div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Articoli Sintesi: Explanation modals -->
+
+  <dialog class="modal" id="ms-pdr">
+    <div class="modal-header"><h3>Il ruolo del Presidente della Repubblica</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il Presidente della Repubblica presiede il CSM come <strong>garante dell'indipendenza della magistratura</strong>. Non partecipa alle decisioni quotidiane, ma la presidenza ha un valore simbolico e istituzionale forte.</p>
+      <p>Con la riforma, dovrà presiedere due organi separati. I critici notano che questo raddoppia un impegno già largamente formale; i favorevoli lo vedono come garanzia di neutralità su entrambi i fronti.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-due-csm">
+    <div class="modal-header"><h3>Perché due CSM?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La logica della riforma: se le carriere sono separate, anche l'organo di autogoverno deve essere separato. Un CSM per i giudici, un CSM per i PM.</p>
+      <p>I favorevoli dicono che evita conflitti di interesse (oggi i PM partecipano a decisioni che riguardano i giudici e viceversa). I critici temono che due CSM più piccoli siano più deboli e più esposti a influenze esterne.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-giudicante-requirente">
+    <div class="modal-header"><h3>Giudicante e requirente</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Due termini tecnici per le due funzioni della magistratura:</p>
+      <ul>
+        <li><strong>Giudicante</strong> = chi giudica. I giudici, che presiedono i processi e emettono sentenze.</li>
+        <li><strong>Requirente</strong> = chi richiede (l'applicazione della legge). I Pubblici Ministeri, che conducono le indagini e sostengono l'accusa.</li>
+      </ul>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-carriere-distinte">
+    <div class="modal-header"><h3>Cosa significa "carriere distinte"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Oggi un magistrato entra per concorso unico e può passare dalla funzione giudicante a quella requirente (e viceversa) nel corso della carriera. In pratica i passaggi sono rari, ma la possibilità esiste.</p>
+      <p>Con le carriere distinte, la scelta è <strong>definitiva al momento del concorso</strong>: chi entra come giudice resta giudice, chi entra come PM resta PM. Due concorsi separati, due percorsi di carriera separati.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-giudicanti">
+    <div class="modal-header"><h3>Chi sono i magistrati giudicanti?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>I <strong>giudici</strong>. Presiedono i processi, valutano le prove, emettono sentenze. Devono essere imparziali e indipendenti: non stanno "dalla parte" di nessuno.</p>
+      <p>In Italia ci sono giudici di primo grado (tribunali), d'appello (corti d'appello) e di legittimità (Corte di Cassazione).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-requirenti">
+    <div class="modal-header"><h3>Chi sono i magistrati requirenti?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>I <strong>Pubblici Ministeri</strong> (PM). Conducono le indagini penali, decidono se esercitare l'azione penale, sostengono l'accusa nei processi. In Italia l'azione penale è <strong>obbligatoria</strong> (Art. 112 Cost.): il PM deve indagare se ha notizia di reato.</p>
+      <p>Non sono "la controparte" dell'avvocato difensore: il loro compito è cercare la verità, anche se questo porta a prosciogliere l'indagato.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-ordinamento">
+    <div class="modal-header"><h3>Cos'è l'ordinamento giudiziario?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'insieme delle <strong>norme che regolano l'organizzazione della magistratura</strong>: come si entra (concorso), come si fa carriera, come sono organizzati i tribunali, quali sono i doveri dei magistrati.</p>
+      <p>È disciplinato da leggi ordinarie (non dalla Costituzione). La riforma costituzionale modifica il quadro di principi; poi serviranno leggi ordinarie per attuarla concretamente.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-sorteggio">
+    <div class="modal-header"><h3>Sorteggiati?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Oggi i membri togati del CSM sono <strong>eletti</strong> dai colleghi magistrati. La riforma li sostituisce con un <strong>sorteggio</strong>: i nomi vengono estratti a caso tra i magistrati della rispettiva carriera.</p>
+      <p>Anche i membri laici (professori e avvocati) vengono sorteggiati, ma da un elenco pre-compilato dal Parlamento.</p>
+      <p>Il sorteggio è un meccanismo inedito per un organo costituzionale italiano di questa importanza.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-quota-inverte">
+    <div class="modal-header"><h3>In che senso "la quota si inverte"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p><strong>Oggi:</strong> i componenti del CSM sono per 2/3 magistrati (togati) e per 1/3 eletti dal Parlamento (laici). La maggioranza è dei magistrati.</p>
+      <p><strong>Con la riforma:</strong> 1/3 magistrati sorteggiati, 2/3 scelti per sorteggio da una lista compilata dal Parlamento. La maggioranza passa alla componente di designazione parlamentare.</p>
+      <p>Questo è uno dei punti più discussi: i favorevoli parlano di maggiore "democraticità"; i critici temono una riduzione dell'autogoverno della magistratura.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-lista-parlamento">
+    <div class="modal-header"><h3>Come funziona la lista parlamentare?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il Parlamento in seduta comune compila un <strong>elenco di candidati</strong> (professori di diritto e avvocati con 15+ anni di esperienza). Da questo elenco vengono poi <strong>estratti a sorte</strong> i 2/3 dei componenti di ciascun CSM.</p>
+      <p>Il Parlamento decide chi può finire nell'elenco; il sorteggio decide chi viene effettivamente estratto. Questo doppio meccanismo è nuovo e non ha precedenti in organi costituzionali italiani.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-togati-laici">
+    <div class="modal-header"><h3>Togati e laici</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Nel linguaggio del CSM:</p>
+      <ul>
+        <li><strong>Togati</strong> = i componenti che sono magistrati (indossano la "toga")</li>
+        <li><strong>Laici</strong> = i componenti esterni alla magistratura (professori e avvocati), designati dal Parlamento</li>
+      </ul>
+      <p>L'equilibrio tra togati e laici determina quanto il CSM è un organo di "auto-governo" (se dominano i togati) o un organo sotto influenza politica (se dominano i laici).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-perche-sorteggio">
+    <div class="modal-header"><h3>Perché passare al sorteggio?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La motivazione dichiarata: eliminare il <strong>correntismo</strong>. Oggi i magistrati si organizzano in correnti (gruppi associativi simili a partiti) che competono per eleggere i "propri" candidati al CSM. Secondo i riformatori, questo produce logiche di potere interne alla magistratura.</p>
+      <p>Il sorteggio eliminerebbe le campagne elettorali tra magistrati. I critici rispondono che sostituisce un meccanismo di responsabilità (l'elezione) con uno aleatorio, e che il correntismo si può affrontare con riforme meno radicali.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-alta-corte">
+    <div class="modal-header"><h3>Cos'è l'Alta Corte disciplinare?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Un <strong>organo completamente nuovo</strong> previsto dalla riforma, che non esiste nella Costituzione attuale. Si occuperà esclusivamente della disciplina dei magistrati: sanzionare i comportamenti scorretti, i ritardi gravi, le violazioni dei doveri.</p>
+      <p>Oggi questa funzione è del CSM (sezione disciplinare). La riforma la toglie dal CSM e la affida a questo nuovo organo separato.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-15-membri">
+    <div class="modal-header"><h3>Come sono scelti i 15 membri?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>L'Alta Corte disciplinare è composta da:</p>
+      <ul>
+        <li><strong>3</strong> nominati dal Presidente della Repubblica (professori/avvocati con 20+ anni)</li>
+        <li><strong>3</strong> sorteggiati da un elenco compilato dal Parlamento (stessi requisiti)</li>
+        <li><strong>6</strong> magistrati giudicanti, sorteggiati tra quelli con 20+ anni di carriera</li>
+        <li><strong>3</strong> magistrati requirenti, sorteggiati tra quelli con 20+ anni di carriera</li>
+      </ul>
+      <p>Durano 4 anni, incarico non rinnovabile. L'Alta Corte elegge il proprio presidente tra i 6 membri non-magistrati.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-giurisdizione-disc">
+    <div class="modal-header"><h3>Cos'è la giurisdizione disciplinare?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il potere di <strong>giudicare e sanzionare i magistrati</strong> che commettono illeciti disciplinari: ritardi gravi nell'esercizio delle funzioni, comportamenti scorretti, violazioni dei doveri d'ufficio.</p>
+      <p>Chi controlla il processo disciplinare ha un potere enorme: può in teoria rimuovere o trasferire magistrati scomodi. Per questo la composizione dell'organo disciplinare è uno dei punti più sensibili della riforma.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-sottratta-csm">
+    <div class="modal-header"><h3>Perché sottrarre la disciplina ai CSM?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La motivazione dichiarata: evitare che i magistrati "si giudichino tra loro". Oggi la sezione disciplinare del CSM è composta in maggioranza da magistrati, e i critici sostengono che questo porti a una certa indulgenza corporativa.</p>
+      <p>I contrari rispondono che un organo disciplinare esterno al CSM rischia di diventare uno strumento di pressione politica sulla magistratura &mdash; come avvenuto in Polonia con la camera disciplinare della Corte Suprema.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-meriti-insigni">
+    <div class="modal-header"><h3>Cosa significa "per meriti insigni"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Un meccanismo costituzionale che permette di nominare <strong>consiglieri di cassazione senza concorso</strong>, scegliendo tra professori universitari di diritto e avvocati con almeno 15 anni di esperienza che si siano distinti in modo eccezionale.</p>
+      <p>È un canale molto stretto (pochissime nomine nella storia repubblicana) pensato per portare competenze esterne al vertice della magistratura.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-sost-proc-gen">
+    <div class="modal-header"><h3>Chi sono i sostituti procuratori generali?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>I magistrati requirenti che lavorano presso la <strong>Procura Generale della Corte di Cassazione</strong>, il vertice del sistema dei PM. Intervengono nei giudizi di legittimità e svolgono funzioni di coordinamento.</p>
+      <p>La riforma estende la nomina per meriti insigni anche a questa posizione, coerentemente con la creazione di due carriere separate.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-csm-competente">
+    <div class="modal-header"><h3>Cos'è il "CSM competente"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Con due CSM separati, ogni decisione viene presa dal CSM della carriera di appartenenza del magistrato. Il CSM giudicante decide per i giudici, il CSM requirente per i PM.</p>
+      <p>Oggi c'è un unico CSM che decide per tutti. L'aggiunta della parola "rispettivo" nei vari articoli è l'adeguamento tecnico a questa nuova struttura.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-inamovibilita">
+    <div class="modal-header"><h3>Cos'è l'inamovibilità?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Una garanzia fondamentale: un magistrato <strong>non può essere trasferito, sospeso o rimosso</strong> se non per decisione del CSM e con precise garanzie procedurali.</p>
+      <p>Serve a proteggere l'indipendenza: un giudice che sta indagando un caso scomodo non può essere "spostato" dal governo o da altri poteri. La riforma non tocca questo principio; cambia solo quale CSM prende la decisione.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-rispettivo">
+    <div class="modal-header"><h3>Perché "rispettivo" CSM?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>La parola "rispettivo" è l'adeguamento tecnico ricorrente nella riforma. Ogni volta che la Costituzione menziona "il Consiglio superiore della magistratura" al singolare, il testo viene aggiornato per riferirsi al CSM della carriera di appartenenza.</p>
+      <p>Questo vale per i trasferimenti (art. 107), le nomine (art. 106) e le competenze organizzative (art. 110).</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-ministro">
+    <div class="modal-header"><h3>Che ruolo ha il Ministro della Giustizia?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Il Ministro della Giustizia (o "Guardasigilli") è un membro del <strong>governo</strong>, non della magistratura. Ha competenze sull'organizzazione dei servizi (edilizia giudiziaria, personale amministrativo, informatica), ma <strong>non</strong> sulle carriere dei magistrati (quelle spettano al CSM).</p>
+      <p>Questo articolo ribadisce il confine: il Ministro si occupa dei servizi, i CSM si occupano dei magistrati.</p>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="ms-servizi-giustizia">
+    <div class="modal-header"><h3>Cosa sono i "servizi relativi alla giustizia"?</h3><button class="modal-close" aria-label="Chiudi">&times;</button></div>
+    <div class="modal-body">
+      <p>Tutto ciò che serve al funzionamento pratico della giustizia ma non riguarda le decisioni giudiziarie: edifici dei tribunali, personale amministrativo, sistemi informatici, gestione delle carceri, servizi di cancelleria.</p>
+      <p>La distinzione è fondamentale: il governo gestisce la "macchina", ma non può influenzare chi giudica o come si giudica.</p>
+    </div>
+  </dialog>
+
   <!-- SECTION 6: Trasparenza Democratica -->
   <section id="trasparenza">
     <h2>Nota sulla Trasparenza Democratica</h2>
@@ -1716,5 +2454,24 @@
   <p>Questa pagina è un progetto informativo indipendente. Non rappresenta una posizione politica.<br>I testi costituzionali sono tratti dalla Gazzetta Ufficiale della Repubblica Italiana.</p>
 </footer>
 
+<script>
+  document.querySelectorAll('.crono-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      var id = this.getAttribute('data-modal');
+      var d = document.getElementById(id);
+      if (d) d.showModal();
+    });
+  });
+  document.querySelectorAll('.modal-close').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      this.closest('dialog').close();
+    });
+  });
+  document.querySelectorAll('dialog.modal, dialog.modal-wide').forEach(function(d) {
+    d.addEventListener('click', function(e) {
+      if (e.target === d) d.close();
+    });
+  });
+</script>
 </body>
 </html>
