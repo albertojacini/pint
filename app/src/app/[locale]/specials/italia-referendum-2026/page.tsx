@@ -19,6 +19,9 @@ const pageNavSections: PageNavSection[] = [
   { id: 'intro', label: 'Introduzione' },
   { id: 'cronologia', label: 'Cronologia' },
   { id: 'articoli', label: 'Articoli modificati' },
+  { id: 'come-ragionare', label: '7 Domande' },
+  { id: 'altri-paesi', label: 'Altri paesi' },
+  { id: 'info-pratiche', label: 'Info pratiche' },
 ]
 
 // ============================================================================
@@ -680,6 +683,293 @@ const articoli: ExplainerItem[] = [
 ]
 
 // ============================================================================
+// Data: Cosa fanno gli altri paesi
+// ============================================================================
+
+const altriPaesi: ExplainerItem[] = [
+  {
+    label: 'Il modello italiano attuale',
+    title: 'Magistratura unificata',
+    description:
+      'Giudici e PM appartengono allo stesso ordine, governato da un unico CSM. Possono passare da una funzione all\u2019altra.',
+    chips: [
+      {
+        label: 'Italia',
+        content: (
+          <p>
+            L&apos;Italia è oggi uno dei pochi paesi europei con magistratura pienamente unificata.
+            Il PM è un magistrato indipendente, non un funzionario del governo. Questo modello è
+            unico nel panorama occidentale ed è esplicitamente tutelato dalla Costituzione del 1948.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: 'Il modello proposto dalla riforma',
+    title: 'Separati ma giudiziari',
+    description:
+      'Carriere distinte, ma i PM restano all\u2019interno dell\u2019ordine giudiziario. Il controllo è in parte giudiziario, in parte esecutivo.',
+    chips: [
+      {
+        label: 'Francia',
+        content: (
+          <>
+            <p>
+              Separazione storica tra <em>magistrats du siège</em> e{' '}
+              <em>magistrats du parquet</em>. Ma i PM sono rimasti sotto l&apos;autorità del
+              Ministro della Giustizia.
+            </p>
+            <p className="mt-2">
+              Risultato: separazione formale, ma <strong>influenza politica sull&apos;azione
+              penale</strong>. Solo nel 2013 una legge ha vietato al Ministro di dare istruzioni
+              sui singoli casi.
+            </p>
+          </>
+        ),
+      },
+    ],
+  },
+  {
+    label: 'Un modello più netto',
+    title: 'Separati ed esecutivi',
+    description:
+      'I PM sono funzionari pubblici, dipendono dal Ministero della Giustizia. Non fanno parte dell\u2019ordine giudiziario.',
+    chips: [
+      {
+        label: 'Germania',
+        content: (
+          <>
+            <p>
+              I PM (<em>Staatsanwaltschaft</em>) sono completamente separati dai giudici — sono
+              funzionari pubblici soggetti a istruzioni dei superiori e in ultima istanza del
+              Ministro della Giustizia.
+            </p>
+            <p className="mt-2">
+              Nel 2019 la CGUE ha stabilito che i PM tedeschi{' '}
+              <strong>non possono essere considerati &quot;autorità giudiziaria&quot;</strong>{' '}
+              proprio per la mancanza di indipendenza dall&apos;esecutivo.
+            </p>
+          </>
+        ),
+      },
+      {
+        label: 'Paesi Bassi',
+        content: (
+          <p>
+            Modello simile alla Germania. I PM sono parte dell&apos;esecutivo, non della
+            magistratura. Il Ministro della Giustizia può dare istruzioni generali e, in teoria,
+            anche su singoli casi.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: 'Il modello anglosassone',
+    title: 'Pienamente politici',
+    description:
+      'I PM sono eletti dal popolo o nominati direttamente dal governo. La separazione è totale e il controllo è politico.',
+    chips: [
+      {
+        label: 'USA',
+        content: (
+          <p>
+            I <em>District Attorneys</em> sono eletti dal popolo. L&apos;Attorney General è nominato
+            dal Presidente. Il sistema è esplicitamente politico: i procuratori fanno campagna
+            elettorale e rispondono agli elettori, non a un organo giudiziario.
+          </p>
+        ),
+      },
+      {
+        label: 'Regno Unito',
+        content: (
+          <p>
+            Il <em>Crown Prosecution Service</em> è un organo del governo. I procuratori sono
+            funzionari pubblici nominati. Separazione totale dalla magistratura giudicante, con
+            controllo esecutivo.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: 'Casi di studio recenti',
+    title: 'Riforme in direzioni opposte',
+    description:
+      'Non esiste una tendenza unica. Alcuni paesi rafforzano i PM, altri li subordinano. Il contesto istituzionale conta più del modello.',
+    chips: [
+      {
+        label: 'Spagna',
+        content: (
+          <p>
+            Nel 2025 ha approvato una grande riforma che trasferisce le indagini penali dai giudici
+            istruttori ai PM — <strong>rafforzando</strong> il ruolo dei PM, non separandolo per
+            indebolirlo. Direzione opposta al dibattito italiano.
+          </p>
+        ),
+      },
+      {
+        label: 'Polonia e Ungheria',
+        content: (
+          <>
+            <p>
+              La riforma giudiziaria polacca è diventata il veicolo per il controllo politico della
+              magistratura: nomine allineate, camera disciplinare usata per rimuovere giudici
+              dissidenti. L&apos;UE ha sanzionato la Polonia per violazione dell&apos;indipendenza
+              giudiziaria.
+            </p>
+            <p className="mt-2">
+              <strong>Non direttamente comparabile</strong> (scopi diversi), ma dimostra che chi
+              controlla il processo disciplinare ha un potere enorme.
+            </p>
+          </>
+        ),
+      },
+    ],
+  },
+]
+
+// ============================================================================
+// Data: Come ragionare — 7 domande
+// ============================================================================
+
+const setteDomande: ExplainerItem[] = [
+  {
+    label: '1. Comprensione',
+    title: 'Cosa mi viene chiesto davvero?',
+    description:
+      'Qual è la domanda in parole semplici? Qual è la situazione attuale? Cosa cambierebbe concretamente se vince il SI? Cosa resta uguale in ogni caso?',
+    chips: [
+      {
+        label: 'Applicato a questo referendum',
+        content: (
+          <p>
+            I magistrati continuano ad entrare per concorso. L&apos;indipendenza della magistratura
+            resta un principio costituzionale. Ciò che cambia è l&apos;organizzazione interna:
+            carriere separate, due organi di autogoverno, un nuovo tribunale disciplinare.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: '2. Diagnosi del Problema',
+    title: "C'è davvero un problema da risolvere?",
+    description:
+      'Quale problema vuole risolvere questa riforma? Il problema è reale e documentato, oppure percepito/politico? Quanto è grave? Come funziona effettivamente il sistema attuale?',
+    chips: [
+      {
+        label: 'Applicato a questo referendum',
+        content: (
+          <p>
+            Il problema dichiarato è che condividere la carriera creerebbe uno squilibrio a favore
+            dell&apos;accusa — il giudice sarebbe troppo vicino al PM. Tuttavia, il tasso di
+            assoluzione in Italia è circa il 45% (tra i più alti d&apos;Europa), il che complica la
+            narrativa del &quot;giudice che sta dalla parte del PM&quot;.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: '3. Adeguatezza della Soluzione',
+    title: 'Questa riforma risolve quel problema?',
+    description:
+      'Il cambiamento proposto affronta logicamente il problema identificato? Esistono alternative più semplici? Cosa mostrano le esperienze di altri paesi? La riforma fa più di quanto necessario?',
+    chips: [
+      {
+        label: 'Applicato a questo referendum',
+        content: (
+          <p>
+            La Francia ha separato le carriere ma ha ottenuto controllo politico sui PM. La Germania
+            ha separazione completa ma i PM non sono considerati &quot;autorità giudiziaria&quot;
+            dalla CGUE. La Spagna nel 2025 ha trasferito i poteri investigativi ai PM (direzione
+            diversa). Le evidenze comparative sono miste — la separazione da sola non garantisce i
+            benefici dichiarati.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: '4. Valutazione dei Rischi',
+    title: 'Cosa potrebbe andare storto?',
+    description:
+      'Quali sono le conseguenze indesiderate plausibili? Questo cambiamento è reversibile? Apre la porta a ulteriori cambiamenti in una direzione preoccupante? Chi controlla le nuove strutture?',
+    chips: [
+      {
+        label: 'Applicato a questo referendum',
+        content: (
+          <p>
+            Rischio che i PM separati perdano le garanzie di autogoverno giudiziario. La nuova Alta
+            Corte disciplinare è composta in parte per sorteggio — meccanismo nuovo e non testato.
+            Polonia e Ungheria dimostrano che i meccanismi disciplinari possono diventare strumenti
+            di controllo politico. Una modifica costituzionale è praticamente irreversibile.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: '5. Interessi e Legittimità',
+    title: 'Chi vuole questa riforma e perché?',
+    description:
+      'Chi promuove questa riforma e con quali motivazioni dichiarate? Chi si oppone? Ci sono interessi non dichiarati da entrambe le parti? Come è stata elaborata la riforma?',
+    chips: [
+      {
+        label: 'Applicato a questo referendum',
+        content: (
+          <p>
+            Promossa dalla coalizione di centrodestra (storicamente in tensione con la
+            magistratura). Avversata dalla maggior parte delle associazioni dei magistrati e da parte
+            dell&apos;opposizione. La riforma è passata senza la maggioranza dei 2/3 — ed è proprio
+            per questo che i cittadini hanno diritto a un voto confermativo.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: '6. La Meccanica del Voto',
+    title: 'Come funziona il mio voto?',
+    description:
+      "Che tipo di referendum è? C'è un quorum? Cosa succede se non voto?",
+    chips: [
+      {
+        label: 'Applicato a questo referendum',
+        content: (
+          <p>
+            Referendum costituzionale confermativo. <strong>Non c&apos;è quorum.</strong> Vince la
+            maggioranza semplice dei voti validi. Ogni voto conta allo stesso modo —
+            l&apos;astensione non ha alcun valore strategico, significa solo lasciare che decidano
+            gli altri.
+          </p>
+        ),
+      },
+    ],
+  },
+  {
+    label: '7. Pesatura Personale',
+    title: 'Cosa conta di più per me?',
+    description:
+      'Quale dei livelli precedenti pesa di più per me? Sono a mio agio con l\u2019incertezza? Qual è il mio default: cambiare o mantenere lo status quo?',
+    chips: [
+      {
+        label: 'Nessuno può rispondere al posto tuo',
+        content: (
+          <p>
+            Questa è la domanda più personale. Non esiste una risposta oggettivamente
+            &quot;giusta&quot;. Se hai attraversato i sei livelli precedenti con onestà, la tua
+            posizione — qualunque essa sia — è una posizione solida.
+          </p>
+        ),
+      },
+    ],
+  },
+]
+
+// ============================================================================
 // Page
 // ============================================================================
 
@@ -691,7 +981,7 @@ export default function ItaliaReferendum2026Page() {
         description="22-23 Marzo 2026"
       />
 
-      <section id="intro" className="scroll-mt-20">
+      <section id="intro" className="scroll-mt-32 lg:scroll-mt-20">
         <Muted className="mb-6">
           Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di
           giudici e pubblici ministeri.
@@ -727,6 +1017,111 @@ export default function ItaliaReferendum2026Page() {
 
       <SectionL1 id="articoli" title="Cosa cambia nella Costituzione">
         <Explainer items={articoli} />
+      </SectionL1>
+
+      <SectionL1 id="come-ragionare" title="Come Ragionare: 7 Domande">
+        <Muted className="mb-4">
+          Ogni referendum è una decisione a strati. Ogni strato costruisce sul precedente. Un
+          elettore che riesce a rispondere a tutti e sette ha una posizione solida —
+          indipendentemente da cosa vota.
+        </Muted>
+        <Explainer items={setteDomande} />
+      </SectionL1>
+
+      <SectionL1 id="altri-paesi" title="Cosa Fanno gli Altri Paesi">
+        <Explainer items={altriPaesi} />
+      </SectionL1>
+
+      <SectionL1 id="info-pratiche" title="Informazioni Pratiche">
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <Box variant="muted" padding="md">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
+              Quando
+            </p>
+            <p className="text-sm font-medium">22-23 Marzo 2026</p>
+          </Box>
+          <Box variant="muted" padding="md">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
+              Tipo
+            </p>
+            <p className="text-sm font-medium">Referendum costituzionale confermativo</p>
+          </Box>
+          <Box variant="muted" padding="md">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
+              Quorum
+            </p>
+            <p className="text-sm font-medium">Nessuno</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Vince la maggioranza semplice dei votanti
+            </p>
+          </Box>
+          <Box variant="muted" padding="md">
+            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-0.5">
+              Perché si vota
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i
+              cittadini possano confermare o respingere la modifica.
+            </p>
+          </Box>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <Box variant="default" padding="md" className="text-center">
+            <p className="text-lg font-bold text-positive">SI</p>
+            <p className="text-xs text-muted-foreground">La riforma entra in vigore</p>
+          </Box>
+          <Box variant="default" padding="md" className="text-center">
+            <p className="text-lg font-bold text-negative">NO</p>
+            <p className="text-xs text-muted-foreground">Si torna alla situazione attuale</p>
+          </Box>
+        </div>
+
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-2">
+          Oggi vs Se vince il SI
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 pr-4 font-medium text-muted-foreground">Oggi</th>
+                <th className="text-left py-2 font-medium text-muted-foreground">Se vince il SI</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  Un&apos;unica magistratura (giudici e PM insieme)
+                </td>
+                <td className="py-2">Carriere separate fin dall&apos;ingresso</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  Un solo CSM governa tutti i magistrati
+                </td>
+                <td className="py-2">Due CSM distinti (uno per giudici, uno per PM)</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  La disciplina è gestita dal CSM
+                </td>
+                <td className="py-2">Nuova Alta Corte disciplinare costituzionale</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  Passaggio libero tra funzioni (giudicare / accusare)
+                </td>
+                <td className="py-2">Scelta definitiva al momento del concorso</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-4 text-muted-foreground">
+                  Membri CSM eletti dai colleghi (2/3 togati)
+                </td>
+                <td className="py-2">Membri CSM sorteggiati (1/3 togati)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </SectionL1>
     </PageNavLayout>
   )

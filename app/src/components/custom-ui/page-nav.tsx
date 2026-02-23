@@ -8,12 +8,7 @@ export interface PageNavSection {
   label: string
 }
 
-interface PageNavProps {
-  sections: PageNavSection[]
-  className?: string
-}
-
-export function PageNav({ sections, className }: PageNavProps) {
+function useActiveSection(sections: PageNavSection[]) {
   const [activeId, setActiveId] = useState<string>(sections[0]?.id ?? '')
   const observerRef = useRef<IntersectionObserver | null>(null)
 
@@ -36,6 +31,17 @@ export function PageNav({ sections, className }: PageNavProps) {
 
     return () => observerRef.current?.disconnect()
   }, [sections])
+
+  return activeId
+}
+
+interface PageNavProps {
+  sections: PageNavSection[]
+  className?: string
+}
+
+export function PageNav({ sections, className }: PageNavProps) {
+  const activeId = useActiveSection(sections)
 
   return (
     <nav className={cn('flex flex-col gap-0.5', className)}>
@@ -64,17 +70,10 @@ interface PageNavLayoutProps {
 }
 
 export function PageNavLayout({ sections, children, className }: PageNavLayoutProps) {
+  const activeId = useActiveSection(sections)
+
   return (
-    <div className={cn('lg:grid lg:grid-cols-[1fr_180px] lg:gap-10', className)}>
-      <div className="min-w-0">{children}</div>
-
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:block">
-        <div className="sticky top-20">
-          <PageNav sections={sections} />
-        </div>
-      </aside>
-
+    <>
       {/* Mobile: sticky horizontal strip */}
       <div className="lg:hidden sticky top-14 z-40 -mx-4 px-4 py-2 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex gap-3 overflow-x-auto no-scrollbar">
@@ -82,13 +81,29 @@ export function PageNavLayout({ sections, children, className }: PageNavLayoutPr
             <a
               key={section.id}
               href={`#${section.id}`}
-              className="text-xs text-muted-foreground hover:text-foreground whitespace-nowrap py-1 transition-colors"
+              className={cn(
+                'text-xs whitespace-nowrap py-1 transition-colors',
+                activeId === section.id
+                  ? 'text-foreground font-medium'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
               {section.label}
             </a>
           ))}
         </div>
       </div>
-    </div>
+
+      <div className={cn('lg:grid lg:grid-cols-[1fr_180px] lg:gap-10', className)}>
+        <div className="min-w-0">{children}</div>
+
+        {/* Desktop sidebar */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-20">
+            <PageNav sections={sections} />
+          </div>
+        </aside>
+      </div>
+    </>
   )
 }

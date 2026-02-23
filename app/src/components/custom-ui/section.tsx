@@ -38,7 +38,7 @@ interface SectionL1Props {
 
 export function SectionL1({ children, title, action, className, id }: SectionL1Props) {
   return (
-    <section id={id} className={cn('mb-10 scroll-mt-20', className)}>
+    <section id={id} className={cn('mb-10 scroll-mt-32 lg:scroll-mt-20', className)}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-3">
           {title && <SectionL1Title>{title}</SectionL1Title>}
