@@ -23,7 +23,7 @@ export interface ExplainerChip {
 export interface ExplainerItem {
   label: string
   title: string
-  description: string
+  description: React.ReactNode
   chips?: ExplainerChip[]
 }
 
@@ -31,6 +31,41 @@ interface ExplainerProps {
   items: ExplainerItem[]
   type?: 'items' | 'timeline'
   className?: string
+}
+
+// ============================================================================
+// Inline link (Wikipedia-style) + Dialog
+// ============================================================================
+
+interface ExplainerLinkProps {
+  label: string
+  title?: string
+  content: React.ReactNode
+  children: React.ReactNode
+}
+
+export function ExplainerLink({ label, title, content, children }: ExplainerLinkProps) {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="underline decoration-dotted underline-offset-2 text-foreground hover:decoration-solid transition-colors"
+      >
+        {children}
+      </button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{title ?? label}</DialogTitle>
+          </DialogHeader>
+          <DialogDescription asChild>
+            <div className="text-sm text-muted-foreground leading-relaxed">{content}</div>
+          </DialogDescription>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
 }
 
 // ============================================================================
@@ -72,8 +107,8 @@ function ItemContent({ item }: { item: ExplainerItem }) {
       <span className="text-[10px] uppercase tracking-wider text-muted-foreground/60">
         {item.label}
       </span>
-      <p className="text-sm font-medium leading-snug mt-0.5">{item.title}</p>
-      <p className="text-sm text-muted-foreground mt-0.5">{item.description}</p>
+      <p className="text-base font-medium leading-snug mt-0.5">{item.title}</p>
+      <div className="text-sm text-muted-foreground mt-0.5">{item.description}</div>
       {item.chips && item.chips.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
           {item.chips.map((chip) => (
@@ -112,9 +147,9 @@ export function Explainer({ items, type = 'items', className }: ExplainerProps) 
   }
 
   return (
-    <div className={cn('divide-y divide-border', className)}>
+    <div className={cn('space-y-5', className)}>
       {items.map((item, i) => (
-        <div key={i} className="py-4 first:pt-0 last:pb-0">
+        <div key={i}>
           <ItemContent item={item} />
         </div>
       ))}
