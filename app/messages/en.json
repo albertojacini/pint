@@ -80,7 +80,8 @@
     "mostRelevant": "Most relevant",
     "latest": "Latest",
     "noEventsFound": "No events found.",
-    "breadcrumb": "Entities"
+    "breadcrumb": "Entities",
+    "overview": "Overview"
   },
   "provisions": {
     "title": "Provisions",

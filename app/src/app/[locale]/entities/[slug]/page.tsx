@@ -23,6 +23,7 @@ import { ProvisionsOverviewLoader } from '@/components/provisions/loaders'
 import { ProvisionCardExtraSmall } from '@/components/provisions/provision-cards'
 import { getProvisionsByEntity } from '@/lib/actions/provisions'
 import { SectionInsight } from '@/components/custom-ui/section-insight'
+import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 import { getTranslations } from 'next-intl/server'
 
 // Priority order for relationship types (higher priority = shown first)
@@ -159,164 +160,179 @@ export default async function EntityPage({ params }: EntityPageProps) {
 
   const insights = entity.sectionInsights
 
+  // Build page nav sections dynamically based on available data
+  const pageNavSections: PageNavSection[] = [
+    { id: 'overview', label: t('overview') },
+    ...(hasAdministrationContent ? [{ id: 'politics', label: t('politics') }] : []),
+    { id: 'administration', label: t('administration') },
+    ...(entity.financialOverview ? [{ id: 'financials', label: t('financials') }] : []),
+    { id: 'events', label: t('events') },
+    { id: 'performance', label: t('performanceIndicators') },
+    { id: 'community', label: t('pintCommunity') },
+  ]
+
   return (
     <div>
       {/* Breadcrumbs */}
       <Breadcrumbs items={[{ label: t('breadcrumb'), href: '/entities' }, { label: entity.name }]} />
 
-      {/* Entity Type Badge + Tags + Quick Actions */}
-      <div className="flex items-center gap-3 mb-6">
-        <EntityClassificationBadge type={entity.type as any} />
-        <Tags tags={entityTags} />
-        <div className="ml-auto">
-          <EntityActions entity={entity} />
-        </div>
-      </div>
-
-      {/* Entity Header */}
-      <div className="flex items-center gap-2 mb-4">
-        <div className="flex-shrink-0">
-          {getStorageUrl('avatars', entity.avatarUrl) ? (
-            <img
-              src={getStorageUrl('avatars', entity.avatarUrl)!}
-              alt={entity.name}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-xl font-bold text-gray-400">{entity.name.charAt(0)}</span>
+      <PageNavLayout sections={pageNavSections}>
+        {/* Overview: badges, header, stats */}
+        <section id="overview" className="scroll-mt-32 lg:scroll-mt-20 mb-10">
+          <div className="flex items-center gap-3 mb-6">
+            <EntityClassificationBadge type={entity.type as any} />
+            <Tags tags={entityTags} />
+            <div className="ml-auto">
+              <EntityActions entity={entity} />
             </div>
-          )}
-        </div>
-        <PageTitle>{entity.name}</PageTitle>
-      </div>
-
-      {/* Information block: stats + related entities */}
-      <Box variant="muted" padding="md" className="space-y-2 mb-10">
-        <EssentialStats population={entity.population} stats={entity.essentialStats} />
-        {sortedRelationships.length > 0 && (
-          <div className="text-xs text-muted-foreground">
-            <span className="text-muted-foreground/60 mr-1.5">{t('relatedEntities')}</span>
-            {sortedRelationships.map((rel, index) => (
-              <span key={rel.id}>
-                <Link href={entityPath(rel)} className="text-link hover:underline">
-                  {rel.name}
-                </Link>
-                {index < sortedRelationships.length - 1 && (
-                  <span className="text-foreground/20"> · </span>
-                )}
-              </span>
-            ))}
           </div>
-        )}
-      </Box>
 
-      {/* Politics / Administrations */}
-      {hasAdministrationContent && (
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex-shrink-0">
+              {getStorageUrl('avatars', entity.avatarUrl) ? (
+                <img
+                  src={getStorageUrl('avatars', entity.avatarUrl)!}
+                  alt={entity.name}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                  <span className="text-xl font-bold text-gray-400">{entity.name.charAt(0)}</span>
+                </div>
+              )}
+            </div>
+            <PageTitle>{entity.name}</PageTitle>
+          </div>
+
+          <Box variant="muted" padding="md" className="space-y-2">
+            <EssentialStats population={entity.population} stats={entity.essentialStats} />
+            {sortedRelationships.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground/60 mr-1.5">{t('relatedEntities')}</span>
+                {sortedRelationships.map((rel, index) => (
+                  <span key={rel.id}>
+                    <Link href={entityPath(rel)} className="text-link hover:underline">
+                      {rel.name}
+                    </Link>
+                    {index < sortedRelationships.length - 1 && (
+                      <span className="text-foreground/20"> · </span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
+          </Box>
+        </section>
+        {/* Politics / Administrations */}
+        {hasAdministrationContent && (
+          <SectionL1
+            id="politics"
+            title={t('politics')}
+            action={
+              <Link href={`/entities/${entity.slug}/ad`} className="text-sm text-link hover:underline">
+                {t('viewAll')}
+              </Link>
+            }
+          >
+            {insights?.politics && <SectionInsight content={insights.politics} className="mb-4" />}
+            <div className="space-y-6">
+              <SectionL2 title="Consiglio comunale" className="mb-0">
+                {councilComposition && councilComposition.length > 0 && (
+                  <CouncilDots composition={councilComposition} />
+                )}
+              </SectionL2>
+
+              <SectionL2 title="Giunta comunale" className="mb-0">
+                {mappedMembers.length > 0 && (
+                  <ExecutiveMembers members={mappedMembers} variant="grid-minimal" />
+                )}
+              </SectionL2>
+
+              <ElectionsSection nextElection={nextElection} history={electionHistory} />
+            </div>
+          </SectionL1>
+        )}
+
         <SectionL1
-          title={t('politics')}
+          id="administration"
+          title={t('administration')}
           action={
-            <Link href={`/entities/${entity.slug}/ad`} className="text-sm text-link hover:underline">
+            <Link href={`/entities/${urlSlug}/provisions`} className="text-sm text-link hover:underline">
               {t('viewAll')}
             </Link>
           }
         >
-          {insights?.politics && <SectionInsight content={insights.politics} className="mb-4" />}
-          <div className="space-y-6">
-            <SectionL2 title="Consiglio comunale" className="mb-0">
-              {councilComposition && councilComposition.length > 0 && (
-                <CouncilDots composition={councilComposition} />
-              )}
+          {insights?.administration && (
+            <SectionInsight content={insights.administration} className="mb-4" />
+          )}
+          <SectionL2>
+            <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
+          </SectionL2>
+          {provisions.length > 0 && (
+            <SectionL2 title={t('relevantProvisions')}>
+              <div className="overflow-x-auto">
+                <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
+                  {provisions.slice(0, 6).map((p) => (
+                    <ProvisionCardExtraSmall
+                      key={p.title}
+                      provision={{ title: p.title, type: p.types[0]?.code ?? 'regulation', avatarUrl: p.avatarUrl }}
+                      className="max-w-[180px]"
+                    />
+                  ))}
+                </div>
+              </div>
+            </SectionL2>
+          )}
+
+          <SectionL2 title={t('community')}>
+            <p className="text-xs text-muted-foreground italic">{t('comingSoon')}</p>
+          </SectionL2>
+        </SectionL1>
+
+        {entity.financialOverview && (
+          <SectionL1 id="financials" title={t('financials')}>
+            {insights?.financials && (
+              <SectionInsight content={insights.financials} className="mb-4" />
+            )}
+            <FinancialTrends data={entity.financialOverview} />
+          </SectionL1>
+        )}
+
+        <SectionL1
+          id="events"
+          title={t('events')}
+          action={
+            <Link href={`${entityPath(entity)}/events`} className="text-sm text-link hover:underline">
+              {t('viewAll')}
+            </Link>
+          }
+        >
+          {insights?.events && <SectionInsight content={insights.events} className="mb-4" />}
+          <EventHeatmapLoader entityId={entity.id} showFilters={false} />
+
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SectionL2 title={t('mostRelevant')}>
+              <EventList events={mostRelevantEvents} />
             </SectionL2>
 
-            <SectionL2 title="Giunta comunale" className="mb-0">
-              {mappedMembers.length > 0 && (
-                <ExecutiveMembers members={mappedMembers} variant="grid-minimal" />
-              )}
+            <SectionL2 title={t('latest')}>
+              <EventList events={latestEvents} />
             </SectionL2>
-
-            <ElectionsSection nextElection={nextElection} history={electionHistory} />
           </div>
         </SectionL1>
-      )}
 
-      <SectionL1
-        title={t('administration')}
-        action={
-          <Link href={`/entities/${urlSlug}/provisions`} className="text-sm text-link hover:underline">
-            {t('viewAll')}
-          </Link>
-        }
-      >
-        {insights?.administration && (
-          <SectionInsight content={insights.administration} className="mb-4" />
-        )}
-        <SectionL2>
-          <ProvisionsOverviewLoader entityId={entity.id} entitySlug={entity.slug} />
-        </SectionL2>
-        {provisions.length > 0 && (
-          <SectionL2 title={t('relevantProvisions')}>
-            <div className="overflow-x-auto">
-              <div className="grid grid-flow-col auto-cols-[180px] grid-rows-3 gap-x-4 gap-y-0 w-max">
-                {provisions.slice(0, 6).map((p) => (
-                  <ProvisionCardExtraSmall
-                    key={p.title}
-                    provision={{ title: p.title, type: p.types[0]?.code ?? 'regulation', avatarUrl: p.avatarUrl }}
-                    className="max-w-[180px]"
-                  />
-                ))}
-              </div>
-            </div>
-          </SectionL2>
-        )}
-
-        <SectionL2 title={t('community')}>
-          <p className="text-xs text-muted-foreground italic">{t('comingSoon')}</p>
-        </SectionL2>
-      </SectionL1>
-
-      {entity.financialOverview && (
-        <SectionL1 title={t('financials')}>
-          {insights?.financials && (
-            <SectionInsight content={insights.financials} className="mb-4" />
+        <SectionL1 id="performance" title={t('performanceIndicators')}>
+          {insights?.performanceIndicators && (
+            <SectionInsight content={insights.performanceIndicators} className="mb-4" />
           )}
-          <FinancialTrends data={entity.financialOverview} />
+          <p className="text-sm text-muted-foreground">{t('comingSoon')}</p>
         </SectionL1>
-      )}
 
-      <SectionL1
-        title={t('events')}
-        action={
-          <Link href={`${entityPath(entity)}/events`} className="text-sm text-link hover:underline">
-            {t('viewAll')}
-          </Link>
-        }
-      >
-        {insights?.events && <SectionInsight content={insights.events} className="mb-4" />}
-        <EventHeatmapLoader entityId={entity.id} showFilters={false} />
-
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <SectionL2 title={t('mostRelevant')}>
-            <EventList events={mostRelevantEvents} />
-          </SectionL2>
-
-          <SectionL2 title={t('latest')}>
-            <EventList events={latestEvents} />
-          </SectionL2>
-        </div>
-      </SectionL1>
-
-      <SectionL1 title={t('performanceIndicators')}>
-        {insights?.performanceIndicators && (
-          <SectionInsight content={insights.performanceIndicators} className="mb-4" />
-        )}
-        <p className="text-sm text-muted-foreground">{t('comingSoon')}</p>
-      </SectionL1>
-
-      <SectionL1 title={t('pintCommunity')}>
-        {insights?.community && <SectionInsight content={insights.community} className="mb-4" />}
-        <p className="text-sm text-muted-foreground">{t('comingSoon')}</p>
-      </SectionL1>
+        <SectionL1 id="community" title={t('pintCommunity')}>
+          {insights?.community && <SectionInsight content={insights.community} className="mb-4" />}
+          <p className="text-sm text-muted-foreground">{t('comingSoon')}</p>
+        </SectionL1>
+      </PageNavLayout>
     </div>
   )
 }
