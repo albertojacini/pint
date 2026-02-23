@@ -4,6 +4,7 @@ import { Muted } from '@/components/custom-ui/typography'
 import { Box } from '@/components/custom-ui/box'
 import { Explainer, ExplainerLink, type ExplainerItem } from '@/components/custom-ui/explainer'
 import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
+import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
 
 export const metadata: Metadata = {
   title: 'Referendum Costituzionale: Separazione delle Carriere — 22-23 Marzo 2026',
@@ -807,6 +808,10 @@ const setteDomande: ExplainerItem[] = [
 export default function ItaliaReferendum2026Page() {
   return (
     <PageNavLayout sections={pageNavSections}>
+      <Breadcrumbs items={[
+        { label: 'Specials' },
+        { label: 'Guida super compatta referendum 2026' },
+      ]} />
       <PageHeader
         title="Referendum Costituzionale: Separazione delle Carriere"
         description="22-23 Marzo 2026"
