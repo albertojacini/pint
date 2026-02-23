@@ -1,12 +1,25 @@
 import type { Metadata } from 'next'
 import { PageHeader, SectionL1 } from '@/components/custom-ui/section'
+import { Muted } from '@/components/custom-ui/typography'
+import { Box } from '@/components/custom-ui/box'
 import { Explainer, type ExplainerItem } from '@/components/custom-ui/explainer'
+import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 
 export const metadata: Metadata = {
   title: 'Referendum Costituzionale: Separazione delle Carriere — 22-23 Marzo 2026',
   description:
     'Guida completa al referendum costituzionale confermativo sulla separazione delle carriere dei magistrati. Testo della legge, confronto articoli, analisi ragionata.',
 }
+
+// ============================================================================
+// Data: Page navigation
+// ============================================================================
+
+const pageNavSections: PageNavSection[] = [
+  { id: 'intro', label: 'Introduzione' },
+  { id: 'cronologia', label: 'Cronologia' },
+  { id: 'articoli', label: 'Articoli modificati' },
+]
 
 // ============================================================================
 // Data: Cronologia
@@ -672,19 +685,49 @@ const articoli: ExplainerItem[] = [
 
 export default function ItaliaReferendum2026Page() {
   return (
-    <div className="max-w-2xl">
+    <PageNavLayout sections={pageNavSections}>
       <PageHeader
         title="Referendum Costituzionale: Separazione delle Carriere"
         description="22-23 Marzo 2026"
       />
 
-      <SectionL1 title="Cronologia">
+      <section id="intro" className="scroll-mt-20">
+        <Muted className="mb-6">
+          Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di
+          giudici e pubblici ministeri.
+        </Muted>
+
+        <Box variant="muted" padding="md" className="mb-6">
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1">
+            Quesito sulla scheda elettorale
+          </p>
+          <p className="text-sm italic text-muted-foreground leading-relaxed">
+            Approvate il testo della legge costituzionale concernente &laquo;Norme in materia di
+            ordinamento giurisdizionale e di istituzione della Corte disciplinare&raquo; approvato
+            dal Parlamento e pubblicato nella Gazzetta Ufficiale n.&nbsp;253 del
+            30&nbsp;ottobre&nbsp;2025?
+          </p>
+        </Box>
+
+        <div className="grid grid-cols-2 gap-3 mb-10">
+          <Box variant="default" padding="md" className="text-center">
+            <p className="text-lg font-bold text-positive">SI</p>
+            <p className="text-xs text-muted-foreground">La riforma entra in vigore</p>
+          </Box>
+          <Box variant="default" padding="md" className="text-center">
+            <p className="text-lg font-bold text-negative">NO</p>
+            <p className="text-xs text-muted-foreground">Si torna alla situazione attuale</p>
+          </Box>
+        </div>
+      </section>
+
+      <SectionL1 id="cronologia" title="Cronologia">
         <Explainer type="timeline" items={cronologia} />
       </SectionL1>
 
-      <SectionL1 title="Cosa cambia nella Costituzione">
+      <SectionL1 id="articoli" title="Cosa cambia nella Costituzione">
         <Explainer items={articoli} />
       </SectionL1>
-    </div>
+    </PageNavLayout>
   )
 }

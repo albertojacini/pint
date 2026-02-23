@@ -33,11 +33,12 @@ interface SectionL1Props {
   title?: React.ReactNode
   action?: React.ReactNode
   className?: string
+  id?: string
 }
 
-export function SectionL1({ children, title, action, className }: SectionL1Props) {
+export function SectionL1({ children, title, action, className, id }: SectionL1Props) {
   return (
-    <section className={cn('mb-10', className)}>
+    <section id={id} className={cn('mb-10 scroll-mt-20', className)}>
       {(title || action) && (
         <div className="flex items-center justify-between mb-3">
           {title && <SectionL1Title>{title}</SectionL1Title>}
