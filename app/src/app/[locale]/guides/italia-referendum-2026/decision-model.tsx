@@ -89,10 +89,10 @@ const dimensions: Dimension[] = [
         'La percezione pubblica di imparzialità potrebbe migliorare anche senza cambiamenti sostanziali',
       ],
       possibleOutcomes: [
-        'Processi percepiti come più imparziali (effetto simbolico)',
-        'PM più orientati all\u2019accusa senza il contrappeso della cultura giudicante (Silvestri: \u201cipertrofia dell\u2019accusa\u201d)',
-        'Nessun cambiamento sostanziale — il problema era già risolto dalla Cartabia',
-        'Parità delle armi rafforzata nella percezione degli avvocati (UCPI)',
+        'L\u2019imparzialità migliora sensibilmente — il giusto processo diventa più concreto',
+        'L\u2019imparzialità migliora nella percezione pubblica, ma non nella sostanza',
+        'L\u2019imparzialità rimane sostanzialmente invariata — il problema era già risolto',
+        'L\u2019imparzialità peggiora — PM autoreferenziali diventano più aggressivi (\u201cipertrofia dell\u2019accusa\u201d)',
       ],
     },
     positionLabels: ['Migliora', 'Non cambia', 'Peggiora'],
@@ -211,10 +211,10 @@ const dimensions: Dimension[] = [
         'Le leggi attuative (a maggioranza semplice) definiranno i dettagli chiave: priorità azione penale, regole disciplinari, procedure sorteggio',
       ],
       possibleOutcomes: [
-        'PM con garanzie costituzionali più forti di oggi (Barbera, Cazzola)',
-        'Effetto intimidatorio: PM evitano indagini su figure politiche per timore del disciplinare',
-        'Azione penale orientata dalla politica — in entrambe le direzioni a seconda della maggioranza',
-        'Subordinazione graduale del PM alla politica (modello Francia pre-2013 o Polonia post-2016)',
+        'L\u2019indipendenza si rafforza — garanzie costituzionali più solide di oggi',
+        'L\u2019indipendenza rimane sostanzialmente invariata — le garanzie formali compensano i rischi strutturali',
+        'L\u2019indipendenza si indebolisce gradualmente — effetto intimidatorio e autocensura dei PM',
+        'L\u2019indipendenza viene compromessa — il PM diventa sensibile alla politica (modello Francia pre-2013)',
       ],
     },
     positionLabels: ['Si rafforza', 'Non cambia', 'Si indebolisce'],
@@ -355,10 +355,10 @@ const dimensions: Dimension[] = [
         'Possibili conflitti di competenza tra i due CSM su materie sovrapposte',
       ],
       possibleOutcomes: [
-        'Governance più mirata e specializzata per ciascuna funzione',
-        'Doppia burocrazia con costi e tempi aumentati',
-        'Conflitti istituzionali simili alla riforma del Titolo V (2001)',
-        'Frammentazione del sistema senza benefici compensativi (Bruti Liberati: \u201cdue organi non comunicanti\u201d)',
+        'L\u2019efficienza migliora — due organi specializzati governano meglio di uno generalista',
+        'L\u2019efficienza rimane sostanzialmente invariata — costi e benefici si compensano',
+        'L\u2019efficienza peggiora — doppia burocrazia, costi maggiori, tempi più lunghi',
+        'L\u2019efficienza peggiora molto — conflitti tra organi e frammentazione paralizzante (modello Titolo V)',
       ],
     },
     positionLabels: ['Migliora', 'Non cambia', 'Peggiora'],
@@ -484,10 +484,10 @@ const dimensions: Dimension[] = [
         'La lista parlamentare filtra chi può essere sorteggiato tra i laici (2/3)',
       ],
       possibleOutcomes: [
-        'Correnti eliminate, nomine basate sul merito',
-        'Correnti mutano in reti informali più opache e meno controllabili (Santalucia)',
-        'Organi più deboli e meno autorevoli (Pertici: \u201corgani deboli\u201d)',
-        'Autogoverno della magistratura sostanzialmente ridotto (da 2/3 a 1/3 togati)',
+        'L\u2019autogoverno migliora — correnti eliminate, nomine basate sul merito',
+        'L\u2019autogoverno rimane sostanzialmente invariato — le correnti si riorganizzano in altre forme',
+        'L\u2019autogoverno peggiora — organi più deboli, meno autorevoli, meno competenti',
+        'L\u2019autogoverno viene svuotato — togati ridotti a 1/3, il Parlamento controlla di fatto la governance',
       ],
     },
     positionLabels: ['Migliora', 'Non cambia', 'Peggiora'],
@@ -599,36 +599,61 @@ const dimensions: Dimension[] = [
 // ============================================================================
 
 function CausalChainView({ chain }: { chain: CausalChain }) {
-  const columns = [
-    { label: 'Dati oggettivi', items: chain.objectiveData },
-    { label: 'Possibili effetti', items: chain.possibleEffects },
-    { label: 'Possibili esiti', items: chain.possibleOutcomes },
-  ]
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-      {columns.map((col, colIdx) => (
-        <div key={col.label} className="relative">
-          {colIdx > 0 && (
-            <span className="hidden sm:block absolute -left-2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/40 text-lg">
-              →
-            </span>
-          )}
-          <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1.5">
-            {col.label}
-          </p>
-          <ul className="space-y-1.5">
-            {col.items.map((item, i) => (
-              <li key={i} className="flex gap-1.5">
-                <span className="text-muted-foreground/40 shrink-0 mt-px">
-                  {colIdx === 0 ? '·' : colIdx === 1 ? '→' : '⇒'}
-                </span>
-                <span className="text-muted-foreground">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {/* Column 1: Objective data */}
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1.5">
+          Dati oggettivi
+        </p>
+        <ul className="space-y-1.5">
+          {chain.objectiveData.map((item, i) => (
+            <li key={i} className="flex gap-1.5">
+              <span className="text-muted-foreground/40 shrink-0 mt-px">·</span>
+              <span className="text-muted-foreground">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Column 2: Possible effects */}
+      <div className="relative">
+        <span className="hidden sm:block absolute -left-2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/40 text-lg">
+          →
+        </span>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1.5">
+          Possibili effetti
+        </p>
+        <ul className="space-y-1.5">
+          {chain.possibleEffects.map((item, i) => (
+            <li key={i} className="flex gap-1.5">
+              <span className="text-muted-foreground/40 shrink-0 mt-px">→</span>
+              <span className="text-muted-foreground">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Column 3: Possible outcomes (ordered best → worst) */}
+      <div className="relative">
+        <span className="hidden sm:block absolute -left-2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/40 text-lg">
+          →
+        </span>
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 mb-1.5">
+          Possibili esiti
+          <span className="normal-case tracking-normal ml-1">(dal migliore al peggiore)</span>
+        </p>
+        <ol className="space-y-1.5">
+          {chain.possibleOutcomes.map((item, i) => (
+            <li key={i} className="flex gap-1.5">
+              <span className="text-muted-foreground/40 shrink-0 mt-px font-mono text-[10px]">
+                {i + 1}.
+              </span>
+              <span className="text-muted-foreground">{item}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   )
 }
