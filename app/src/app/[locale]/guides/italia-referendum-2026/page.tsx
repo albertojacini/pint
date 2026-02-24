@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { PageHeader, SectionL1 } from '@/components/custom-ui/section'
 import { Muted } from '@/components/custom-ui/typography'
 import { Box } from '@/components/custom-ui/box'
+import { DefinitionTable } from '@/components/custom-ui/tables'
 import { Explainer, ExplainerLink, type ExplainerItem } from '@/components/custom-ui/explainer'
 import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
@@ -1378,142 +1379,140 @@ const setteDomande: ExplainerItem[] = [
 export default function ItaliaReferendum2026Page() {
   return (
     <PageNavLayout sections={pageNavSections}>
-      <Breadcrumbs
-        items={[{ label: 'Guide' }, { label: 'Guida super compatta referendum 2026' }]}
-      />
+      <Breadcrumbs items={[{ label: 'Guide' }, { label: 'Guida compatta al referendum 2026' }]} />
       <PageHeader title="Referendum confermativo sulla Separazione delle Carriere" />
 
       <section id="intro" className="scroll-mt-32 lg:scroll-mt-20">
-        <dl className="text-sm space-y-1 mb-6">
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">In breve</dt>
-            <dd>
-              Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di
-              giudici e pubblici ministeri.
-            </dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Quesito ufficiale</dt>
-            <dd className="italic text-muted-foreground">
-              "Approvate il testo della legge costituzionale concernente &laquo;Norme in materia di
-              ordinamento giurisdizionale e di istituzione della Corte disciplinare&raquo; approvato
-              dal Parlamento e pubblicato nella Gazzetta Ufficiale n.&nbsp;253 del
-              30&nbsp;ottobre&nbsp;2025?"
-            </dd>
-          </div>
-        </dl>
-
-        <dl className="text-sm space-y-1 mb-6">
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Quando</dt>
-            <dd className="font-medium">22-23 Marzo 2026</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Tipo</dt>
-            <dd className="font-medium">Referendum costituzionale confermativo</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Quorum</dt>
-            <dd>
-              <span className="font-medium">Nessuno</span> — vince la maggioranza semplice dei
-              votanti
-            </dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Perché si vota</dt>
-            <dd>
-              Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i
-              cittadini possano confermare o respingere la modifica.
-            </dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Se vince il NO</dt>
-            <dd>Si torna alla situazione attuale. Nessun cambiamento alla Costituzione.</dd>
-          </div>
-          <div className="flex gap-2">
-            <dt className="text-muted-foreground shrink-0 w-28">Se vince il SI</dt>
-            <dd>
-              <ul className="space-y-0.5">
-                <li>
-                  Carriere separate fin dall&apos;ingresso{' '}
-                  <ExplainerLink
-                    label="Carriere separate"
-                    content={
-                      <p>
-                        Oggi un magistrato può passare dalla funzione giudicante a quella
-                        requirente. Con le carriere distinte la scelta è{' '}
-                        <strong>definitiva al momento del concorso</strong>. Due concorsi separati,
-                        due percorsi di carriera separati.
-                      </p>
-                    }
-                  >
-                    Dettagli
-                  </ExplainerLink>
-                </li>
-                <li>
-                  Due CSM distinti (uno per giudici, uno per PM){' '}
-                  <ExplainerLink
-                    label="Due CSM"
-                    content={
-                      <p>
-                        Se le carriere sono separate, anche l&apos;organo di autogoverno deve essere
-                        separato. I favorevoli dicono che evita conflitti di interesse. I critici
-                        temono CSM più piccoli e più esposti a influenze esterne.
-                      </p>
-                    }
-                  >
-                    Dettagli
-                  </ExplainerLink>
-                </li>
-                <li>
-                  Nuova Alta Corte disciplinare costituzionale{' '}
-                  <ExplainerLink
-                    label="Alta Corte disciplinare"
-                    content={
-                      <p>
-                        Un organo completamente nuovo. Si occuperà esclusivamente della disciplina
-                        dei magistrati. Oggi questa funzione è del CSM (sezione disciplinare). La
-                        riforma la trasferisce a questo nuovo organo separato.
-                      </p>
-                    }
-                  >
-                    Dettagli
-                  </ExplainerLink>
-                </li>
-                <li>
-                  Scelta definitiva al momento del concorso{' '}
-                  <ExplainerLink
-                    label="Concorso"
-                    content={
-                      <p>
-                        Oggi c&apos;è un unico concorso per entrare in magistratura. Con la riforma
-                        ci saranno due concorsi separati: uno per la carriera giudicante, uno per la
-                        carriera requirente. Non sarà più possibile cambiare funzione.
-                      </p>
-                    }
-                  >
-                    Dettagli
-                  </ExplainerLink>
-                </li>
-                <li>
-                  Membri CSM sorteggiati (1/3 togati){' '}
-                  <ExplainerLink
-                    label="Sorteggio"
-                    content={
-                      <p>
-                        Oggi i membri togati del CSM sono <strong>eletti</strong> dai colleghi. La
-                        riforma introduce il <strong>sorteggio</strong>: i nomi vengono estratti a
-                        caso. La quota si inverte: da 2/3 togati a 1/3 togati.
-                      </p>
-                    }
-                  >
-                    Dettagli
-                  </ExplainerLink>
-                </li>
-              </ul>
-            </dd>
-          </div>
-        </dl>
+        <DefinitionTable
+          className="mb-6"
+          items={[
+            {
+              label: 'In breve',
+              value:
+                'Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di giudici e pubblici ministeri.',
+            },
+            {
+              label: 'Quesito ufficiale',
+              value: (
+                <span className="italic text-muted-foreground">
+                  &quot;Approvate il testo della legge costituzionale concernente &laquo;Norme in
+                  materia di ordinamento giurisdizionale e di istituzione della Corte
+                  disciplinare&raquo; approvato dal Parlamento e pubblicato nella Gazzetta Ufficiale
+                  n.&nbsp;253 del 30&nbsp;ottobre&nbsp;2025?&quot;
+                </span>
+              ),
+            },
+            {
+              label: 'Quando',
+              value: <span className="font-medium">22-23 Marzo 2026</span>,
+            },
+            {
+              label: 'Tipo',
+              value: <span className="font-medium">Referendum costituzionale confermativo</span>,
+            },
+            {
+              label: 'Quorum',
+              value: (
+                <>
+                  <span className="font-medium">Nessuno</span> — vince la maggioranza semplice dei
+                  votanti
+                </>
+              ),
+            },
+            {
+              label: 'Perché si vota',
+              value:
+                'Il Parlamento ha approvato la riforma senza i 2/3. La Costituzione prevede che i cittadini possano confermare o respingere la modifica.',
+            },
+            {
+              label: 'Se vince il NO',
+              value: 'Si torna alla situazione attuale. Nessun cambiamento alla Costituzione.',
+            },
+            {
+              label: 'Se vince il SI',
+              value: (
+                <ul className="list-disc pl-4 space-y-0.5">
+                  <li>
+                    Carriere separate fin dall&apos;ingresso{' '}
+                    <ExplainerLink
+                      label="Carriere separate"
+                      content={
+                        <p>
+                          Oggi un magistrato può passare dalla funzione giudicante a quella
+                          requirente. Con le carriere distinte la scelta è{' '}
+                          <strong>definitiva al momento del concorso</strong>. Due concorsi separati,
+                          due percorsi di carriera separati.
+                        </p>
+                      }
+                    >
+                      Dettagli
+                    </ExplainerLink>
+                  </li>
+                  <li>
+                    Due CSM distinti (uno per giudici, uno per PM){' '}
+                    <ExplainerLink
+                      label="Due CSM"
+                      content={
+                        <p>
+                          Se le carriere sono separate, anche l&apos;organo di autogoverno deve
+                          essere separato. I favorevoli dicono che evita conflitti di interesse. I
+                          critici temono CSM più piccoli e più esposti a influenze esterne.
+                        </p>
+                      }
+                    >
+                      Dettagli
+                    </ExplainerLink>
+                  </li>
+                  <li>
+                    Nuova Alta Corte disciplinare costituzionale{' '}
+                    <ExplainerLink
+                      label="Alta Corte disciplinare"
+                      content={
+                        <p>
+                          Un organo completamente nuovo. Si occuperà esclusivamente della disciplina
+                          dei magistrati. Oggi questa funzione è del CSM (sezione disciplinare). La
+                          riforma la trasferisce a questo nuovo organo separato.
+                        </p>
+                      }
+                    >
+                      Dettagli
+                    </ExplainerLink>
+                  </li>
+                  <li>
+                    Scelta definitiva al momento del concorso{' '}
+                    <ExplainerLink
+                      label="Concorso"
+                      content={
+                        <p>
+                          Oggi c&apos;è un unico concorso per entrare in magistratura. Con la
+                          riforma ci saranno due concorsi separati: uno per la carriera giudicante,
+                          uno per la carriera requirente. Non sarà più possibile cambiare funzione.
+                        </p>
+                      }
+                    >
+                      Dettagli
+                    </ExplainerLink>
+                  </li>
+                  <li>
+                    Membri CSM sorteggiati (1/3 togati){' '}
+                    <ExplainerLink
+                      label="Sorteggio"
+                      content={
+                        <p>
+                          Oggi i membri togati del CSM sono <strong>eletti</strong> dai colleghi. La
+                          riforma introduce il <strong>sorteggio</strong>: i nomi vengono estratti a
+                          caso. La quota si inverte: da 2/3 togati a 1/3 togati.
+                        </p>
+                      }
+                    >
+                      Dettagli
+                    </ExplainerLink>
+                  </li>
+                </ul>
+              ),
+            },
+          ]}
+        />
 
         <div className="grid grid-cols-2 gap-3 mb-10">
           <Box variant="default" padding="md" className="text-center">

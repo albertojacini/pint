@@ -26,9 +26,7 @@ export default async function Home() {
       {/* Hero Section */}
       <div className="mb-12 text-center">
         <PageTitle className="mb-4">{t('title')}</PageTitle>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          {t('description')}
-        </p>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('description')}</p>
       </div>
 
       {/* Featured Entity: Comune di Milano */}
@@ -63,7 +61,9 @@ export default async function Home() {
           )}
 
           {/* Scores */}
-          {(milanoEntity.scoreInnovation || milanoEntity.scoreSustainability || milanoEntity.scoreImpact) && (
+          {(milanoEntity.scoreInnovation ||
+            milanoEntity.scoreSustainability ||
+            milanoEntity.scoreImpact) && (
             <div className="mt-4 flex gap-3 flex-wrap">
               {milanoEntity.scoreInnovation && milanoEntity.scoreInnovation > 0 && (
                 <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
@@ -98,7 +98,7 @@ export default async function Home() {
           href="/guides/italia-referendum-2026"
           className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
         >
-          Guida super compatta al referendum 2026 sulla separazione delle carriere
+          Guida compatta al referendum 2026 sulla separazione delle carriere
         </Link>
       </div>
 
