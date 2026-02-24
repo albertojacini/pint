@@ -1,6 +1,5 @@
 'use client'
 
-import { CircleHelp } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import {
   Dialog,
@@ -80,14 +79,8 @@ function ChipWithDialog({ chip }: { chip: ExplainerChip }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className={cn(
-          'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium transition-colors',
-          isAccent
-            ? 'border border-primary/30 bg-primary/5 text-primary hover:bg-primary/10'
-            : 'border border-border bg-background text-muted-foreground hover:bg-muted hover:text-foreground'
-        )}
+        className="text-sm underline decoration-dashed underline-offset-2 text-link hover:decoration-solid transition-colors"
       >
-        <CircleHelp className="h-3 w-3 opacity-50" />
         {chip.label}
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -117,7 +110,7 @@ function ItemContent({ item }: { item: ExplainerItem }) {
       <p className="text-base font-medium leading-snug mt-0.5">{item.title}</p>
       <div className="text-sm text-muted-foreground mt-0.5">{item.description}</div>
       {item.chips && item.chips.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
+        <div className="flex flex-wrap gap-3 mt-2">
           {item.chips.map((chip) => (
             <ChipWithDialog key={chip.label} chip={chip} />
           ))}

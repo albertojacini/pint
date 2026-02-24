@@ -1447,9 +1447,7 @@ export default function ItaliaReferendum2026Page() {
                       </p>
                     }
                   >
-                    <span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">
-                      dettagli
-                    </span>
+                    Dettagli
                   </ExplainerLink>
                 </li>
                 <li>
@@ -1464,9 +1462,7 @@ export default function ItaliaReferendum2026Page() {
                       </p>
                     }
                   >
-                    <span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">
-                      dettagli
-                    </span>
+                    Dettagli
                   </ExplainerLink>
                 </li>
                 <li>
@@ -1481,9 +1477,7 @@ export default function ItaliaReferendum2026Page() {
                       </p>
                     }
                   >
-                    <span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">
-                      dettagli
-                    </span>
+                    Dettagli
                   </ExplainerLink>
                 </li>
                 <li>
@@ -1498,9 +1492,7 @@ export default function ItaliaReferendum2026Page() {
                       </p>
                     }
                   >
-                    <span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">
-                      dettagli
-                    </span>
+                    Dettagli
                   </ExplainerLink>
                 </li>
                 <li>
@@ -1515,9 +1507,7 @@ export default function ItaliaReferendum2026Page() {
                       </p>
                     }
                   >
-                    <span className="inline-flex items-center rounded-full border border-border bg-background px-1.5 py-0 text-[10px] text-muted-foreground">
-                      dettagli
-                    </span>
+                    Dettagli
                   </ExplainerLink>
                 </li>
               </ul>
