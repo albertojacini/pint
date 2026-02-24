@@ -6,6 +6,7 @@ import { DefinitionTable } from '@/components/custom-ui/tables'
 import { Explainer, ExplainerLink, type ExplainerItem } from '@/components/custom-ui/explainer'
 import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
+import { DecisionModel } from './decision-model'
 
 export const metadata: Metadata = {
   title: 'Referendum Costituzionale: Separazione delle Carriere — 22-23 Marzo 2026',
@@ -21,7 +22,7 @@ const pageNavSections: PageNavSection[] = [
   { id: 'intro', label: 'Introduzione' },
   { id: 'cronologia', label: 'Cronologia' },
   { id: 'articoli', label: 'Contenuto' },
-  { id: 'come-ragionare', label: '7 Domande' },
+  { id: 'come-ragionare', label: 'Come decidere' },
   { id: 'altri-paesi', label: 'Altri paesi' },
 ]
 
@@ -1234,143 +1235,6 @@ const altriPaesi: ExplainerItem[] = [
   },
 ]
 
-// ============================================================================
-// Data: Come ragionare — 7 domande
-// ============================================================================
-
-const setteDomande: ExplainerItem[] = [
-  {
-    label: '1. Comprensione',
-    title: 'Cosa mi viene chiesto davvero?',
-    description:
-      'Qual è la domanda in parole semplici? Qual è la situazione attuale? Cosa cambierebbe concretamente se vince il SI? Cosa resta uguale in ogni caso?',
-    chips: [
-      {
-        label: 'Applicato a questo referendum',
-        content: (
-          <p>
-            I magistrati continuano ad entrare per concorso. L&apos;indipendenza della magistratura
-            resta un principio costituzionale. Ciò che cambia è l&apos;organizzazione interna:
-            carriere separate, due organi di autogoverno, un nuovo tribunale disciplinare.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: '2. Diagnosi del Problema',
-    title: "C'è davvero un problema da risolvere?",
-    description:
-      'Quale problema vuole risolvere questa riforma? Il problema è reale e documentato, oppure percepito/politico? Quanto è grave? Come funziona effettivamente il sistema attuale?',
-    chips: [
-      {
-        label: 'Applicato a questo referendum',
-        content: (
-          <p>
-            Il problema dichiarato è che condividere la carriera creerebbe uno squilibrio a favore
-            dell&apos;accusa — il giudice sarebbe troppo vicino al PM. Tuttavia, il tasso di
-            assoluzione in Italia è circa il 45% (tra i più alti d&apos;Europa), il che complica la
-            narrativa del &quot;giudice che sta dalla parte del PM&quot;.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: '3. Adeguatezza della Soluzione',
-    title: 'Questa riforma risolve quel problema?',
-    description:
-      'Il cambiamento proposto affronta logicamente il problema identificato? Esistono alternative più semplici? Cosa mostrano le esperienze di altri paesi? La riforma fa più di quanto necessario?',
-    chips: [
-      {
-        label: 'Applicato a questo referendum',
-        content: (
-          <p>
-            La Francia ha separato le carriere ma ha ottenuto controllo politico sui PM. La Germania
-            ha separazione completa ma i PM non sono considerati &quot;autorità giudiziaria&quot;
-            dalla CGUE. La Spagna nel 2025 ha trasferito i poteri investigativi ai PM (direzione
-            diversa). Le evidenze comparative sono miste — la separazione da sola non garantisce i
-            benefici dichiarati.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: '4. Valutazione dei Rischi',
-    title: 'Cosa potrebbe andare storto?',
-    description:
-      'Quali sono le conseguenze indesiderate plausibili? Questo cambiamento è reversibile? Apre la porta a ulteriori cambiamenti in una direzione preoccupante? Chi controlla le nuove strutture?',
-    chips: [
-      {
-        label: 'Applicato a questo referendum',
-        content: (
-          <p>
-            Rischio che i PM separati perdano le garanzie di autogoverno giudiziario. La nuova Alta
-            Corte disciplinare è composta in parte per sorteggio — meccanismo nuovo e non testato.
-            Polonia e Ungheria dimostrano che i meccanismi disciplinari possono diventare strumenti
-            di controllo politico. Una modifica costituzionale è praticamente irreversibile.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: '5. Interessi e Legittimità',
-    title: 'Chi vuole questa riforma e perché?',
-    description:
-      'Chi promuove questa riforma e con quali motivazioni dichiarate? Chi si oppone? Ci sono interessi non dichiarati da entrambe le parti? Come è stata elaborata la riforma?',
-    chips: [
-      {
-        label: 'Applicato a questo referendum',
-        content: (
-          <p>
-            Promossa dalla coalizione di centrodestra (storicamente in tensione con la
-            magistratura). Avversata dalla maggior parte delle associazioni dei magistrati e da
-            parte dell&apos;opposizione. La riforma è passata senza la maggioranza dei 2/3 — ed è
-            proprio per questo che i cittadini hanno diritto a un voto confermativo.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: '6. La Meccanica del Voto',
-    title: 'Come funziona il mio voto?',
-    description: "Che tipo di referendum è? C'è un quorum? Cosa succede se non voto?",
-    chips: [
-      {
-        label: 'Applicato a questo referendum',
-        content: (
-          <p>
-            Referendum costituzionale confermativo. <strong>Non c&apos;è quorum.</strong> Vince la
-            maggioranza semplice dei voti validi. Ogni voto conta allo stesso modo —
-            l&apos;astensione non ha alcun valore strategico, significa solo lasciare che decidano
-            gli altri.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: '7. Pesatura Personale',
-    title: 'Cosa conta di più per me?',
-    description:
-      'Quale dei livelli precedenti pesa di più per me? Sono a mio agio con l\u2019incertezza? Qual è il mio default: cambiare o mantenere lo status quo?',
-    chips: [
-      {
-        label: 'Nessuno può rispondere al posto tuo',
-        content: (
-          <p>
-            Questa è la domanda più personale. Non esiste una risposta oggettivamente
-            &quot;giusta&quot;. Se hai attraversato i sei livelli precedenti con onestà, la tua
-            posizione — qualunque essa sia — è una posizione solida.
-          </p>
-        ),
-      },
-    ],
-  },
-]
 
 // ============================================================================
 // Page
@@ -1440,8 +1304,8 @@ export default function ItaliaReferendum2026Page() {
                         <p>
                           Oggi un magistrato può passare dalla funzione giudicante a quella
                           requirente. Con le carriere distinte la scelta è{' '}
-                          <strong>definitiva al momento del concorso</strong>. Due concorsi separati,
-                          due percorsi di carriera separati.
+                          <strong>definitiva al momento del concorso</strong>. Due concorsi
+                          separati, due percorsi di carriera separati.
                         </p>
                       }
                     >
@@ -1538,13 +1402,12 @@ export default function ItaliaReferendum2026Page() {
         <Explainer items={articoli} />
       </SectionL1>
 
-      <SectionL1 id="come-ragionare" title="Come Ragionare: 7 Domande">
+      <SectionL1 id="come-ragionare" title="Come decidere">
         <Muted className="mb-4">
-          Ogni referendum è una decisione a strati. Ogni strato costruisce sul precedente. Un
-          elettore che riesce a rispondere a tutti e sette ha una posizione solida —
-          indipendentemente da cosa vota.
+          Nessuno sa con certezza cosa succederà se vince il SI. Scegli il tuo punto di vista,
+          esplora gli scenari possibili e valuta quanto li ritieni probabili.
         </Muted>
-        <Explainer items={setteDomande} />
+        <DecisionModel />
       </SectionL1>
 
       <SectionL1 id="altri-paesi" title="Cosa Fanno gli Altri Paesi">
