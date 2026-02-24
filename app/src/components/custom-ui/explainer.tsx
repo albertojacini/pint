@@ -51,7 +51,7 @@ export function ExplainerLink({ label, title, content, children }: ExplainerLink
     <>
       <button
         onClick={() => setOpen(true)}
-        className="underline decoration-dotted underline-offset-2 text-foreground hover:decoration-solid transition-colors"
+        className="underline decoration-dashed underline-offset-2 text-link hover:decoration-solid transition-colors"
       >
         {children}
       </button>
