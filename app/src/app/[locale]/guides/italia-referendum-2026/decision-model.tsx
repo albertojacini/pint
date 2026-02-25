@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import { Box } from '@/components/custom-ui/box'
 import { Muted } from '@/components/custom-ui/typography'
+import { ExplainerLink } from '@/components/custom-ui/explainer'
 
 // ============================================================================
 // Types
@@ -13,7 +14,7 @@ type DimensionId = 'imparzialita' | 'indipendenza' | 'efficienza' | 'autogoverno
 type Position = 'positive' | 'neutral' | 'negative' | null
 
 interface CausalChain {
-  objectiveData: string[]
+  objectiveData: ReactNode[]
   possibleEffects: string[]
   possibleOutcomes: string[]
 }
@@ -47,10 +48,38 @@ const dimensions: Dimension[] = [
     reformComponent: 'Separazione delle carriere (Art. 102)',
     causalChain: {
       objectiveData: [
-        'La riforma introduce due concorsi separati per giudici e PM (Art. 102)',
-        'Oggi i passaggi di funzione sono lo 0,5% dopo la riforma Cartabia (2022)',
-        'Il tasso di assoluzione in Italia \u00e8 ~45%, tra i pi\u00f9 alti in Europa',
-        'L\u2019Art. 111 (giusto processo) richiede gi\u00e0 un giudice terzo e imparziale',
+        <>
+          I passaggi di funzione tra giudice e PM saranno eliminati{' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Dopo la riforma Cartabia (2022), i passaggi di funzione sono gi&agrave; ridotti
+                allo 0,5% dei magistrati. Il tasso di assoluzione in Italia &egrave; ~45%, tra i
+                pi&ugrave; alti in Europa. L&apos;Art. 111 (giusto processo) richiede gi&agrave;
+                un giudice terzo e imparziale.
+              </p>
+            }
+          >
+            (oggi 0,5%)
+          </ExplainerLink>
+        </>,
+        <>
+          Due concorsi separati: uno per la carriera giudicante, uno per la requirente (Art.
+          102){' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Oggi c&apos;&egrave; un unico concorso per entrare in magistratura. Dopo
+                l&apos;ingresso si pu&ograve; scegliere e, nei limiti della Cartabia, cambiare
+                funzione.
+              </p>
+            }
+          >
+            (oggi concorso unico)
+          </ExplainerLink>
+        </>,
       ],
       possibleEffects: [
         'Il giudice non ha mai svolto funzioni requirenti e viceversa',
@@ -130,11 +159,37 @@ const dimensions: Dimension[] = [
     reformComponent: 'CSM requirente (Art. 104) + Alta Corte (Art. 105)',
     causalChain: {
       objectiveData: [
-        'Nuovo CSM requirente: 1/3 togati sorteggiati, 2/3 da lista compilata dal Parlamento',
-        'Nuova Alta Corte disciplinare, le cui decisioni non sono impugnabili in Cassazione',
-        'L\u2019Art. 112 (obbligatoriet\u00e0 dell\u2019azione penale) resta invariato',
-        'Il Presidente della Repubblica presiede entrambi i CSM',
-        'Oggi: CSM unico con 2/3 togati eletti, 1/3 laici eletti dal Parlamento',
+        <>
+          Nasce un CSM requirente separato: 1/3 togati sorteggiati, 2/3 da lista parlamentare{' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Oggi esiste un CSM unico con 2/3 componenti togati (eletti dai magistrati) e
+                1/3 laici (eletti dal Parlamento in seduta comune).
+              </p>
+            }
+          >
+            (oggi CSM unico, 2/3 togati eletti)
+          </ExplainerLink>
+        </>,
+        <>
+          La giurisdizione disciplinare passa all&apos;Alta Corte; le decisioni non saranno
+          impugnabili in Cassazione{' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Oggi la disciplina &egrave; gestita dalla sezione disciplinare interna al CSM.
+                Le sue decisioni sono impugnabili davanti alle Sezioni Unite della Cassazione.
+              </p>
+            }
+          >
+            (oggi sezione interna al CSM, impugnabile)
+          </ExplainerLink>
+        </>,
+        <>L&apos;Art. 112 (obbligatoriet&agrave; dell&apos;azione penale) resta invariato</>,
+        <>Il Presidente della Repubblica presiede entrambi i CSM</>,
       ],
       possibleEffects: [
         'La maggioranza parlamentare controlla la composizione della lista dei laici (2/3 del CSM requirente)',
@@ -236,11 +291,38 @@ const dimensions: Dimension[] = [
     reformComponent: 'Due CSM (Art. 104) + Alta Corte disciplinare (Art. 105)',
     causalChain: {
       objectiveData: [
-        'Oggi: un CSM unico gestisce l\u2019intero sistema giudiziario',
-        'Proposta: due CSM separati (giudicante e requirente) + Alta Corte disciplinare',
-        'L\u2019Alta Corte gestir\u00e0 ~75 casi/anno con un costo stimato di ~20M\u20AC/anno (Maruotti, ANM)',
-        'L\u2019Italia ha tra i tempi processuali pi\u00f9 lunghi d\u2019Europa',
-        'Il testo non prevede meccanismi di coordinamento tra i due CSM',
+        <>
+          Il CSM si sdoppia in due organi separati (giudicante e requirente){' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Oggi un unico CSM gestisce l&apos;intero sistema giudiziario: assunzioni,
+                assegnazioni, trasferimenti e promozioni sia dei giudici che dei PM.
+                L&apos;Italia ha tra i tempi processuali pi&ugrave; lunghi d&apos;Europa.
+              </p>
+            }
+          >
+            (oggi CSM unico)
+          </ExplainerLink>
+        </>,
+        <>
+          Nasce l&apos;Alta Corte disciplinare con propria struttura autonoma{' '}
+          <ExplainerLink
+            label="Stima dei costi"
+            content={
+              <p>
+                Secondo le stime dell&apos;ANM (Maruotti), l&apos;Alta Corte gestirebbe ~75
+                casi/anno con un costo stimato di ~20M&euro;/anno. Oggi la disciplina &egrave;
+                gestita dalla sezione disciplinare interna al CSM senza costi aggiuntivi di
+                struttura.
+              </p>
+            }
+          >
+            (~75 casi/anno, ~20M&euro;/anno stimati)
+          </ExplainerLink>
+        </>,
+        <>Nessun meccanismo di coordinamento tra i due CSM &egrave; previsto nel testo</>,
       ],
       possibleEffects: [
         'Duplicazione di strutture amministrative, sedi, organici, sistemi IT',
@@ -327,11 +409,39 @@ const dimensions: Dimension[] = [
     reformComponent: 'Sorteggio + inversione quota togati/laici (Art. 104)',
     causalChain: {
       objectiveData: [
-        'Oggi: CSM con 2/3 togati eletti, organizzati in correnti con programmi pubblici',
-        'Proposta: 1/3 togati sorteggiati, 2/3 laici da lista parlamentare',
-        'Scandalo Palamara (2019): document\u00f2 logiche di scambio tra correnti per nomine',
-        'Mandato di 4 anni, non immediatamente ripetibile',
-        'Il sorteggio per concorsi universitari (2008) non ha prodotto miglioramenti misurabili (studio Senato 2017)',
+        <>
+          I membri togati del CSM saranno sorteggiati, non pi&ugrave; eletti{' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Oggi i componenti togati sono eletti da tutti i magistrati ordinari. Le elezioni
+                sono organizzate da correnti (gruppi associativi) con programmi pubblici. Lo
+                scandalo Palamara (2019) document&ograve; logiche di scambio tra correnti per le
+                nomine.
+              </p>
+            }
+          >
+            (oggi eletti, organizzati in correnti)
+          </ExplainerLink>
+        </>,
+        <>
+          La quota togati/laici si inverte: da 2/3 a 1/3 togati{' '}
+          <ExplainerLink
+            label="Situazione attuale"
+            content={
+              <p>
+                Oggi i togati sono 2/3 dei componenti e i laici (eletti dal Parlamento) sono
+                1/3. Con la riforma i togati scendono a 1/3 e i laici (sorteggiati da lista
+                parlamentare) salgono a 2/3.
+              </p>
+            }
+          >
+            (oggi 2/3 togati, 1/3 laici)
+          </ExplainerLink>
+        </>,
+        <>I 2/3 laici saranno sorteggiati da una lista compilata dal Parlamento in seduta comune</>,
+        <>Mandato di 4 anni, non immediatamente ripetibile</>,
       ],
       possibleEffects: [
         'Eliminazione della competizione elettorale tra correnti nel CSM',
