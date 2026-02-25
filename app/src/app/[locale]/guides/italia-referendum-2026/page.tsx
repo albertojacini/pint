@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import { PageHeader, SectionL1, SectionL2 } from '@/components/custom-ui/section'
+import { PageHeader, SectionL1 } from '@/components/custom-ui/section'
 import { Muted } from '@/components/custom-ui/typography'
 import { Box } from '@/components/custom-ui/box'
 import { DefinitionTable } from '@/components/custom-ui/tables'
 import { Explainer, ExplainerLink, type ExplainerItem } from '@/components/custom-ui/explainer'
 import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
-import { DecisionModel, CausalChainView, type CausalChain } from './decision-model'
+import { DecisionModel } from './decision-model'
 
 export const metadata: Metadata = {
   title: 'Referendum Costituzionale: Separazione delle Carriere — 22-23 Marzo 2026',
@@ -1177,44 +1177,13 @@ const quadroDecisionale: ExplainerItem[] = [
     description:
       'Per il SI: indipendenza del PM erosa, frammentazione istituzionale, duplicazione costosa (critici). Per il NO: status quo con correntismo, imparzialità percepita come insufficiente, promessa storica disattesa (sostenitori). L\u2019analisi tecnica sopra mappa gli scenari per ciascuna dimensione.',
   },
+  {
+    label: 'Complessità',
+    title: 'Si può davvero valutare cosa succederà?',
+    description:
+      'La riforma tocca 4 dimensioni indipendenti (imparzialità, indipendenza, efficienza, autogoverno) e gli effetti vanno in direzioni opposte a seconda della dimensione. L\u2019analisi tecnica sopra tenta di mapparli, ma è un esercizio da legislatore \u2014 chi propone una riforma costituzionale dovrebbe averlo fatto prima del voto. Per l\u2019elettore, le domande di questa sezione sono più utili della previsione tecnica.',
+  },
 ]
-
-// ============================================================================
-// Data: Quadro decisionale — Riepilogo analisi tecnica
-// ============================================================================
-
-const riepilogoTecnico: CausalChain = {
-  objectiveData: [
-    <>Carriere separate: due concorsi distinti, nessun passaggio di funzione (Art. 102)</>,
-    <>Due CSM separati: 1/3 togati sorteggiati, 2/3 da lista parlamentare (Art. 104)</>,
-    <>Alta Corte disciplinare: nuovo organo, decisioni inappellabili (Art. 105)</>,
-    <>Inversione quota togati da 2/3 a 1/3 nei CSM (Art. 104)</>,
-  ],
-  possibleEffects: [
-    <>
-      <strong>Imparzialità:</strong> culture professionali separate, ma i passaggi erano già 0,5%
-      dopo la Cartabia
-    </>,
-    <>
-      <strong>Indipendenza:</strong> garanzia costituzionalizzata vs. rischio influenza politica via
-      CSM requirente (2/3 laici) e Alta Corte (inappellabile)
-    </>,
-    <>
-      <strong>Efficienza:</strong> specializzazione di due organi vs. duplicazione senza
-      coordinamento
-    </>,
-    <>
-      <strong>Autogoverno:</strong> fine delle correnti elettorali vs. reti informali opache e
-      organi più deboli
-    </>,
-  ],
-  possibleOutcomes: [
-    'La giustizia diventa più imparziale e il correntismo finisce',
-    'Cambiamenti marginali \u2014 i problemi strutturali restano',
-    'Frammentazione istituzionale e indebolimento dell\u2019indipendenza del PM',
-    'Il Parlamento acquisisce influenza sulla magistratura requirente',
-  ],
-}
 
 // ============================================================================
 // Page
@@ -1398,11 +1367,7 @@ export default function ItaliaReferendum2026Page() {
           votare, servono anche domande più generali.
         </Muted>
 
-        <Explainer items={quadroDecisionale} className="mb-8" />
-
-        <SectionL2 title="Riepilogo analisi tecnica">
-          <CausalChainView chain={riepilogoTecnico} />
-        </SectionL2>
+        <Explainer items={quadroDecisionale} />
       </SectionL1>
     </PageNavLayout>
   )
