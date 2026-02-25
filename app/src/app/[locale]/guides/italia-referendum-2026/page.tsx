@@ -6,7 +6,7 @@ import { DefinitionTable } from '@/components/custom-ui/tables'
 import { Explainer, ExplainerLink, type ExplainerItem } from '@/components/custom-ui/explainer'
 import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 import { Breadcrumbs } from '@/components/custom-ui/breadcrumbs'
-import { DecisionModel } from './decision-model'
+import { DecisionModel, CausalChainView, type CausalChain } from './decision-model'
 
 export const metadata: Metadata = {
   title: 'Referendum Costituzionale: Separazione delle Carriere — 22-23 Marzo 2026',
@@ -1089,33 +1089,21 @@ const articoli: ExplainerItem[] = [
 ]
 
 // ============================================================================
-// Data: Cosa fanno gli altri paesi
+// Data: Quadro decisionale — Domande generali
 // ============================================================================
 
-const altriPaesi: ExplainerItem[] = [
+const quadroDecisionale: ExplainerItem[] = [
   {
-    label: 'Il modello italiano attuale',
-    title: 'Magistratura unificata',
+    label: 'Rischio',
+    title: 'Quanto è rischioso il cambiamento?',
     description:
-      'Giudici e PM appartengono allo stesso ordine, governato da un unico CSM. Possono passare da una funzione all\u2019altra.',
-    chips: [
-      {
-        label: 'Italia',
-        content: (
-          <p>
-            L&apos;Italia è oggi uno dei pochi paesi europei con magistratura pienamente unificata.
-            Il PM è un magistrato indipendente, non un funzionario del governo. Questo modello è
-            unico nel panorama occidentale ed è esplicitamente tutelato dalla Costituzione del 1948.
-          </p>
-        ),
-      },
-    ],
+      'Una modifica costituzionale è permanente — serve un\u2019altra modifica per annullarla. Il testo è scarno: i dettagli chiave (sorteggio, disciplina, rapporto PM-esecutivo) sono delegati a leggi ordinarie che maggioranze diverse scriveranno diversamente. Costi diretti: duplicazione CSM + Alta Corte (~20M\u20AC/anno). Costo di opportunità: energia di riforma non spesa sulla durata dei processi.',
   },
   {
-    label: 'Il modello proposto dalla riforma',
-    title: 'Separati ma giudiziari',
+    label: 'Precedenti',
+    title: 'Cosa ci dicono gli altri paesi?',
     description:
-      'Carriere distinte, ma i PM restano all\u2019interno dell\u2019ordine giudiziario. Il controllo è in parte giudiziario, in parte esecutivo.',
+      'La maggior parte dei paesi UE ha carriere separate, ma i modelli sono molto eterogenei. In Europa, separazione e subordinazione politica spesso coesistono. Solo il Portogallo combina separazione e genuina indipendenza del PM. Non esiste una tendenza unica.',
     chips: [
       {
         label: 'Francia',
@@ -1133,96 +1121,40 @@ const altriPaesi: ExplainerItem[] = [
           </>
         ),
       },
-    ],
-  },
-  {
-    label: 'Un modello più netto',
-    title: 'Separati ed esecutivi',
-    description:
-      'I PM sono funzionari pubblici, dipendono dal Ministero della Giustizia. Non fanno parte dell\u2019ordine giudiziario.',
-    chips: [
       {
         label: 'Germania',
         content: (
           <>
             <p>
-              I PM (<em>Staatsanwaltschaft</em>) sono completamente separati dai giudici — sono
-              funzionari pubblici soggetti a istruzioni dei superiori e in ultima istanza del
-              Ministro della Giustizia.
+              I PM (<em>Staatsanwaltschaft</em>) sono completamente separati dai giudici —
+              funzionari pubblici soggetti al Ministro della Giustizia.
             </p>
             <p className="mt-2">
               Nel 2019 la CGUE ha stabilito che i PM tedeschi{' '}
-              <strong>non possono essere considerati &quot;autorità giudiziaria&quot;</strong>{' '}
-              proprio per la mancanza di indipendenza dall&apos;esecutivo.
+              <strong>non sono &quot;autorità giudiziaria&quot;</strong> per mancanza di
+              indipendenza dall&apos;esecutivo.
             </p>
           </>
         ),
       },
       {
-        label: 'Paesi Bassi',
+        label: 'Spagna 2025',
         content: (
           <p>
-            Modello simile alla Germania. I PM sono parte dell&apos;esecutivo, non della
-            magistratura. Il Ministro della Giustizia può dare istruzioni generali e, in teoria,
-            anche su singoli casi.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: 'Il modello anglosassone',
-    title: 'Pienamente politici',
-    description:
-      'I PM sono eletti dal popolo o nominati direttamente dal governo. La separazione è totale e il controllo è politico.',
-    chips: [
-      {
-        label: 'USA',
-        content: (
-          <p>
-            I <em>District Attorneys</em> sono eletti dal popolo. L&apos;Attorney General è nominato
-            dal Presidente. Il sistema è esplicitamente politico: i procuratori fanno campagna
-            elettorale e rispondono agli elettori, non a un organo giudiziario.
+            Ha trasferito le indagini penali dai giudici istruttori ai PM —{' '}
+            <strong>rafforzando</strong> il ruolo dei PM, non separandolo per indebolirlo. Direzione
+            opposta al dibattito italiano.
           </p>
         ),
       },
       {
-        label: 'Regno Unito',
-        content: (
-          <p>
-            Il <em>Crown Prosecution Service</em> è un organo del governo. I procuratori sono
-            funzionari pubblici nominati. Separazione totale dalla magistratura giudicante, con
-            controllo esecutivo.
-          </p>
-        ),
-      },
-    ],
-  },
-  {
-    label: 'Casi di studio recenti',
-    title: 'Riforme in direzioni opposte',
-    description:
-      'Non esiste una tendenza unica. Alcuni paesi rafforzano i PM, altri li subordinano. Il contesto istituzionale conta più del modello.',
-    chips: [
-      {
-        label: 'Spagna',
-        content: (
-          <p>
-            Nel 2025 ha approvato una grande riforma che trasferisce le indagini penali dai giudici
-            istruttori ai PM — <strong>rafforzando</strong> il ruolo dei PM, non separandolo per
-            indebolirlo. Direzione opposta al dibattito italiano.
-          </p>
-        ),
-      },
-      {
-        label: 'Polonia e Ungheria',
+        label: 'Polonia',
         content: (
           <>
             <p>
-              La riforma giudiziaria polacca è diventata il veicolo per il controllo politico della
-              magistratura: nomine allineate, camera disciplinare usata per rimuovere giudici
-              dissidenti. L&apos;UE ha sanzionato la Polonia per violazione dell&apos;indipendenza
-              giudiziaria.
+              La riforma giudiziaria è diventata veicolo per il controllo politico: nomine
+              allineate, camera disciplinare usata per rimuovere giudici dissidenti. L&apos;UE ha
+              sanzionato la Polonia.
             </p>
             <p className="mt-2">
               <strong>Non direttamente comparabile</strong> (scopi diversi), ma dimostra che chi
@@ -1233,88 +1165,56 @@ const altriPaesi: ExplainerItem[] = [
       },
     ],
   },
-]
-
-// ============================================================================
-// Data: Rischi e incertezza
-// ============================================================================
-
-const rischiEIncertezza: ExplainerItem[] = [
   {
-    label: 'Reversibilità',
-    title: 'Quanto è reversibile?',
+    label: 'Attori',
+    title: 'Chi lo vuole e perché?',
     description:
-      'Una modifica costituzionale richiede un\u2019altra modifica costituzionale per essere annullata. Le leggi attuative (maggioranza ordinaria) possono essere cambiate più facilmente, ma il cambiamento strutturale è permanente.',
+      'A favore: governo (centrodestra) e avvocatura (UCPI, CNF \u2014 \u201Cobiettivo storico\u201D). Contro: 96% dei magistrati (ANM, inclusa MI di centrodestra), CSM (24 voti), MEDEL (18.000 magistrati, 16 paesi). La Commissione UE avverte che isolare il PM è \u201Cspesso vulnerabile alla politicizzazione\u201D. Ogni attore ha un interesse istituzionale specifico nella struttura della giustizia.',
   },
   {
     label: 'Incertezza',
-    title: 'Quanto è incerto l\u2019esito?',
+    title: 'Cosa può andare storto?',
     description:
-      'Il testo costituzionale è scarno nei dettagli. Saranno le leggi attuative (maggioranza ordinaria) a definire i meccanismi chiave: procedure di sorteggio, regole disciplinari, rapporto PM-esecutivo. Maggioranze diverse scriveranno leggi diverse.',
-  },
-  {
-    label: 'Scenario peggiore',
-    title: 'Qual è lo scenario peggiore?',
-    description:
-      'Per il SI: indipendenza del PM erosa, sistema giudiziario frammentato (critici). Per il NO: lo status quo con i suoi problemi noti persiste (sostenitori). L\u2019analisi tecnica mappa questi scenari per ciascuna dimensione.',
+      'Per il SI: indipendenza del PM erosa, frammentazione istituzionale, duplicazione costosa (critici). Per il NO: status quo con correntismo, imparzialità percepita come insufficiente, promessa storica disattesa (sostenitori). L\u2019analisi tecnica sopra mappa gli scenari per ciascuna dimensione.',
   },
 ]
 
 // ============================================================================
-// Data: Attori e agende
+// Data: Quadro decisionale — Riepilogo analisi tecnica
 // ============================================================================
 
-const attoriEAgende: ExplainerItem[] = [
-  {
-    label: 'A favore',
-    title: 'Il governo (centrodestra)',
-    description:
-      'Proponente. Nordio inquadra la riforma come rottura del "correntismo" e compimento di una promessa storica. Continuità con le proposte dell\u2019era Berlusconi.',
-  },
-  {
-    label: 'Contro',
-    title: 'La magistratura (ANM)',
-    description:
-      'Il 96% dei magistrati si oppone, inclusa Magistratura Indipendente (tradizionalmente allineata al centrodestra). Lo stesso CSM ha votato parere negativo (24 voti). Il loro interesse istituzionale: preservare il modello di autogoverno unificato.',
-  },
-  {
-    label: 'A favore',
-    title: 'L\u2019avvocatura (UCPI, CNF)',
-    description:
-      'Fortemente a favore. L\u2019UCPI la definisce "un obiettivo storico". Il CNF ha aderito all\u2019unanimità al comitato per il SI. Il loro interesse istituzionale: un sistema più accusatorio con un\u2019accusa più debole.',
-  },
-  {
-    label: 'Osservatore',
-    title: 'Le istituzioni europee',
-    description:
-      'La Commissione UE (Rule of Law Report 2025) avverte che isolare il servizio del PM è "spesso vulnerabile alla politicizzazione". MEDEL (18.000 magistrati, 16 paesi) si oppone. Non un attore diretto ma un segnale significativo.',
-  },
-]
-
-// ============================================================================
-// Data: Costi del cambiamento
-// ============================================================================
-
-const costiDelCambiamento: ExplainerItem[] = [
-  {
-    label: 'Diretti',
-    title: 'Costi diretti',
-    description:
-      'Duplicazione delle strutture CSM (personale, uffici, IT). Alta Corte: ~20M\u20AC/anno per ~75 casi (stima ANM). Nuova infrastruttura per il sistema a doppio concorso.',
-  },
-  {
-    label: 'Transizione',
-    title: 'Costi di transizione',
-    description:
-      'Necessaria legislazione attuativa (maggioranza ordinaria). Periodo di transizione per i magistrati in servizio. Rischio di fallimenti di coordinamento tipo Titolo V durante la transizione.',
-  },
-  {
-    label: 'Opportunità',
-    title: 'Costi di opportunità',
-    description:
-      'Energia di riforma costituzionale spesa sulla governance giudiziaria anziché sulla durata dei processi, digitalizzazione o organico. Il problema centrale della giustizia italiana (durata dei processi) non viene direttamente affrontato.',
-  },
-]
+const riepilogoTecnico: CausalChain = {
+  objectiveData: [
+    <>Carriere separate: due concorsi distinti, nessun passaggio di funzione (Art. 102)</>,
+    <>Due CSM separati: 1/3 togati sorteggiati, 2/3 da lista parlamentare (Art. 104)</>,
+    <>Alta Corte disciplinare: nuovo organo, decisioni inappellabili (Art. 105)</>,
+    <>Inversione quota togati da 2/3 a 1/3 nei CSM (Art. 104)</>,
+  ],
+  possibleEffects: [
+    <>
+      <strong>Imparzialità:</strong> culture professionali separate, ma i passaggi erano già 0,5%
+      dopo la Cartabia
+    </>,
+    <>
+      <strong>Indipendenza:</strong> garanzia costituzionalizzata vs. rischio influenza politica via
+      CSM requirente (2/3 laici) e Alta Corte (inappellabile)
+    </>,
+    <>
+      <strong>Efficienza:</strong> specializzazione di due organi vs. duplicazione senza
+      coordinamento
+    </>,
+    <>
+      <strong>Autogoverno:</strong> fine delle correnti elettorali vs. reti informali opache e
+      organi più deboli
+    </>,
+  ],
+  possibleOutcomes: [
+    'La giustizia diventa più imparziale e il correntismo finisce',
+    'Cambiamenti marginali \u2014 i problemi strutturali restano',
+    'Frammentazione istituzionale e indebolimento dell\u2019indipendenza del PM',
+    'Il Parlamento acquisisce influenza sulla magistratura requirente',
+  ],
+}
 
 // ============================================================================
 // Page
@@ -1495,24 +1395,13 @@ export default function ItaliaReferendum2026Page() {
         <Muted className="mb-4">
           Questo è il lavoro dell&apos;elettore. L&apos;analisi tecnica cerca di prevedere gli
           effetti specifici — un esercizio necessario ma pieno di incertezza. Per decidere come
-          votare, servono anche domande più generali: quanto è rischioso il cambiamento? Chi lo
-          vuole e perché? Cosa ci dicono le esperienze degli altri paesi? Quanto costa?
+          votare, servono anche domande più generali.
         </Muted>
 
-        <SectionL2 title="Rischi e incertezza">
-          <Explainer items={rischiEIncertezza} />
-        </SectionL2>
+        <Explainer items={quadroDecisionale} className="mb-8" />
 
-        <SectionL2 title="Attori e agende">
-          <Explainer items={attoriEAgende} />
-        </SectionL2>
-
-        <SectionL2 title="Cosa fanno gli altri paesi">
-          <Explainer items={altriPaesi} />
-        </SectionL2>
-
-        <SectionL2 title="Costi del cambiamento">
-          <Explainer items={costiDelCambiamento} />
+        <SectionL2 title="Riepilogo analisi tecnica">
+          <CausalChainView chain={riepilogoTecnico} />
         </SectionL2>
       </SectionL1>
     </PageNavLayout>

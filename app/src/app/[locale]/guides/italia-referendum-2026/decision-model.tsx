@@ -8,7 +8,7 @@ import { ExplainerLink } from '@/components/custom-ui/explainer'
 
 type DimensionId = 'imparzialita' | 'indipendenza' | 'efficienza' | 'autogoverno'
 
-interface CausalChain {
+export interface CausalChain {
   objectiveData: ReactNode[]
   possibleEffects: ReactNode[]
   possibleOutcomes: string[]
@@ -650,7 +650,7 @@ const dimensions: Dimension[] = [
 // Component
 // ============================================================================
 
-function CausalChainView({ chain }: { chain: CausalChain }) {
+export function CausalChainView({ chain }: { chain: CausalChain }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_1fr] gap-2 text-xs">
       {/* Column 1: Objective data */}
