@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { PageHeader, SectionL1 } from '@/components/custom-ui/section'
+import { PageHeader, SectionL1, SectionL2 } from '@/components/custom-ui/section'
 import { Muted } from '@/components/custom-ui/typography'
 import { Box } from '@/components/custom-ui/box'
 import { DefinitionTable } from '@/components/custom-ui/tables'
@@ -22,8 +22,8 @@ const pageNavSections: PageNavSection[] = [
   { id: 'intro', label: 'Introduzione' },
   { id: 'cronologia', label: 'Cronologia' },
   { id: 'articoli', label: 'Contenuto' },
-  { id: 'come-ragionare', label: 'Analisi' },
-  { id: 'altri-paesi', label: 'Altri paesi' },
+  { id: 'come-ragionare', label: 'Analisi profonda' },
+  { id: 'altri-paesi', label: 'Analisi superficiale' },
 ]
 
 // ============================================================================
@@ -1236,6 +1236,87 @@ const altriPaesi: ExplainerItem[] = [
 ]
 
 // ============================================================================
+// Data: Rischi e incertezza
+// ============================================================================
+
+const rischiEIncertezza: ExplainerItem[] = [
+  {
+    label: 'Reversibilità',
+    title: 'Quanto è reversibile?',
+    description:
+      'Una modifica costituzionale richiede un\u2019altra modifica costituzionale per essere annullata. Le leggi attuative (maggioranza ordinaria) possono essere cambiate più facilmente, ma il cambiamento strutturale è permanente.',
+  },
+  {
+    label: 'Incertezza',
+    title: 'Quanto è incerto l\u2019esito?',
+    description:
+      'Il testo costituzionale è scarno nei dettagli. Saranno le leggi attuative (maggioranza ordinaria) a definire i meccanismi chiave: procedure di sorteggio, regole disciplinari, rapporto PM-esecutivo. Maggioranze diverse scriveranno leggi diverse.',
+  },
+  {
+    label: 'Scenario peggiore',
+    title: 'Qual è lo scenario peggiore?',
+    description:
+      'Per il SI: indipendenza del PM erosa, sistema giudiziario frammentato (critici). Per il NO: lo status quo con i suoi problemi noti persiste (sostenitori). L\u2019analisi profonda mappa questi scenari per ciascuna dimensione.',
+  },
+]
+
+// ============================================================================
+// Data: Attori e agende
+// ============================================================================
+
+const attoriEAgende: ExplainerItem[] = [
+  {
+    label: 'A favore',
+    title: 'Il governo (centrodestra)',
+    description:
+      'Proponente. Nordio inquadra la riforma come rottura del "correntismo" e compimento di una promessa storica. Continuità con le proposte dell\u2019era Berlusconi.',
+  },
+  {
+    label: 'Contro',
+    title: 'La magistratura (ANM)',
+    description:
+      'Il 96% dei magistrati si oppone, inclusa Magistratura Indipendente (tradizionalmente allineata al centrodestra). Lo stesso CSM ha votato parere negativo (24 voti). Il loro interesse istituzionale: preservare il modello di autogoverno unificato.',
+  },
+  {
+    label: 'A favore',
+    title: 'L\u2019avvocatura (UCPI, CNF)',
+    description:
+      'Fortemente a favore. L\u2019UCPI la definisce "un obiettivo storico". Il CNF ha aderito all\u2019unanimità al comitato per il SI. Il loro interesse istituzionale: un sistema più accusatorio con un\u2019accusa più debole.',
+  },
+  {
+    label: 'Osservatore',
+    title: 'Le istituzioni europee',
+    description:
+      'La Commissione UE (Rule of Law Report 2025) avverte che isolare il servizio del PM è "spesso vulnerabile alla politicizzazione". MEDEL (18.000 magistrati, 16 paesi) si oppone. Non un attore diretto ma un segnale significativo.',
+  },
+]
+
+// ============================================================================
+// Data: Costi del cambiamento
+// ============================================================================
+
+const costiDelCambiamento: ExplainerItem[] = [
+  {
+    label: 'Diretti',
+    title: 'Costi diretti',
+    description:
+      'Duplicazione delle strutture CSM (personale, uffici, IT). Alta Corte: ~20M\u20AC/anno per ~75 casi (stima ANM). Nuova infrastruttura per il sistema a doppio concorso.',
+  },
+  {
+    label: 'Transizione',
+    title: 'Costi di transizione',
+    description:
+      'Necessaria legislazione attuativa (maggioranza ordinaria). Periodo di transizione per i magistrati in servizio. Rischio di fallimenti di coordinamento tipo Titolo V durante la transizione.',
+  },
+  {
+    label: 'Opportunità',
+    title: 'Costi di opportunità',
+    description:
+      'Energia di riforma costituzionale spesa sulla governance giudiziaria anziché sulla durata dei processi, digitalizzazione o organico. Il problema centrale della giustizia italiana (durata dei processi) non viene direttamente affrontato.',
+  },
+]
+
+// ============================================================================
 // Page
 // ============================================================================
 
@@ -1403,14 +1484,35 @@ export default function ItaliaReferendum2026Page() {
 
       <SectionL1 id="come-ragionare" title="Analisi profonda">
         <Muted className="mb-4">
-          La riforma tocca 4 aspetti indipendenti. Per ciascuno: cosa cambia, i possibili effetti e
-          gli esiti. Valutali separatamente.
+          Cosa succede se vince il SI? La riforma tocca 4 aspetti indipendenti. Per ciascuno: cosa
+          cambia, i possibili effetti e gli esiti. Valutali separatamente.
         </Muted>
         <DecisionModel />
       </SectionL1>
 
       <SectionL1 id="altri-paesi" title="Analisi superficiale">
-        <Explainer items={altriPaesi} />
+        <Muted className="mb-4">
+          L&apos;analisi profonda cerca di prevedere gli effetti specifici — un esercizio necessario
+          ma pieno di incertezza. Per decidere come votare, servono anche domande più generali:
+          quanto è rischioso il cambiamento? Chi lo vuole e perché? Cosa ci dicono le esperienze
+          degli altri paesi? Quanto costa?
+        </Muted>
+
+        <SectionL2 title="Rischi e incertezza">
+          <Explainer items={rischiEIncertezza} />
+        </SectionL2>
+
+        <SectionL2 title="Attori e agende">
+          <Explainer items={attoriEAgende} />
+        </SectionL2>
+
+        <SectionL2 title="Cosa fanno gli altri paesi">
+          <Explainer items={altriPaesi} />
+        </SectionL2>
+
+        <SectionL2 title="Costi del cambiamento">
+          <Explainer items={costiDelCambiamento} />
+        </SectionL2>
       </SectionL1>
     </PageNavLayout>
   )
