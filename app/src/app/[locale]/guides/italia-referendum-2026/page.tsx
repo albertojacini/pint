@@ -1094,10 +1094,10 @@ const articoli: ExplainerItem[] = [
 
 const quadroDecisionale: ExplainerItem[] = [
   {
-    label: 'Rischio',
-    title: 'Quanto è rischioso il cambiamento?',
+    label: 'Rischi e costi',
+    title: 'Quanto è rischioso e quanto costa?',
     description:
-      'Una modifica costituzionale è permanente — serve un\u2019altra modifica per annullarla. Il testo è scarno: i dettagli chiave (sorteggio, disciplina, rapporto PM-esecutivo) sono delegati a leggi ordinarie che maggioranze diverse scriveranno diversamente. Costi diretti: duplicazione CSM + Alta Corte (~20M\u20AC/anno). Costo di opportunità: energia di riforma non spesa sulla durata dei processi.',
+      'La riforma tocca 4 dimensioni indipendenti (imparzialità, indipendenza, efficienza, autogoverno) con effetti che vanno in direzioni opposte \u2014 l\u2019analisi tecnica sopra tenta di mapparli, ma è un esercizio da legislatore, non da elettore. Una modifica costituzionale è permanente e il testo è scarno: i dettagli chiave sono delegati a leggi ordinarie che maggioranze diverse scriveranno diversamente. Costi diretti: duplicazione CSM + Alta Corte (~20M\u20AC/anno). Costo di opportunità: energia di riforma non spesa sulla durata dei processi.',
   },
   {
     label: 'Precedenti',
@@ -1172,16 +1172,10 @@ const quadroDecisionale: ExplainerItem[] = [
       'A favore: governo (centrodestra) e avvocatura (UCPI, CNF \u2014 \u201Cobiettivo storico\u201D). Contro: 96% dei magistrati (ANM, inclusa MI di centrodestra), CSM (24 voti), MEDEL (18.000 magistrati, 16 paesi). La Commissione UE avverte che isolare il PM è \u201Cspesso vulnerabile alla politicizzazione\u201D. Ogni attore ha un interesse istituzionale specifico nella struttura della giustizia.',
   },
   {
-    label: 'Incertezza',
-    title: 'Cosa può andare storto?',
+    label: 'Interesse',
+    title: 'Qual è il mio interesse?',
     description:
-      'Per il SI: indipendenza del PM erosa, frammentazione istituzionale, duplicazione costosa (critici). Per il NO: status quo con correntismo, imparzialità percepita come insufficiente, promessa storica disattesa (sostenitori). L\u2019analisi tecnica sopra mappa gli scenari per ciascuna dimensione.',
-  },
-  {
-    label: 'Complessità',
-    title: 'Si può davvero valutare cosa succederà?',
-    description:
-      'La riforma tocca 4 dimensioni indipendenti (imparzialità, indipendenza, efficienza, autogoverno) e gli effetti vanno in direzioni opposte a seconda della dimensione. L\u2019analisi tecnica sopra tenta di mapparli, ma è un esercizio da legislatore \u2014 chi propone una riforma costituzionale dovrebbe averlo fatto prima del voto. Per l\u2019elettore, le domande di questa sezione sono più utili della previsione tecnica.',
+      'La riforma riguarda la governance della giustizia, non i diritti dei cittadini direttamente. Ma il modo in cui sono organizzati giudici e PM determina chi indaga, chi giudica, e con quanta indipendenza dalla politica. Chiediti: come cittadino, preferisco un PM più indipendente o più controllabile? Un sistema che rischia l\u2019inerzia o uno che rischia la frammentazione?',
   },
 ]
 
@@ -1193,7 +1187,7 @@ export default function ItaliaReferendum2026Page() {
   return (
     <PageNavLayout sections={pageNavSections}>
       <Breadcrumbs items={[{ label: 'Guide' }, { label: 'Guida compatta al referendum 2026' }]} />
-      <PageHeader title="Referendum confermativo sulla Separazione delle Carriere" />
+      <PageHeader title="Referendum costituzionale" />
 
       <section id="intro" className="scroll-mt-32 lg:scroll-mt-20">
         <DefinitionTable
