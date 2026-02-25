@@ -22,8 +22,8 @@ const pageNavSections: PageNavSection[] = [
   { id: 'intro', label: 'Introduzione' },
   { id: 'cronologia', label: 'Cronologia' },
   { id: 'articoli', label: 'Contenuto' },
-  { id: 'come-ragionare', label: 'Analisi profonda' },
-  { id: 'altri-paesi', label: 'Analisi superficiale' },
+  { id: 'come-ragionare', label: 'Analisi tecnica' },
+  { id: 'altri-paesi', label: 'Quadro decisionale' },
 ]
 
 // ============================================================================
@@ -1256,7 +1256,7 @@ const rischiEIncertezza: ExplainerItem[] = [
     label: 'Scenario peggiore',
     title: 'Qual è lo scenario peggiore?',
     description:
-      'Per il SI: indipendenza del PM erosa, sistema giudiziario frammentato (critici). Per il NO: lo status quo con i suoi problemi noti persiste (sostenitori). L\u2019analisi profonda mappa questi scenari per ciascuna dimensione.',
+      'Per il SI: indipendenza del PM erosa, sistema giudiziario frammentato (critici). Per il NO: lo status quo con i suoi problemi noti persiste (sostenitori). L\u2019analisi tecnica mappa questi scenari per ciascuna dimensione.',
   },
 ]
 
@@ -1482,20 +1482,21 @@ export default function ItaliaReferendum2026Page() {
         <Explainer items={articoli} />
       </SectionL1>
 
-      <SectionL1 id="come-ragionare" title="Analisi profonda">
+      <SectionL1 id="come-ragionare" title="Analisi tecnica">
         <Muted className="mb-4">
-          Cosa succede se vince il SI? La riforma tocca 4 aspetti indipendenti. Per ciascuno: cosa
-          cambia, i possibili effetti e gli esiti. Valutali separatamente.
+          Questo è il lavoro che il legislatore dovrebbe fare: mappare ogni modifica costituzionale
+          ai suoi possibili effetti e esiti. La riforma tocca 4 aspetti indipendenti. Per ciascuno:
+          cosa cambia, i possibili effetti e gli esiti. Valutali separatamente.
         </Muted>
         <DecisionModel />
       </SectionL1>
 
-      <SectionL1 id="altri-paesi" title="Analisi superficiale">
+      <SectionL1 id="altri-paesi" title="Quadro decisionale">
         <Muted className="mb-4">
-          L&apos;analisi profonda cerca di prevedere gli effetti specifici — un esercizio necessario
-          ma pieno di incertezza. Per decidere come votare, servono anche domande più generali:
-          quanto è rischioso il cambiamento? Chi lo vuole e perché? Cosa ci dicono le esperienze
-          degli altri paesi? Quanto costa?
+          Questo è il lavoro dell&apos;elettore. L&apos;analisi tecnica cerca di prevedere gli
+          effetti specifici — un esercizio necessario ma pieno di incertezza. Per decidere come
+          votare, servono anche domande più generali: quanto è rischioso il cambiamento? Chi lo
+          vuole e perché? Cosa ci dicono le esperienze degli altri paesi? Quanto costa?
         </Muted>
 
         <SectionL2 title="Rischi e incertezza">
