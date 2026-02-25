@@ -22,7 +22,7 @@ const pageNavSections: PageNavSection[] = [
   { id: 'intro', label: 'Introduzione' },
   { id: 'cronologia', label: 'Cronologia' },
   { id: 'articoli', label: 'Contenuto' },
-  { id: 'come-ragionare', label: 'Come decidere' },
+  { id: 'come-ragionare', label: 'Analisi' },
   { id: 'altri-paesi', label: 'Altri paesi' },
 ]
 
@@ -1235,7 +1235,6 @@ const altriPaesi: ExplainerItem[] = [
   },
 ]
 
-
 // ============================================================================
 // Page
 // ============================================================================
@@ -1402,15 +1401,15 @@ export default function ItaliaReferendum2026Page() {
         <Explainer items={articoli} />
       </SectionL1>
 
-      <SectionL1 id="come-ragionare" title="Come decidere">
+      <SectionL1 id="come-ragionare" title="Analisi profonda">
         <Muted className="mb-4">
-          Nessuno sa con certezza cosa succederà se vince il SI. Scegli il tuo punto di vista,
-          esplora gli scenari possibili e valuta quanto li ritieni probabili.
+          La riforma tocca 4 aspetti indipendenti. Per ciascuno: cosa cambia, i possibili effetti e
+          gli esiti. Valutali separatamente.
         </Muted>
         <DecisionModel />
       </SectionL1>
 
-      <SectionL1 id="altri-paesi" title="Cosa Fanno gli Altri Paesi">
+      <SectionL1 id="altri-paesi" title="Analisi superficiale">
         <Explainer items={altriPaesi} />
       </SectionL1>
     </PageNavLayout>
