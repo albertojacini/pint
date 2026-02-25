@@ -543,7 +543,7 @@ function CausalChainView({ chain }: { chain: CausalChain }) {
         <ul className="space-y-1.5">
           {chain.possibleEffects.map((item, i) => (
             <li key={i} className="flex gap-1.5">
-              <span className="text-muted-foreground/40 shrink-0 mt-px">&rarr;</span>
+              <span className="text-muted-foreground/40 shrink-0 mt-px">&middot;</span>
               <span className="text-muted-foreground">{item}</span>
             </li>
           ))}
