@@ -23,7 +23,7 @@ const pageNavSections: PageNavSection[] = [
   { id: 'cronologia', label: 'Cronologia' },
   { id: 'articoli', label: 'Contenuto' },
   { id: 'come-ragionare', label: 'Analisi tecnica' },
-  { id: 'altri-paesi', label: 'Quadro decisionale' },
+  { id: 'voto-razionale', label: 'Il voto razionale' },
 ]
 
 // ============================================================================
@@ -1089,93 +1089,41 @@ const articoli: ExplainerItem[] = [
 ]
 
 // ============================================================================
-// Data: Quadro decisionale — Domande generali
+// Data: Il voto razionale
 // ============================================================================
 
-const quadroDecisionale: ExplainerItem[] = [
+const votoRazionale: ExplainerItem[] = [
   {
-    label: 'Rischi e costi',
-    title: 'Quanto è rischioso e quanto costa?',
+    label: 'Priorità personali',
+    title: 'Cosa mi importa e quanto sono insoddisfatto?',
     description:
-      'La riforma tocca 4 dimensioni indipendenti (imparzialità, indipendenza, efficienza, autogoverno) con effetti che vanno in direzioni opposte \u2014 l\u2019analisi tecnica sopra tenta di mapparli, ma è un esercizio da legislatore, non da elettore. Una modifica costituzionale è permanente e il testo è scarno: i dettagli chiave sono delegati a leggi ordinarie che maggioranze diverse scriveranno diversamente. Costi diretti: duplicazione CSM + Alta Corte (~20M\u20AC/anno). Costo di opportunità: energia di riforma non spesa sulla durata dei processi.',
-  },
-  {
-    label: 'Precedenti',
-    title: 'Cosa ci dicono gli altri paesi?',
-    description:
-      'La maggior parte dei paesi UE ha carriere separate, ma i modelli sono molto eterogenei. In Europa, separazione e subordinazione politica spesso coesistono. Solo il Portogallo combina separazione e genuina indipendenza del PM. Non esiste una tendenza unica.',
+      'La riforma tocca molti aspetti del sistema giustizia. Non tutti contano allo stesso modo per ogni cittadino. Il primo passo è capire quali aspetti contano di più per te, quanto sei insoddisfatto dello status quo su quegli aspetti, e quanto rischio sei disposto ad accettare per cambiarli.',
     chips: [
       {
-        label: 'Francia',
+        label: 'Aspetti toccati dalla riforma',
         content: (
-          <>
-            <p>
-              Separazione storica tra <em>magistrats du siège</em> e <em>magistrats du parquet</em>.
-              Ma i PM sono rimasti sotto l&apos;autorità del Ministro della Giustizia.
-            </p>
-            <p className="mt-2">
-              Risultato: separazione formale, ma{' '}
-              <strong>influenza politica sull&apos;azione penale</strong>. Solo nel 2013 una legge
-              ha vietato al Ministro di dare istruzioni sui singoli casi.
-            </p>
-          </>
-        ),
-      },
-      {
-        label: 'Germania',
-        content: (
-          <>
-            <p>
-              I PM (<em>Staatsanwaltschaft</em>) sono completamente separati dai giudici —
-              funzionari pubblici soggetti al Ministro della Giustizia.
-            </p>
-            <p className="mt-2">
-              Nel 2019 la CGUE ha stabilito che i PM tedeschi{' '}
-              <strong>non sono &quot;autorità giudiziaria&quot;</strong> per mancanza di
-              indipendenza dall&apos;esecutivo.
-            </p>
-          </>
-        ),
-      },
-      {
-        label: 'Spagna 2025',
-        content: (
-          <p>
-            Ha trasferito le indagini penali dai giudici istruttori ai PM —{' '}
-            <strong>rafforzando</strong> il ruolo dei PM, non separandolo per indebolirlo. Direzione
-            opposta al dibattito italiano.
-          </p>
-        ),
-      },
-      {
-        label: 'Polonia',
-        content: (
-          <>
-            <p>
-              La riforma giudiziaria è diventata veicolo per il controllo politico: nomine
-              allineate, camera disciplinare usata per rimuovere giudici dissidenti. L&apos;UE ha
-              sanzionato la Polonia.
-            </p>
-            <p className="mt-2">
-              <strong>Non direttamente comparabile</strong> (scopi diversi), ma dimostra che chi
-              controlla il processo disciplinare ha un potere enorme.
-            </p>
-          </>
+          <ul className="list-disc pl-4 space-y-1">
+            <li>Imparzialità dei processi</li>
+            <li>Indipendenza delle indagini dalla politica</li>
+            <li>Lotta alla corruzione e alla criminalità organizzata</li>
+            <li>Accountability della magistratura</li>
+            <li>Merito vs. appartenenza nelle nomine</li>
+            <li>Durata dei processi</li>
+            <li>Costo del sistema giustizia</li>
+            <li>Equilibrio tra poteri dello stato</li>
+            <li>Protezione dall&apos;uso politico della giustizia</li>
+            <li>Fiducia nel sistema giustizia</li>
+            <li>Stabilità costituzionale</li>
+          </ul>
         ),
       },
     ],
   },
   {
-    label: 'Attori',
-    title: 'Chi lo vuole e perché?',
+    label: 'Esito atteso',
+    title: 'Cosa penso che succederà?',
     description:
-      'A favore: governo (centrodestra) e avvocatura (UCPI, CNF \u2014 \u201Cobiettivo storico\u201D). Contro: 96% dei magistrati (ANM, inclusa MI di centrodestra), CSM (24 voti), MEDEL (18.000 magistrati, 16 paesi). La Commissione UE avverte che isolare il PM è \u201Cspesso vulnerabile alla politicizzazione\u201D. Ogni attore ha un interesse istituzionale specifico nella struttura della giustizia.',
-  },
-  {
-    label: 'Interesse',
-    title: 'Qual è il mio interesse?',
-    description:
-      'La riforma riguarda la governance della giustizia, non i diritti dei cittadini direttamente. Ma il modo in cui sono organizzati giudici e PM determina chi indaga, chi giudica, e con quanta indipendenza dalla politica. Chiediti: come cittadino, preferisco un PM più indipendente o più controllabile? Un sistema che rischia l\u2019inerzia o uno che rischia la frammentazione?',
+      'Date le mie priorità, cosa penso che succederà realmente se la riforma passa? Questa valutazione viene da due fonti: la mia analisi tecnica personale (la sezione sopra mappa le possibilità) e la fiducia che ripongo nei miei opinion leader — costituzionalisti, magistrati, avvocati, politici. Ciascuno ha interessi istituzionali specifici; nessuno è neutrale. Il peso che do a ciascuna fonte è esso stesso un parametro personale.',
   },
 ]
 
@@ -1187,7 +1135,7 @@ export default function ItaliaReferendum2026Page() {
   return (
     <PageNavLayout sections={pageNavSections}>
       <Breadcrumbs items={[{ label: 'Guide' }, { label: 'Guida compatta al referendum 2026' }]} />
-      <PageHeader title="Referendum costituzionale" />
+      <PageHeader title="Referendum costituzionale 2026" />
 
       <section id="intro" className="scroll-mt-32 lg:scroll-mt-20">
         <DefinitionTable
@@ -1196,7 +1144,12 @@ export default function ItaliaReferendum2026Page() {
             {
               label: 'In breve',
               value:
-                'Ti viene chiesto se approvare una modifica alla Costituzione che separa le carriere di giudici e pubblici ministeri.',
+                'Ti viene chiesto se approvare una modifica alla Costituzione proposta dal governo che introduce diverse modifiche nei meccanismi di funzionamento della magistratura.',
+            },
+            {
+              label: 'Obiettivo della riforma',
+              value:
+                'Rendere i processi più imparziali separando le carriere di giudici e PM ed eliminare il correntismo nel CSM.',
             },
             {
               label: 'Quesito ufficiale',
@@ -1320,17 +1273,6 @@ export default function ItaliaReferendum2026Page() {
             },
           ]}
         />
-
-        <div className="grid grid-cols-2 gap-3 mb-10">
-          <Box variant="default" padding="md" className="text-center">
-            <p className="text-lg font-bold text-positive">SI</p>
-            <p className="text-xs text-muted-foreground">La riforma entra in vigore</p>
-          </Box>
-          <Box variant="default" padding="md" className="text-center">
-            <p className="text-lg font-bold text-negative">NO</p>
-            <p className="text-xs text-muted-foreground">Si torna alla situazione attuale</p>
-          </Box>
-        </div>
       </section>
 
       <SectionL1 id="cronologia" title="Cronologia">
@@ -1354,14 +1296,12 @@ export default function ItaliaReferendum2026Page() {
         <DecisionModel />
       </SectionL1>
 
-      <SectionL1 id="altri-paesi" title="Quadro decisionale">
+      <SectionL1 id="voto-razionale" title="Il voto razionale">
         <Muted className="mb-4">
-          Questo è il lavoro dell&apos;elettore. L&apos;analisi tecnica cerca di prevedere gli
-          effetti specifici — un esercizio necessario ma pieno di incertezza. Per decidere come
-          votare, servono anche domande più generali.
+          La decisione è molto complessa — probabilmente troppo per il 99% degli elettori. La scelta
+          finale può essere ridotta a due parametri personali.
         </Muted>
-
-        <Explainer items={quadroDecisionale} />
+        <Explainer items={votoRazionale} />
       </SectionL1>
     </PageNavLayout>
   )
