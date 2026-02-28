@@ -9,6 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

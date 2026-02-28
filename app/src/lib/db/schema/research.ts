@@ -1,4 +1,5 @@
-import { pgTable, text, uuid, timestamp, numeric } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, doublePrecision, index } from 'drizzle-orm/pg-core'
+import { documents } from './sources'
 
 // ============================================================================
 // RESEARCH AGENT SUBSYSTEM (resag_)
@@ -13,7 +14,9 @@ export const researches = pgTable('resag_researches', {
   }).notNull().default('researching'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => ({
+  statusIdx: index('idx_resag_researches_status').on(table.status),
+}))
 
 export const sources = pgTable('resag_sources', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -33,9 +36,14 @@ export const sources = pgTable('resag_sources', {
     enum: ['pending', 'fetching', 'completed', 'failed', 'skipped']
   }).notNull().default('pending'),
   fetchedAt: timestamp('fetched_at', { withTimezone: true }),
-  relevanceScore: numeric('relevance_score'),
-  reliabilityScore: numeric('reliability_score'),
+  relevanceScore: doublePrecision('relevance_score'),
+  reliabilityScore: doublePrecision('reliability_score'),
   evaluationNotes: text('evaluation_notes'),
+  promotedDocumentId: uuid('promoted_document_id').references(() => documents.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-})
+}, (table) => ({
+  researchIdIdx: index('idx_resag_sources_research_id').on(table.researchId),
+  fetchStatusIdx: index('idx_resag_sources_fetch_status').on(table.fetchStatus),
+  urlIdx: index('idx_resag_sources_url').on(table.url),
+}))

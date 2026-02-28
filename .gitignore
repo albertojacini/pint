@@ -56,8 +56,8 @@ backups/
 *.db-shm
 *.db-wal
 
-# Drizzle
-drizzle/
+# Drizzle (allow app/drizzle/ for schema snapshots)
+!app/drizzle/
 
 # Supabase CLI
 **/.branches/
