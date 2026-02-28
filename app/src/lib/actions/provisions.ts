@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db/client'
 import { provisions, ideas, tags, taggables, provisionTypes, provisionTypeAssocs } from '@/lib/db/schema'
-import { eq, desc, asc, or, ilike, and, SQL, inArray } from 'drizzle-orm'
+import { eq, desc, asc, or, ilike, and, sql, SQL, inArray } from 'drizzle-orm'
 
 // Tag type definition
 export type Tag = {
@@ -465,4 +465,104 @@ export async function getFilteredProvisions(
     changelog: p.changelog as { items: Array<{ timestamp: string; label: string }> } | null,
     tags: tagsByProvision[p.id] || []
   }))
+}
+
+// Temporal provision with date bounds and ranking score
+export type TemporalProvision = {
+  id: string
+  slug: string
+  title: string
+  tagline: string | null
+  avatarUrl: string | null
+  status: string
+  relevance: number | null
+  startsOn: string | null
+  endsOn: string | null
+  highlights: { items: Array<{ label: string; value: string }> } | null
+  types: ProvisionType[]
+  score: number
+}
+
+// Fetches temporal provisions (those with starts_on or ends_on set), ranked by
+// a combined score of relevance and temporal proximity. Provisions happening now
+// or very soon with high relevance float to the top.
+export async function getTemporalProvisions(entityId: string): Promise<TemporalProvision[]> {
+  // proximity: 1.0 when happening today, decays with distance in days.
+  // Uses the closest bound (start or end) to "now" for the distance.
+  // relevance is normalized to 0-1 (max 10), then blended 50/50 with proximity.
+  const scoreExpr = sql<number>`
+    COALESCE(relevance, 0) / 10.0 * 0.5
+    + 1.0 / (1.0 + LEAST(
+        ABS(CURRENT_DATE - COALESCE(starts_on, ends_on)),
+        ABS(CURRENT_DATE - COALESCE(ends_on, starts_on))
+      )) * 0.5
+  `
+
+  const rows = await db
+    .select({
+      id: provisions.id,
+      slug: provisions.slug,
+      title: provisions.title,
+      tagline: provisions.tagline,
+      avatarUrl: provisions.avatarUrl,
+      status: provisions.status,
+      relevance: provisions.relevance,
+      startsOn: provisions.startsOn,
+      endsOn: provisions.endsOn,
+      highlights: provisions.highlights,
+      score: scoreExpr,
+    })
+    .from(provisions)
+    .where(and(
+      eq(provisions.entityId, entityId),
+      or(
+        sql`${provisions.startsOn} IS NOT NULL`,
+        sql`${provisions.endsOn} IS NOT NULL`
+      )
+    ))
+    .orderBy(desc(scoreExpr))
+
+  const provisionIds = rows.map(r => r.id)
+  const typesByProvision = await getProvisionTypes(provisionIds)
+
+  return rows.map(r => ({
+    ...r,
+    score: Number(r.score),
+    highlights: r.highlights as { items: Array<{ label: string; value: string }> } | null,
+    types: typesByProvision[r.id] || [],
+  }))
+}
+
+// Recent temporal provisions: ended before today, ordered by most recent first
+export async function getRecentTemporalProvisions(entityId: string, limit = 6): Promise<TemporalProvision[]> {
+  const all = await getTemporalProvisions(entityId)
+  const today = new Date().toISOString().slice(0, 10)
+  return all
+    .filter(p => {
+      const end = p.endsOn ?? p.startsOn
+      return end && end < today
+    })
+    .sort((a, b) => {
+      const endA = a.endsOn ?? a.startsOn ?? ''
+      const endB = b.endsOn ?? b.startsOn ?? ''
+      return endB.localeCompare(endA)
+    })
+    .slice(0, limit)
+}
+
+// Upcoming temporal provisions: starts today or later, ordered by soonest first
+export async function getUpcomingTemporalProvisions(entityId: string, limit = 6): Promise<TemporalProvision[]> {
+  const all = await getTemporalProvisions(entityId)
+  const today = new Date().toISOString().slice(0, 10)
+  return all
+    .filter(p => {
+      const start = p.startsOn ?? p.endsOn
+      return start && start >= today
+    })
+    .sort((a, b) => {
+      const startA = a.startsOn ?? a.endsOn ?? ''
+      const startB = b.startsOn ?? b.endsOn ?? ''
+      return startA.localeCompare(startB)
+    })
+    .slice(0, limit)
 }

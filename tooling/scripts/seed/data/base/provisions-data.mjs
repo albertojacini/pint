@@ -453,6 +453,168 @@ export const provisions = [
   },
   {
     entity: 'Comune di Milano',
+    title: 'Olimpiadi Invernali Milano-Cortina 2026',
+    tagline: 'Giochi olimpici invernali ospitati a Milano e Cortina d\'Ampezzo',
+    description:
+      'Milano e Cortina d\'Ampezzo ospitano i **XXV Giochi Olimpici Invernali** dal *6 al 22 febbraio 2026*, seguiti dalle Paralimpiadi dal *6 al 15 marzo*. Il programma prevede interventi su **infrastrutture sportive**, mobilità e rigenerazione urbana, con un budget complessivo di *€1,5 miliardi* per il comitato organizzatore e oltre *€3 miliardi* in opere connesse. Milano ospita le gare di **pattinaggio**, **hockey su ghiaccio** e le **cerimonie** allo stadio di *San Siro*, mentre Cortina accoglie le discipline alpine e di scivolamento.',
+    types: ['program'],
+    status: 'active',
+    relevance: 10,
+    startsOn: '2026-02-06',
+    endsOn: '2026-02-22',
+    highlights: {
+      items: [
+        { label: 'Durata', value: '6-22 Feb 2026' },
+        { label: 'Budget organizzativo', value: '€1,5B' },
+        { label: 'Opere connesse', value: '€3B+' },
+        { label: 'Sedi gara', value: '14' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  // --- Past temporal provisions ---
+  {
+    entity: 'Comune di Milano',
+    title: 'Expo Milano 2015',
+    tagline: 'Esposizione universale "Nutrire il Pianeta, Energia per la Vita"',
+    description:
+      'Milano ha ospitato l\'**Esposizione Universale 2015** sul tema *"Nutrire il Pianeta, Energia per la Vita"*, con **145 paesi partecipanti** e oltre *21 milioni di visitatori* in sei mesi. Il sito espositivo di *1,1 km²* a Rho-Pero ha generato investimenti per *€14 miliardi* in infrastrutture, trasporti e rigenerazione urbana, inclusa la costruzione della **Metro Linea 5** e il potenziamento della rete autostradale.',
+    types: ['program'],
+    status: 'active',
+    relevance: 9,
+    startsOn: '2015-05-01',
+    endsOn: '2015-10-31',
+    highlights: {
+      items: [
+        { label: 'Visitatori', value: '21,5M' },
+        { label: 'Paesi partecipanti', value: '145' },
+        { label: 'Investimenti', value: '€14B' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
+    title: 'Pre-COP26 Milano 2021',
+    tagline: 'Conferenza preparatoria alla COP26 sul clima',
+    description:
+      'Milano ha ospitato la **Pre-COP26** dal *30 settembre al 2 ottobre 2021*, riunendo i ministri dell\'ambiente di oltre **50 paesi** per negoziati preparatori alla conferenza di Glasgow. L\'evento si è tenuto al **MiCo** e ha incluso la *Youth4Climate*, con **400 giovani delegati** da 197 paesi che hanno presentato proposte su transizione energetica, mobilità e giustizia climatica.',
+    types: ['program'],
+    status: 'active',
+    relevance: 6,
+    startsOn: '2021-09-30',
+    endsOn: '2021-10-02',
+    highlights: {
+      items: [
+        { label: 'Paesi', value: '50+' },
+        { label: 'Giovani delegati', value: '400' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
+    title: 'MIND Milano Innovation District - Fase 1',
+    tagline: 'Riqualificazione dell\'area Expo in distretto dell\'innovazione',
+    description:
+      'La **Fase 1** del progetto **MIND** (Milano Innovation District) ha trasformato il sito di *Expo 2015* in un polo per ricerca, innovazione e scienze della vita. Il progetto, gestito da **Lendlease**, prevede investimenti per *€4,5 miliardi* su *1 milione di m²*. La prima fase ha incluso l\'insediamento di **Human Technopole**, il campus di **Università Statale** e il nuovo ospedale **Galeazzi-Sant\'Ambrogio**.',
+    types: ['infrastructure'],
+    status: 'active',
+    relevance: 7,
+    startsOn: '2019-01-01',
+    endsOn: '2025-12-31',
+    highlights: {
+      items: [
+        { label: 'Superficie', value: '1M m²' },
+        { label: 'Investimento', value: '€4,5B' },
+        { label: 'Anchor tenant', value: 'Human Technopole' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  // --- Future temporal provisions ---
+  {
+    entity: 'Comune di Milano',
+    title: 'Paralimpiadi Invernali Milano-Cortina 2026',
+    tagline: 'Giochi paralimpici invernali, seguito delle Olimpiadi',
+    description:
+      'Le **Paralimpiadi Invernali 2026** si terranno dal *6 al 15 marzo* a Milano e Cortina, con circa *700 atleti* da **45 paesi** in competizione in *6 discipline*. Milano ospiterà le gare di **para ice hockey** e le cerimonie, mentre Cortina accoglierà le discipline alpine e nordiche. L\'evento utilizza le stesse infrastrutture olimpiche, con adattamenti per l\'accessibilità.',
+    types: ['program'],
+    status: 'active',
+    relevance: 8,
+    startsOn: '2026-03-06',
+    endsOn: '2026-03-15',
+    highlights: {
+      items: [
+        { label: 'Atleti', value: '~700' },
+        { label: 'Paesi', value: '45' },
+        { label: 'Discipline', value: '6' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
+    title: 'Nuovo Stadio San Siro',
+    tagline: 'Costruzione del nuovo stadio per Milan e Inter',
+    description:
+      'Il progetto per il **Nuovo Stadio di San Siro** prevede la costruzione di un impianto da *60.000 posti* accanto all\'attuale Meazza, con demolizione successiva dello stadio storico e creazione di un parco urbano. Il costo stimato è di *€1,2 miliardi*, interamente finanziati da **AC Milan** e **FC Internazionale**. Il nuovo stadio includerà strutture commerciali, un museo del calcio e spazi per eventi, con un impatto economico previsto di *€150M/anno*.',
+    types: ['infrastructure'],
+    status: 'active',
+    relevance: 9,
+    startsOn: '2027-03-01',
+    endsOn: '2030-09-30',
+    highlights: {
+      items: [
+        { label: 'Capienza', value: '60.000' },
+        { label: 'Costo', value: '€1,2B' },
+        { label: 'Completamento', value: '2030' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
+    title: 'Prolungamento M1 Monza-Bettola',
+    tagline: 'Estensione della linea metro M1 verso Monza',
+    description:
+      'Il progetto prevede il **prolungamento della linea M1** dalla stazione di *Sesto FS* fino a **Monza-Bettola**, con *3 nuove stazioni* su un tracciato di *3,3 km*. L\'investimento complessivo è di *€560 milioni*, cofinanziato da Stato, Regione Lombardia e Comune. L\'opera servirà un bacino di *200.000 residenti* e punta a ridurre di *15.000 auto/giorno* il traffico sull\'asse Milano-Monza.',
+    types: ['infrastructure'],
+    status: 'active',
+    relevance: 6,
+    startsOn: '2026-06-01',
+    endsOn: '2029-12-31',
+    highlights: {
+      items: [
+        { label: 'Nuove stazioni', value: '3' },
+        { label: 'Tracciato', value: '3,3 km' },
+        { label: 'Investimento', value: '€560M' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
+    title: 'Piano Quartieri 2026-2028',
+    tagline: 'Programma di rigenerazione per i quartieri periferici',
+    description:
+      'Il **Piano Quartieri** stanzia *€120 milioni* per interventi di rigenerazione in **9 quartieri periferici** di Milano, con focus su sicurezza, verde pubblico, mobilità dolce e spazi aggregativi. Ogni quartiere riceve un pacchetto personalizzato di interventi co-progettati con i residenti attraverso *assemblee pubbliche*. Il programma include la riqualificazione di *15 piazze*, la creazione di *8 nuove aree verdi* e il potenziamento dell\'illuminazione pubblica.',
+    types: ['program'],
+    status: 'active',
+    relevance: 5,
+    startsOn: '2026-09-01',
+    endsOn: '2028-12-31',
+    highlights: {
+      items: [
+        { label: 'Budget', value: '€120M' },
+        { label: 'Quartieri', value: '9' },
+        { label: 'Piazze riqualificate', value: '15' },
+      ],
+    },
+    changelog: { items: [] },
+  },
+  {
+    entity: 'Comune di Milano',
     title: 'Public Space Occupation Permits (Dehors)',
     tagline: 'Outdoor seating permits for restaurants',
     description:

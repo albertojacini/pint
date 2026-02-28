@@ -1,4 +1,4 @@
-import { pgTable, text, uuid, timestamp, integer, uniqueIndex, jsonb } from 'drizzle-orm/pg-core'
+import { pgTable, text, uuid, timestamp, date, integer, uniqueIndex, jsonb } from 'drizzle-orm/pg-core'
 import { ideas } from './policies'
 import { events } from './events'
 import { artifacts } from './knowledge'
@@ -354,6 +354,11 @@ export const provisions = pgTable('gov_provisions', {
   status: text('status').notNull().default('active'), // 'active', 'repealed', 'suspended'
   relevance: integer('relevance'),
   ideaId: uuid('idea_id').references(() => ideas.id, { onDelete: 'set null' }),
+  // Temporal bounds for provisions with a defined lifespan (e.g., temporary policies,
+  // events like the Winter Olympics, infrastructure projects). Null means the provision
+  // has no temporal bound on that side. Used for timeline/chart display.
+  startsOn: date('starts_on'),
+  endsOn: date('ends_on'),
   // ============================================================================
   // DERIVED DISPLAY FIELDS
   // Pre-computed fields optimized for UI rendering. These fields synthesize data

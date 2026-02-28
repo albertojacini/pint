@@ -10,6 +10,20 @@ import { RelevanceDots } from '@/components/custom-ui/relevance-dots'
 import { getStorageUrl } from '@/lib/storage'
 import { ProvisionChangesDensity } from './provision-changes-density'
 
+// Formats a date string (YYYY-MM-DD) into a short display label (e.g. "Feb 2026")
+function formatShortDate(date: string): string {
+  const d = new Date(date + 'T00:00:00')
+  return d.toLocaleDateString('en', { month: 'short', year: 'numeric' })
+}
+
+// Builds a compact date range label from optional start/end dates
+export function formatDateRange(startsOn?: string | null, endsOn?: string | null): string | null {
+  if (!startsOn && !endsOn) return null
+  if (startsOn && endsOn) return `${formatShortDate(startsOn)} – ${formatShortDate(endsOn)}`
+  if (startsOn) return `From ${formatShortDate(startsOn)}`
+  return `Until ${formatShortDate(endsOn!)}`
+}
+
 interface ProvisionCardProps {
   provision: {
     id: string
@@ -20,6 +34,8 @@ interface ProvisionCardProps {
     types: ProvisionType[]
     status: string
     relevance: number | null
+    startsOn?: string | null
+    endsOn?: string | null
     ideaId: string | null
     ideaTitle: string | null
     highlights: { items: Array<{ label: string; value: string }> } | null
@@ -39,12 +55,19 @@ export function ProvisionCard({ provision, entity }: ProvisionCardProps) {
 
   return (
     <div className="border border-border/50 rounded-lg p-4 bg-card hover:border-primary/30 hover:shadow-lg transition-all duration-200 flex flex-col h-full">
-      {/* Row 1: Type Badges + Tags */}
+      {/* Row 1: Type Badges + Date + Tags */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
         {/* Type badges */}
         {provision.types.map((type) => (
           <ProvisionClassificationBadge key={type.id} type={type.code as any} />
         ))}
+
+        {/* Temporal date range */}
+        {formatDateRange(provision.startsOn, provision.endsOn) && (
+          <span className="text-[10px] text-muted-foreground/70">
+            {formatDateRange(provision.startsOn, provision.endsOn)}
+          </span>
+        )}
 
         {/* Tags */}
         <Tags tags={visibleTags} maxTags={3} className="ml-auto" />

@@ -21,7 +21,7 @@ import { EventHeatmapLoader } from '@/components/events/loaders'
 import { EventList } from '@/components/events/event-list'
 import { ProvisionsOverviewLoader } from '@/components/provisions/loaders'
 import { ProvisionCardExtraSmall } from '@/components/provisions/provision-cards'
-import { getProvisionsByEntity } from '@/lib/actions/provisions'
+import { getProvisionsByEntity, getRecentTemporalProvisions, getUpcomingTemporalProvisions } from '@/lib/actions/provisions'
 import { SectionInsight } from '@/components/custom-ui/section-insight'
 import { PageNavLayout, type PageNavSection } from '@/components/custom-ui/page-nav'
 import { getTranslations } from 'next-intl/server'
@@ -63,7 +63,11 @@ export default async function EntityPage({ params }: EntityPageProps) {
     getMostRelevantEventsByEntity(entity.id, 10),
   ])
 
-  const provisions = await getProvisionsByEntity(entity.id)
+  const [provisions, recentProvisions, upcomingProvisions] = await Promise.all([
+    getProvisionsByEntity(entity.id),
+    getRecentTemporalProvisions(entity.id),
+    getUpcomingTemporalProvisions(entity.id),
+  ])
   const relationships = await getGroupedEntityRelationships(entity.id)
 
   // Fetch tags for this entity
@@ -282,6 +286,38 @@ export default async function EntityPage({ params }: EntityPageProps) {
                 </div>
               </div>
             </SectionL2>
+          )}
+          {(recentProvisions.length > 0 || upcomingProvisions.length > 0) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {recentProvisions.length > 0 && (
+                <SectionL2 title={t('recentProvisions')}>
+                  {recentProvisions.map((p) => (
+                    <ProvisionCardExtraSmall
+                      key={p.id}
+                      provision={{
+                        title: p.title,
+                        type: p.types[0]?.code ?? 'program',
+                        avatarUrl: p.avatarUrl,
+                      }}
+                    />
+                  ))}
+                </SectionL2>
+              )}
+              {upcomingProvisions.length > 0 && (
+                <SectionL2 title={t('upcomingProvisions')}>
+                  {upcomingProvisions.map((p) => (
+                    <ProvisionCardExtraSmall
+                      key={p.id}
+                      provision={{
+                        title: p.title,
+                        type: p.types[0]?.code ?? 'program',
+                        avatarUrl: p.avatarUrl,
+                      }}
+                    />
+                  ))}
+                </SectionL2>
+              )}
+            </div>
           )}
 
           <SectionL2 title={t('community')}>
